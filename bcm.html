@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Call Main</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+      background: #000;
+    }
+
+    :root {
+      --btn-size: 150px;
+      --gap: 18px;
+      --radius: 18px;
+    }
+
+    body {
+      position: relative;
+      background: url("images/bookcallmain-bg.jpg") no-repeat center center / cover;
+    }
+
+    .page-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 8vh;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(4, var(--btn-size));
+      grid-template-rows: repeat(3, var(--btn-size));
+      gap: var(--gap);
+      justify-items: center;
+      align-items: center;
+    }
+
+    .stage-btn {
+      width: var(--btn-size);
+      height: var(--btn-size);
+      border: none;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(255,255,255,0.12);
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .stage-btn:hover:not(:disabled) {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .stage-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .stage-btn.disabled,
+    .stage-btn:disabled {
+      opacity: 0.45;
+      filter: grayscale(100%);
+      cursor: default;
+    }
+
+    .stage-btn.completed::after {
+      content: "완료";
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.72);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 2;
+    }
+
+    .btn11 {
+      width: calc(var(--btn-size) * 2 + var(--gap));
+      height: var(--btn-size);
+      grid-column: 3 / 5;
+      grid-row: 3 / 4;
+    }
+
+    .score-box {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 20;
+      min-width: 145px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.58);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .reset-btn {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 20;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.66);
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover {
+      background: rgba(0,0,0,0.82);
+    }
+
+    @media (max-width: 1280px) {
+      :root {
+        --btn-size: 132px;
+        --gap: 16px;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      :root {
+        --btn-size: 112px;
+        --gap: 14px;
+      }
+
+      .score-box {
+        font-size: 17px;
+        min-width: 130px;
+      }
+    }
+
+    @media (max-width: 900px) and (orientation: portrait) {
+      :root {
+        --btn-size: 98px;
+        --gap: 12px;
+      }
+
+      .page-wrap {
+        padding-top: 10vh;
+      }
+
+      .score-box {
+        top: 14px;
+        right: 14px;
+        padding: 10px 14px;
+        font-size: 15px;
+      }
+
+      .reset-btn {
+        right: 14px;
+        bottom: 14px;
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="score-box" id="totalScoreBox">총점 0점</div>
+
+  <div class="page-wrap">
+    <div class="button-grid">
+      <button class="stage-btn" id="btn1" onclick="goStage(1)">
+        <img src="images/bookcall-btn1.png" alt="1번">
+      </button>
+      <button class="stage-btn" id="btn2" onclick="goStage(2)">
+        <img src="images/bookcall-btn2.png" alt="2번">
+      </button>
+      <button class="stage-btn" id="btn3" onclick="goStage(3)">
+        <img src="images/bookcall-btn3.png" alt="3번">
+      </button>
+      <button class="stage-btn" id="btn4" onclick="goStage(4)">
+        <img src="images/bookcall-btn4.png" alt="4번">
+      </button>
+
+      <button class="stage-btn" id="btn5" onclick="goStage(5)">
+        <img src="images/bookcall-btn5.png" alt="5번">
+      </button>
+      <button class="stage-btn" id="btn6" onclick="goStage(6)">
+        <img src="images/bookcall-btn6.png" alt="6번">
+      </button>
+      <button class="stage-btn" id="btn7" onclick="goStage(7)">
+        <img src="images/bookcall-btn7.png" alt="7번">
+      </button>
+      <button class="stage-btn" id="btn8" onclick="goStage(8)">
+        <img src="images/bookcall-btn8.png" alt="8번">
+      </button>
+
+      <button class="stage-btn" id="btn9" onclick="goStage(9)">
+        <img src="images/bookcall-btn9.png" alt="9번">
+      </button>
+      <button class="stage-btn" id="btn10" onclick="goStage(10)">
+        <img src="images/bookcall-btn10.png" alt="10번">
+      </button>
+
+      <button class="stage-btn btn11 disabled" id="btn11" onclick="goStage(11)" disabled>
+        <img src="images/bookcall-btn11.png" alt="11번">
+      </button>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetGame()">테스트용 초기화</button>
+
+  <script>
+    const PROGRESS_KEY = "bookcall_progress_v2";
+
+    function getProgress() {
+      return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+    }
+
+    function getTotalScore(progress) {
+      let total = 0;
+      for (let i = 1; i <= 11; i++) {
+        if (typeof progress[i] === "object" && progress[i] !== null) {
+          total += Number(progress[i].score || 0);
+        }
+      }
+      return total;
+    }
+
+    function all1to10Done(progress) {
+      for (let i = 1; i <= 10; i++) {
+        if (!progress[i] || !progress[i].completed) return false;
+      }
+      return true;
+    }
+
+    function applyButtons() {
+      const progress = getProgress();
+
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.getElementById(`btn${i}`);
+        if (progress[i] && progress[i].completed) {
+          btn.disabled = true;
+          btn.classList.add("disabled", "completed");
+        } else {
+          btn.disabled = false;
+          btn.classList.remove("disabled", "completed");
+        }
+      }
+
+      const btn11 = document.getElementById("btn11");
+      if (progress[11] && progress[11].completed) {
+        btn11.disabled = true;
+        btn11.classList.add("disabled", "completed");
+      } else if (all1to10Done(progress)) {
+        btn11.disabled = false;
+        btn11.classList.remove("disabled");
+      } else {
+        btn11.disabled = true;
+        btn11.classList.add("disabled");
+      }
+
+      document.getElementById("totalScoreBox").textContent = `총점 ${getTotalScore(progress)}점`;
+    }
+
+    function goStage(num) {
+      if (num >= 1 && num <= 10) {
+        location.href = `bookcall${num}.html`;
+      } else if (num === 11) {
+        location.href = "bookcall11.html";
+      }
+    }
+
+    function resetGame() {
+      if (confirm("진행상황과 점수를 모두 초기화할까요?")) {
+        localStorage.removeItem(PROGRESS_KEY);
+        location.reload();
+      }
+    }
+
+    applyButtons();
+  </script>
+</body>
+</html>
