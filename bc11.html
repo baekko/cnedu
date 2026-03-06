@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Call 11</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+      background: #000;
+    }
+
+    body {
+      position: relative;
+      background: url("images/bookcall11-bg.jpg") no-repeat center center / cover;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.15);
+      z-index: 1;
+    }
+
+    .ui-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: 7vh;
+      transform: translateX(-50%);
+      width: min(92vw, 980px);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .answer-row {
+      width: 100%;
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .answer-input {
+      width: min(72vw, 470px);
+      height: 66px;
+      padding: 0 20px;
+      border: none;
+      border-radius: 16px;
+      outline: none;
+      background: rgba(255,255,255,0.94);
+      color: #111;
+      font-size: 24px;
+    }
+
+    .submit-btn {
+      height: 66px;
+      min-width: 132px;
+      border: none;
+      border-radius: 16px;
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      background: #1e6cff;
+      cursor: pointer;
+      padding: 0 24px;
+    }
+
+    .submit-btn:hover {
+      background: #1357db;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      min-width: 130px;
+      height: 58px;
+      border: none;
+      border-radius: 16px;
+      padding: 0 22px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .action-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .top-score {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 20;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.58);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.56);
+      z-index: 100;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: min(86vw, 560px);
+      min-height: 230px;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.34);
+      padding: 28px 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      justify-content: center;
+    }
+
+    .modal-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .modal-content {
+      text-align: center;
+      font-size: 22px;
+      color: #222;
+      line-height: 1.6;
+      white-space: pre-line;
+      word-break: keep-all;
+    }
+
+    .modal-close {
+      align-self: center;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 26px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #1e6cff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .video-modal.show {
+      display: flex;
+    }
+
+    .video-wrap {
+      position: relative;
+      width: min(90vw, 1100px);
+      max-height: 90vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .video-wrap.score2 {
+      width: min(92vw, 1200px);
+    }
+
+    .video-wrap.score1 {
+      width: min(74vw, 900px);
+    }
+
+    .video-wrap.score0 {
+      width: min(56vw, 700px);
+    }
+
+    .result-video {
+      width: 100%;
+      max-height: 88vh;
+      border-radius: 18px;
+      background: #000;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+
+    @media (max-width: 1280px) {
+      .answer-input {
+        height: 60px;
+        font-size: 22px;
+      }
+
+      .submit-btn {
+        height: 60px;
+        font-size: 20px;
+      }
+
+      .action-btn {
+        min-width: 122px;
+        height: 54px;
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .ui-wrap {
+        bottom: 6vh;
+      }
+
+      .answer-input {
+        width: min(80vw, 430px);
+        height: 54px;
+        font-size: 20px;
+      }
+
+      .submit-btn {
+        height: 54px;
+        min-width: 118px;
+        font-size: 18px;
+      }
+
+      .action-btn {
+        min-width: 112px;
+        height: 50px;
+        font-size: 17px;
+      }
+
+      .modal-title {
+        font-size: 24px;
+      }
+
+      .modal-content {
+        font-size: 19px;
+      }
+
+      .top-score {
+        top: 14px;
+        right: 14px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 900px) and (orientation: portrait) {
+      .answer-row {
+        flex-direction: column;
+      }
+
+      .answer-input,
+      .submit-btn {
+        width: min(84vw, 460px);
+      }
+
+      .video-wrap.score2,
+      .video-wrap.score1,
+      .video-wrap.score0 {
+        width: 92vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="top-score" id="scorePreview">예상 점수 2점</div>
+
+  <div class="ui-wrap">
+    <div class="answer-row">
+      <input
+        type="text"
+        id="answerInput"
+        class="answer-input"
+        placeholder="최종 정답을 입력하세요"
+        autocomplete="off"
+      />
+      <button class="submit-btn" onclick="checkAnswer()">입력</button>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn" id="hintBtn" onclick="showHint()">힌트</button>
+      <button class="action-btn" id="answerBtn" onclick="showAnswer()" disabled>정답보기</button>
+      <button class="action-btn" id="scoreBtn" onclick="showScore()">점수보기</button>
+    </div>
+  </div>
+
+  <div class="modal" id="infoModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalTitle">안내</div>
+      <div class="modal-content" id="modalContent"></div>
+      <button class="modal-close" onclick="closeInfoModal()">닫기</button>
+    </div>
+  </div>
+
+  <div class="video-modal" id="videoModal">
+    <div class="video-wrap" id="videoWrap">
+      <video id="resultVideo" class="result-video" playsinline></video>
+    </div>
+  </div>
+
+  <script>
+    const PROGRESS_KEY = "bookcall_progress_v2";
+
+    let usedHint = false;
+    let usedAnswerView = false;
+    let locked = false;
+
+    function getProgress() {
+      return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+    }
+
+    function setProgress(progress) {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+    }
+
+    function all1to10Done(progress) {
+      for (let i = 1; i <= 10; i++) {
+        if (!progress[i] || !progress[i].completed) return false;
+      }
+      return true;
+    }
+
+    function currentEarnableScore() {
+      if (usedAnswerView) return 0;
+      if (usedHint) return 1;
+      return 2;
+    }
+
+    function updateScorePreview() {
+      document.getElementById("scorePreview").textContent = `예상 점수 ${currentEarnableScore()}점`;
+    }
+
+    function openInfoModal(title, content) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalContent").textContent = content;
+      document.getElementById("infoModal").classList.add("show");
+    }
+
+    function closeInfoModal() {
+      document.getElementById("infoModal").classList.remove("show");
+    }
+
+    function normalizeText(text) {
+      return text.replace(/\s+/g, "").trim().toLowerCase();
+    }
+
+    function showHint() {
+      if (locked) return;
+      usedHint = true;
+      document.getElementById("answerBtn").disabled = false;
+      updateScorePreview();
+      openInfoModal("힌트", finalConfig.hintText);
+    }
+
+    function showAnswer() {
+      if (locked) return;
+      if (!usedHint) return;
+      usedAnswerView = true;
+      updateScorePreview();
+      openInfoModal("정답", finalConfig.answerText);
+    }
+
+    function showScore() {
+      openInfoModal("현재 문제 점수", `이 문제를 지금 맞추면 ${currentEarnableScore()}점입니다.`);
+    }
+
+    function saveFinalResult(score) {
+      const progress = getProgress();
+      progress[11] = {
+        completed: true,
+        score: score,
+        usedHint: usedHint,
+        usedAnswerView: usedAnswerView
+      };
+      setProgress(progress);
+    }
+
+    function playResultVideo(score) {
+      const videoModal = document.getElementById("videoModal");
+      const videoWrap = document.getElementById("videoWrap");
+      const video = document.getElementById("resultVideo");
+
+      videoWrap.className = "video-wrap";
+      videoWrap.classList.add(score === 2 ? "score2" : score === 1 ? "score1" : "score0");
+
+      let videoSrc = "";
+      if (score === 2) videoSrc = finalConfig.video2;
+      else if (score === 1) videoSrc = finalConfig.video1;
+      else videoSrc = finalConfig.video0;
+
+      video.src = videoSrc;
+      videoModal.classList.add("show");
+
+      const moveToEnd = () => {
+        video.pause();
+        video.currentTime = 0;
+        location.href = "bookcallend.html";
+      };
+
+      video.onended = moveToEnd;
+
+      video.onerror = () => {
+        alert("영상 파일을 불러오지 못했습니다. 파일 경로를 확인해주세요.");
+        moveToEnd();
+      };
+
+      video.play().catch(() => {
+        alert("자동재생이 차단되었습니다. 화면을 한 번 터치한 뒤 다시 시도해주세요.");
+      });
+    }
+
+    function checkAnswer() {
+      if (locked) return;
+
+      const progress = getProgress();
+      if (!all1to10Done(progress)) {
+        openInfoModal("안내", "1번부터 10번까지 모든 문제를 먼저 완료해야 합니다.");
+        return;
+      }
+
+      const input = document.getElementById("answerInput").value;
+      if (!input.trim()) {
+        openInfoModal("안내", "정답을 입력해주세요.");
+        return;
+      }
+
+      if (normalizeText(input) === normalizeText(finalConfig.correctAnswer)) {
+        locked = true;
+        const score = currentEarnableScore();
+        saveFinalResult(score);
+        closeInfoModal();
+        playResultVideo(score);
+      } else {
+        openInfoModal("오답", "정답이 아닙니다. 다시 시도해보세요.");
+      }
+    }
+
+    document.getElementById("answerInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        checkAnswer();
+      }
+    });
+
+    const finalConfig = {
+      correctAnswer: "최종정답",
+      hintText: "여기에 11번 힌트를 입력하세요.",
+      answerText: "최종정답",
+      video2: "videos/score2.mp4",
+      video1: "videos/score1.mp4",
+      video0: "videos/score0.mp4"
+    };
+
+    updateScorePreview();
+  </script>
+</body>
+</html>
