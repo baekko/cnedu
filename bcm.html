@@ -21,13 +21,14 @@
 
     :root {
       --btn-size: 150px;
-      --gap: 18px;
+      --gap: 36px;
       --radius: 18px;
+      --panel-radius: 28px;
     }
 
     body {
       position: relative;
-      background: url("images/bookcallmain-bg.jpg") no-repeat center center / cover;
+      background: url("bcm.jpg") no-repeat center center / cover;
     }
 
     .page-wrap {
@@ -39,7 +40,40 @@
       padding-top: 8vh;
     }
 
+    /* 버튼 전체 묶음 */
+    .grid-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* 뒤에서 받치는 장식용 판 */
+    .grid-panel {
+      position: absolute;
+      z-index: 0;
+
+      /* 위, 아래, 왼쪽, 오른쪽 모두 버튼 간격만큼 확장 */
+      top: calc(var(--gap) * -1);
+      left: calc(var(--gap) * -1);
+      width: calc(var(--btn-size) * 4 + var(--gap) * 3 + var(--gap) * 2);
+      height: calc(var(--btn-size) * 3 + var(--gap) * 2 + var(--gap) * 2);
+
+      border-radius: var(--panel-radius);
+
+      background: rgba(226, 163, 81, 0.35);
+
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.35),
+        0 8px 18px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -8px 18px rgba(0,0,0,0.10);
+
+      backdrop-filter: blur(2px);
+      pointer-events: none;
+    }
+
     .button-grid {
+      position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: repeat(4, var(--btn-size));
       grid-template-rows: repeat(3, var(--btn-size));
@@ -57,12 +91,46 @@
       background: rgba(255,255,255,0.12);
       cursor: pointer;
       position: relative;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
       transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+      box-shadow:
+        0 14px 30px rgba(0,0,0,0.45),
+        0 6px 12px rgba(0,0,0,0.32),
+        inset 0 2px 2px rgba(255,255,255,0.30),
+        inset 0 -4px 8px rgba(0,0,0,0.24);
+    }
+
+    .stage-btn::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 6px;
+      height: 24%;
+      border-radius: 12px;
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.22),
+        rgba(255,255,255,0.03)
+      );
+      pointer-events: none;
+      z-index: 2;
     }
 
     .stage-btn:hover:not(:disabled) {
       transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 18px 36px rgba(0,0,0,0.50),
+        0 8px 16px rgba(0,0,0,0.34),
+        inset 0 2px 2px rgba(255,255,255,0.32),
+        inset 0 -4px 8px rgba(0,0,0,0.24);
+    }
+
+    .stage-btn:active:not(:disabled) {
+      transform: translateY(2px) scale(0.98);
+      box-shadow:
+        0 8px 16px rgba(0,0,0,0.34),
+        inset 0 2px 3px rgba(255,255,255,0.20),
+        inset 0 -3px 6px rgba(0,0,0,0.28);
     }
 
     .stage-btn img {
@@ -70,27 +138,16 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      position: relative;
+      z-index: 1;
     }
 
     .stage-btn.disabled,
     .stage-btn:disabled {
-      opacity: 0.45;
+      opacity: 0.42;
       filter: grayscale(100%);
       cursor: default;
-    }
-
-    .stage-btn.completed::after {
-      content: "완료";
-      position: absolute;
-      right: 8px;
-      top: 8px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.72);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      z-index: 2;
+      transform: none;
     }
 
     .btn11 {
@@ -134,29 +191,46 @@
       background: rgba(0,0,0,0.82);
     }
 
+    /* 큰 태블릿 */
     @media (max-width: 1280px) {
       :root {
         --btn-size: 132px;
-        --gap: 16px;
+        --gap: 32px;
+        --radius: 18px;
+        --panel-radius: 26px;
       }
     }
 
+    /* 일반 태블릿 */
     @media (max-width: 1024px) {
       :root {
         --btn-size: 112px;
-        --gap: 14px;
+        --gap: 28px;
+        --radius: 16px;
+        --panel-radius: 24px;
       }
 
       .score-box {
         font-size: 17px;
         min-width: 130px;
       }
+
+      .stage-btn {
+        box-shadow:
+          0 12px 24px rgba(0,0,0,0.44),
+          0 5px 10px rgba(0,0,0,0.30),
+          inset 0 2px 2px rgba(255,255,255,0.26),
+          inset 0 -4px 7px rgba(0,0,0,0.22);
+      }
     }
 
+    /* 세로형 태블릿 */
     @media (max-width: 900px) and (orientation: portrait) {
       :root {
         --btn-size: 98px;
-        --gap: 12px;
+        --gap: 24px;
+        --radius: 15px;
+        --panel-radius: 22px;
       }
 
       .page-wrap {
@@ -176,6 +250,14 @@
         padding: 10px 14px;
         font-size: 14px;
       }
+
+      .stage-btn {
+        box-shadow:
+          0 10px 20px rgba(0,0,0,0.42),
+          0 4px 8px rgba(0,0,0,0.28),
+          inset 0 2px 2px rgba(255,255,255,0.24),
+          inset 0 -3px 6px rgba(0,0,0,0.20);
+      }
     }
   </style>
 </head>
@@ -183,43 +265,47 @@
   <div class="score-box" id="totalScoreBox">총점 0점</div>
 
   <div class="page-wrap">
-    <div class="button-grid">
-      <button class="stage-btn" id="btn1" onclick="goStage(1)">
-        <img src="images/bookcall-btn1.png" alt="1번">
-      </button>
-      <button class="stage-btn" id="btn2" onclick="goStage(2)">
-        <img src="images/bookcall-btn2.png" alt="2번">
-      </button>
-      <button class="stage-btn" id="btn3" onclick="goStage(3)">
-        <img src="images/bookcall-btn3.png" alt="3번">
-      </button>
-      <button class="stage-btn" id="btn4" onclick="goStage(4)">
-        <img src="images/bookcall-btn4.png" alt="4번">
-      </button>
+    <div class="grid-wrap">
+      <div class="grid-panel"></div>
 
-      <button class="stage-btn" id="btn5" onclick="goStage(5)">
-        <img src="images/bookcall-btn5.png" alt="5번">
-      </button>
-      <button class="stage-btn" id="btn6" onclick="goStage(6)">
-        <img src="images/bookcall-btn6.png" alt="6번">
-      </button>
-      <button class="stage-btn" id="btn7" onclick="goStage(7)">
-        <img src="images/bookcall-btn7.png" alt="7번">
-      </button>
-      <button class="stage-btn" id="btn8" onclick="goStage(8)">
-        <img src="images/bookcall-btn8.png" alt="8번">
-      </button>
+      <div class="button-grid">
+        <button class="stage-btn" id="btn1" onclick="goStage(1)">
+          <img src="bc000.png" alt="1번">
+        </button>
+        <button class="stage-btn" id="btn2" onclick="goStage(2)">
+          <img src="bc100.png" alt="2번">
+        </button>
+        <button class="stage-btn" id="btn3" onclick="goStage(3)">
+          <img src="bc200.png" alt="3번">
+        </button>
+        <button class="stage-btn" id="btn4" onclick="goStage(4)">
+          <img src="bc300.png" alt="4번">
+        </button>
 
-      <button class="stage-btn" id="btn9" onclick="goStage(9)">
-        <img src="images/bookcall-btn9.png" alt="9번">
-      </button>
-      <button class="stage-btn" id="btn10" onclick="goStage(10)">
-        <img src="images/bookcall-btn10.png" alt="10번">
-      </button>
+        <button class="stage-btn" id="btn5" onclick="goStage(5)">
+          <img src="bc400.png" alt="5번">
+        </button>
+        <button class="stage-btn" id="btn6" onclick="goStage(6)">
+          <img src="bc500.png" alt="6번">
+        </button>
+        <button class="stage-btn" id="btn7" onclick="goStage(7)">
+          <img src="bc600.png" alt="7번">
+        </button>
+        <button class="stage-btn" id="btn8" onclick="goStage(8)">
+          <img src="bc700.png" alt="8번">
+        </button>
 
-      <button class="stage-btn btn11 disabled" id="btn11" onclick="goStage(11)" disabled>
-        <img src="images/bookcall-btn11.png" alt="11번">
-      </button>
+        <button class="stage-btn" id="btn9" onclick="goStage(9)">
+          <img src="bc800.png" alt="9번">
+        </button>
+        <button class="stage-btn" id="btn10" onclick="goStage(10)">
+          <img src="bc900.png" alt="10번">
+        </button>
+
+        <button class="stage-btn btn11 disabled" id="btn11" onclick="goStage(11)" disabled>
+          <img src="bc1100.png" alt="11번">
+        </button>
+      </div>
     </div>
   </div>
 
@@ -229,7 +315,11 @@
     const PROGRESS_KEY = "bookcall_progress_v2";
 
     function getProgress() {
-      return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+      try {
+        return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+      } catch (e) {
+        return {};
+      }
     }
 
     function getTotalScore(progress) {
@@ -256,17 +346,17 @@
         const btn = document.getElementById(`btn${i}`);
         if (progress[i] && progress[i].completed) {
           btn.disabled = true;
-          btn.classList.add("disabled", "completed");
+          btn.classList.add("disabled");
         } else {
           btn.disabled = false;
-          btn.classList.remove("disabled", "completed");
+          btn.classList.remove("disabled");
         }
       }
 
       const btn11 = document.getElementById("btn11");
       if (progress[11] && progress[11].completed) {
         btn11.disabled = true;
-        btn11.classList.add("disabled", "completed");
+        btn11.classList.add("disabled");
       } else if (all1to10Done(progress)) {
         btn11.disabled = false;
         btn11.classList.remove("disabled");
@@ -296,6 +386,7 @@
     applyButtons();
   </script>
 </body>
-
 </html>
+
+
 
