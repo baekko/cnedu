@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR 선택 페이지</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:"Pretendard","Noto Sans KR",sans-serif;
+}
+
+body{
+position:relative;
+background:url("bcoo.jpg") no-repeat center center / cover;
+}
+
+
+/* =========================
+   버튼 영역
+========================= */
+
+.button-area{
+
+position:absolute;
+
+left:50%;
+bottom:7vh;
+
+transform:translateX(-50%);
+
+display:grid;
+
+grid-template-columns:repeat(2,225px);
+grid-template-rows:repeat(2,338px);
+
+column-gap:90px;
+row-gap:75px;
+
+justify-content:center;
+align-items:center;
+
+}
+
+
+/* =========================
+   버튼 스타일
+========================= */
+
+.menu-btn{
+
+position:relative;
+
+width:225px;
+height:338px;
+
+border:none;
+border-radius:26px;
+
+overflow:hidden;
+cursor:pointer;
+
+background:
+linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 18%, rgba(0,0,0,0.08) 100%),
+#5c83c7;
+
+box-shadow:
+0 18px 32px rgba(0,0,0,0.25),
+0 8px 14px rgba(0,0,0,0.15),
+inset 0 2px 2px rgba(255,255,255,0.55),
+inset 0 -5px 10px rgba(0,0,0,0.10);
+
+transition:all .18s ease;
+
+}
+
+
+/* 위쪽 빛 */
+
+.menu-btn::before{
+
+content:"";
+
+position:absolute;
+
+left:14px;
+right:14px;
+top:10px;
+
+height:24%;
+
+border-radius:22px;
+
+background:linear-gradient(
+180deg,
+rgba(255,255,255,.35),
+rgba(255,255,255,.05)
+);
+
+}
+
+
+/* 바닥 그림자 */
+
+.menu-btn::after{
+
+content:"";
+
+position:absolute;
+
+left:15%;
+right:15%;
+bottom:-14px;
+
+height:20px;
+
+background:rgba(0,0,0,.2);
+
+filter:blur(10px);
+
+border-radius:50%;
+
+}
+
+
+.menu-btn:hover{
+
+transform:translateY(-5px);
+
+}
+
+
+.menu-btn:active{
+
+transform:translateY(2px) scale(.98);
+
+}
+
+
+/* 버튼 이미지 */
+
+.menu-btn img{
+
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="button-area">
+
+<button class="menu-btn" onclick="location.href='bco.html'">
+<img src="bc.png">
+</button>
+
+<button class="menu-btn" onclick="location.href='phno.html'">
+<img src="phn.png">
+</button>
+
+<button class="menu-btn" onclick="location.href='rho.html'">
+<img src="rh.png">
+</button>
+
+<button class="menu-btn" onclick="location.href='pzo.html'">
+<img src="pz.png">
+</button>
+
+</div>
+
+</body>
+</html>
