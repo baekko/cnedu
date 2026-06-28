@@ -184,18 +184,36 @@ body {
   </div>
 
   <script>
-    let isMoving = false;
+  let isMoving = false;
 
-    function goPage(button, url) {
-      if (isMoving) return;
-      isMoving = true;
+  function resetButtons() {
+    isMoving = false;
 
-      button.classList.add("selected");
+    document.querySelectorAll(".choice-btn").forEach(function (btn) {
+      btn.classList.remove("selected");
+    });
+  }
 
-      setTimeout(function () {
-        location.href = url;
-      }, 450);
-    }
+  function goPage(button, url) {
+    if (isMoving) return;
+    isMoving = true;
+
+    button.classList.add("selected");
+
+    setTimeout(function () {
+      location.href = url;
+    }, 450);
+  }
+
+  // 뒤로가기 했을 때 상태 초기화
+  window.addEventListener("pageshow", function () {
+    resetButtons();
+  });
+
+  // 일반 새로고침/복귀 상황도 대비
+  window.addEventListener("load", function () {
+    resetButtons();
+  });
   </script>
 </body>
 </html>
