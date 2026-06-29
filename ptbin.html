@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PLAY THE BOOK INTRO</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+}
+
+:root {
+  --card-size: clamp(330px, 75vw, 670px);
+  --card-top: clamp(95px, 14vh, 150px);
+
+  --arrow-w: clamp(78px, 11vw, 120px);
+  --arrow-h: clamp(66px, 9vw, 96px);
+  --arrow-gap: clamp(50px, 8vw, 90px);
+  --arrow-top-gap: clamp(28px, 4vh, 42px);
+
+  --next-bottom: clamp(48px, 7vh, 80px);
+}
+
+body {
+  position: relative;
+  background: url("ptbin.png") no-repeat center center / cover;
+}
+
+.intro-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.card-area {
+  position: absolute;
+  left: 50%;
+  top: var(--card-top);
+  transform: translateX(-50%);
+  width: var(--card-size);
+  height: var(--card-size);
+  z-index: 5;
+}
+
+.story-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 화살표 영역 */
+.arrow-area {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--card-top) + var(--card-size) + var(--arrow-top-gap));
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--arrow-gap);
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.arrow-btn {
+  width: var(--arrow-w);
+  height: var(--arrow-h);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.arrow-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.arrow-btn:active {
+  transform: translateY(2px) scale(0.95);
+}
+
+.arrow-btn svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter:
+    drop-shadow(0 9px 10px rgba(0,0,0,0.42))
+    drop-shadow(0 3px 3px rgba(0,0,0,0.35));
+}
+
+.arrow-btn .arrow-shape {
+  fill: #5b351d;
+  stroke: #2d160b;
+  stroke-width: 3;
+}
+
+.arrow-btn .arrow-highlight {
+  fill: rgba(255,255,255,0.22);
+}
+
+.arrow-btn.hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* 다음 버튼 */
+.next-btn {
+  position: absolute;
+  left: 50%;
+  bottom: var(--next-bottom);
+  transform: translateX(-50%);
+  z-index: 20;
+  display: none;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 46px;
+  background: rgba(80, 46, 24, 0.88);
+  color: #fff8e8;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.35),
+    inset 0 2px 2px rgba(255,255,255,0.25),
+    inset 0 -4px 8px rgba(0,0,0,0.25);
+}
+
+.next-btn.show {
+  display: block;
+  animation: fadeUp 0.35s ease;
+}
+
+.next-btn:active {
+  transform: translateX(-50%) scale(0.96);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 휴대폰 */
+@media (max-width: 600px) {
+  :root {
+    --card-size: min(82vw, 360px);
+    --card-top: 13vh;
+    --arrow-w: 72px;
+    --arrow-h: 62px;
+    --arrow-gap: 44px;
+    --arrow-top-gap: 24px;
+    --next-bottom: 42px;
+  }
+
+  .next-btn {
+    padding: 13px 38px;
+  }
+}
+
+/* 작은 휴대폰 */
+@media (max-width: 390px) {
+  :root {
+    --card-size: 80vw;
+    --card-top: 12vh;
+    --arrow-w: 64px;
+    --arrow-h: 56px;
+    --arrow-gap: 36px;
+    --arrow-top-gap: 22px;
+    --next-bottom: 36px;
+  }
+}
+</style>
+</head>
+
+<body>
+  <div class="intro-wrap">
+    <div class="card-area">
+      <img id="storyImg" class="story-img" src="ptbin1.png" alt="인트로 이미지">
+    </div>
+
+    <div class="arrow-area">
+      <button id="prevBtn" class="arrow-btn hidden" onclick="prevSlide()" aria-label="이전">
+        <svg viewBox="0 0 120 96" aria-hidden="true">
+          <path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/>
+          <path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/>
+        </svg>
+      </button>
+
+      <button id="nextArrowBtn" class="arrow-btn" onclick="nextSlide()" aria-label="다음">
+        <svg viewBox="0 0 120 96" aria-hidden="true">
+          <path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/>
+          <path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/>
+        </svg>
+      </button>
+    </div>
+
+    <button id="nextPageBtn" class="next-btn" onclick="goNextPage()">다음</button>
+  </div>
+
+<script>
+const TOTAL_SLIDES = 11;
+const RETURN_KEY = "ptbin_return_from_next";
+
+let currentSlide = 1;
+let timer = null;
+let nextUnlocked = false;
+
+const storyImg = document.getElementById("storyImg");
+const prevBtn = document.getElementById("prevBtn");
+const nextArrowBtn = document.getElementById("nextArrowBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
+
+function getNavigationType() {
+  const nav = performance.getEntriesByType("navigation")[0];
+  return nav ? nav.type : "navigate";
+}
+
+function resetIntroState(showNextButton) {
+  currentSlide = 1;
+  nextUnlocked = showNextButton;
+
+  storyImg.src = "ptbin1.png";
+  prevBtn.classList.add("hidden");
+  nextArrowBtn.classList.remove("hidden");
+
+  clearTimeout(timer);
+
+  if (showNextButton) {
+    nextPageBtn.classList.add("show");
+  } else {
+    nextPageBtn.classList.remove("show");
+  }
+}
+
+function updateSlide() {
+  storyImg.src = `ptbin${currentSlide}.png`;
+
+  if (currentSlide === 1) {
+    prevBtn.classList.add("hidden");
+  } else {
+    prevBtn.classList.remove("hidden");
+  }
+
+  if (currentSlide === TOTAL_SLIDES) {
+    nextArrowBtn.classList.add("hidden");
+    startNextButtonTimer();
+  } else {
+    nextArrowBtn.classList.remove("hidden");
+
+    if (!nextUnlocked) {
+      nextPageBtn.classList.remove("show");
+    }
+
+    clearTimeout(timer);
+  }
+}
+
+function nextSlide() {
+  if (currentSlide < TOTAL_SLIDES) {
+    currentSlide++;
+    updateSlide();
+  }
+}
+
+function prevSlide() {
+  if (currentSlide > 1) {
+    currentSlide--;
+    updateSlide();
+  }
+}
+
+function startNextButtonTimer() {
+  clearTimeout(timer);
+
+  if (nextUnlocked) {
+    nextPageBtn.classList.add("show");
+    return;
+  }
+
+  timer = setTimeout(function () {
+    nextUnlocked = true;
+    nextPageBtn.classList.add("show");
+  }, 5000);
+}
+
+function goNextPage() {
+  sessionStorage.setItem(RETURN_KEY, "true");
+  location.href = "https://baekko.github.io/cnedu/ptbm.html";
+}
+
+window.addEventListener("pageshow", function (event) {
+  const navType = getNavigationType();
+
+  if (navType === "reload") {
+    sessionStorage.removeItem(RETURN_KEY);
+    resetIntroState(false);
+    return;
+  }
+
+  const cameBackFromNext =
+    event.persisted || navType === "back_forward";
+
+  if (cameBackFromNext && sessionStorage.getItem(RETURN_KEY) === "true") {
+    resetIntroState(true);
+  } else {
+    resetIntroState(false);
+  }
+});
+</script>
+</body>
+</html>
