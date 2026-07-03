@@ -20,8 +20,8 @@ html, body {
 }
 
 :root {
-  --btn-w: clamp(140px, 25vw, 255px);
-  --btn-h: clamp(170px, 32vw, 300px);
+  --btn-w: clamp(140px, 30vw, 305px);
+  --btn-h: clamp(200px, 50vw, 350px);
   --btn-gap: clamp(26px, 4vw, 70px);
   --btn-bottom: clamp(140px, 25vh, 275px);
 
@@ -158,8 +158,8 @@ body {
 /* 휴대폰 세로 보정 */
 @media (max-width: 430px) {
   :root {
-    --btn-w: 100px;
-    --btn-h: 132px;
+    --btn-w: 120px;
+    --btn-h: 200px;
     --btn-gap: 10px;
     --btn-bottom: 160px;
 
@@ -174,46 +174,28 @@ body {
 
 <body>
   <div class="button-area">
-    <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/letter.html')" aria-label="중고등학생용">
-      <img src="ptb13.png" alt="중고등학생용">
+    <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptrs.html')" aria-label="초등학생용">
+      <img src="ptb7.png" alt="초등학생용">
     </button>
 
-    <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/rabbit.html')" aria-label="초등학생용">
-      <img src="ptb7.png" alt="초등학생용">
+    <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptbs.html')" aria-label="중고등학생용">
+      <img src="ptb13.png" alt="중고등학생용">
     </button>
   </div>
 
   <script>
-  let isMoving = false;
+    let isMoving = false;
 
-  function resetButtons() {
-    isMoving = false;
+    function goPage(button, url) {
+      if (isMoving) return;
+      isMoving = true;
 
-    document.querySelectorAll(".choice-btn").forEach(function (btn) {
-      btn.classList.remove("selected");
-    });
-  }
+      button.classList.add("selected");
 
-  function goPage(button, url) {
-    if (isMoving) return;
-    isMoving = true;
-
-    button.classList.add("selected");
-
-    setTimeout(function () {
-      location.href = url;
-    }, 450);
-  }
-
-  // 뒤로가기 했을 때 상태 초기화
-  window.addEventListener("pageshow", function () {
-    resetButtons();
-  });
-
-  // 일반 새로고침/복귀 상황도 대비
-  window.addEventListener("load", function () {
-    resetButtons();
-  });
+      setTimeout(function () {
+        location.href = url;
+      }, 450);
+    }
   </script>
 </body>
 </html>
