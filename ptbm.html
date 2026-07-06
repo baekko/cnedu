@@ -4,64 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PLAY THE BOOK MAIN</title>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:"Pretendard","Noto Sans KR",sans-serif;
-  background:#000;
-}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Pretendard","Noto Sans KR",sans-serif;background:#000;}
 
 :root{
   --shelf-w: clamp(560px, 72vw, 780px);
   --shelf-top: clamp(70px, 9vh, 105px);
-
   --wood:#9a5a34;
   --wood-light:#c87545;
   --wood-dark:#4a2719;
-
   --outer-border:10px;
   --inner-border:5px;
   --cell-gap:10px;
-
   --cell-h: clamp(168px, 21vw, 218px);
-
   --book-w: clamp(100px, 13vw, 135px);
   --book-h: clamp(143px, 18.6vw, 193px);
-
   --wide-w: clamp(160px, 21vw, 210px);
   --wide-h: clamp(96px, 12.6vw, 126px);
 }
 
-body{
-  position:relative;
-  background:url("ptbin.png") no-repeat center center / cover;
-}
+body{position:relative;background:url("ptbin.png") no-repeat center center / cover;}
 
-.page-wrap{
-  width:100%;
-  height:100%;
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding-top:var(--shelf-top);
-}
+.page-wrap{width:100%;height:100%;display:flex;justify-content:center;align-items:flex-start;padding-top:var(--shelf-top);}
 
 .bookshelf{
   position:relative;
   width:var(--shelf-w);
   padding:12px;
-  background:
-    linear-gradient(90deg, rgba(255,255,255,.05), rgba(0,0,0,.08)),
-    var(--wood);
+  background:linear-gradient(90deg, rgba(255,255,255,.05), rgba(0,0,0,.08)),var(--wood);
   border:var(--outer-border) solid var(--wood-light);
-  box-shadow:
-    0 24px 44px rgba(0,0,0,.33),
-    inset 0 0 0 3px rgba(68,30,15,.24);
+  box-shadow:0 24px 44px rgba(0,0,0,.33), inset 0 0 0 3px rgba(68,30,15,.24);
 }
 
 .bookshelf::before{
@@ -71,7 +44,7 @@ body{
   right:-18px;
   top:-24px;
   height:24px;
-  background:linear-gradient(180deg, #d18450, #a85d35);
+  background:linear-gradient(180deg,#d18450,#a85d35);
   box-shadow:0 8px 14px rgba(0,0,0,.25);
 }
 
@@ -91,22 +64,18 @@ body{
 .shelf-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  grid-template-rows:repeat(3, var(--cell-h));
+  grid-template-rows:repeat(3,var(--cell-h));
   gap:var(--cell-gap);
 }
 
 .shelf-cell{
-  background:
-    radial-gradient(circle at center, rgba(120,70,40,.45), rgba(50,25,15,.18) 55%, rgba(0,0,0,.18)),
-    var(--wood-dark);
+  background:radial-gradient(circle at center, rgba(120,70,40,.45), rgba(50,25,15,.18) 55%, rgba(0,0,0,.18)),var(--wood-dark);
   border:var(--inner-border) solid var(--wood-light);
   display:flex;
   align-items:flex-end;
   justify-content:center;
   overflow:hidden;
-  box-shadow:
-    inset 0 10px 16px rgba(0,0,0,.34),
-    inset 0 -4px 7px rgba(255,180,100,.08);
+  box-shadow:inset 0 10px 16px rgba(0,0,0,.34), inset 0 -4px 7px rgba(255,180,100,.08);
 }
 
 .mission-btn{
@@ -121,15 +90,15 @@ body{
   -webkit-tap-highlight-color:transparent;
 }
 
+.mission-btn.book{width:var(--book-w);height:var(--book-h);}
+.mission-btn.wide{width:var(--wide-w);height:var(--wide-h);margin-bottom:22px;}
+
 .mission-btn.book img{
   width:100%;
   height:100%;
   object-fit:contain;
   display:block;
-  filter:
-    drop-shadow(0 12px 10px rgba(0,0,0,.48))
-    drop-shadow(4px 4px 5px rgba(0,0,0,.30))
-    drop-shadow(-2px -1px 2px rgba(255,255,255,.14));
+  filter:drop-shadow(0 12px 10px rgba(0,0,0,.48)) drop-shadow(4px 4px 5px rgba(0,0,0,.30)) drop-shadow(-2px -1px 2px rgba(255,255,255,.14));
 }
 
 .mission-btn.wide img{
@@ -140,33 +109,10 @@ body{
   filter:drop-shadow(0 3px 3px rgba(0,0,0,.24));
 }
 
-.mission-btn.book{
-  width:var(--book-w);
-  height:var(--book-h);
-}
+.mission-btn:hover:not(:disabled){transform:translateY(-4px) scale(1.04);filter:brightness(1.08);}
+.mission-btn:active:not(:disabled){transform:translateY(1px) scale(.97);}
+.mission-btn:disabled{opacity:.38;filter:grayscale(100%);cursor:default;}
 
-.mission-btn.wide{
-  width:var(--wide-w);
-  height:var(--wide-h);
-  margin-bottom:22px;
-}
-
-.mission-btn:hover:not(:disabled){
-  transform:translateY(-4px) scale(1.04);
-  filter:brightness(1.08);
-}
-
-.mission-btn:active:not(:disabled){
-  transform:translateY(1px) scale(.97);
-}
-
-.mission-btn:disabled{
-  opacity:.38;
-  filter:grayscale(100%);
-  cursor:default;
-}
-
-/* 안내 모달 */
 .info-modal{
   position:fixed;
   inset:0;
@@ -177,13 +123,11 @@ body{
   background:rgba(0,0,0,.55);
 }
 
-.info-modal.show{
-  display:flex;
-}
+.info-modal.show{display:flex;}
 
 .info-box{
   position:relative;
-  width:min(82vw, 560px);
+  width:min(82vw,560px);
   max-height:82vh;
   background:#fff7e8;
   border-radius:22px;
@@ -233,11 +177,8 @@ body{
   box-shadow:0 8px 18px rgba(0,0,0,.32);
 }
 
-.reopen-btn.show{
-  display:block;
-}
+.reopen-btn.show{display:block;}
 
-/* 개발용 초기화 버튼 */
 .dev-reset-btn{
   position:fixed;
   right:16px;
@@ -253,78 +194,37 @@ body{
   cursor:pointer;
 }
 
-/* 휴대폰 */
 @media(max-width:600px){
   :root{
     --shelf-w:88vw;
     --shelf-top:9vh;
-
     --outer-border:7px;
     --inner-border:4px;
     --cell-gap:7px;
-
     --cell-h:112px;
-
     --book-w:66px;
     --book-h:94px;
-
     --wide-w:100px;
     --wide-h:60px;
   }
 
   .bookshelf{padding:8px;}
-
-  .bookshelf::before{
-    left:-12px;
-    right:-12px;
-    top:-18px;
-    height:18px;
-  }
-
-  .bookshelf::after{
-    bottom:-30px;
-    height:38px;
-  }
-
+  .bookshelf::before{left:-12px;right:-12px;top:-18px;height:18px;}
+  .bookshelf::after{bottom:-30px;height:38px;}
   .mission-btn.wide{margin-bottom:12px;}
-
-  .info-box{
-    width:88vw;
-    padding:12px;
-  }
-
-  .info-close{
-    right:-8px;
-    top:-8px;
-    width:36px;
-    height:36px;
-    font-size:21px;
-  }
-
-  .reopen-btn{
-    bottom:12px;
-    font-size:14px;
-    padding:9px 20px;
-  }
-
-  .dev-reset-btn{
-    right:10px;
-    bottom:10px;
-    padding:8px 10px;
-    font-size:12px;
-  }
+  .info-box{width:88vw;padding:12px;}
+  .info-close{right:-8px;top:-8px;width:36px;height:36px;font-size:21px;}
+  .reopen-btn{bottom:12px;font-size:14px;padding:9px 20px;}
+  .dev-reset-btn{right:10px;bottom:10px;padding:8px 10px;font-size:12px;}
 }
 
 @media(max-width:390px){
   :root{
     --shelf-w:90vw;
     --shelf-top:8.5vh;
-
     --cell-h:103px;
-
     --book-w:60px;
     --book-h:86px;
-
     --wide-w:92px;
     --wide-h:55px;
   }
@@ -336,41 +236,12 @@ body{
 <div class="page-wrap">
   <div class="bookshelf">
     <div class="shelf-grid">
-      <div class="shelf-cell">
-        <button class="mission-btn book" id="btn1" onclick="goMission(1)">
-          <img src="ptbm1.png" alt="1번 문제">
-        </button>
-      </div>
-
-      <div class="shelf-cell">
-        <button class="mission-btn book" id="btn2" onclick="goMission(2)">
-          <img src="ptbm2.png" alt="2번 문제">
-        </button>
-      </div>
-
-      <div class="shelf-cell">
-        <button class="mission-btn book" id="btn3" onclick="goMission(3)">
-          <img src="ptbm3.png" alt="3번 문제">
-        </button>
-      </div>
-
-      <div class="shelf-cell">
-        <button class="mission-btn book" id="btn4" onclick="goMission(4)">
-          <img src="ptbm4.png" alt="4번 문제">
-        </button>
-      </div>
-
-      <div class="shelf-cell">
-        <button class="mission-btn book" id="btn5" onclick="goMission(5)">
-          <img src="ptbm5.png" alt="5번 문제">
-        </button>
-      </div>
-
-      <div class="shelf-cell">
-        <button class="mission-btn wide" id="btn6" onclick="goMission(6)" disabled>
-          <img src="ptbm6.png" alt="6번">
-        </button>
-      </div>
+      <div class="shelf-cell"><button class="mission-btn book" id="btn1" onclick="goMission(1)"><img src="ptbm1.png" alt="1번 문제"></button></div>
+      <div class="shelf-cell"><button class="mission-btn book" id="btn2" onclick="goMission(2)"><img src="ptbm2.png" alt="2번 문제"></button></div>
+      <div class="shelf-cell"><button class="mission-btn book" id="btn3" onclick="goMission(3)"><img src="ptbm3.png" alt="3번 문제"></button></div>
+      <div class="shelf-cell"><button class="mission-btn book" id="btn4" onclick="goMission(4)"><img src="ptbm4.png" alt="4번 문제"></button></div>
+      <div class="shelf-cell"><button class="mission-btn book" id="btn5" onclick="goMission(5)"><img src="ptbm5.png" alt="5번 문제"></button></div>
+      <div class="shelf-cell"><button class="mission-btn wide" id="btn6" onclick="goMission(6)" disabled><img src="ptbm6.png" alt="6번"></button></div>
     </div>
   </div>
 </div>
@@ -378,7 +249,7 @@ body{
 <div class="info-modal" id="infoModal">
   <div class="info-box">
     <button class="info-close" onclick="closeInfoModal()">×</button>
-    <img src="ptbmm.png" alt="안내 이미지">
+    <img id="infoModalImg" src="ptbmm.png" alt="안내 이미지">
   </div>
 </div>
 
@@ -388,6 +259,7 @@ body{
 <script>
 const PROGRESS_KEY = "ptb_progress_v1";
 const MODAL_KEY = "ptbm_modal_seen_once";
+const END_MODAL_KEY = "ptbm_end_modal_seen_once";
 
 function getProgress(){
   try{
@@ -412,22 +284,14 @@ function applyButtons(){
     btn.disabled = !!(progress[i] && progress[i].completed);
   }
 
-  const btn6 = document.getElementById("btn6");
-
-  if(progress[6] && progress[6].completed){
-    btn6.disabled = true;
-  }else if(all1to5Done(progress)){
-    btn6.disabled = false;
-  }else{
-    btn6.disabled = true;
-  }
+  document.getElementById("btn6").disabled = !all1to5Done(progress);
 }
 
 function goMission(num){
   if(num>=1 && num<=5){
     location.href = `ptbq${num}.html`;
   }else if(num===6){
-    location.href = "ptbq6.html";
+    location.href = "https://baekko.github.io/cnedu/ptbend.html";
   }
 }
 
@@ -435,8 +299,13 @@ function resetDev(){
   if(confirm("개발용 초기화를 할까요?")){
     localStorage.removeItem(PROGRESS_KEY);
     sessionStorage.removeItem(MODAL_KEY);
+    sessionStorage.removeItem(END_MODAL_KEY);
     location.reload();
   }
+}
+
+function setModalImage(src){
+  document.getElementById("infoModalImg").src = src;
 }
 
 function openInfoModal(){
@@ -451,8 +320,26 @@ function closeInfoModal(){
 window.addEventListener("pageshow", function(){
   applyButtons();
 
+  const progress = getProgress();
+
+  if(all1to5Done(progress)){
+    document.getElementById("reopenBtn").classList.remove("show");
+
+    if(sessionStorage.getItem(END_MODAL_KEY) !== "true"){
+      sessionStorage.setItem(END_MODAL_KEY, "true");
+      setModalImage("ptbme.png");
+
+      setTimeout(function(){
+        openInfoModal();
+      }, 1000);
+    }
+
+    return;
+  }
+
   if(sessionStorage.getItem(MODAL_KEY) !== "true"){
     sessionStorage.setItem(MODAL_KEY, "true");
+    setModalImage("ptbmm.png");
 
     setTimeout(function(){
       openInfoModal();
