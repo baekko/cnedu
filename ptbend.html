@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PLAY THE BOOK END</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:"Pretendard","Noto Sans KR",sans-serif;
+}
+
+:root{
+  --card-size:clamp(330px,75vw,670px);
+  --card-top:clamp(95px,14vh,150px);
+  --arrow-w:clamp(78px,11vw,120px);
+  --arrow-h:clamp(66px,9vw,96px);
+  --arrow-gap:clamp(50px,8vw,90px);
+  --arrow-top-gap:clamp(28px,4vh,42px);
+  --bottom-btn-bottom:clamp(42px,6vh,70px);
+}
+
+body{
+  position:relative;
+  background:url("ptbin.png") no-repeat center center / cover;
+}
+
+.end-wrap{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+.card-area{
+  position:absolute;
+  left:50%;
+  top:var(--card-top);
+  transform:translateX(-50%);
+  width:var(--card-size);
+  height:var(--card-size);
+  z-index:5;
+}
+
+.story-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.arrow-area{
+  position:absolute;
+  left:50%;
+  top:calc(var(--card-top) + var(--card-size) + var(--arrow-top-gap));
+  transform:translateX(-50%);
+  display:flex;
+  gap:var(--arrow-gap);
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+}
+
+.arrow-btn{
+  width:var(--arrow-w);
+  height:var(--arrow-h);
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  position:relative;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease, filter .15s ease;
+}
+
+.arrow-btn:hover{transform:translateY(-3px) scale(1.04);}
+.arrow-btn:active{transform:translateY(2px) scale(.95);}
+
+.arrow-btn svg{
+  width:100%;
+  height:100%;
+  display:block;
+  filter:drop-shadow(0 9px 10px rgba(0,0,0,.42)) drop-shadow(0 3px 3px rgba(0,0,0,.35));
+}
+
+.arrow-shape{
+  fill:#5b351d;
+  stroke:#2d160b;
+  stroke-width:3;
+}
+
+.arrow-highlight{
+  fill:rgba(255,255,255,.22);
+}
+
+.arrow-btn.hidden{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.info-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.55);
+}
+
+.info-modal.show{display:flex;}
+
+.info-box{
+  position:relative;
+  width:min(82vw,560px);
+  max-height:82vh;
+  background:#fff7e8;
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 20px 45px rgba(0,0,0,.42);
+}
+
+.info-box img{
+  width:100%;
+  max-height:72vh;
+  object-fit:contain;
+  display:block;
+  border-radius:16px;
+}
+
+.info-close{
+  position:absolute;
+  right:-12px;
+  top:-12px;
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:#5a321d;
+  color:white;
+  font-size:24px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.35);
+}
+
+.bottom-btn-area{
+  position:absolute;
+  left:50%;
+  bottom:var(--bottom-btn-bottom);
+  transform:translateX(-50%);
+  z-index:20;
+  display:flex;
+  gap:14px;
+  align-items:center;
+  justify-content:center;
+}
+
+.bottom-btn{
+  display:none;
+  border:none;
+  border-radius:999px;
+  padding:13px 32px;
+  background:rgba(80,46,24,.88);
+  color:#fff8e8;
+  font-size:clamp(17px,2.4vw,24px);
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 2px 2px rgba(255,255,255,.25), inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.bottom-btn.show{
+  display:block;
+  animation:fadeUp .35s ease;
+}
+
+.bottom-btn:active{transform:scale(.96);}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:600px){
+  :root{
+    --card-size:min(82vw,360px);
+    --card-top:13vh;
+    --arrow-w:72px;
+    --arrow-h:62px;
+    --arrow-gap:44px;
+    --arrow-top-gap:24px;
+    --bottom-btn-bottom:36px;
+  }
+
+  .info-box{width:88vw;padding:12px;}
+  .info-close{right:-8px;top:-8px;width:36px;height:36px;font-size:21px;}
+  .bottom-btn{padding:11px 24px;font-size:16px;}
+}
+
+@media(max-width:390px){
+  :root{
+    --card-size:80vw;
+    --card-top:12vh;
+    --arrow-w:64px;
+    --arrow-h:56px;
+    --arrow-gap:36px;
+    --arrow-top-gap:22px;
+    --bottom-btn-bottom:30px;
+  }
+
+  .bottom-btn{padding:10px 20px;font-size:15px;}
+}
+</style>
+</head>
+
+<body>
+<div class="end-wrap">
+  <div class="card-area">
+    <img id="storyImg" class="story-img" src="ptbend1.png" alt="엔딩 이미지">
+  </div>
+
+  <div class="arrow-area">
+    <button id="prevBtn" class="arrow-btn hidden" onclick="prevSlide()" aria-label="이전">
+      <svg viewBox="0 0 120 96" aria-hidden="true">
+        <path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/>
+        <path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/>
+      </svg>
+    </button>
+
+    <button id="nextArrowBtn" class="arrow-btn" onclick="nextSlide()" aria-label="다음">
+      <svg viewBox="0 0 120 96" aria-hidden="true">
+        <path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/>
+        <path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="bottom-btn-area">
+    <button id="reopenBtn" class="bottom-btn" onclick="openInfoModal()">다시보기</button>
+    <button id="nextPageBtn" class="bottom-btn" onclick="goNextPage()">다음</button>
+  </div>
+</div>
+
+<div class="info-modal" id="infoModal">
+  <div class="info-box">
+    <button class="info-close" onclick="closeInfoModal()">×</button>
+    <img src="ptbq6.png" alt="안내 이미지">
+  </div>
+</div>
+
+<script>
+/* 엔딩 슬라이드 장수는 여기만 바꾸면 됩니다. */
+const TOTAL_SLIDES = 5;
+
+let currentSlide = 1;
+
+const storyImg = document.getElementById("storyImg");
+const prevBtn = document.getElementById("prevBtn");
+const nextArrowBtn = document.getElementById("nextArrowBtn");
+const reopenBtn = document.getElementById("reopenBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
+
+function updateSlide(){
+  storyImg.src = `ptbend${currentSlide}.png`;
+
+  if(currentSlide === 1){
+    prevBtn.classList.add("hidden");
+  }else{
+    prevBtn.classList.remove("hidden");
+  }
+
+  if(currentSlide === TOTAL_SLIDES){
+    nextArrowBtn.classList.add("hidden");
+    nextPageBtn.classList.add("show");
+  }else{
+    nextArrowBtn.classList.remove("hidden");
+    nextPageBtn.classList.remove("show");
+  }
+}
+
+function nextSlide(){
+  if(currentSlide < TOTAL_SLIDES){
+    currentSlide++;
+    updateSlide();
+  }
+}
+
+function prevSlide(){
+  if(currentSlide > 1){
+    currentSlide--;
+    updateSlide();
+  }
+}
+
+function openInfoModal(){
+  document.getElementById("infoModal").classList.add("show");
+}
+
+function closeInfoModal(){
+  document.getElementById("infoModal").classList.remove("show");
+  reopenBtn.classList.add("show");
+}
+
+function goNextPage(){
+  location.href = "https://baekko.github.io/cnedu/ptbout.html";
+}
+
+setTimeout(function(){
+  openInfoModal();
+}, 1000);
+
+updateSlide();
+</script>
+</body>
+</html>
