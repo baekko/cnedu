@@ -159,6 +159,7 @@ body{
   gap:14px;
   align-items:center;
   justify-content:center;
+  flex-wrap:nowrap;
 }
 
 .bottom-btn{
@@ -171,6 +172,7 @@ body{
   font-size:clamp(17px,2.4vw,24px);
   font-weight:800;
   cursor:pointer;
+  white-space:nowrap;
   box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 2px 2px rgba(255,255,255,.25), inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
@@ -199,7 +201,24 @@ body{
 
   .info-box{width:88vw;padding:12px;}
   .info-close{right:-8px;top:-8px;width:36px;height:36px;font-size:21px;}
-  .bottom-btn{padding:11px 24px;font-size:16px;}
+
+  .bottom-btn-area{
+    gap:8px;
+  }
+
+  .bottom-btn{
+    padding:10px 16px;
+    font-size:15px;
+    white-space:nowrap;
+  }
+
+  #reopenBtn{
+    min-width:124px;
+  }
+
+  #nextPageBtn{
+    min-width:72px;
+  }
 }
 
 @media(max-width:390px){
@@ -213,7 +232,23 @@ body{
     --bottom-btn-bottom:30px;
   }
 
-  .bottom-btn{padding:10px 20px;font-size:15px;}
+  .bottom-btn-area{
+    gap:6px;
+  }
+
+  .bottom-btn{
+    padding:9px 12px;
+    font-size:14px;
+    white-space:nowrap;
+  }
+
+  #reopenBtn{
+    min-width:116px;
+  }
+
+  #nextPageBtn{
+    min-width:64px;
+  }
 }
 </style>
 </head>
@@ -254,7 +289,6 @@ body{
 </div>
 
 <script>
-/* 엔딩 슬라이드 장수는 여기만 바꾸면 됩니다. */
 const TOTAL_SLIDES = 12;
 
 let currentSlide = 1;
@@ -313,6 +347,11 @@ function goNextPage(){
 setTimeout(function(){
   openInfoModal();
 }, 1000);
+
+updateSlide();
+</script>
+</body>
+</html>
 
 updateSlide();
 </script>
