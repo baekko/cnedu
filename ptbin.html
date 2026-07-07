@@ -118,34 +118,35 @@ body {
 }
 
 /* 다음 버튼 */
-.next-btn {
-  position: absolute;
-  left: 50%;
-  bottom: var(--next-bottom);
-  transform: translateX(-50%);
-  z-index: 20;
-  display: none;
-  border: none;
-  border-radius: 999px;
-  padding: 16px 46px;
-  background: rgba(80, 46, 24, 0.88);
-  color: #fff8e8;
-  font-size: clamp(20px, 3vw, 28px);
-  font-weight: 800;
-  cursor: pointer;
+.next-btn{
+  position:absolute;
+  left:50%;
+  bottom:var(--next-bottom);
+  transform:translateX(-50%);
+  z-index:20;
+  display:none;
+  border:none;
+  border-radius:999px;
+  padding:13px 32px;
+  background:rgba(80,46,24,.88);
+  color:#fff8e8;
+  font-size:clamp(17px,2.4vw,24px);
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
   box-shadow:
-    0 10px 24px rgba(0,0,0,0.35),
-    inset 0 2px 2px rgba(255,255,255,0.25),
-    inset 0 -4px 8px rgba(0,0,0,0.25);
+    0 10px 24px rgba(0,0,0,.35),
+    inset 0 2px 2px rgba(255,255,255,.25),
+    inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
-.next-btn.show {
-  display: block;
-  animation: fadeUp 0.35s ease;
+.next-btn.show{
+  display:block;
+  animation:fadeUp .35s ease;
 }
 
-.next-btn:active {
-  transform: translateX(-50%) scale(0.96);
+.next-btn:active{
+  transform:translateX(-50%) scale(.96);
 }
 
 @keyframes fadeUp {
@@ -171,8 +172,10 @@ body {
     --next-bottom: 42px;
   }
 
-  .next-btn {
-    padding: 13px 38px;
+  .next-btn{
+  padding:10px 16px;
+  font-size:15px;
+  white-space:nowrap;
   }
 }
 
@@ -186,6 +189,12 @@ body {
     --arrow-gap: 36px;
     --arrow-top-gap: 22px;
     --next-bottom: 36px;
+  }
+
+  .next-btn{
+  padding:9px 12px;
+  font-size:14px;
+  white-space:nowrap;
   }
 }
 </style>
@@ -299,7 +308,7 @@ function startNextButtonTimer() {
   timer = setTimeout(function () {
     nextUnlocked = true;
     nextPageBtn.classList.add("show");
-  }, 5000);
+  }, 2000);
 }
 
 function goNextPage() {
