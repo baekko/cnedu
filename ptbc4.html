@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTB CLASS QUESTION</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:"Pretendard","Noto Sans KR",sans-serif;
+  background:#000;
+}
+
+body{
+  position:relative;
+  background:url("ptbcc4.png") no-repeat center center / cover;
+}
+
+.ui-wrap{
+  position:absolute;
+  left:50%;
+  bottom:7vh;
+  transform:translateX(-50%);
+  width:clamp(420px, 56vw, 560px);
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.answer-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) 86px;
+  gap:12px;
+}
+
+.answer-input{
+  width:100%;
+  height:58px;
+  border:none;
+  border-radius:14px;
+  padding:0 18px;
+  font-size:20px;
+  outline:none;
+  background:rgba(255,255,255,.95);
+  color:#222;
+}
+
+.submit-btn{
+  height:58px;
+  border:none;
+  border-radius:14px;
+  font-size:18px;
+  font-weight:900;
+  color:white;
+  background:#5a321d;
+  cursor:pointer;
+  padding:0;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.action-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+
+.action-btn{
+  height:54px;
+  border:none;
+  border-radius:14px;
+  font-size:17px;
+  font-weight:900;
+  color:white;
+  background:#5a321d;
+  cursor:pointer;
+  padding:0;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.submit-btn:active,
+.action-btn:active{
+  transform:translateY(2px) scale(.98);
+}
+
+.action-btn:disabled{
+  opacity:.42;
+  cursor:default;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.55);
+  z-index:100;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:min(86vw, 560px);
+  background:#fff7e8;
+  border-radius:22px;
+  padding:30px 24px;
+  text-align:center;
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+}
+
+.modal-title{
+  font-size:28px;
+  font-weight:900;
+  margin-bottom:18px;
+  color:#2b160c;
+}
+
+.modal-content{
+  font-size:22px;
+  line-height:1.6;
+  color:#2b160c;
+  white-space:pre-line;
+  word-break:keep-all;
+}
+
+.modal-close{
+  margin-top:22px;
+  border:none;
+  border-radius:14px;
+  padding:12px 26px;
+  font-size:18px;
+  font-weight:900;
+  color:#fff;
+  background:#5a321d;
+  cursor:pointer;
+}
+
+.shake{
+  animation:shake .25s ease;
+}
+
+@keyframes shake{
+  0%{transform:translateX(-50%) translateX(0);}
+  25%{transform:translateX(-50%) translateX(-6px);}
+  50%{transform:translateX(-50%) translateX(6px);}
+  75%{transform:translateX(-50%) translateX(-4px);}
+  100%{transform:translateX(-50%) translateX(0);}
+}
+
+@media(max-width:600px){
+  .ui-wrap{
+    width:min(88vw, 330px);
+    bottom:5.5vh;
+    gap:11px;
+  }
+
+  .answer-row{
+    grid-template-columns:minmax(0, 1fr) 64px;
+    gap:8px;
+  }
+
+  .answer-input{
+    height:52px;
+    font-size:16px;
+    padding:0 14px;
+    border-radius:13px;
+  }
+
+  .submit-btn{
+    height:52px;
+    font-size:16px;
+    border-radius:13px;
+  }
+
+  .action-row{
+    gap:8px;
+  }
+
+  .action-btn{
+    height:48px;
+    font-size:14px;
+    border-radius:13px;
+  }
+
+  .modal-title{font-size:23px;}
+  .modal-content{font-size:18px;}
+}
+
+@media(max-width:390px){
+  .ui-wrap{
+    width:min(90vw, 310px);
+  }
+
+  .answer-row{
+    grid-template-columns:minmax(0, 1fr) 58px;
+    gap:7px;
+  }
+
+  .answer-input{
+    height:50px;
+    font-size:15px;
+    padding:0 12px;
+  }
+
+  .submit-btn{
+    height:50px;
+    font-size:15px;
+  }
+
+  .action-row{
+    gap:7px;
+  }
+
+  .action-btn{
+    height:46px;
+    font-size:13px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="ui-wrap" id="uiWrap">
+  <div class="answer-row">
+    <input id="answerInput" class="answer-input" type="text" placeholder="정답을 입력하세요" autocomplete="off">
+    <button class="submit-btn" onclick="checkAnswer()">입력</button>
+  </div>
+
+  <div class="action-row">
+    <button class="action-btn" onclick="showHint1()">힌트 1</button>
+    <button class="action-btn" id="hint2Btn" onclick="showHint2()" disabled>힌트 2</button>
+    <button class="action-btn" id="answerBtn" onclick="showAnswer()" disabled>정답보기</button>
+  </div>
+</div>
+
+<div class="modal" id="infoModal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">안내</div>
+    <div class="modal-content" id="modalContent"></div>
+    <button class="modal-close" onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
+<script>
+const missionConfig = {
+  correctAnswer: "past",
+  hint1Text: "단서의 배경색이 있는 단어를 이용하세요.",
+  hint2Text: "각 편지봉투는 한글의 자음 또는 모음이 됩니다.",
+  answerText: "past",
+  successText: "정답입니다.",
+  bgImage: "ptbcc4.png"
+};
+
+let locked = false;
+let usedHint1 = false;
+let usedHint2 = false;
+
+function normalize(text){
+  return String(text).replace(/\s+/g,"").trim().toLowerCase();
+}
+
+function openModal(title, content){
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalContent").textContent = content;
+  document.getElementById("infoModal").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("infoModal").classList.remove("show");
+}
+
+function showHint1(){
+  if(locked) return;
+
+  usedHint1 = true;
+  document.getElementById("hint2Btn").disabled = false;
+  openModal("힌트 1", missionConfig.hint1Text);
+}
+
+function showHint2(){
+  if(locked) return;
+  if(!usedHint1) return;
+
+  usedHint2 = true;
+  document.getElementById("answerBtn").disabled = false;
+  openModal("힌트 2", missionConfig.hint2Text);
+}
+
+function showAnswer(){
+  if(locked) return;
+  if(!usedHint2) return;
+
+  openModal("정답보기", missionConfig.answerText);
+}
+
+function checkAnswer(){
+  if(locked) return;
+
+  const input = document.getElementById("answerInput").value;
+
+  if(!input.trim()){
+    openModal("안내", "정답을 입력해주세요.");
+    return;
+  }
+
+  if(normalize(input) === normalize(missionConfig.correctAnswer)){
+    locked = true;
+    openModal("정답", missionConfig.successText);
+  }else{
+    const ui = document.getElementById("uiWrap");
+    ui.classList.remove("shake");
+    void ui.offsetWidth;
+    ui.classList.add("shake");
+    openModal("오답", "정답이 아닙니다.");
+  }
+}
+
+document.getElementById("answerInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    checkAnswer();
+  }
+});
+
+document.body.style.backgroundImage = `url("${missionConfig.bgImage}")`;
+</script>
+
+</body>
+</html>
