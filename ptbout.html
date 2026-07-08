@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAY THE BOOK OUTRO</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:"Pretendard","Noto Sans KR",sans-serif;
+}
+
+body{
+  position:relative;
+  background:url("ptbout.png") no-repeat center center / cover;
+}
+
+.ending-panel{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(82vw,720px);
+  min-height:clamp(430px,62vh,600px);
+  padding:clamp(28px,4vw,46px);
+  border-radius:26px;
+
+  background:rgba(233,148,20,0.3);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:none;
+  backdrop-filter:blur(2px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  opacity:0;
+  animation:panelFadeIn 1s ease forwards;
+}
+
+.ending-text{
+  width:100%;
+  color:#fffaf0;
+  font-size:clamp(22px,2.6vw,34px);
+  font-weight:800;
+  line-height:1.75;
+  text-align:center;
+  white-space:pre-line;
+  word-break:keep-all;
+  text-shadow:0 3px 8px rgba(0,0,0,.42);
+  opacity:0;
+}
+
+.ending-text.show{
+  animation:textFadeIn .8s ease forwards;
+}
+
+.reset-btn{
+  position:fixed;
+  left:50%;
+  bottom:clamp(42px,6vh,70px);
+  transform:translateX(-50%);
+  z-index:20;
+
+  border:none;
+  border-radius:999px;
+  padding:13px 32px;
+
+  background:rgba(80,46,24,.88);
+  color:#fff8e8;
+
+  font-size:clamp(17px,2.4vw,24px);
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.35),
+    inset 0 2px 2px rgba(255,255,255,.25),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.reset-btn:active{
+  transform:translateX(-50%) scale(.96);
+}
+
+/* 리셋 모달 */
+.reset-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.58);
+}
+
+.reset-modal.show{
+  display:flex;
+}
+
+.reset-box{
+  width:min(86vw,420px);
+  border-radius:22px;
+  padding:28px 24px;
+  background:rgba(255,247,232,.96);
+  text-align:center;
+  box-shadow:0 20px 45px rgba(0,0,0,.42);
+}
+
+.reset-title{
+  color:#2b160c;
+  font-size:26px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.reset-desc{
+  color:#4a2a18;
+  font-size:17px;
+  font-weight:700;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+
+.reset-input{
+  width:100%;
+  height:52px;
+  border:2px solid rgba(90,50,29,.35);
+  border-radius:14px;
+  padding:0 14px;
+  font-size:22px;
+  font-weight:900;
+  text-align:center;
+  outline:none;
+  color:#2b160c;
+  background:white;
+  margin-bottom:18px;
+}
+
+.reset-input:focus{
+  border-color:#5a321d;
+}
+
+.reset-actions{
+  display:flex;
+  gap:10px;
+}
+
+.reset-action-btn{
+  flex:1;
+  height:48px;
+  border:none;
+  border-radius:14px;
+  color:white;
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
+  background:#5a321d;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.28),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.reset-action-btn.cancel{
+  background:#8a6a55;
+}
+
+.reset-message{
+  min-height:22px;
+  margin-top:14px;
+  font-size:15px;
+  font-weight:800;
+  color:#b3261e;
+}
+
+@keyframes panelFadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes textFadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@media(max-width:600px){
+  .ending-panel{
+    width:88vw;
+    min-height:60vh;
+    padding:24px 18px;
+    border-radius:22px;
+  }
+
+  .ending-text{
+    font-size:15px;
+    line-height:1.7;
+  }
+
+  .reset-btn{
+    bottom:36px;
+    padding:10px 16px;
+    font-size:15px;
+  }
+
+  .reset-box{
+    width:88vw;
+    padding:24px 18px;
+  }
+
+  .reset-title{
+    font-size:23px;
+  }
+
+  .reset-desc{
+    font-size:15px;
+  }
+
+  .reset-input{
+    height:48px;
+    font-size:20px;
+  }
+
+  .reset-action-btn{
+    height:46px;
+    font-size:16px;
+  }
+}
+
+@media(max-width:390px){
+  .ending-text{
+    font-size:14px;
+    line-height:1.65;
+  }
+
+  .reset-btn{
+    bottom:30px;
+    padding:9px 12px;
+    font-size:14px;
+  }
+
+  .reset-title{
+    font-size:21px;
+  }
+
+  .reset-desc{
+    font-size:14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="ending-panel">
+  <div class="ending-text" id="endingText"></div>
+</div>
+
+<button class="reset-btn" onclick="openResetModal()">RESET</button>
+
+<div class="reset-modal" id="resetModal">
+  <div class="reset-box">
+    <div class="reset-title">관리자 초기화</div>
+    <div class="reset-desc">리셋 암호를 입력하세요.</div>
+
+    <input
+      id="resetInput"
+      class="reset-input"
+      type="password"
+      inputmode="numeric"
+      maxlength="8"
+      autocomplete="off"
+      placeholder="암호 입력"
+    >
+
+    <div class="reset-actions">
+      <button class="reset-action-btn cancel" onclick="closeResetModal()">취소</button>
+      <button class="reset-action-btn" onclick="checkResetPassword()">확인</button>
+    </div>
+
+    <div class="reset-message" id="resetMessage"></div>
+  </div>
+</div>
+
+<script>
+const PROGRESS_KEY = "ptb_progress_v1";
+const RESET_PASSWORD = "1216";
+
+function getProgress(){
+  try{
+    return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+  }catch(e){
+    return {};
+  }
+}
+
+function getTotalScore(){
+  const progress = getProgress();
+  let total = 0;
+
+  for(let i=1; i<=5; i++){
+    if(progress[i] && progress[i].completed){
+      total += Number(progress[i].score || 0);
+    }
+  }
+
+  return total;
+}
+
+function openResetModal(){
+  const modal = document.getElementById("resetModal");
+  const input = document.getElementById("resetInput");
+  const message = document.getElementById("resetMessage");
+
+  message.textContent = "";
+  input.value = "";
+  modal.classList.add("show");
+
+  setTimeout(function(){
+    input.focus();
+  },100);
+}
+
+function closeResetModal(){
+  document.getElementById("resetModal").classList.remove("show");
+}
+
+function checkResetPassword(){
+  const input = document.getElementById("resetInput").value.trim();
+  const message = document.getElementById("resetMessage");
+
+  if(input !== RESET_PASSWORD){
+    message.textContent = "암호가 맞지 않습니다.";
+    return;
+  }
+
+  localStorage.removeItem("ptb_progress_v1");
+
+  sessionStorage.removeItem("ptbm_modal_seen_once");
+  sessionStorage.removeItem("ptbm_end_modal_seen_once");
+  sessionStorage.removeItem("ptbin_return_from_next");
+
+  message.style.color = "#1f7a3a";
+  message.textContent = "초기화되었습니다.";
+
+  setTimeout(function(){
+    location.href = "https://baekko.github.io/cnedu/bbd.html";
+  },800);
+}
+
+document.getElementById("resetInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    checkResetPassword();
+  }
+});
+
+document.getElementById("resetModal").addEventListener("click", function(e){
+  if(e.target.id === "resetModal"){
+    closeResetModal();
+  }
+});
+
+const totalScore = getTotalScore();
+
+const message =
+`게임에서 만난 다섯 권의 책은
+단순한 문제가 아니라,
+주인공의 마음과 기억이었습니다.
+여러분도 책 속에서
+누군가의 마음을 만나고,
+오래도록 기억에 남을 
+이야기를 발견하길 바랍니다.
+언제나 새로운 이야기들이
+도서관에서 여러분을 기다리고 있습니다.
+끝까지 함께해 주셔서 감사합니다.
+
+추신: 여러분이 얻은 기억은 ${totalScore}입니다.`;
+
+const textBox = document.getElementById("endingText");
+
+setTimeout(function(){
+  textBox.innerHTML = message.replace(/\n/g,"<br>");
+  textBox.classList.add("show");
+},2000);
+</script>
+
+</body>
+</html>
