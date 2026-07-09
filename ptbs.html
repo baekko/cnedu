@@ -28,7 +28,16 @@ html, body {
 
 body {
   position: relative;
-  background: url("ptbs.png") no-repeat center center / cover;
+}
+
+/* 배경 동영상 */
+.bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 
 .button-area {
@@ -42,9 +51,11 @@ body {
   justify-content: center;
   z-index: 10;
 }
-.choice-btn:nth-child(2) img {
-  transform: translateY(-3px);
+
+.button-area.hide {
+  display: none;
 }
+
 .choice-btn {
   width: var(--btn-w);
   height: var(--btn-h);
@@ -76,7 +87,6 @@ body {
   transform: translateY(1px) scale(0.98);
 }
 
-/* PNG 실제 모양 그대로 불빛 */
 .choice-btn.selected img {
   filter:
     brightness(1.15)
@@ -110,36 +120,78 @@ body {
 </head>
 
 <body>
-  <div class="button-area">
-    <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptbt.html')" aria-label="게임용">
-      <img src="ptbsg.png" alt="게임용">
-    </button>
 
-    <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptbc.html')" aria-label="수업용">
-      <img src="ptbst.png" alt="수업용">
-    </button>
-  </div>
+<video id="bgVideo" class="bg-video" muted playsinline preload="auto">
+  <source src="ptbs.mp4" type="video/mp4">
+</video>
 
-  <script>
-    let isMoving = false;
+<div class="button-area" id="buttonArea">
+  <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptbt.html')" aria-label="게임용">
+    <img src="ptbsg.png" alt="게임용">
+  </button>
 
-    function resetButtons() {
-      isMoving = false;
-      document.querySelectorAll(".choice-btn").forEach(function(btn) {
-        btn.classList.remove("selected");
-      });
-    }
+  <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptbc.html')" aria-label="수업용">
+    <img src="ptbst.png" alt="수업용">
+  </button>
+</div>
 
-    function goPage(button, url) {
-      if (isMoving) return;
+<script>
+let isMoving = false;
+let targetUrl = "";
+let moveTimer = null;
 
-      isMoving = true;
-      button.classList.add("selected");
+const bgVideo = document.getElementById("bgVideo");
+const buttonArea = document.getElementById("buttonArea");
 
-      setTimeout(function () {
-        location.href = url;
-      }, 450);
-    }
+function resetPage() {
+  isMoving = false;
+  targetUrl = "";
+
+  clearTimeout(moveTimer);
+
+  buttonArea.classList.remove("hide");
+
+  document.querySelectorAll(".choice-btn").forEach(function(btn) {
+    btn.classList.remove("selected");
+  });
+
+  bgVideo.pause();
+  bgVideo.currentTime = 0;
+}
+
+function goPage(button, url) {
+  if (isMoving) return;
+
+  isMoving = true;
+  targetUrl = url;
+
+  button.classList.add("selected");
+
+  setTimeout(function () {
+    buttonArea.classList.add("hide");
+
+    bgVideo.currentTime = 0;
+
+    bgVideo.play().catch(function () {
+      moveTimer = setTimeout(function () {
+        location.href = targetUrl;
+      }, 3000);
+    });
+  }, 1000);
+}
+
+bgVideo.addEventListener("ended", function () {
+  moveTimer = setTimeout(function () {
+    location.href = targetUrl;
+  }, 1000);
+});
+
+window.addEventListener("pageshow", resetPage);
+window.addEventListener("load", resetPage);
+</script>
+
+</body>
+</html>
 
     window.addEventListener("pageshow", resetButtons);
     window.addEventListener("load", resetButtons);
