@@ -25,73 +25,95 @@ body{
   background:url("ptbout.png") no-repeat center center / cover;
 }
 
-.ending-panel{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  width:min(82vw,720px);
-  min-height:clamp(430px,62vh,600px);
-  padding:clamp(28px,4vw,46px);
-  border-radius:26px;
-
-  background:rgba(233,148,20,0.3);
-  border:1px solid rgba(255,255,255,0.18);
-  box-shadow:none;
-  backdrop-filter:blur(2px);
-
-  display:flex;
-  align-items:center;
+/* 점수 이미지 모달 */
+.score-modal{
+  position:fixed;
+  inset:0;
+  z-index:900;
+  display:none;
   justify-content:center;
-
-  opacity:0;
-  animation:panelFadeIn 1s ease forwards;
+  align-items:center;
+  background:rgba(0,0,0,.55);
 }
 
-.ending-text{
+.score-modal.show{
+  display:flex;
+}
+
+.score-box{
+  position:relative;
+  width:min(82vw,560px);
+  max-height:82vh;
+  background:#fff7e8;
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 20px 45px rgba(0,0,0,.42);
+}
+
+.score-box img{
   width:100%;
-  color:#fffaf0;
-  font-size:clamp(22px,2.6vw,34px);
-  font-weight:800;
-  line-height:1.75;
-  text-align:center;
-  white-space:pre-line;
-  word-break:keep-all;
-  text-shadow:0 3px 8px rgba(0,0,0,.42);
-  opacity:0;
+  max-height:72vh;
+  object-fit:contain;
+  display:block;
+  border-radius:16px;
 }
 
-.ending-text.show{
-  animation:textFadeIn .8s ease forwards;
+.score-close{
+  position:absolute;
+  right:-12px;
+  top:-12px;
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:#5a321d;
+  color:white;
+  font-size:24px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.35);
 }
 
-.reset-btn{
+/* 하단 버튼 영역 */
+.bottom-btn-area{
   position:fixed;
   left:50%;
   bottom:clamp(42px,6vh,70px);
   transform:translateX(-50%);
   z-index:20;
+  display:flex;
+  gap:14px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:nowrap;
+}
 
+.bottom-btn{
   border:none;
   border-radius:999px;
   padding:13px 32px;
-
   background:rgba(80,46,24,.88);
   color:#fff8e8;
-
   font-size:clamp(17px,2.4vw,24px);
   font-weight:800;
   cursor:pointer;
   white-space:nowrap;
-
   box-shadow:
     0 10px 24px rgba(0,0,0,.35),
     inset 0 2px 2px rgba(255,255,255,.25),
     inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
-.reset-btn:active{
-  transform:translateX(-50%) scale(.96);
+.bottom-btn:active{
+  transform:scale(.96);
+}
+
+.reopen-btn{
+  display:none;
+}
+
+.reopen-btn.show{
+  display:block;
 }
 
 /* 리셋 모달 */
@@ -185,31 +207,26 @@ body{
   color:#b3261e;
 }
 
-@keyframes panelFadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-@keyframes textFadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
 @media(max-width:600px){
-  .ending-panel{
+  .score-box{
     width:88vw;
-    min-height:60vh;
-    padding:24px 18px;
-    border-radius:22px;
+    padding:12px;
   }
 
-  .ending-text{
-    font-size:15px;
-    line-height:1.7;
+  .score-close{
+    right:-8px;
+    top:-8px;
+    width:36px;
+    height:36px;
+    font-size:21px;
   }
 
-  .reset-btn{
+  .bottom-btn-area{
     bottom:36px;
+    gap:8px;
+  }
+
+  .bottom-btn{
     padding:10px 16px;
     font-size:15px;
   }
@@ -239,13 +256,12 @@ body{
 }
 
 @media(max-width:390px){
-  .ending-text{
-    font-size:14px;
-    line-height:1.65;
+  .bottom-btn-area{
+    bottom:30px;
+    gap:6px;
   }
 
-  .reset-btn{
-    bottom:30px;
+  .bottom-btn{
     padding:9px 12px;
     font-size:14px;
   }
@@ -263,11 +279,17 @@ body{
 
 <body>
 
-<div class="ending-panel">
-  <div class="ending-text" id="endingText"></div>
+<div class="score-modal" id="scoreModal">
+  <div class="score-box">
+    <button class="score-close" onclick="closeScoreModal()">×</button>
+    <img id="scoreImage" src="" alt="엔딩 편지">
+  </div>
 </div>
 
-<button class="reset-btn" onclick="openResetModal()">RESET</button>
+<div class="bottom-btn-area">
+  <button class="bottom-btn reopen-btn" id="reopenBtn" onclick="openScoreModal()">편지 다시보기</button>
+  <button class="bottom-btn reset-btn" onclick="openResetModal()">RESET</button>
+</div>
 
 <div class="reset-modal" id="resetModal">
   <div class="reset-box">
@@ -297,6 +319,8 @@ body{
 const PROGRESS_KEY = "ptb_progress_v1";
 const RESET_PASSWORD = "1216";
 
+let currentScoreImage = "";
+
 function getProgress(){
   try{
     return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
@@ -318,11 +342,38 @@ function getTotalScore(){
   return total;
 }
 
+function getScoreImageName(){
+  let score = getTotalScore();
+
+  if(score < 0) score = 0;
+  if(score > 100) score = 100;
+
+  score = Math.round(score / 10) * 10;
+
+  return "ptbo" + score + ".png";
+}
+
+function setScoreImage(){
+  currentScoreImage = getScoreImageName();
+  document.getElementById("scoreImage").src = currentScoreImage;
+}
+
+function openScoreModal(){
+  setScoreImage();
+  document.getElementById("scoreModal").classList.add("show");
+}
+
+function closeScoreModal(){
+  document.getElementById("scoreModal").classList.remove("show");
+  document.getElementById("reopenBtn").classList.add("show");
+}
+
 function openResetModal(){
   const modal = document.getElementById("resetModal");
   const input = document.getElementById("resetInput");
   const message = document.getElementById("resetMessage");
 
+  message.style.color = "#b3261e";
   message.textContent = "";
   input.value = "";
   modal.classList.add("show");
@@ -341,6 +392,7 @@ function checkResetPassword(){
   const message = document.getElementById("resetMessage");
 
   if(input !== RESET_PASSWORD){
+    message.style.color = "#b3261e";
     message.textContent = "암호가 맞지 않습니다.";
     return;
   }
@@ -355,7 +407,7 @@ function checkResetPassword(){
   message.textContent = "초기화되었습니다.";
 
   setTimeout(function(){
-    location.href = "https://baekko.github.io/cnedu/bdd.html";
+    location.href = "https://baekko.github.io/cnedu/bbd.html";
   },800);
 }
 
@@ -371,28 +423,15 @@ document.getElementById("resetModal").addEventListener("click", function(e){
   }
 });
 
-const totalScore = getTotalScore();
-
-const message =
-`게임에서 만난 다섯 권의 책은
-단순한 문제가 아니라,
-주인공의 마음과 기억이었습니다.
-여러분도 책 속에서
-누군가의 마음을 만나고,
-오래도록 기억에 남을 
-이야기를 발견하길 바랍니다.
-언제나 새로운 이야기들이
-도서관에서 여러분을 기다리고 있습니다.
-끝까지 함께해 주셔서 감사합니다.
-
-추신: 여러분이 얻은 기억은 ${totalScore}입니다.`;
-
-const textBox = document.getElementById("endingText");
+document.getElementById("scoreModal").addEventListener("click", function(e){
+  if(e.target.id === "scoreModal"){
+    closeScoreModal();
+  }
+});
 
 setTimeout(function(){
-  textBox.innerHTML = message.replace(/\n/g,"<br>");
-  textBox.classList.add("show");
-},2000);
+  openScoreModal();
+},1000);
 </script>
 
 </body>
