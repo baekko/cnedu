@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MBS SLIDE</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  height:100dvh;
+  overflow:hidden;
+  background:#000;
+  font-family:"Pretendard","Noto Sans KR",sans-serif;
+}
+
+body{
+  position:relative;
+  background:url("mbs.png") no-repeat center center / cover;
+}
+
+/*
+  이미지 원본 비율: 250 × 400
+  가로÷세로 = 0.625
+*/
+:root{
+  --slide-ratio:250 / 400;
+
+  --arrow-width:clamp(58px,18vw,92px);
+  --arrow-height:clamp(48px,15vw,76px);
+  --arrow-gap:clamp(38px,13vw,80px);
+
+  --safe-top:max(14px,env(safe-area-inset-top));
+  --safe-bottom:max(8px,env(safe-area-inset-bottom));
+}
+
+.slide-wrap{
+  position:relative;
+  width:100%;
+  height:100%;
+  min-height:100svh;
+}
+
+/* 250×400 이미지 영역 */
+.card-area{
+  position:absolute;
+  left:50%;
+  top:var(--safe-top);
+  transform:translateX(-50%);
+
+  /*
+    모바일 가로 공간과 세로 공간을 모두 고려해 크기 결정
+    아래쪽 화살표 공간 약 100px 확보
+  */
+  width:min(
+    92vw,
+    calc((100svh - 125px - var(--safe-top)) * 0.625),
+    625px
+  );
+
+  aspect-ratio:250 / 400;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:5;
+}
+
+/* 원본 이미지 전체 표시 */
+.story-img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* 화살표를 화면 가장 아래에 고정 */
+.arrow-area{
+  position:fixed;
+  left:50%;
+  bottom:calc(var(--safe-bottom) + 2px);
+  transform:translateX(-50%);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:var(--arrow-gap);
+
+  z-index:20;
+}
+
+.arrow-btn{
+  width:var(--arrow-width);
+  height:var(--arrow-height);
+  border:none;
+  padding:0;
+  background:transparent;
+  cursor:pointer;
+  position:relative;
+
+  transition:transform .15s ease;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+.arrow-btn:active{
+  transform:scale(.92);
+}
+
+.arrow-btn svg{
+  width:100%;
+  height:100%;
+  display:block;
+  filter:
+    drop-shadow(0 7px 8px rgba(0,0,0,.42))
+    drop-shadow(0 2px 2px rgba(0,0,0,.35));
+}
+
+.arrow-shape{
+  fill:#5b351d;
+  stroke:#2d160b;
+  stroke-width:3;
+}
+
+.arrow-highlight{
+  fill:rgba(255,255,255,.22);
+}
+
+.arrow-btn.hidden{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+/* 가로가 매우 좁은 휴대폰 */
+@media(max-width:390px){
+  :root{
+    --arrow-width:58px;
+    --arrow-height:48px;
+    --arrow-gap:34px;
+  }
+
+  .card-area{
+    width:min(
+      91vw,
+      calc((100svh - 105px - var(--safe-top)) * 0.625)
+    );
+  }
+}
+
+/* 화면 높이가 짧은 휴대폰 */
+@media(max-height:700px){
+  :root{
+    --arrow-width:54px;
+    --arrow-height:45px;
+  }
+
+  .card-area{
+    width:min(
+      88vw,
+      calc((100svh - 92px - var(--safe-top)) * 0.625)
+    );
+  }
+}
+
+/* 태블릿 및 큰 화면 */
+@media(min-width:768px){
+  .card-area{
+    width:min(
+      72vw,
+      calc((100svh - 145px - var(--safe-top)) * 0.625),
+      625px
+    );
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="slide-wrap">
+
+  <div class="card-area">
+    <img
+      id="storyImg"
+      class="story-img"
+      src="mbs1.png"
+      alt="이야기 이미지 1"
+    >
+  </div>
+
+  <div class="arrow-area">
+
+    <button
+      id="prevBtn"
+      class="arrow-btn hidden"
+      type="button"
+      onclick="prevSlide()"
+      aria-label="이전 이미지"
+    >
+      <svg viewBox="0 0 120 96" aria-hidden="true">
+        <path
+          class="arrow-shape"
+          d="M84 10
+             Q92 15 92 26
+             L92 70
+             Q92 81 84 86
+             Q76 91 67 84
+             L22 54
+             Q13 48 22 42
+             L67 12
+             Q76 5 84 10 Z"
+        />
+        <path
+          class="arrow-highlight"
+          d="M78 18
+             Q84 21 84 28
+             L84 36
+             L39 48
+             L78 22 Z"
+        />
+      </svg>
+    </button>
+
+    <button
+      id="nextBtn"
+      class="arrow-btn"
+      type="button"
+      onclick="nextSlide()"
+      aria-label="다음 이미지"
+    >
+      <svg viewBox="0 0 120 96" aria-hidden="true">
+        <path
+          class="arrow-shape"
+          d="M36 10
+             Q28 15 28 26
+             L28 70
+             Q28 81 36 86
+             Q44 91 53 84
+             L98 54
+             Q107 48 98 42
+             L53 12
+             Q44 5 36 10 Z"
+        />
+        <path
+          class="arrow-highlight"
+          d="M42 18
+             Q36 21 36 28
+             L36 36
+             L81 48
+             L42 22 Z"
+        />
+      </svg>
+    </button>
+
+  </div>
+</div>
+
+<script>
+const TOTAL_SLIDES = 29;
+
+let currentSlide = 1;
+
+const storyImg = document.getElementById("storyImg");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+function updateSlide(){
+  storyImg.src = `mbs${currentSlide}.png`;
+  storyImg.alt = `이야기 이미지 ${currentSlide}`;
+
+  prevBtn.classList.toggle("hidden", currentSlide === 1);
+  nextBtn.classList.toggle("hidden", currentSlide === TOTAL_SLIDES);
+}
+
+function nextSlide(){
+  if(currentSlide >= TOTAL_SLIDES){
+    return;
+  }
+
+  currentSlide++;
+  updateSlide();
+}
+
+function prevSlide(){
+  if(currentSlide <= 1){
+    return;
+  }
+
+  currentSlide--;
+  updateSlide();
+}
+
+/* 페이지를 새로 열면 첫 이미지부터 시작 */
+window.addEventListener("pageshow",function(){
+  currentSlide = 1;
+  updateSlide();
+});
+
+/* 다음 이미지 미리 불러오기 */
+storyImg.addEventListener("load",function(){
+  const nextNumber = currentSlide + 1;
+
+  if(nextNumber <= TOTAL_SLIDES){
+    const preloadImage = new Image();
+    preloadImage.src = `mbs${nextNumber}.png`;
+  }
+});
+
+updateSlide();
+</script>
+
+</body>
+</html>
