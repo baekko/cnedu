@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>RABBIT HOLE</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+  overflow:hidden;
+
+  font-family:
+    "Pretendard",
+    "Noto Sans KR",
+    sans-serif;
+}
+
+
+/* =========================================================
+   전체 화면
+
+   bdum.png에서 실제 추출한 색상
+
+   위 하늘:
+   #2794ED
+
+   아래 잔디:
+   #759D31
+========================================================= */
+
+body{
+  position:relative;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:#2794ED;
+}
+
+
+/* =========================================================
+   위쪽 / 아래쪽 여백 배경
+
+   화면이 길어서 bdum.png 위아래에 여백이 생기는 경우
+   위는 하늘색, 아래는 잔디색으로 채움
+========================================================= */
+
+body::before{
+  content:"";
+
+  position:fixed;
+
+  left:0;
+  right:0;
+  top:0;
+
+  height:50%;
+
+  background:#2794ED;
+
+  z-index:-2;
+}
+
+
+body::after{
+  content:"";
+
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:50%;
+
+  background:#85AA34;
+
+  z-index:-2;
+}
+
+
+/* =========================================================
+   배경 + 책 공통 기준 프레임
+
+   원본 이미지 크기
+   939 × 1500
+
+   화면에 완전히 들어오도록 자동 축소
+========================================================= */
+
+.scene{
+  position:relative;
+
+  width:min(
+    100vw,
+    calc(100dvh * 939 / 1500)
+  );
+
+  height:min(
+    100dvh,
+    calc(100vw * 1500 / 939)
+  );
+
+  aspect-ratio:939 / 1500;
+
+  flex:none;
+
+  overflow:hidden;
+
+  z-index:1;
+}
+
+
+/* =========================================================
+   나무 배경
+========================================================= */
+
+.tree-bg{
+  position:absolute;
+
+  inset:0;
+
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  object-fit:fill;
+
+  pointer-events:none;
+  user-select:none;
+
+  z-index:1;
+}
+
+
+/* =========================================================
+   책 버튼 공통
+
+   ★ 5권 모두 동일 크기
+========================================================= */
+
+.book-btn{
+  position:absolute;
+
+  width:15.2%;
+
+  border:none;
+
+  margin:0;
+  padding:0;
+
+  background:transparent;
+
+  cursor:pointer;
+
+  z-index:10;
+
+  /*
+    left / top 좌표가
+    책 중심점이 되도록 설정
+  */
+  transform:
+    translate(-50%,-50%);
+
+  transition:
+    transform .18s ease,
+    opacity .18s ease,
+    filter .18s ease;
+
+  -webkit-tap-highlight-color:transparent;
+
+  touch-action:manipulation;
+}
+
+
+/* 책 이미지 */
+.book-btn img{
+  width:100%;
+  height:auto;
+
+  display:block;
+
+  object-fit:contain;
+
+  filter:
+    drop-shadow(
+      0 8px 8px
+      rgba(0,0,0,.38)
+    )
+    drop-shadow(
+      3px 4px 3px
+      rgba(0,0,0,.20)
+    );
+}
+
+
+/* 마우스 */
+.book-btn:hover:not(:disabled){
+  transform:
+    translate(-50%,-50%)
+    translateY(-4px)
+    scale(1.05);
+}
+
+
+/* 터치 */
+.book-btn:active:not(:disabled){
+  transform:
+    translate(-50%,-50%)
+    translateY(2px)
+    scale(.96);
+}
+
+
+/* =========================================================
+   완료한 문제
+========================================================= */
+
+.book-btn:disabled{
+  opacity:.30;
+
+  filter:
+    grayscale(100%)
+    brightness(.72);
+
+  cursor:default;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   책 위치
+
+   두 번째 배치 이미지 기준
+========================================================= */
+
+
+/* 1번 - 위 중앙 */
+.book1{
+  left:55%;
+  top:12.5%;
+}
+
+
+/* 2번 - 왼쪽 위 */
+.book2{
+  left:23.8%;
+  top:27.5%;
+}
+
+
+/* 3번 - 중앙 */
+.book3{
+  left:55%;
+  top:34%;
+}
+
+
+/* 4번 - 왼쪽 아래 */
+.book4{
+  left:22.8%;
+  top:58.3%;
+}
+
+
+/* 5번 - 오른쪽 아래 */
+.book5{
+  left:78.2%;
+  top:54.1%;
+}
+
+
+/* =========================================================
+   마지막 영상
+========================================================= */
+
+.video-modal{
+  position:fixed;
+
+  inset:0;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  background:
+    rgba(0,0,0,.60);
+
+  z-index:500;
+}
+
+
+.video-modal.show{
+  display:flex;
+}
+
+
+.video-box{
+  width:min(
+    70vw,
+    650px
+  );
+
+  max-height:75vh;
+
+  overflow:hidden;
+
+  border-radius:22px;
+
+  background:transparent;
+
+  animation:
+    videoOpen .4s ease;
+}
+
+
+.end-video{
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-height:75vh;
+
+  object-fit:contain;
+
+  border-radius:22px;
+
+  background:transparent;
+}
+
+
+@keyframes videoOpen{
+
+  from{
+    opacity:0;
+
+    transform:
+      scale(.88);
+  }
+
+  to{
+    opacity:1;
+
+    transform:
+      scale(1);
+  }
+
+}
+
+
+/* =========================================================
+   개발용 초기화 버튼
+========================================================= */
+
+.dev-reset{
+  position:fixed;
+
+  right:10px;
+  bottom:
+    calc(
+      10px
+      +
+      env(safe-area-inset-bottom)
+    );
+
+  z-index:1000;
+
+  border:none;
+
+  border-radius:999px;
+
+  padding:
+    8px 12px;
+
+  background:
+    rgba(42,60,45,.84);
+
+  color:white;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 5px 12px
+    rgba(0,0,0,.28);
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+/* =========================================================
+   휴대폰
+========================================================= */
+
+@media(max-width:600px){
+
+  /*
+    책 좌표나 크기는 바꾸지 않음.
+
+    scene 전체가 축소되기 때문에
+    나무 + 책이 같이 줄어듦.
+  */
+
+  .video-box{
+    width:76vw;
+
+    max-width:340px;
+
+    border-radius:18px;
+  }
+
+
+  .end-video{
+    border-radius:18px;
+  }
+
+}
+
+
+/* =========================================================
+   작은 휴대폰
+========================================================= */
+
+@media(max-width:390px){
+
+  .dev-reset{
+    padding:
+      7px 9px;
+
+    font-size:11px;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     나무 + 책 버튼
+===================================================== -->
+
+<div class="scene">
+
+
+  <!-- 나무 배경 -->
+
+  <img
+    src="bdum.png"
+    class="tree-bg"
+    alt=""
+  >
+
+
+  <!-- =================================================
+       1번 책
+  ================================================== -->
+
+  <button
+    id="book1"
+    class="book-btn book1"
+    type="button"
+    onclick="goMission(1)"
+    aria-label="1번 문제"
+  >
+
+    <img
+      src="bdum1.png"
+      alt="1번 책"
+    >
+
+  </button>
+
+
+  <!-- =================================================
+       2번 책
+  ================================================== -->
+
+  <button
+    id="book2"
+    class="book-btn book2"
+    type="button"
+    onclick="goMission(2)"
+    aria-label="2번 문제"
+  >
+
+    <img
+      src="bdum2.png"
+      alt="2번 책"
+    >
+
+  </button>
+
+
+  <!-- =================================================
+       3번 책
+  ================================================== -->
+
+  <button
+    id="book3"
+    class="book-btn book3"
+    type="button"
+    onclick="goMission(3)"
+    aria-label="3번 문제"
+  >
+
+    <img
+      src="bdum3.png"
+      alt="3번 책"
+    >
+
+  </button>
+
+
+  <!-- =================================================
+       4번 책
+  ================================================== -->
+
+  <button
+    id="book4"
+    class="book-btn book4"
+    type="button"
+    onclick="goMission(4)"
+    aria-label="4번 문제"
+  >
+
+    <img
+      src="bdum4.png"
+      alt="4번 책"
+    >
+
+  </button>
+
+
+  <!-- =================================================
+       5번 책
+  ================================================== -->
+
+  <button
+    id="book5"
+    class="book-btn book5"
+    type="button"
+    onclick="goMission(5)"
+    aria-label="5번 문제"
+  >
+
+    <img
+      src="bdum5.png"
+      alt="5번 책"
+    >
+
+  </button>
+
+
+</div>
+
+
+<!-- =====================================================
+     엔딩 영상
+===================================================== -->
+
+<div
+  id="videoModal"
+  class="video-modal"
+>
+
+  <div class="video-box">
+
+    <video
+      id="endVideo"
+      class="end-video"
+      playsinline
+      muted
+      preload="auto"
+    >
+
+      <source
+        src="bdum.mp4"
+        type="video/mp4"
+      >
+
+    </video>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     개발용 초기화
+===================================================== -->
+
+<button
+  class="dev-reset"
+  type="button"
+  onclick="devReset()"
+>
+  테스트 초기화
+</button>
+
+
+<script>
+
+/* =========================================================
+   저장키
+
+   bduq1~5와 동일해야 함
+========================================================= */
+
+const PROGRESS_KEY =
+  "bdu_progress_v1";
+
+
+const END_VIDEO_KEY =
+  "bdum_end_video_started";
+
+
+let endTimer =
+  null;
+
+
+/* =========================================================
+   저장 데이터 읽기
+========================================================= */
+
+function getProgress(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(
+        PROGRESS_KEY
+      )
+    ) || {};
+
+  }
+
+  catch(e){
+
+    return {};
+
+  }
+
+}
+
+
+/* =========================================================
+   1~5번 모두 완료 여부
+========================================================= */
+
+function allMissionsDone(
+  progress
+){
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    if(
+      !progress[i]
+      ||
+      !progress[i].completed
+    ){
+
+      return false;
+
+    }
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================================================
+   책 버튼 비활성화
+========================================================= */
+
+function applyBookState(){
+
+  const progress =
+    getProgress();
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    const button =
+      document.getElementById(
+        "book" + i
+      );
+
+
+    button.disabled =
+      !!(
+        progress[i]
+        &&
+        progress[i].completed
+      );
+
+  }
+
+
+  /*
+    아직 5개를 다 풀지 않았다면
+    엔딩 영상 실행 기록 제거
+  */
+
+  if(
+    !allMissionsDone(
+      progress
+    )
+  ){
+
+    sessionStorage.removeItem(
+      END_VIDEO_KEY
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   문제 페이지 이동
+========================================================= */
+
+function goMission(
+  number
+){
+
+  const button =
+    document.getElementById(
+      "book" + number
+    );
+
+
+  if(
+    button.disabled
+  ){
+
+    return;
+
+  }
+
+
+  location.href =
+    `https://baekko.github.io/cnedu/bduq${number}.html`;
+
+}
+
+
+/* =========================================================
+   엔딩 조건 확인
+========================================================= */
+
+function checkEnding(){
+
+  const progress =
+    getProgress();
+
+
+  /*
+    아직 다 안 풀었음
+  */
+
+  if(
+    !allMissionsDone(
+      progress
+    )
+  ){
+
+    return;
+
+  }
+
+
+  /*
+    이미 영상이 시작됐음
+  */
+
+  if(
+    sessionStorage.getItem(
+      END_VIDEO_KEY
+    )
+    ===
+    "true"
+  ){
+
+    return;
+
+  }
+
+
+  clearTimeout(
+    endTimer
+  );
+
+
+  /*
+    마지막 문제를 풀고 돌아온 뒤
+    5초 후 엔딩 영상
+  */
+
+  endTimer =
+    setTimeout(
+      function(){
+
+        sessionStorage.setItem(
+          END_VIDEO_KEY,
+          "true"
+        );
+
+
+        playEndingVideo();
+
+      },
+
+      5000
+    );
+
+}
+
+
+/* =========================================================
+   엔딩 영상
+========================================================= */
+
+function playEndingVideo(){
+
+  const modal =
+    document.getElementById(
+      "videoModal"
+    );
+
+
+  const video =
+    document.getElementById(
+      "endVideo"
+    );
+
+
+  modal
+    .classList
+    .add(
+      "show"
+    );
+
+
+  video.currentTime =
+    0;
+
+
+  video.load();
+
+
+  /*
+    영상 끝나면 바로 엔딩
+  */
+
+  video.onended =
+    function(){
+
+      goEnd();
+
+    };
+
+
+  /*
+    영상 오류 시
+  */
+
+  video.onerror =
+    function(){
+
+      setTimeout(
+        goEnd,
+        1000
+      );
+
+    };
+
+
+  const playPromise =
+    video.play();
+
+
+  if(
+    playPromise !==
+    undefined
+  ){
+
+    playPromise
+      .catch(
+        function(){
+
+          setTimeout(
+            goEnd,
+            1000
+          );
+
+        }
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   엔딩 페이지
+========================================================= */
+
+function goEnd(){
+
+  location.href =
+    "https://baekko.github.io/cnedu/bduend.html";
+
+}
+
+
+/* =========================================================
+   개발용 초기화
+========================================================= */
+
+function devReset(){
+
+  localStorage.removeItem(
+    PROGRESS_KEY
+  );
+
+
+  sessionStorage.removeItem(
+    END_VIDEO_KEY
+  );
+
+
+  clearTimeout(
+    endTimer
+  );
+
+
+  location.reload();
+
+}
+
+
+/* =========================================================
+   문제 풀고 메인으로 돌아왔을 때
+========================================================= */
+
+window.addEventListener(
+  "pageshow",
+  function(){
+
+    applyBookState();
+
+    checkEnding();
+
+  }
+);
+
+
+/* =========================================================
+   최초 실행
+========================================================= */
+
+applyBookState();
+
+checkEnding();
+
+</script>
+
+</body>
+</html>
