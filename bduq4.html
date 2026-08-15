@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>RABBIT HOLE - MISSION 1</title>
+
+<style>
+
+/* =========================================================
+   기본 설정
+========================================================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+
+  overflow:hidden;
+
+  font-family:
+    "Pretendard",
+    "Noto Sans KR",
+    sans-serif;
+
+  background:#000;
+}
+
+
+/* =========================================================
+   공통 변수
+========================================================= */
+
+:root{
+
+  /* 녹색 계열 */
+
+  --green:#4f7d32;
+  --green-light:#79a94d;
+  --green-dark:#29451b;
+
+
+  /* -----------------------------------------
+     말박스
+  ----------------------------------------- */
+
+  --talk-width:min(88vw,600px);
+
+  /*
+    ★ 말박스 위치
+
+    숫자를 높이면 위로 올라감
+    숫자를 낮추면 아래로 내려감
+  */
+
+  --talk-bottom:15vh;
+
+  --talk-max-height:24vh;
+
+
+  /* -----------------------------------------
+     화살표
+
+     ★ 현재 마음에 든 위치 유지
+  ----------------------------------------- */
+
+  --control-bottom:31vh;
+
+  --arrow-w:82px;
+  --arrow-h:68px;
+
+
+  /* -----------------------------------------
+     문제 UI
+  ----------------------------------------- */
+
+  --ui-bottom:7vh;
+}
+
+
+/* =========================================================
+   배경
+========================================================= */
+
+body{
+  position:relative;
+
+  background:
+    url("bduq11.png")
+    no-repeat
+    center center / cover;
+}
+
+
+/* =========================================================
+   화살표 / 미션시작 / 나무로 영역
+========================================================= */
+
+.talk-controls{
+
+  position:fixed;
+
+  left:50%;
+  bottom:var(--control-bottom);
+
+  transform:translateX(-50%);
+
+  width:var(--talk-width);
+  height:var(--arrow-h);
+
+  display:none;
+
+  align-items:center;
+  justify-content:space-between;
+
+  z-index:40;
+}
+
+
+.talk-controls.show{
+  display:flex;
+
+  animation:
+    fadeSimple .35s ease;
+}
+
+
+/* =========================================================
+   말박스
+
+   ★ 화살표와 완전히 독립
+
+   화살표 크기나 위치가 바뀌어도
+   말박스 위치에 영향 없음
+========================================================= */
+
+.talk-image-wrap{
+
+  position:fixed;
+
+  left:50%;
+
+  bottom:var(--talk-bottom);
+
+  transform:translateX(-50%);
+
+  width:var(--talk-width);
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  z-index:30;
+
+  pointer-events:none;
+}
+
+
+.talk-image-wrap.show{
+
+  display:flex;
+
+  animation:
+    fadeSimple .35s ease;
+}
+
+
+.talk-img{
+
+  display:block;
+
+  width:auto;
+  height:auto;
+
+  max-width:100%;
+  max-height:var(--talk-max-height);
+
+  object-fit:contain;
+
+  filter:
+    drop-shadow(
+      0 8px 14px
+      rgba(0,0,0,.30)
+    );
+}
+
+
+/* =========================================================
+   화살표 버튼
+========================================================= */
+
+.arrow-btn{
+
+  width:var(--arrow-w);
+  height:var(--arrow-h);
+
+  flex:0 0 var(--arrow-w);
+
+  border:none;
+
+  background:transparent;
+
+  padding:0;
+
+  cursor:pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  touch-action:manipulation;
+
+  transition:
+    transform .15s ease;
+}
+
+
+.arrow-btn:hover{
+
+  transform:
+    translateY(-2px)
+    scale(1.03);
+}
+
+
+.arrow-btn:active{
+
+  transform:
+    translateY(2px)
+    scale(.94);
+}
+
+
+.arrow-btn svg{
+
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  filter:
+
+    drop-shadow(
+      0 7px 8px
+      rgba(0,0,0,.40)
+    )
+
+    drop-shadow(
+      0 2px 2px
+      rgba(0,0,0,.30)
+    );
+}
+
+
+.arrow-shape{
+
+  fill:var(--green);
+
+  stroke:var(--green-dark);
+
+  stroke-width:3;
+}
+
+
+.arrow-highlight{
+
+  fill:
+    rgba(255,255,255,.25);
+}
+
+
+.arrow-btn.hidden{
+
+  visibility:hidden;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   미션시작 / 나무로
+
+   ★ 태블릿에서 작아지지 않도록
+   크기를 확실하게 지정
+========================================================= */
+
+.round-btn{
+
+  display:none;
+
+  height:58px;
+
+  min-width:130px;
+
+  padding:0 28px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #82b855 0%,
+      #5f913b 45%,
+      #456f2b 100%
+    );
+
+  color:#fffdf1;
+
+  font-size:20px;
+
+  font-weight:900;
+
+  line-height:1;
+
+  letter-spacing:-0.3px;
+
+  white-space:nowrap;
+
+  cursor:pointer;
+
+  text-align:center;
+
+  box-shadow:
+
+    0 8px 0
+    #29451b,
+
+    0 12px 18px
+    rgba(0,0,0,.32),
+
+    inset 0 3px 3px
+    rgba(255,255,255,.38),
+
+    inset 0 -5px 8px
+    rgba(0,0,0,.20);
+
+  text-shadow:
+    0 2px 2px
+    rgba(0,0,0,.25);
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  touch-action:manipulation;
+}
+
+
+.round-btn.show{
+
+  display:block;
+}
+
+
+.round-btn:active{
+
+  transform:
+    translateY(5px);
+
+  box-shadow:
+
+    0 3px 0
+    #29451b,
+
+    0 7px 12px
+    rgba(0,0,0,.28),
+
+    inset 0 3px 3px
+    rgba(255,255,255,.28),
+
+    inset 0 -4px 7px
+    rgba(0,0,0,.22);
+}
+
+
+/* =========================================================
+   문제 UI
+========================================================= */
+
+.ui-wrap{
+
+  position:fixed;
+
+  left:50%;
+  bottom:var(--ui-bottom);
+
+  transform:
+    translateX(-50%);
+
+  width:
+    clamp(
+      420px,
+      56vw,
+      560px
+    );
+
+  z-index:20;
+
+  display:none;
+
+  flex-direction:column;
+
+  gap:14px;
+}
+
+
+.ui-wrap.show{
+
+  display:flex;
+
+  animation:
+    fadeUp .35s ease;
+}
+
+
+/* =========================================================
+   정답 입력
+========================================================= */
+
+.answer-row{
+
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    86px;
+
+  gap:12px;
+}
+
+
+.answer-input{
+
+  width:100%;
+
+  height:58px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:
+    0 18px;
+
+  font-size:20px;
+
+  outline:none;
+
+  background:
+    rgba(255,255,255,.95);
+
+  color:#222;
+
+  box-shadow:
+    0 8px 18px
+    rgba(0,0,0,.25);
+}
+
+
+.submit-btn{
+
+  height:58px;
+
+  border:none;
+
+  border-radius:14px;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--green-light),
+      var(--green)
+    );
+
+  cursor:pointer;
+
+  box-shadow:
+
+    0 7px 0
+    var(--green-dark),
+
+    0 10px 16px
+    rgba(0,0,0,.28),
+
+    inset 0 2px 2px
+    rgba(255,255,255,.30);
+}
+
+
+/* =========================================================
+   힌트 / 정답보기 / 기억보상
+========================================================= */
+
+.action-row{
+
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0,1fr)
+    );
+
+  gap:12px;
+}
+
+
+.action-btn{
+
+  height:54px;
+
+  border:none;
+
+  border-radius:14px;
+
+  font-size:17px;
+
+  font-weight:900;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--green-light),
+      var(--green)
+    );
+
+  cursor:pointer;
+
+  box-shadow:
+
+    0 6px 0
+    var(--green-dark),
+
+    0 9px 15px
+    rgba(0,0,0,.27),
+
+    inset 0 2px 2px
+    rgba(255,255,255,.30);
+}
+
+
+.submit-btn:active,
+.action-btn:active{
+
+  transform:
+    translateY(4px);
+}
+
+
+.action-btn:disabled{
+
+  opacity:.42;
+
+  cursor:default;
+}
+
+
+/* =========================================================
+   안내 모달
+========================================================= */
+
+.info-modal{
+
+  position:fixed;
+
+  inset:0;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  background:
+    rgba(0,0,0,.55);
+
+  z-index:100;
+}
+
+
+.info-modal.show{
+
+  display:flex;
+}
+
+
+.info-box{
+
+  width:
+    min(
+      86vw,
+      560px
+    );
+
+  background:
+    #f7f4df;
+
+  border-radius:22px;
+
+  padding:
+    30px 24px;
+
+  text-align:center;
+
+  box-shadow:
+    0 18px 40px
+    rgba(0,0,0,.35);
+}
+
+
+.modal-title{
+
+  font-size:28px;
+
+  font-weight:900;
+
+  margin-bottom:18px;
+
+  color:
+    var(--green-dark);
+}
+
+
+.modal-content{
+
+  font-size:22px;
+
+  line-height:1.6;
+
+  color:#25351d;
+
+  white-space:
+    pre-line;
+
+  word-break:
+    keep-all;
+}
+
+
+.modal-close{
+
+  margin-top:22px;
+
+  height:50px;
+
+  min-width:100px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:
+    0 24px;
+
+  font-size:17px;
+
+  font-weight:900;
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--green-light),
+      var(--green)
+    );
+
+  cursor:pointer;
+}
+
+
+/* =========================================================
+   결과 영상
+========================================================= */
+
+.video-modal{
+
+  position:fixed;
+
+  inset:0;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  background:
+    rgba(0,0,0,.68);
+
+  z-index:300;
+}
+
+
+.video-modal.show{
+
+  display:flex;
+}
+
+
+.video-box{
+
+  width:
+    clamp(
+      360px,
+      58vw,
+      760px
+    );
+
+  max-height:76vh;
+
+  overflow:hidden;
+
+  border-radius:24px;
+
+  background:
+    transparent;
+}
+
+
+.result-video{
+
+  display:block;
+
+  width:100%;
+
+  height:auto;
+
+  border-radius:24px;
+
+  background:
+    transparent;
+}
+
+
+/* =========================================================
+   애니메이션
+========================================================= */
+
+.shake{
+
+  animation:
+    shake .25s ease;
+}
+
+
+@keyframes shake{
+
+  0%{
+    transform:
+      translateX(-50%)
+      translateX(0);
+  }
+
+  25%{
+    transform:
+      translateX(-50%)
+      translateX(-6px);
+  }
+
+  50%{
+    transform:
+      translateX(-50%)
+      translateX(6px);
+  }
+
+  75%{
+    transform:
+      translateX(-50%)
+      translateX(-4px);
+  }
+
+  100%{
+    transform:
+      translateX(-50%)
+      translateX(0);
+  }
+}
+
+
+@keyframes fadeUp{
+
+  from{
+
+    opacity:0;
+
+    transform:
+      translateX(-50%)
+      translateY(12px);
+  }
+
+  to{
+
+    opacity:1;
+
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+
+@keyframes fadeSimple{
+
+  from{
+    opacity:0;
+  }
+
+  to{
+    opacity:1;
+  }
+}
+
+
+/* =========================================================
+   ★ 휴대폰
+========================================================= */
+
+@media(max-width:600px){
+
+  :root{
+
+    --talk-width:
+      min(92vw,360px);
+
+    /*
+      ★ 휴대폰 말박스 위치
+
+      올리고 싶으면 숫자를 높임
+
+      예:
+      10vh → 아래
+      15vh → 위
+      20vh → 더 위
+    */
+
+    --talk-bottom:12vh;
+
+
+    /*
+      화살표 위치
+    */
+
+    --control-bottom:28vh;
+
+    --arrow-w:58px;
+
+    --arrow-h:48px;
+
+    --talk-max-height:22vh;
+
+    --ui-bottom:5.5vh;
+  }
+
+
+  /* 미션시작 / 나무로 */
+
+  .round-btn{
+
+    height:46px;
+
+    min-width:100px;
+
+    padding:
+      0 16px;
+
+    border-radius:13px;
+
+    font-size:15px;
+
+    box-shadow:
+
+      0 6px 0
+      #29451b,
+
+      0 9px 14px
+      rgba(0,0,0,.30),
+
+      inset 0 2px 2px
+      rgba(255,255,255,.35),
+
+      inset 0 -4px 6px
+      rgba(0,0,0,.18);
+  }
+
+
+  .ui-wrap{
+
+    width:
+      min(
+        88vw,
+        330px
+      );
+
+    gap:11px;
+  }
+
+
+  .answer-row{
+
+    grid-template-columns:
+      minmax(0,1fr)
+      64px;
+
+    gap:8px;
+  }
+
+
+  .answer-input{
+
+    height:52px;
+
+    font-size:16px;
+
+    padding:
+      0 14px;
+
+    border-radius:13px;
+  }
+
+
+  .submit-btn{
+
+    height:52px;
+
+    font-size:16px;
+
+    border-radius:13px;
+  }
+
+
+  .action-row{
+
+    gap:8px;
+  }
+
+
+  .action-btn{
+
+    height:48px;
+
+    font-size:14px;
+
+    border-radius:13px;
+  }
+
+
+  .modal-title{
+
+    font-size:23px;
+  }
+
+
+  .modal-content{
+
+    font-size:18px;
+  }
+
+
+  .video-box{
+
+    width:72vw;
+
+    max-width:340px;
+
+    border-radius:18px;
+  }
+
+
+  .result-video{
+
+    border-radius:18px;
+  }
+
+}
+
+
+/* =========================================================
+   ★ 아주 작은 휴대폰
+========================================================= */
+
+@media(max-width:390px){
+
+  :root{
+
+    --talk-width:92vw;
+
+    --talk-bottom:12vh;
+
+    --control-bottom:27vh;
+
+    --arrow-w:54px;
+
+    --arrow-h:45px;
+
+    --talk-max-height:21vh;
+  }
+
+
+  .round-btn{
+
+    height:44px;
+
+    min-width:94px;
+
+    padding:
+      0 14px;
+
+    font-size:14px;
+  }
+
+
+  .ui-wrap{
+
+    width:
+      min(
+        90vw,
+        310px
+      );
+  }
+
+
+  .answer-row{
+
+    grid-template-columns:
+      minmax(0,1fr)
+      58px;
+
+    gap:7px;
+  }
+
+
+  .answer-input{
+
+    height:50px;
+
+    font-size:15px;
+
+    padding:
+      0 12px;
+  }
+
+
+  .submit-btn{
+
+    height:50px;
+
+    font-size:15px;
+  }
+
+
+  .action-row{
+
+    gap:7px;
+  }
+
+
+  .action-btn{
+
+    height:46px;
+
+    font-size:13px;
+  }
+
+}
+
+
+/* =========================================================
+   ★ 화면 높이가 짧은 휴대폰
+
+   여기서는 말박스 위치를 건드리지 않음
+========================================================= */
+
+@media(max-height:700px){
+
+  :root{
+
+    --talk-max-height:20vh;
+
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     화살표 / 미션시작 / 나무로
+===================================================== -->
+
+<div
+  class="talk-controls"
+  id="talkControls"
+>
+
+
+  <!-- 왼쪽 화살표 -->
+
+  <button
+    id="prevTalkBtn"
+    class="arrow-btn hidden"
+    type="button"
+    onclick="prevTalk()"
+    aria-label="이전"
+  >
+
+    <svg
+      viewBox="0 0 120 96"
+      aria-hidden="true"
+    >
+
+      <path
+        class="arrow-shape"
+        d="
+        M84 10
+        Q92 15 92 26
+        L92 70
+        Q92 81 84 86
+        Q76 91 67 84
+        L22 54
+        Q13 48 22 42
+        L67 12
+        Q76 5 84 10 Z
+        "
+      />
+
+      <path
+        class="arrow-highlight"
+        d="
+        M78 18
+        Q84 21 84 28
+        L84 36
+        L39 48
+        L78 22 Z
+        "
+      />
+
+    </svg>
+
+  </button>
+
+
+  <!-- 오른쪽 화살표 -->
+
+  <button
+    id="nextTalkBtn"
+    class="arrow-btn"
+    type="button"
+    onclick="nextTalk()"
+    aria-label="다음"
+  >
+
+    <svg
+      viewBox="0 0 120 96"
+      aria-hidden="true"
+    >
+
+      <path
+        class="arrow-shape"
+        d="
+        M36 10
+        Q28 15 28 26
+        L28 70
+        Q28 81 36 86
+        Q44 91 53 84
+        L98 54
+        Q107 48 98 42
+        L53 12
+        Q44 5 36 10 Z
+        "
+      />
+
+      <path
+        class="arrow-highlight"
+        d="
+        M42 18
+        Q36 21 36 28
+        L36 36
+        L81 48
+        L42 22 Z
+        "
+      />
+
+    </svg>
+
+  </button>
+
+
+  <!-- 미션시작 -->
+
+  <button
+    id="missionStartBtn"
+    class="round-btn"
+    type="button"
+    onclick="startMission()"
+  >
+    미션시작
+  </button>
+
+
+  <!-- 나무로 -->
+
+  <button
+    id="treeBtn"
+    class="round-btn"
+    type="button"
+    onclick="finishMission()"
+  >
+    나무로
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     말박스
+===================================================== -->
+
+<div
+  class="talk-image-wrap"
+  id="talkImageWrap"
+>
+
+  <img
+    id="talkImage"
+    class="talk-img"
+    src=""
+    alt="보라토끼 말박스"
+  >
+
+</div>
+
+
+<!-- =====================================================
+     문제 UI
+===================================================== -->
+
+<div
+  class="ui-wrap"
+  id="uiWrap"
+>
+
+  <div class="answer-row">
+
+    <input
+      id="answerInput"
+      class="answer-input"
+      type="text"
+      placeholder="정답을 입력하세요"
+      autocomplete="off"
+    >
+
+    <button
+      class="submit-btn"
+      type="button"
+      onclick="checkAnswer()"
+    >
+      입력
+    </button>
+
+  </div>
+
+
+  <div class="action-row">
+
+    <button
+      class="action-btn"
+      type="button"
+      onclick="showHint()"
+    >
+      힌트보기
+    </button>
+
+
+    <button
+      class="action-btn"
+      id="answerBtn"
+      type="button"
+      onclick="showAnswer()"
+      disabled
+    >
+      정답보기
+    </button>
+
+
+    <button
+      class="action-btn"
+      type="button"
+      onclick="showReward()"
+    >
+      당근갯수
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     안내 모달
+===================================================== -->
+
+<div
+  class="info-modal"
+  id="infoModal"
+>
+
+  <div class="info-box">
+
+    <div
+      class="modal-title"
+      id="modalTitle"
+    >
+      안내
+    </div>
+
+    <div
+      class="modal-content"
+      id="modalContent"
+    ></div>
+
+    <button
+      class="modal-close"
+      type="button"
+      onclick="closeModal()"
+    >
+      닫기
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     결과 영상
+===================================================== -->
+
+<div
+  class="video-modal"
+  id="videoModal"
+>
+
+  <div class="video-box">
+
+    <video
+      id="resultVideo"
+      class="result-video"
+      playsinline
+      muted
+    ></video>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   ★ 각 문제에서 수정할 부분
+========================================================= */
+
+const missionConfig = {
+
+  /*
+    bduq1.html = 1
+    bduq2.html = 2
+    bduq3.html = 3
+    ...
+  */
+
+  missionNumber:4,
+
+
+  /* 정답 */
+
+  correctAnswer:"카레라이스",
+
+
+  /* 힌트 */
+
+  hintText:
+    "여우의 귀를 맞추고 혀를 보세요.",
+
+
+  /* 정답보기 */
+
+  answerText:
+    "카레라이스",
+
+
+  /*
+    문제 전 말박스 개수
+
+    예:
+    bduq101.png
+    bduq102.png
+    bduq103.png
+
+    3장이면 3
+  */
+
+  introTalkCount:4,
+
+
+  /*
+    정답 후 말박스 개수
+
+    예:
+    bduq1011.png
+    bduq1022.png
+
+    2장이면 2
+  */
+
+  successTalkCount:4
+
+};
+
+
+/* =========================================================
+   저장
+========================================================= */
+
+const PROGRESS_KEY =
+  "bdu_progress_v1";
+
+
+let usedHint =
+  false;
+
+let usedAnswer =
+  false;
+
+let locked =
+  false;
+
+let talkMode =
+  "intro";
+
+let currentTalk =
+  1;
+
+let pendingScore =
+  null;
+
+
+/* =========================================================
+   요소
+========================================================= */
+
+const talkImageWrap =
+  document.getElementById(
+    "talkImageWrap"
+  );
+
+const talkControls =
+  document.getElementById(
+    "talkControls"
+  );
+
+const talkImage =
+  document.getElementById(
+    "talkImage"
+  );
+
+const prevTalkBtn =
+  document.getElementById(
+    "prevTalkBtn"
+  );
+
+const nextTalkBtn =
+  document.getElementById(
+    "nextTalkBtn"
+  );
+
+const missionStartBtn =
+  document.getElementById(
+    "missionStartBtn"
+  );
+
+const treeBtn =
+  document.getElementById(
+    "treeBtn"
+  );
+
+const uiWrap =
+  document.getElementById(
+    "uiWrap"
+  );
+
+
+/* =========================================================
+   진행상황 읽기
+========================================================= */
+
+function getProgress(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(
+        PROGRESS_KEY
+      )
+    ) || {};
+
+  }
+  catch(e){
+
+    return {};
+
+  }
+
+}
+
+
+/* =========================================================
+   진행상황 저장
+========================================================= */
+
+function setProgress(
+  progress
+){
+
+  localStorage.setItem(
+    PROGRESS_KEY,
+    JSON.stringify(
+      progress
+    )
+  );
+
+}
+
+
+/* =========================================================
+   정답 비교
+========================================================= */
+
+function normalize(
+  text
+){
+
+  return String(text)
+    .replace(
+      /\s+/g,
+      ""
+    )
+    .trim()
+    .toLowerCase();
+
+}
+
+
+/* =========================================================
+   현재 문제 점수
+========================================================= */
+
+function currentScore(){
+
+  if(usedAnswer){
+
+    return 0;
+
+  }
+
+
+  if(usedHint){
+
+    return 10;
+
+  }
+
+
+  return 20;
+
+}
+
+
+/* =========================================================
+   총 기억보상
+========================================================= */
+
+function getTotalScore(){
+
+  const progress =
+    getProgress();
+
+  let total =
+    0;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    if(
+      progress[i]
+      &&
+      progress[i].completed
+    ){
+
+      total +=
+        Number(
+          progress[i].score
+          ||
+          0
+        );
+
+    }
+
+  }
+
+
+  return total;
+
+}
+
+
+/* =========================================================
+   결과 저장
+========================================================= */
+
+function saveResult(
+  score
+){
+
+  const progress =
+    getProgress();
+
+
+  progress[
+    missionConfig.missionNumber
+  ] = {
+
+    completed:true,
+
+    score:score,
+
+    usedHint:
+      usedHint,
+
+    usedAnswer:
+      usedAnswer
+
+  };
+
+
+  setProgress(
+    progress
+  );
+
+}
+
+
+/* =========================================================
+   모달
+========================================================= */
+
+function openModal(
+  title,
+  content
+){
+
+  document
+    .getElementById(
+      "modalTitle"
+    )
+    .textContent =
+      title;
+
+
+  document
+    .getElementById(
+      "modalContent"
+    )
+    .textContent =
+      content;
+
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+}
+
+
+function closeModal(){
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   힌트
+========================================================= */
+
+function showHint(){
+
+  if(locked){
+
+    return;
+
+  }
+
+
+  usedHint =
+    true;
+
+
+  document
+    .getElementById(
+      "answerBtn"
+    )
+    .disabled =
+      false;
+
+
+  openModal(
+    "힌트",
+    missionConfig.hintText
+  );
+
+}
+
+
+/* =========================================================
+   정답보기
+========================================================= */
+
+function showAnswer(){
+
+  if(locked){
+
+    return;
+
+  }
+
+
+  if(!usedHint){
+
+    return;
+
+  }
+
+
+  usedAnswer =
+    true;
+
+
+  openModal(
+    "정답",
+    missionConfig.answerText
+  );
+
+}
+
+
+/* =========================================================
+   기억보상
+========================================================= */
+
+function showReward(){
+
+  openModal(
+
+    "기억보상",
+
+    `현재까지 모은 기억보상은 ${getTotalScore()}입니다.`
+
+  );
+
+}
+
+
+/* =========================================================
+   말박스 이미지 파일명
+========================================================= */
+
+function getTalkImage(){
+
+  const mission =
+    missionConfig.missionNumber;
+
+
+  /*
+    문제 전
+
+    bduq101.png
+    bduq102.png
+    bduq103.png
+  */
+
+  if(
+    talkMode ===
+    "intro"
+  ){
+
+    return `bduq${mission}0${currentTalk}.png`;
+
+  }
+
+
+  /*
+    문제 정답 후
+
+    bduq1011.png
+    bduq1022.png
+  */
+
+  return `bduq${mission}0${currentTalk}${currentTalk}.png`;
+
+}
+
+
+/* =========================================================
+   대화 표시
+========================================================= */
+
+function showTalk(){
+
+  talkImage.src =
+    getTalkImage();
+
+
+  talkImageWrap
+    .classList
+    .add(
+      "show"
+    );
+
+
+  talkControls
+    .classList
+    .add(
+      "show"
+    );
+
+
+  updateTalkControls();
+
+}
+
+
+/* =========================================================
+   대화 버튼 상태
+========================================================= */
+
+function updateTalkControls(){
+
+  const total =
+
+    talkMode ===
+    "intro"
+
+      ?
+
+    missionConfig
+      .introTalkCount
+
+      :
+
+    missionConfig
+      .successTalkCount;
+
+
+  /* 첫 장에서는 왼쪽 없음 */
+
+  if(
+    currentTalk === 1
+  ){
+
+    prevTalkBtn
+      .classList
+      .add(
+        "hidden"
+      );
+
+  }
+  else{
+
+    prevTalkBtn
+      .classList
+      .remove(
+        "hidden"
+      );
+
+  }
+
+
+  /* 우측 버튼 초기화 */
+
+  nextTalkBtn
+    .style
+    .display =
+      "none";
+
+
+  missionStartBtn
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  treeBtn
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  /* 마지막 장 전 */
+
+  if(
+    currentTalk
+    <
+    total
+  ){
+
+    nextTalkBtn
+      .style
+      .display =
+        "block";
+
+    return;
+
+  }
+
+
+  /* 문제 전 마지막 */
+
+  if(
+    talkMode ===
+    "intro"
+  ){
+
+    missionStartBtn
+      .classList
+      .add(
+        "show"
+      );
+
+  }
+
+
+  /* 문제 정답 후 마지막 */
+
+  else{
+
+    treeBtn
+      .classList
+      .add(
+        "show"
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   다음 대화
+========================================================= */
+
+function nextTalk(){
+
+  const total =
+
+    talkMode ===
+    "intro"
+
+      ?
+
+    missionConfig
+      .introTalkCount
+
+      :
+
+    missionConfig
+      .successTalkCount;
+
+
+  if(
+    currentTalk
+    <
+    total
+  ){
+
+    currentTalk++;
+
+    showTalk();
+
+  }
+
+}
+
+
+/* =========================================================
+   이전 대화
+========================================================= */
+
+function prevTalk(){
+
+  if(
+    currentTalk > 1
+  ){
+
+    currentTalk--;
+
+    showTalk();
+
+  }
+
+}
+
+
+/* =========================================================
+   미션 시작
+========================================================= */
+
+function startMission(){
+
+  talkImageWrap
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  talkControls
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  /*
+    문제 배경으로 변경
+
+    1번:
+    bduq12.png
+
+    2번:
+    bduq22.png
+  */
+
+  document
+    .body
+    .style
+    .backgroundImage =
+
+      `url("bduq${missionConfig.missionNumber}2.png")`;
+
+
+  uiWrap
+    .classList
+    .add(
+      "show"
+    );
+
+
+  setTimeout(
+    function(){
+
+      document
+        .getElementById(
+          "answerInput"
+        )
+        .focus();
+
+    },
+    300
+  );
+
+}
+
+
+/* =========================================================
+   정답 확인
+========================================================= */
+
+function checkAnswer(){
+
+  if(locked){
+
+    return;
+
+  }
+
+
+  const input =
+
+    document
+      .getElementById(
+        "answerInput"
+      )
+      .value;
+
+
+  /* 입력 안 함 */
+
+  if(
+    !input.trim()
+  ){
+
+    openModal(
+      "안내",
+      "정답을 입력해주세요."
+    );
+
+    return;
+
+  }
+
+
+  /* 정답 */
+
+  if(
+
+    normalize(input)
+
+    ===
+
+    normalize(
+      missionConfig
+        .correctAnswer
+    )
+
+  ){
+
+    locked =
+      true;
+
+
+    pendingScore =
+      currentScore();
+
+
+    saveResult(
+      pendingScore
+    );
+
+
+    closeModal();
+
+
+    uiWrap
+      .classList
+      .remove(
+        "show"
+      );
+
+
+    /*
+      토끼가 있는
+      첫 번째 배경으로 복귀
+    */
+
+    document
+      .body
+      .style
+      .backgroundImage =
+
+        `url("bduq${missionConfig.missionNumber}1.png")`;
+
+
+    talkMode =
+      "success";
+
+
+    currentTalk =
+      1;
+
+
+    /*
+      1초 후
+      정답 후 대화
+    */
+
+    setTimeout(
+      function(){
+
+        showTalk();
+
+      },
+      1000
+    );
+
+  }
+
+
+  /* 오답 */
+
+  else{
+
+    uiWrap
+      .classList
+      .remove(
+        "shake"
+      );
+
+
+    void
+      uiWrap.offsetWidth;
+
+
+    uiWrap
+      .classList
+      .add(
+        "shake"
+      );
+
+
+    openModal(
+      "오답",
+      "정답이 아닙니다."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   나무로
+========================================================= */
+
+function finishMission(){
+
+  talkImageWrap
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  talkControls
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  /*
+    정답보기까지 사용
+    → 영상 없이 메인
+  */
+
+  if(
+    pendingScore === 0
+  ){
+
+    goMain();
+
+    return;
+
+  }
+
+
+  playResultVideo(
+    pendingScore
+  );
+
+}
+
+
+/* =========================================================
+   결과 영상 선택
+========================================================= */
+
+function getVideoSrc(
+  score
+){
+
+  /*
+    힌트 없이 정답
+  */
+
+  if(
+    score === 20
+  ){
+
+    return "bduq1.mp4";
+
+  }
+
+
+  /*
+    힌트 사용
+  */
+
+  if(
+    score === 10
+  ){
+
+    return "bduq2.mp4";
+
+  }
+
+
+  return "";
+
+}
+
+
+/* =========================================================
+   결과 영상 재생
+========================================================= */
+
+function playResultVideo(
+  score
+){
+
+  const videoModal =
+
+    document
+      .getElementById(
+        "videoModal"
+      );
+
+
+  const video =
+
+    document
+      .getElementById(
+        "resultVideo"
+      );
+
+
+  const src =
+    getVideoSrc(
+      score
+    );
+
+
+  if(
+    !src
+  ){
+
+    goMain();
+
+    return;
+
+  }
+
+
+  videoModal
+    .classList
+    .add(
+      "show"
+    );
+
+
+  video.src =
+    src;
+
+
+  video.load();
+
+
+  /*
+    영상 종료 후
+    메인으로
+  */
+
+  video.onended =
+    function(){
+
+      goMain();
+
+    };
+
+
+  /*
+    영상 오류
+  */
+
+  video.onerror =
+    function(){
+
+      setTimeout(
+        goMain,
+        1000
+      );
+
+    };
+
+
+  const playPromise =
+    video.play();
+
+
+  if(
+    playPromise !==
+    undefined
+  ){
+
+    playPromise
+      .catch(
+        function(){
+
+          setTimeout(
+            goMain,
+            1000
+          );
+
+        }
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   메인페이지 이동
+========================================================= */
+
+function goMain(){
+
+  location.href =
+    "https://baekko.github.io/cnedu/bdum.html";
+
+}
+
+
+/* =========================================================
+   Enter 입력
+========================================================= */
+
+document
+  .getElementById(
+    "answerInput"
+  )
+  .addEventListener(
+
+    "keydown",
+
+    function(e){
+
+      if(
+        e.key ===
+        "Enter"
+      ){
+
+        checkAnswer();
+
+      }
+
+    }
+
+  );
+
+
+/* =========================================================
+   최초 배경
+========================================================= */
+
+document
+  .body
+  .style
+  .backgroundImage =
+
+    `url("bduq${missionConfig.missionNumber}1.png")`;
+
+
+/* =========================================================
+   2초 후 첫 말박스
+========================================================= */
+
+setTimeout(
+
+  function(){
+
+    talkMode =
+      "intro";
+
+    currentTalk =
+      1;
+
+    showTalk();
+
+  },
+
+  2000
+
+);
+
+</script>
+
+</body>
+</html>
