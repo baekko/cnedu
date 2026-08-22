@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PLAY THE BOOK</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+:root {
+  --btn-w: clamp(140px, 30vw, 305px);
+  --btn-h: clamp(200px, 50vw, 350px);
+  --btn-gap: clamp(26px, 4vw, 70px);
+  --btn-bottom: clamp(140px, 25vh, 275px);
+}
+
+body {
+  position: relative;
+}
+
+/* 배경 동영상 */
+.bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.button-area {
+  position: absolute;
+  left: 50%;
+  bottom: var(--btn-bottom);
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--btn-gap);
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.button-area.hide {
+  display: none;
+}
+
+.choice-btn {
+  width: var(--btn-w);
+  height: var(--btn-h);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  transition: transform 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.choice-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 12px 16px rgba(0,0,0,0.55))
+    drop-shadow(0 4px 5px rgba(0,0,0,0.4));
+  transition: filter 0.18s ease, transform 0.18s ease;
+}
+
+.choice-btn:hover {
+  transform: translateY(-5px) scale(1.03);
+}
+
+.choice-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.choice-btn.selected img {
+  filter:
+    brightness(1.15)
+    saturate(1.12)
+    drop-shadow(0 0 2px rgba(255,255,210,1))
+    drop-shadow(0 0 6px rgba(255,235,130,1))
+    drop-shadow(0 0 14px rgba(255,205,60,0.95))
+    drop-shadow(0 0 26px rgba(255,160,35,0.75))
+    drop-shadow(0 12px 16px rgba(0,0,0,0.55));
+}
+
+.choice-btn.selected {
+  animation: buttonFlash 0.42s ease;
+}
+
+@keyframes buttonFlash {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.045); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --btn-w: 120px;
+    --btn-h: 200px;
+    --btn-gap: 10px;
+    --btn-bottom: 160px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<video id="bgVideo" class="bg-video" muted playsinline preload="auto">
+  <source src="ptbs.mp4" type="video/mp4">
+</video>
+
+<div class="button-area" id="buttonArea">
+  <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/bdut.html')" aria-label="게임용">
+    <img src="bdusg.png" alt="게임용">
+  </button>
+
+  <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/bduc.html')" aria-label="수업용">
+    <img src="bdust.png" alt="수업용">
+  </button>
+</div>
+
+<script>
+let isMoving = false;
+let targetUrl = "";
+let moveTimer = null;
+
+const bgVideo = document.getElementById("bgVideo");
+const buttonArea = document.getElementById("buttonArea");
+
+function resetPage() {
+  isMoving = false;
+  targetUrl = "";
+
+  clearTimeout(moveTimer);
+
+  buttonArea.classList.remove("hide");
+
+  document.querySelectorAll(".choice-btn").forEach(function(btn) {
+    btn.classList.remove("selected");
+  });
+
+  bgVideo.pause();
+  bgVideo.currentTime = 0;
+}
+
+function goPage(button, url) {
+  if (isMoving) return;
+
+  isMoving = true;
+  targetUrl = url;
+
+  button.classList.add("selected");
+
+  setTimeout(function () {
+    buttonArea.classList.add("hide");
+
+    bgVideo.currentTime = 0;
+
+    bgVideo.play().catch(function () {
+      moveTimer = setTimeout(function () {
+        location.href = targetUrl;
+      }, 3000);
+    });
+  }, 1000);
+}
+
+bgVideo.addEventListener("ended", function () {
+  moveTimer = setTimeout(function () {
+    location.href = targetUrl;
+  }, 1000);
+});
+
+window.addEventListener("pageshow", resetPage);
+window.addEventListener("load", resetPage);
+</script>
+
+</body>
+</html>
