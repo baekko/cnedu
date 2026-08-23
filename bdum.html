@@ -75,70 +75,36 @@ body{
 
 body{
   position:relative;
-
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+  overflow:hidden;
   background:#1788EB;
-}
-
-body::before{
-  content:"";
-
-  position:fixed;
-
-  left:0;
-  right:0;
-  top:0;
-
-  height:50%;
-
-  background:#1788EB;
-
-  z-index:-2;
-}
-
-body::after{
-  content:"";
-
-  position:fixed;
-
-  left:0;
-  right:0;
-  bottom:0;
-
-  height:50%;
-
-  background:#8BAD36;
-
-  z-index:-2;
 }
 
 
 /* =========================================================
    나무 프레임
+
+   새 bdum.png는 주변 하늘/땅을 넓힌 이미지 사용.
+   화면 비율에 따라 주변부가 더 보이거나 덜 보이게 하고
+   나무와 책 버튼은 같은 좌표계 안에서 함께 움직임.
 ========================================================= */
 
 .scene{
-  position:relative;
+  position:fixed;
+  left:50%;
+  top:50%;
 
-  width:min(
-    100vw,
-    calc(100dvh * 939 / 1500)
-  );
+  /*
+    새 이미지 비율 1024 × 1455 기준.
+    화면 전체를 빈틈없이 덮되 이미지 비율은 유지.
+  */
+  width:max(100vw, calc(100dvh * 1024 / 1455));
+  height:max(100dvh, calc(100vw * 1455 / 1024));
 
-  height:min(
-    100dvh,
-    calc(100vw * 1500 / 939)
-  );
-
-  aspect-ratio:939 / 1500;
-
-  flex:none;
-
+  transform:translate(-50%,-50%);
   overflow:hidden;
-
   z-index:1;
 }
 
@@ -149,14 +115,12 @@ body::after{
 
 .tree-bg{
   position:absolute;
-
   inset:0;
 
   width:100%;
   height:100%;
 
   display:block;
-
   object-fit:fill;
 
   pointer-events:none;
@@ -175,7 +139,7 @@ body::after{
 .book-btn{
   position:absolute;
 
-  width:15.2%;
+  width:12.8%;
 
   border:none;
   margin:0;
@@ -262,27 +226,27 @@ body::after{
 
 .book1{
   left:55%;
-  top:12.5%;
+  top:20%;
 }
 
 .book2{
-  left:23.8%;
-  top:27.5%;
+  left:27%;
+  top:32%;
 }
 
 .book3{
   left:55%;
-  top:34%;
+  top:38%;
 }
 
 .book4{
-  left:22.8%;
-  top:58.3%;
+  left:27%;
+  top:54%;
 }
 
 .book5{
-  left:78.2%;
-  top:54.1%;
+  left:76%;
+  top:51%;
 }
 
 
