@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>RABBIT HOLE END</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   기본
+========================================================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+  overflow:hidden;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  background:#000;
+}
+
+
+/* =========================================================
+   공통 변수
+
+   bduin과 같은 래빗홀 스타일
+========================================================= */
+
+:root{
+
+  --green:#4f7d32;
+  --green-light:#79a94d;
+  --green-dark:#29451b;
+
+  --paper:#f4ecd1;
+  --paper-border:#7f4b3a;
+  --paper-text:#8c4a2e;
+
+  --talk-width:min(88vw,600px);
+
+  --control-bottom:31vh;
+
+  --arrow-w:82px;
+  --arrow-h:68px;
+
+  /*
+    화살표 아래에서
+    말박스가 시작되는 간격
+  */
+  --talk-gap:34px;
+
+  /*
+    마지막 다음 버튼 위치
+  */
+  --next-bottom:5vh;
+
+}
+
+
+/* =========================================================
+   배경
+
+   처음에는 bduend1.png
+========================================================= */
+
+body{
+  position:relative;
+
+  background:
+    url("bduend1.png")
+    no-repeat
+    center center / cover;
+}
+
+
+/* =========================================================
+   화살표 영역
+
+   ★ 위치 고정
+   ★ 말박스 줄 수와 관계없이 움직이지 않음
+========================================================= */
+
+.talk-controls{
+
+  position:fixed;
+
+  left:50%;
+  bottom:var(--control-bottom);
+
+  transform:
+    translateX(-50%);
+
+  width:var(--talk-width);
+  height:var(--arrow-h);
+
+  display:none;
+
+  align-items:center;
+  justify-content:space-between;
+
+  z-index:40;
+}
+
+
+.talk-controls.show{
+
+  display:flex;
+
+  animation:
+    fadeSimple .35s ease;
+}
+
+
+/* =========================================================
+   말박스 영역
+
+   ★ 화살표를 기준으로 상단 고정
+   ★ 글이 길어지면 아래로만 커짐
+========================================================= */
+
+.talk-box-wrap{
+
+  position:fixed;
+
+  left:50%;
+
+  top:
+    calc(
+      100dvh
+      - var(--control-bottom)
+      + var(--talk-gap)
+    );
+
+  transform:
+    translateX(-50%);
+
+  width:var(--talk-width);
+
+  display:none;
+
+  z-index:30;
+}
+
+
+.talk-box-wrap.show{
+
+  display:block;
+
+  animation:
+    fadeSimple .35s ease;
+}
+
+
+/* =========================================================
+   말박스
+========================================================= */
+
+.talk-box{
+
+  width:100%;
+
+  padding:
+    22px 25px;
+
+  border:
+    3px solid
+    var(--paper-border);
+
+  background:
+    var(--paper);
+
+  color:
+    var(--paper-text);
+
+  font-size:23px;
+
+  font-weight:700;
+
+  line-height:1.55;
+
+  word-break:keep-all;
+
+  white-space:pre-line;
+
+  box-shadow:
+    0 7px 14px
+    rgba(0,0,0,.22);
+}
+
+
+/* =========================================================
+   화살표 버튼
+========================================================= */
+
+.arrow-btn{
+
+  width:var(--arrow-w);
+  height:var(--arrow-h);
+
+  flex:
+    0 0 var(--arrow-w);
+
+  border:none;
+
+  background:transparent;
+
+  padding:0;
+
+  cursor:pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  touch-action:
+    manipulation;
+
+  transition:
+    transform .15s ease;
+}
+
+
+.arrow-btn:hover{
+
+  transform:
+    translateY(-2px)
+    scale(1.03);
+}
+
+
+.arrow-btn:active{
+
+  transform:
+    translateY(2px)
+    scale(.94);
+}
+
+
+.arrow-btn svg{
+
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  filter:
+    drop-shadow(
+      0 7px 8px
+      rgba(0,0,0,.40)
+    )
+    drop-shadow(
+      0 2px 2px
+      rgba(0,0,0,.30)
+    );
+}
+
+
+.arrow-shape{
+
+  fill:
+    var(--green);
+
+  stroke:
+    var(--green-dark);
+
+  stroke-width:3;
+}
+
+
+.arrow-highlight{
+
+  fill:
+    rgba(255,255,255,.25);
+}
+
+
+.arrow-btn.hidden{
+
+  visibility:hidden;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   마지막 다음 버튼
+
+   bdum의 모험시작 버튼과 같은 스타일
+========================================================= */
+
+.next-page-btn{
+
+  position:fixed;
+
+  left:50%;
+
+  bottom:
+    var(--next-bottom);
+
+  transform:
+    translateX(-50%);
+
+  z-index:60;
+
+  display:none;
+
+  height:58px;
+
+  min-width:130px;
+
+  padding:
+    0 28px;
+
+  border:
+    3px solid
+    var(--green-dark);
+
+  border-radius:15px;
+
+  background:
+    var(--green);
+
+  color:#fffdf1;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:20px;
+
+  font-weight:900;
+
+  line-height:1;
+
+  white-space:nowrap;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 5px 8px
+    rgba(0,0,0,.30),
+
+    inset 0 2px 2px
+    rgba(255,255,255,.25);
+
+  text-shadow:
+    0 1px 2px
+    rgba(0,0,0,.25);
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  transition:
+    transform .15s ease;
+}
+
+
+.next-page-btn.show{
+
+  display:block;
+
+  animation:
+    fadeSimple .35s ease;
+}
+
+
+.next-page-btn:hover{
+
+  transform:
+    translateX(-50%)
+    translateY(-2px)
+    scale(1.03);
+}
+
+
+.next-page-btn:active{
+
+  transform:
+    translateX(-50%)
+    translateY(2px)
+    scale(.96);
+}
+
+
+/* =========================================================
+   애니메이션
+========================================================= */
+
+@keyframes fadeSimple{
+
+  from{
+    opacity:0;
+  }
+
+  to{
+    opacity:1;
+  }
+
+}
+
+
+/* =========================================================
+   휴대폰
+========================================================= */
+
+@media(max-width:600px){
+
+  :root{
+
+    --talk-width:
+      min(92vw,360px);
+
+    --control-bottom:28vh;
+
+    --arrow-w:58px;
+    --arrow-h:48px;
+
+    --talk-gap:24px;
+
+    --next-bottom:
+      calc(
+        3vh
+        +
+        env(safe-area-inset-bottom)
+      );
+
+  }
+
+
+  .talk-box{
+
+    padding:
+      15px 17px;
+
+    border-width:2px;
+
+    font-size:16px;
+
+    line-height:1.5;
+
+    box-shadow:
+      0 5px 10px
+      rgba(0,0,0,.22);
+  }
+
+
+  .next-page-btn{
+
+    height:46px;
+
+    min-width:100px;
+
+    padding:
+      0 18px;
+
+    border-width:3px;
+
+    border-radius:13px;
+
+    font-size:15px;
+  }
+
+}
+
+
+/* =========================================================
+   작은 휴대폰
+========================================================= */
+
+@media(max-width:390px){
+
+  :root{
+
+    --talk-width:92vw;
+
+    --control-bottom:27vh;
+
+    --arrow-w:54px;
+    --arrow-h:45px;
+
+    --talk-gap:22px;
+
+  }
+
+
+  .talk-box{
+
+    padding:
+      13px 15px;
+
+    font-size:15px;
+
+    line-height:1.45;
+  }
+
+
+  .next-page-btn{
+
+    height:44px;
+
+    min-width:94px;
+
+    padding:
+      0 15px;
+
+    font-size:14px;
+  }
+
+}
+
+
+/* =========================================================
+   화면 높이가 낮은 기기
+========================================================= */
+
+@media(max-height:700px){
+
+  .talk-box{
+
+    padding:
+      11px 14px;
+
+    font-size:14px;
+
+    line-height:1.4;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     화살표
+===================================================== -->
+
+<div
+  id="talkControls"
+  class="talk-controls"
+>
+
+
+  <!-- 왼쪽 -->
+
+  <button
+    id="prevTalkBtn"
+    class="arrow-btn hidden"
+    type="button"
+    onclick="prevTalk()"
+    aria-label="이전"
+  >
+
+    <svg
+      viewBox="0 0 120 96"
+      aria-hidden="true"
+    >
+
+      <path
+        class="arrow-shape"
+        d="
+        M84 10
+        Q92 15 92 26
+        L92 70
+        Q92 81 84 86
+        Q76 91 67 84
+        L22 54
+        Q13 48 22 42
+        L67 12
+        Q76 5 84 10 Z
+        "
+      />
+
+      <path
+        class="arrow-highlight"
+        d="
+        M78 18
+        Q84 21 84 28
+        L84 36
+        L39 48
+        L78 22 Z
+        "
+      />
+
+    </svg>
+
+  </button>
+
+
+  <!-- 오른쪽 -->
+
+  <button
+    id="nextTalkBtn"
+    class="arrow-btn"
+    type="button"
+    onclick="nextTalk()"
+    aria-label="다음"
+  >
+
+    <svg
+      viewBox="0 0 120 96"
+      aria-hidden="true"
+    >
+
+      <path
+        class="arrow-shape"
+        d="
+        M36 10
+        Q28 15 28 26
+        L28 70
+        Q28 81 36 86
+        Q44 91 53 84
+        L98 54
+        Q107 48 98 42
+        L53 12
+        Q44 5 36 10 Z
+        "
+      />
+
+      <path
+        class="arrow-highlight"
+        d="
+        M42 18
+        Q36 21 36 28
+        L36 36
+        L81 48
+        L42 22 Z
+        "
+      />
+
+    </svg>
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     말박스
+===================================================== -->
+
+<div
+  id="talkBoxWrap"
+  class="talk-box-wrap"
+>
+
+  <div
+    id="talkBox"
+    class="talk-box"
+  ></div>
+
+</div>
+
+
+<!-- =====================================================
+     마지막 다음 버튼
+===================================================== -->
+
+<button
+  id="nextPageBtn"
+  class="next-page-btn"
+  type="button"
+  onclick="goNextPage()"
+>
+  다음
+</button>
+
+
+<script>
+
+/* =========================================================
+   전체 대사
+
+   0~1   : bduend1.png
+   2~5   : bduend2.png
+   6~10  : bduend3.png
+   11    : bduend2.png
+========================================================= */
+
+const talks = [
+
+  /* =====================================================
+     1~2
+     bduend1.png
+  ===================================================== */
+
+  `얼마나 지났을까.
+한참 잠을 자고난 후 눈을 떴어.
+그런데 눈앞에 있던 것은
+커다란 책열매나무도, 토끼도 아니었어.`,
+
+  `분명 조금 전까지 래빗홀 속 책열매나무 아래에
+있었는데 어느새 교실로 돌아와 있었어.
+친구는?
+급하게 교실 안을 둘러보았지만 그 어디에도 없었어.`,
+
+
+  /* =====================================================
+     3~6
+     bduend2.png
+  ===================================================== */
+
+  `‘설마…… 전부 꿈이었나?’
+곧장 거울 앞으로 달려갔어.
+“토끼야!”
+거울을 향해 소리쳤어.`,
+
+  `“친구 데려온다며!”
+하지만 거울은 조용했어.
+손으로 만져 보아도 평범한 거울일 뿐이었지.`,
+
+  `그날 이후 매일 거울을 찾아갔어.
+아침에도 들여다보고, 수업이 끝난 뒤에도 보고.
+하지만 거울 속에는 언제나
+우리의 모습만 덩그러니 비칠 뿐이었지.`,
+
+  `처음에는 화가 났지만
+시간이 지날수록 걱정이 되기 시작했어.
+‘친구에게 무슨 일이 생긴 건 아닐까?
+다시 래빗홀로 들어가야 하나?`,
+
+
+  /* =====================================================
+     7~11
+     bduend3.png
+  ===================================================== */
+
+  `그러던 어느 날이었어.
+그날도 아무 일 없을 거라 생각하며
+거울 앞에서 돌아서려던 순간,
+거울 표면에 작은 물결이 번지더니
+보라토끼가 다시 나타난거야!`,
+
+  `우리는 반가워할 틈도 없이 거울 앞으로 달려갔어.
+“친구를 데려온다며!”
+우리보고 기다리라고 해 놓고
+왜 교실로 돌려보낸 거야?
+“내 친구는 어디 있어?”`,
+
+  `“미안해.
+사실 나도 친구를 데리고 돌아가려고 했어.”
+토끼가 뜻밖의 말을 꺼냈어.
+“네 친구가…… 아직 돌아가기 싫대.”`,
+
+  `“뭐라고?
+친구를 구하겠다고 그 문제들을 다 풀었는데!”
+우리들은 어이없는 표정으로 서로를 바라봤어.`,
+
+  `“네 친구가 너희한테 꼭 이 말을 전해 달라고 했어.”
+“걱정하지 마, 난 잘 지내고 있어.
+래빗홀에는 아직 만나고 싶은 이야기가 너무 많아.
+조금만 더 이곳을 여행하고 돌아갈게.
+그때까지 조금만 기다려 줘!” 라고 말이야.`,
+
+
+  /* =====================================================
+     12
+     다시 bduend2.png
+  ===================================================== */
+
+  `토끼는 씩 웃어 보이더니 거울 속으로 사라졌어.
+우리는 한동안 말없이 거울을 바라보았지.
+친구가 돌아오면 어떤 이야기를 들려줄까 생각하면서.`
+
+];
+
+
+/* =========================================================
+   현재 말박스 번호
+========================================================= */
+
+let currentTalk = 0;
+
+
+/* =========================================================
+   요소
+========================================================= */
+
+const talkControls =
+  document.getElementById(
+    "talkControls"
+  );
+
+
+const talkBoxWrap =
+  document.getElementById(
+    "talkBoxWrap"
+  );
+
+
+const talkBox =
+  document.getElementById(
+    "talkBox"
+  );
+
+
+const prevTalkBtn =
+  document.getElementById(
+    "prevTalkBtn"
+  );
+
+
+const nextTalkBtn =
+  document.getElementById(
+    "nextTalkBtn"
+  );
+
+
+const nextPageBtn =
+  document.getElementById(
+    "nextPageBtn"
+  );
+
+
+/* =========================================================
+   현재 대사에 맞는 배경 이미지 결정
+========================================================= */
+
+function getBackgroundForTalk(
+  index
+){
+
+  /*
+    1~2번째
+  */
+
+  if(
+    index <= 1
+  ){
+
+    return "bduend1.png";
+
+  }
+
+
+  /*
+    3~6번째
+  */
+
+  if(
+    index >= 2
+    &&
+    index <= 5
+  ){
+
+    return "bduend2.png";
+
+  }
+
+
+  /*
+    7~11번째
+  */
+
+  if(
+    index >= 6
+    &&
+    index <= 10
+  ){
+
+    return "bduend3.png";
+
+  }
+
+
+  /*
+    마지막 12번째
+  */
+
+  return "bduend2.png";
+
+}
+
+
+/* =========================================================
+   배경 변경
+========================================================= */
+
+function updateBackground(){
+
+  const image =
+    getBackgroundForTalk(
+      currentTalk
+    );
+
+
+  document
+    .body
+    .style
+    .backgroundImage =
+      `url("${image}")`;
+
+}
+
+
+/* =========================================================
+   대사 표시
+========================================================= */
+
+function updateTalk(){
+
+  /*
+    배경부터 변경
+  */
+
+  updateBackground();
+
+
+  /*
+    말 내용
+  */
+
+  talkBox.textContent =
+    talks[
+      currentTalk
+    ];
+
+
+  /*
+    첫 번째 대사
+    → 왼쪽 화살표 숨김
+  */
+
+  if(
+    currentTalk === 0
+  ){
+
+    prevTalkBtn
+      .classList
+      .add(
+        "hidden"
+      );
+
+  }
+
+  else{
+
+    prevTalkBtn
+      .classList
+      .remove(
+        "hidden"
+      );
+
+  }
+
+
+  /*
+    마지막 대사인지
+  */
+
+  const isLast =
+    currentTalk ===
+    talks.length - 1;
+
+
+  /* =====================================================
+     마지막 대사
+
+     오른쪽 화살표 제거
+     하단에 다음 버튼
+  ===================================================== */
+
+  if(
+    isLast
+  ){
+
+    nextTalkBtn.style.visibility =
+      "hidden";
+
+
+    nextTalkBtn.style.pointerEvents =
+      "none";
+
+
+    nextPageBtn
+      .classList
+      .add(
+        "show"
+      );
+
+  }
+
+
+  /* =====================================================
+     마지막이 아닐 때
+
+     오른쪽 화살표 표시
+     다음 버튼 제거
+  ===================================================== */
+
+  else{
+
+    nextTalkBtn.style.visibility =
+      "visible";
+
+
+    nextTalkBtn.style.pointerEvents =
+      "auto";
+
+
+    nextPageBtn
+      .classList
+      .remove(
+        "show"
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   다음 화살표
+========================================================= */
+
+function nextTalk(){
+
+  if(
+    currentTalk <
+    talks.length - 1
+  ){
+
+    currentTalk++;
+
+
+    updateTalk();
+
+  }
+
+}
+
+
+/* =========================================================
+   이전 화살표
+========================================================= */
+
+function prevTalk(){
+
+  if(
+    currentTalk > 0
+  ){
+
+    currentTalk--;
+
+
+    updateTalk();
+
+  }
+
+}
+
+
+/* =========================================================
+   마지막 다음
+
+   → bduout.html
+========================================================= */
+
+function goNextPage(){
+
+  location.href =
+    "bduout.html";
+
+}
+
+
+/* =========================================================
+   처음 실행
+
+   bduin처럼 로드 후 약간 있다가
+   말박스와 화살표 등장
+
+   배경 자체는 처음부터 bduend1.png
+========================================================= */
+
+function startPage(){
+
+  currentTalk =
+    0;
+
+
+  updateBackground();
+
+
+  /*
+    초기에는 UI 숨김
+  */
+
+  talkControls
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  talkBoxWrap
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  nextPageBtn
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  /*
+    1초 뒤 첫 대화 등장
+  */
+
+  setTimeout(
+    function(){
+
+      updateTalk();
+
+
+      talkControls
+        .classList
+        .add(
+          "show"
+        );
+
+
+      talkBoxWrap
+        .classList
+        .add(
+          "show"
+        );
+
+    },
+
+    1000
+  );
+
+}
+
+
+/* =========================================================
+   실행
+========================================================= */
+
+window.addEventListener(
+  "load",
+  startPage
+);
+
+</script>
+
+</body>
+</html>
