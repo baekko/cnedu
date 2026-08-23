@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>RABBIT HOLE OUTRO</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
+  rel="stylesheet"
+>
+
+<style>
+
+/* =========================================================
+   기본
+========================================================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+
+  overflow:hidden;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  background:#000;
+}
+
+
+/* =========================================================
+   래빗홀 공통 색상
+========================================================= */
+
+:root{
+
+  --green:#4f7d32;
+  --green-light:#79a94d;
+  --green-dark:#29451b;
+
+  --paper:#f4ecd1;
+  --paper-border:#7f4b3a;
+  --paper-text:#8c4a2e;
+
+}
+
+
+/* =========================================================
+   배경
+========================================================= */
+
+body{
+  position:relative;
+
+  background:
+    url("bduout.png")
+    no-repeat
+    center center / cover;
+}
+
+
+/* =========================================================
+   엔딩 말박스
+
+   ★ 화면 중앙
+========================================================= */
+
+.ending-message{
+  position:fixed;
+
+  left:50%;
+  top:50%;
+
+  transform:
+    translate(-50%,-50%);
+
+  width:
+    min(
+      86vw,
+      620px
+    );
+
+  padding:
+    24px 28px;
+
+  border:
+    3px solid
+    var(--paper-border);
+
+  background:
+    var(--paper);
+
+  color:
+    var(--paper-text);
+
+  font-size:
+    23px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1.6;
+
+  word-break:
+    keep-all;
+
+  white-space:
+    pre-line;
+
+  box-shadow:
+    0 8px 18px
+    rgba(0,0,0,.24);
+
+  z-index:20;
+
+  animation:
+    fadeSimple .4s ease;
+}
+
+
+/* =========================================================
+   RESET 버튼 영역
+
+   ★ 처음에는 숨김
+   ★ 2초 뒤 나타남
+========================================================= */
+
+.bottom-btn-area{
+  position:fixed;
+
+  left:50%;
+
+  bottom:
+    clamp(
+      42px,
+      6vh,
+      70px
+    );
+
+  transform:
+    translateX(-50%);
+
+  z-index:30;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+}
+
+
+.bottom-btn-area.show{
+  display:flex;
+
+  animation:
+    fadeSimple .35s ease;
+}
+
+
+/* =========================================================
+   RESET 버튼
+
+   ★ 래빗홀 버튼 스타일
+========================================================= */
+
+.reset-btn{
+
+  height:58px;
+
+  min-width:145px;
+
+  padding:
+    0 28px;
+
+  border:
+    3px solid
+    var(--green-dark);
+
+  border-radius:15px;
+
+  background:
+    var(--green);
+
+  color:#fffdf1;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:
+    20px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1;
+
+  white-space:
+    nowrap;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 5px 8px
+    rgba(0,0,0,.30),
+
+    inset 0 2px 2px
+    rgba(255,255,255,.25);
+
+  text-shadow:
+    0 1px 2px
+    rgba(0,0,0,.25);
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  touch-action:
+    manipulation;
+
+  transition:
+    transform .15s ease;
+}
+
+
+.reset-btn:hover{
+
+  transform:
+    translateY(-2px)
+    scale(1.03);
+}
+
+
+.reset-btn:active{
+
+  transform:
+    translateY(2px)
+    scale(.96);
+}
+
+
+/* =========================================================
+   리셋 모달
+
+   ★ 말박스보다 위
+========================================================= */
+
+.reset-modal{
+
+  position:fixed;
+
+  inset:0;
+
+  z-index:1000;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  padding:
+    20px;
+
+  background:
+    rgba(0,0,0,.58);
+}
+
+
+.reset-modal.show{
+
+  display:flex;
+}
+
+
+/* =========================================================
+   리셋창
+========================================================= */
+
+.reset-box{
+
+  width:
+    min(
+      88vw,
+      430px
+    );
+
+  padding:
+    30px 24px;
+
+  border:
+    3px solid
+    var(--paper-border);
+
+  border-radius:
+    18px;
+
+  background:
+    var(--paper);
+
+  text-align:
+    center;
+
+  box-shadow:
+    0 20px 46px
+    rgba(0,0,0,.42);
+}
+
+
+/* =========================================================
+   리셋 제목
+========================================================= */
+
+.reset-title{
+
+  color:
+    var(--paper-text);
+
+  font-size:
+    26px;
+
+  font-weight:
+    900;
+
+  margin-bottom:
+    12px;
+}
+
+
+/* =========================================================
+   설명
+========================================================= */
+
+.reset-desc{
+
+  color:
+    var(--paper-text);
+
+  font-size:
+    17px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1.5;
+
+  margin-bottom:
+    18px;
+}
+
+
+/* =========================================================
+   암호 입력창
+========================================================= */
+
+.reset-input{
+
+  width:
+    100%;
+
+  height:
+    52px;
+
+  margin-bottom:
+    18px;
+
+  padding:
+    0 14px;
+
+  border:
+    3px solid
+    var(--paper-border);
+
+  border-radius:
+    13px;
+
+  background:
+    #fff;
+
+  color:
+    var(--paper-text);
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:
+    22px;
+
+  font-weight:
+    900;
+
+  text-align:
+    center;
+
+  outline:
+    none;
+}
+
+
+.reset-input:focus{
+
+  border-color:
+    var(--green);
+}
+
+
+/* =========================================================
+   취소 / 확인
+========================================================= */
+
+.reset-actions{
+
+  display:flex;
+
+  gap:10px;
+}
+
+
+.reset-action-btn{
+
+  flex:1;
+
+  height:
+    48px;
+
+  border:
+    3px solid
+    var(--green-dark);
+
+  border-radius:
+    13px;
+
+  background:
+    var(--green);
+
+  color:
+    #fffdf1;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:
+    17px;
+
+  font-weight:
+    900;
+
+  cursor:
+    pointer;
+
+  box-shadow:
+    0 5px 8px
+    rgba(0,0,0,.25),
+
+    inset 0 2px 2px
+    rgba(255,255,255,.22);
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+.reset-action-btn.cancel{
+
+  background:
+    #78955f;
+
+  border-color:
+    #3f5c2d;
+}
+
+
+.reset-action-btn:active{
+
+  transform:
+    scale(.96);
+}
+
+
+/* =========================================================
+   리셋 결과 문구
+========================================================= */
+
+.reset-message{
+
+  min-height:
+    22px;
+
+  margin-top:
+    14px;
+
+  color:
+    #b3261e;
+
+  font-size:
+    15px;
+
+  font-weight:
+    800;
+}
+
+
+/* =========================================================
+   애니메이션
+========================================================= */
+
+@keyframes fadeSimple{
+
+  from{
+    opacity:0;
+  }
+
+  to{
+    opacity:1;
+  }
+
+}
+
+
+/* =========================================================
+   휴대폰
+========================================================= */
+
+@media(max-width:600px){
+
+  .ending-message{
+
+    width:
+      min(
+        90vw,
+        360px
+      );
+
+    padding:
+      17px 19px;
+
+    border-width:
+      2px;
+
+    font-size:
+      16px;
+
+    line-height:
+      1.55;
+  }
+
+
+  .bottom-btn-area{
+
+    bottom:
+      calc(
+        36px
+        +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+
+  .reset-btn{
+
+    height:
+      46px;
+
+    min-width:
+      110px;
+
+    padding:
+      0 18px;
+
+    border-width:
+      3px;
+
+    border-radius:
+      13px;
+
+    font-size:
+      15px;
+  }
+
+
+  .reset-box{
+
+    width:
+      88vw;
+
+    padding:
+      24px 18px;
+
+    border-width:
+      2px;
+  }
+
+
+  .reset-title{
+
+    font-size:
+      23px;
+  }
+
+
+  .reset-desc{
+
+    font-size:
+      15px;
+  }
+
+
+  .reset-input{
+
+    height:
+      48px;
+
+    border-width:
+      2px;
+
+    font-size:
+      20px;
+  }
+
+
+  .reset-action-btn{
+
+    height:
+      46px;
+
+    border-width:
+      2px;
+
+    font-size:
+      16px;
+  }
+
+}
+
+
+/* =========================================================
+   작은 휴대폰
+========================================================= */
+
+@media(max-width:390px){
+
+  .ending-message{
+
+    width:
+      91vw;
+
+    padding:
+      14px 16px;
+
+    font-size:
+      15px;
+
+    line-height:
+      1.5;
+  }
+
+
+  .bottom-btn-area{
+
+    bottom:
+      calc(
+        30px
+        +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+
+  .reset-btn{
+
+    height:
+      44px;
+
+    min-width:
+      105px;
+
+    padding:
+      0 15px;
+
+    font-size:
+      14px;
+  }
+
+
+  .reset-title{
+
+    font-size:
+      21px;
+  }
+
+
+  .reset-desc{
+
+    font-size:
+      14px;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     중앙 엔딩 말박스
+===================================================== -->
+
+<div
+  id="endingMessage"
+  class="ending-message"
+>래빗홀에서의 모험, 재미있었나요?
+책을 펼치는 순간, 우리도 주인공처럼
+새로운 세계로 떠날 수 있어요.
+오늘 만난 이야기처럼 여러분을 기다리는
+수많은 이야기가 도서관의 책 속에 숨어 있답니다.
+이제 여러분만의 새로운 래빗홀을 찾아 떠나보세요!
+</div>
+
+
+<!-- =====================================================
+     RESET 버튼
+
+     2초 후 표시
+===================================================== -->
+
+<div
+  id="bottomBtnArea"
+  class="bottom-btn-area"
+>
+
+  <button
+    class="reset-btn"
+    type="button"
+    onclick="openResetModal()"
+  >
+    RESET
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     관리자 초기화 모달
+===================================================== -->
+
+<div
+  id="resetModal"
+  class="reset-modal"
+>
+
+  <div
+    class="reset-box"
+  >
+
+
+    <div
+      class="reset-title"
+    >
+      관리자 초기화
+    </div>
+
+
+    <div
+      class="reset-desc"
+    >
+      리셋 암호를 입력하세요.
+    </div>
+
+
+    <input
+      id="resetInput"
+      class="reset-input"
+      type="password"
+      inputmode="numeric"
+      maxlength="8"
+      autocomplete="off"
+      placeholder="암호 입력"
+    >
+
+
+    <div
+      class="reset-actions"
+    >
+
+      <button
+        class="reset-action-btn cancel"
+        type="button"
+        onclick="closeResetModal()"
+      >
+        취소
+      </button>
+
+
+      <button
+        class="reset-action-btn"
+        type="button"
+        onclick="checkResetPassword()"
+      >
+        확인
+      </button>
+
+    </div>
+
+
+    <div
+      id="resetMessage"
+      class="reset-message"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   암호
+========================================================= */
+
+const RESET_PASSWORD =
+  "1216";
+
+
+/* =========================================================
+   2초 뒤 RESET 버튼 등장
+========================================================= */
+
+setTimeout(
+  function(){
+
+    document
+      .getElementById(
+        "bottomBtnArea"
+      )
+      .classList
+      .add(
+        "show"
+      );
+
+  },
+
+  2000
+);
+
+
+/* =========================================================
+   리셋 모달 열기
+========================================================= */
+
+function openResetModal(){
+
+  const modal =
+    document.getElementById(
+      "resetModal"
+    );
+
+
+  const input =
+    document.getElementById(
+      "resetInput"
+    );
+
+
+  const message =
+    document.getElementById(
+      "resetMessage"
+    );
+
+
+  message.style.color =
+    "#b3261e";
+
+
+  message.textContent =
+    "";
+
+
+  input.value =
+    "";
+
+
+  modal
+    .classList
+    .add(
+      "show"
+    );
+
+
+  setTimeout(
+    function(){
+
+      input.focus();
+
+    },
+
+    100
+  );
+
+}
+
+
+/* =========================================================
+   리셋 모달 닫기
+
+   ★ 말박스는 그대로 있으므로
+     취소하면 바로 다시 볼 수 있음
+========================================================= */
+
+function closeResetModal(){
+
+  document
+    .getElementById(
+      "resetModal"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   암호 검사
+========================================================= */
+
+function checkResetPassword(){
+
+  const input =
+    document
+      .getElementById(
+        "resetInput"
+      )
+      .value
+      .trim();
+
+
+  const message =
+    document.getElementById(
+      "resetMessage"
+    );
+
+
+  /* 암호 틀림 */
+
+  if(
+    input !==
+    RESET_PASSWORD
+  ){
+
+    message.style.color =
+      "#b3261e";
+
+
+    message.textContent =
+      "암호가 맞지 않습니다.";
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     래빗홀 진행상황 초기화
+  ===================================================== */
+
+  localStorage.removeItem(
+    "bdu_progress_v1"
+  );
+
+
+  /*
+    현재 bdum 환영인사 저장값
+  */
+
+  localStorage.removeItem(
+    "bdum_intro_done_v2"
+  );
+
+
+  /*
+    이전 테스트 버전까지 함께 삭제
+  */
+
+  localStorage.removeItem(
+    "bdum_intro_done"
+  );
+
+
+  sessionStorage.removeItem(
+    "bdum_intro_done"
+  );
+
+
+  sessionStorage.removeItem(
+    "bdum_intro_done_v2"
+  );
+
+
+  /*
+    과거 엔딩 영상 테스트값이
+    남아 있을 경우까지 삭제
+  */
+
+  sessionStorage.removeItem(
+    "bdum_end_video_started"
+  );
+
+
+  /* =====================================================
+     성공 메시지
+  ===================================================== */
+
+  message.style.color =
+    "#1f7a3a";
+
+
+  message.textContent =
+    "초기화되었습니다.";
+
+
+  /* =====================================================
+     bbd 이동
+  ===================================================== */
+
+  setTimeout(
+    function(){
+
+      location.href =
+        "https://baekko.github.io/cnedu/bbd.html";
+
+    },
+
+    800
+  );
+
+}
+
+
+/* =========================================================
+   ENTER → 확인
+========================================================= */
+
+document
+  .getElementById(
+    "resetInput"
+  )
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key ===
+        "Enter"
+      ){
+
+        checkResetPassword();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   모달 바깥 터치 → 닫기
+========================================================= */
+
+document
+  .getElementById(
+    "resetModal"
+  )
+  .addEventListener(
+    "click",
+    function(e){
+
+      if(
+        e.target.id ===
+        "resetModal"
+      ){
+
+        closeResetModal();
+
+      }
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
