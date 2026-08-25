@@ -3,373 +3,2054 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>PLAY THE BOOK MAIN</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{width:100%;height:100%;overflow:hidden;font-family:"Pretendard","Noto Sans KR",sans-serif;background:#000;}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+
+  font-family:
+    "Pretendard",
+    "Noto Sans KR",
+    sans-serif;
+
+  background:#000;
+}
+
+
+/* =========================================================
+   기본 변수
+========================================================= */
 
 :root{
-  --shelf-w: clamp(560px, 72vw, 780px);
-  --shelf-top: clamp(70px, 9vh, 105px);
+
+  --shelf-w:
+    clamp(560px,72vw,780px);
+
+  --shelf-top:
+    clamp(70px,9vh,105px);
+
   --wood:#7b4a2f;
   --wood-light:#8a5637;
   --wood-dark:#3f2418;
+
   --outer-border:10px;
   --inner-border:5px;
+
   --cell-gap:10px;
-  --cell-h: clamp(168px, 21vw, 218px);
-  --book-w: clamp(100px, 13vw, 135px);
-  --book-h: clamp(143px, 18.6vw, 193px);
-  --wide-w: clamp(160px, 21vw, 210px);
-  --wide-h: clamp(96px, 12.6vw, 126px);
+
+  --cell-h:
+    clamp(168px,21vw,218px);
+
+  --book-w:
+    clamp(100px,13vw,135px);
+
+  --book-h:
+    clamp(143px,18.6vw,193px);
+
+  --wide-w:
+    clamp(160px,21vw,210px);
+
+  --wide-h:
+    clamp(96px,12.6vw,126px);
+
+
+  /* FINAL 카드 */
+
+  --final-paper:#f4ecd1;
+  --final-border:#7f4b3a;
+  --final-blue:#235a9e;
+  --final-orange:#ff884d;
 }
 
-body{position:relative;background:url("ptbin.png") no-repeat center center / cover;}
 
-.page-wrap{width:100%;height:100%;display:flex;justify-content:center;align-items:flex-start;padding-top:var(--shelf-top);}
+/* =========================================================
+   배경
+========================================================= */
+
+body{
+  position:relative;
+
+  background:
+    url("ptbin.png")
+    no-repeat
+    center center / cover;
+}
+
+
+/* =========================================================
+   책장
+========================================================= */
+
+.page-wrap{
+  width:100%;
+  height:100%;
+
+  display:flex;
+
+  justify-content:center;
+  align-items:flex-start;
+
+  padding-top:
+    var(--shelf-top);
+}
+
 
 .bookshelf{
   position:relative;
-  width:var(--shelf-w);
+
+  width:
+    var(--shelf-w);
+
   padding:12px;
-  background:linear-gradient(90deg, rgba(255,255,255,.05), rgba(0,0,0,.08)),var(--wood);
-  border:var(--outer-border) solid var(--wood-light);
-  box-shadow:0 24px 44px rgba(0,0,0,.33), inset 0 0 0 3px rgba(68,30,15,.24);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.05),
+      rgba(0,0,0,.08)
+    ),
+    var(--wood);
+
+  border:
+    var(--outer-border)
+    solid
+    var(--wood-light);
+
+  box-shadow:
+    0 24px 44px rgba(0,0,0,.33),
+    inset 0 0 0 3px rgba(68,30,15,.24);
 }
+
 
 .bookshelf::before{
   content:"";
+
   position:absolute;
+
   left:-18px;
   right:-18px;
   top:-24px;
+
   height:24px;
-  background:linear-gradient(180deg,#8a5637,#6b3f29);
-  box-shadow:0 8px 14px rgba(0,0,0,.25);
+
+  background:
+    linear-gradient(
+      180deg,
+      #8a5637,
+      #6b3f29
+    );
+
+  box-shadow:
+    0 8px 14px
+    rgba(0,0,0,.25);
 }
+
 
 .bookshelf::after{
   content:"";
+
   position:absolute;
+
   left:50%;
   bottom:-38px;
-  transform:translateX(-50%);
+
+  transform:
+    translateX(-50%);
+
   width:112%;
   height:48px;
-  background:rgba(230,210,170,.58);
+
+  background:
+    rgba(230,210,170,.58);
+
   border-radius:50%;
+
   z-index:-1;
 }
 
+
 .shelf-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:repeat(3,var(--cell-h));
-  gap:var(--cell-gap);
+
+  grid-template-columns:
+    1fr 1fr;
+
+  grid-template-rows:
+    repeat(3,var(--cell-h));
+
+  gap:
+    var(--cell-gap);
 }
 
+
 .shelf-cell{
-  background:radial-gradient(circle at center, rgba(120,70,40,.45), rgba(50,25,15,.18) 55%, rgba(0,0,0,.18)),var(--wood-dark);
-  border:var(--inner-border) solid var(--wood-light);
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(120,70,40,.45),
+      rgba(50,25,15,.18) 55%,
+      rgba(0,0,0,.18)
+    ),
+    var(--wood-dark);
+
+  border:
+    var(--inner-border)
+    solid
+    var(--wood-light);
+
   display:flex;
+
   align-items:flex-end;
   justify-content:center;
+
   overflow:hidden;
-  box-shadow:inset 0 10px 16px rgba(0,0,0,.34), inset 0 -4px 7px rgba(255,180,100,.08);
+
+  box-shadow:
+    inset 0 10px 16px rgba(0,0,0,.34),
+    inset 0 -4px 7px rgba(255,180,100,.08);
 }
+
+
+/* =========================================================
+   책 버튼
+========================================================= */
 
 .mission-btn{
   border:none;
   background:transparent;
+
   cursor:pointer;
+
   position:relative;
+
   padding:0;
   margin:0;
+
   display:block;
-  transition:transform .18s ease, filter .18s ease, opacity .18s ease;
-  -webkit-tap-highlight-color:transparent;
+
+  transition:
+    transform .18s ease,
+    filter .18s ease,
+    opacity .18s ease;
+
+  -webkit-tap-highlight-color:
+    transparent;
 }
 
-.mission-btn.book{width:var(--book-w);height:var(--book-h);}
-.mission-btn.wide{width:var(--wide-w);height:var(--wide-h);margin-bottom:22px;}
+
+.mission-btn.book{
+  width:var(--book-w);
+  height:var(--book-h);
+}
+
+
+.mission-btn.wide{
+  width:var(--wide-w);
+  height:var(--wide-h);
+
+  margin-bottom:22px;
+}
+
 
 .mission-btn.book img{
   width:100%;
   height:100%;
+
   object-fit:contain;
+
   display:block;
-  filter:drop-shadow(0 12px 10px rgba(0,0,0,.48)) drop-shadow(4px 4px 5px rgba(0,0,0,.30)) drop-shadow(-2px -1px 2px rgba(255,255,255,.14));
+
+  filter:
+    drop-shadow(
+      0 12px 10px
+      rgba(0,0,0,.48)
+    )
+    drop-shadow(
+      4px 4px 5px
+      rgba(0,0,0,.30)
+    )
+    drop-shadow(
+      -2px -1px 2px
+      rgba(255,255,255,.14)
+    );
 }
+
 
 .mission-btn.wide img{
   width:100%;
   height:100%;
+
   object-fit:contain;
+
   display:block;
-  filter:drop-shadow(0 3px 3px rgba(0,0,0,.24));
+
+  filter:
+    drop-shadow(
+      0 3px 3px
+      rgba(0,0,0,.24)
+    );
 }
 
-.mission-btn:hover:not(:disabled){transform:translateY(-4px) scale(1.04);filter:brightness(1.08);}
-.mission-btn:active:not(:disabled){transform:translateY(1px) scale(.97);}
-.mission-btn:disabled{opacity:.38;filter:grayscale(100%);cursor:default;}
+
+.mission-btn:hover:not(:disabled){
+  transform:
+    translateY(-4px)
+    scale(1.04);
+
+  filter:
+    brightness(1.08);
+}
+
+
+.mission-btn:active:not(:disabled){
+  transform:
+    translateY(1px)
+    scale(.97);
+}
+
+
+.mission-btn:disabled{
+  opacity:.38;
+
+  filter:
+    grayscale(100%);
+
+  cursor:default;
+}
+
+
+/* =========================================================
+   안내 이미지 모달
+========================================================= */
 
 .info-modal{
   position:fixed;
+
   inset:0;
+
   z-index:1000;
+
   display:none;
+
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.55);
+
+  background:
+    rgba(0,0,0,.55);
 }
 
-.info-modal.show{display:flex;}
+
+.info-modal.show{
+  display:flex;
+}
+
 
 .info-box{
   position:relative;
-  width:min(82vw,560px);
+
+  width:
+    min(82vw,560px);
+
   max-height:82vh;
+
   background:#fff7e8;
+
   border-radius:22px;
+
   padding:18px;
-  box-shadow:0 20px 45px rgba(0,0,0,.42);
+
+  box-shadow:
+    0 20px 45px
+    rgba(0,0,0,.42);
 }
+
 
 .info-box img{
   width:100%;
+
   max-height:72vh;
+
   object-fit:contain;
+
   display:block;
+
   border-radius:16px;
 }
 
+
 .info-close{
   position:absolute;
+
   right:-12px;
   top:-12px;
+
   width:42px;
   height:42px;
+
   border:none;
+
   border-radius:50%;
+
   background:#5a321d;
+
   color:white;
+
   font-size:24px;
   font-weight:900;
+
   cursor:pointer;
-  box-shadow:0 6px 14px rgba(0,0,0,.35);
+
+  box-shadow:
+    0 6px 14px
+    rgba(0,0,0,.35);
 }
+
+
+/* =========================================================
+   다시보기
+========================================================= */
 
 .reopen-btn{
   position:fixed;
+
   left:50%;
-  bottom:clamp(42px,6vh,70px);
-  transform:translateX(-50%);
+
+  bottom:
+    clamp(42px,6vh,70px);
+
+  transform:
+    translateX(-50%);
+
   z-index:900;
+
   display:none;
+
   border:none;
+
   border-radius:999px;
-  padding:13px 32px;
-  background:rgba(80,46,24,.88);
+
+  padding:
+    13px 32px;
+
+  background:
+    rgba(80,46,24,.88);
+
   color:#fff8e8;
-  font-size:clamp(17px,2.4vw,24px);
+
+  font-size:
+    clamp(17px,2.4vw,24px);
+
   font-weight:800;
+
   cursor:pointer;
+
   white-space:nowrap;
+
   box-shadow:
     0 10px 24px rgba(0,0,0,.35),
     inset 0 2px 2px rgba(255,255,255,.25),
     inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
+
 .reopen-btn.show{
   display:block;
-  animation:fadeUp .35s ease;
 }
 
+
 .reopen-btn:active{
-  transform:translateX(-50%) scale(.96);
+  transform:
+    translateX(-50%)
+    scale(.96);
 }
+
+
+/* =========================================================
+   FINAL 미션 배경
+========================================================= */
+
+.final-modal{
+  position:fixed;
+
+  inset:0;
+
+  z-index:1200;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  background:
+    rgba(0,0,0,.58);
+}
+
+
+.final-modal.show{
+  display:flex;
+}
+
+
+/* =========================================================
+   FINAL 미션카드
+
+   ★ 애니메이션 없음
+   ★ 그냥 바로 표시
+   ★ 아래 여백 축소
+========================================================= */
+
+.final-card{
+  width:
+    min(86vw,560px);
+
+  padding:
+    28px 28px 18px;
+
+  border:
+    5px solid
+    var(--final-border);
+
+  border-radius:
+    32px;
+
+  background:
+    var(--final-paper);
+
+  text-align:center;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  box-shadow:
+    0 20px 45px
+    rgba(0,0,0,.38);
+}
+
+
+/* =========================================================
+   FINAL 키트
+========================================================= */
+
+.final-kit{
+  color:
+    var(--final-blue);
+
+  font-size:30px;
+  font-weight:900;
+
+  margin-bottom:30px;
+
+  line-height:1.3;
+}
+
+
+/* =========================================================
+   편지 코드 입력 표시
+========================================================= */
+
+.final-question{
+  width:100%;
+
+  min-height:66px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:
+    12px 18px;
+
+  margin-bottom:24px;
+
+  border:
+    4px solid
+    var(--final-orange);
+
+  border-radius:10px;
+
+  background:#fff;
+
+  color:#000;
+
+  font-size:25px;
+  font-weight:900;
+}
+
+
+/* =========================================================
+   정답 입력
+========================================================= */
+
+.final-answer-row{
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    86px;
+
+  gap:12px;
+
+  margin:0;
+}
+
+
+.final-answer-input{
+  width:100%;
+  height:58px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:
+    0 18px;
+
+  outline:none;
+
+  background:
+    rgba(255,255,255,.98);
+
+  color:#222;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:20px;
+  font-weight:700;
+
+  box-shadow:
+    0 8px 18px
+    rgba(0,0,0,.20);
+}
+
+
+.final-submit-btn{
+  height:58px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:0;
+
+  background:#5a321d;
+
+  color:#fff;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:18px;
+  font-weight:900;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+
+.final-submit-btn:active{
+  transform:
+    translateY(2px)
+    scale(.98);
+}
+
+
+/* =========================================================
+   정답 메시지
+
+   평소에는 공간을 차지하지 않음
+========================================================= */
+
+.final-message{
+  display:none;
+
+  margin-top:10px;
+
+  color:#b3261e;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:16px;
+  font-weight:900;
+}
+
+
+.final-message.show{
+  display:block;
+}
+
+
+/* =========================================================
+   오답 흔들림
+========================================================= */
+
+.final-shake{
+  animation:
+    finalShake .28s ease;
+}
+
+
+@keyframes finalShake{
+
+  0%{
+    transform:translateX(0);
+  }
+
+  25%{
+    transform:translateX(-7px);
+  }
+
+  50%{
+    transform:translateX(7px);
+  }
+
+  75%{
+    transform:translateX(-4px);
+  }
+
+  100%{
+    transform:translateX(0);
+  }
+
+}
+
+
+/* =========================================================
+   개발용 초기화
+========================================================= */
 
 .dev-reset-btn{
   position:fixed;
+
   right:16px;
   bottom:16px;
+
   z-index:999;
+
   border:none;
+
   border-radius:10px;
-  padding:10px 14px;
-  background:rgba(0,0,0,.65);
+
+  padding:
+    10px 14px;
+
+  background:
+    rgba(0,0,0,.65);
+
   color:white;
+
   font-size:14px;
   font-weight:700;
+
   cursor:pointer;
 }
 
+
+/* =========================================================
+   휴대폰
+========================================================= */
+
 @media(max-width:600px){
+
   :root{
+
     --shelf-w:88vw;
     --shelf-top:9vh;
+
     --outer-border:7px;
     --inner-border:4px;
+
     --cell-gap:7px;
+
     --cell-h:112px;
+
     --book-w:66px;
     --book-h:94px;
+
     --wide-w:100px;
     --wide-h:60px;
+
   }
 
-  .bookshelf{padding:8px;}
-  .bookshelf::before{left:-12px;right:-12px;top:-18px;height:18px;}
-  .bookshelf::after{bottom:-30px;height:38px;}
-  .mission-btn.wide{margin-bottom:12px;}
-  .info-box{width:88vw;padding:12px;}
-  .info-close{right:-8px;top:-8px;width:36px;height:36px;font-size:21px;}
-  .reopen-btn{
-  bottom:36px;
-  padding:10px 16px;
-  font-size:15px;
-  white-space:nowrap;
+
+  .bookshelf{
+    padding:8px;
   }
-  .dev-reset-btn{right:10px;bottom:10px;padding:8px 10px;font-size:12px;}
+
+
+  .bookshelf::before{
+    left:-12px;
+    right:-12px;
+    top:-18px;
+
+    height:18px;
+  }
+
+
+  .bookshelf::after{
+    bottom:-30px;
+
+    height:38px;
+  }
+
+
+  .mission-btn.wide{
+    margin-bottom:12px;
+  }
+
+
+  .info-box{
+    width:88vw;
+
+    padding:12px;
+  }
+
+
+  .info-close{
+    right:-8px;
+    top:-8px;
+
+    width:36px;
+    height:36px;
+
+    font-size:21px;
+  }
+
+
+  .reopen-btn{
+    bottom:36px;
+
+    padding:
+      10px 16px;
+
+    font-size:15px;
+  }
+
+
+  .dev-reset-btn{
+    right:10px;
+    bottom:10px;
+
+    padding:
+      8px 10px;
+
+    font-size:12px;
+  }
+
+
+  /* FINAL 카드 */
+
+  .final-card{
+    width:
+      min(90vw,380px);
+
+    padding:
+      23px 20px 13px;
+
+    border-width:4px;
+
+    border-radius:25px;
+  }
+
+
+  .final-kit{
+    font-size:22px;
+
+    margin-bottom:22px;
+  }
+
+
+  .final-question{
+    min-height:56px;
+
+    margin-bottom:20px;
+
+    padding:
+      10px 12px;
+
+    border-width:3px;
+
+    font-size:18px;
+  }
+
+
+  .final-answer-row{
+    grid-template-columns:
+      minmax(0,1fr)
+      64px;
+
+    gap:8px;
+  }
+
+
+  .final-answer-input{
+    height:52px;
+
+    padding:
+      0 14px;
+
+    border-radius:13px;
+
+    font-size:16px;
+  }
+
+
+  .final-submit-btn{
+    height:52px;
+
+    border-radius:13px;
+
+    font-size:16px;
+  }
+
+
+  .final-message{
+    margin-top:8px;
+
+    font-size:14px;
+  }
+
 }
+
+
+/* =========================================================
+   작은 휴대폰
+========================================================= */
 
 @media(max-width:390px){
+
   :root{
+
     --shelf-w:90vw;
     --shelf-top:8.5vh;
+
     --cell-h:103px;
+
     --book-w:60px;
     --book-h:86px;
+
     --wide-w:92px;
     --wide-h:55px;
+
   }
+
+
   .reopen-btn{
-  bottom:30px;
-  padding:9px 12px;
-  font-size:14px;
-  white-space:nowrap;
+    bottom:30px;
+
+    padding:
+      9px 12px;
+
+    font-size:14px;
   }
+
+
+  .final-card{
+    width:91vw;
+
+    padding:
+      20px 17px 11px;
+  }
+
+
+  .final-kit{
+    font-size:20px;
+
+    margin-bottom:19px;
+  }
+
+
+  .final-question{
+    font-size:17px;
+
+    margin-bottom:18px;
+  }
+
+
+  .final-answer-row{
+    grid-template-columns:
+      minmax(0,1fr)
+      58px;
+
+    gap:7px;
+  }
+
+
+  .final-answer-input{
+    height:50px;
+
+    padding:
+      0 12px;
+
+    font-size:15px;
+  }
+
+
+  .final-submit-btn{
+    height:50px;
+
+    font-size:15px;
+  }
+
 }
+
 </style>
 </head>
 
+
 <body>
+
+
+<!-- =====================================================
+     책장
+===================================================== -->
+
 <div class="page-wrap">
+
   <div class="bookshelf">
+
     <div class="shelf-grid">
-      <div class="shelf-cell"><button class="mission-btn book" id="btn1" onclick="goMission(1)"><img src="ptbm1.png" alt="1번 문제"></button></div>
-      <div class="shelf-cell"><button class="mission-btn book" id="btn2" onclick="goMission(2)"><img src="ptbm2.png" alt="2번 문제"></button></div>
-      <div class="shelf-cell"><button class="mission-btn book" id="btn3" onclick="goMission(3)"><img src="ptbm3.png" alt="3번 문제"></button></div>
-      <div class="shelf-cell"><button class="mission-btn book" id="btn4" onclick="goMission(4)"><img src="ptbm4.png" alt="4번 문제"></button></div>
-      <div class="shelf-cell"><button class="mission-btn book" id="btn5" onclick="goMission(5)"><img src="ptbm5.png" alt="5번 문제"></button></div>
-      <div class="shelf-cell"><button class="mission-btn wide" id="btn6" onclick="goMission(6)" disabled><img src="ptbm6.png" alt="6번"></button></div>
+
+
+      <div class="shelf-cell">
+
+        <button
+          class="mission-btn book"
+          id="btn1"
+          onclick="goMission(1)"
+        >
+
+          <img
+            src="ptbm1.png"
+            alt="1번 문제"
+          >
+
+        </button>
+
+      </div>
+
+
+      <div class="shelf-cell">
+
+        <button
+          class="mission-btn book"
+          id="btn2"
+          onclick="goMission(2)"
+        >
+
+          <img
+            src="ptbm2.png"
+            alt="2번 문제"
+          >
+
+        </button>
+
+      </div>
+
+
+      <div class="shelf-cell">
+
+        <button
+          class="mission-btn book"
+          id="btn3"
+          onclick="goMission(3)"
+        >
+
+          <img
+            src="ptbm3.png"
+            alt="3번 문제"
+          >
+
+        </button>
+
+      </div>
+
+
+      <div class="shelf-cell">
+
+        <button
+          class="mission-btn book"
+          id="btn4"
+          onclick="goMission(4)"
+        >
+
+          <img
+            src="ptbm4.png"
+            alt="4번 문제"
+          >
+
+        </button>
+
+      </div>
+
+
+      <div class="shelf-cell">
+
+        <button
+          class="mission-btn book"
+          id="btn5"
+          onclick="goMission(5)"
+        >
+
+          <img
+            src="ptbm5.png"
+            alt="5번 문제"
+          >
+
+        </button>
+
+      </div>
+
+
+      <div class="shelf-cell">
+
+        <button
+          class="mission-btn wide"
+          id="btn6"
+          onclick="goMission(6)"
+          disabled
+        >
+
+          <img
+            src="ptbm6.png"
+            alt="6번"
+          >
+
+        </button>
+
+      </div>
+
+
     </div>
+
   </div>
+
 </div>
 
-<div class="info-modal" id="infoModal">
+
+<!-- =====================================================
+     안내 이미지
+===================================================== -->
+
+<div
+  class="info-modal"
+  id="infoModal"
+>
+
   <div class="info-box">
-    <button class="info-close" onclick="closeInfoModal()">×</button>
-    <img id="infoModalImg" src="ptbmm.png" alt="안내 이미지">
+
+    <button
+      class="info-close"
+      onclick="closeInfoModal()"
+    >
+      ×
+    </button>
+
+
+    <img
+      id="infoModalImg"
+      src="ptbmm.png"
+      alt="안내 이미지"
+    >
+
   </div>
+
 </div>
 
-<button class="reopen-btn" id="reopenBtn" onclick="openInfoModal()">다시보기</button>
-<button class="dev-reset-btn" onclick="resetDev()">개발용 초기화</button>
+
+<!-- =====================================================
+     다시보기
+===================================================== -->
+
+<button
+  class="reopen-btn"
+  id="reopenBtn"
+  onclick="openInfoModal()"
+>
+  다시보기
+</button>
+
+
+<!-- =====================================================
+     FINAL 미션카드
+===================================================== -->
+
+<div
+  class="final-modal"
+  id="finalModal"
+>
+
+  <div
+    class="final-card"
+    id="finalCard"
+  >
+
+
+    <div class="final-kit">
+      FINAL 키트 사용
+    </div>
+
+
+    <div class="final-question">
+      편지 코드 입력
+    </div>
+
+
+    <div class="final-answer-row">
+
+
+      <input
+        id="finalAnswerInput"
+        class="final-answer-input"
+        type="text"
+        placeholder="정답을 입력하세요"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      >
+
+
+      <button
+        class="final-submit-btn"
+        type="button"
+        onclick="checkFinalAnswer()"
+      >
+        입력
+      </button>
+
+
+    </div>
+
+
+    <div
+      class="final-message"
+      id="finalMessage"
+    ></div>
+
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     개발용 초기화
+===================================================== -->
+
+<button
+  class="dev-reset-btn"
+  onclick="resetDev()"
+>
+  개발용 초기화
+</button>
+
 
 <script>
-const PROGRESS_KEY = "ptb_progress_v1";
-const MODAL_KEY = "ptbm_modal_seen_once";
-const END_MODAL_KEY = "ptbm_end_modal_seen_once";
+
+/* =========================================================
+   저장값
+========================================================= */
+
+const PROGRESS_KEY =
+  "ptb_progress_v1";
+
+
+const MODAL_KEY =
+  "ptbm_modal_seen_once";
+
+
+const END_MODAL_KEY =
+  "ptbm_end_modal_seen_once";
+
+
+const FINAL_KEY =
+  "ptbm_final_mission_done";
+
+
+const FINAL_SHOWN_KEY =
+  "ptbm_final_mission_shown";
+
+
+const FINAL_ANSWER =
+  "memories";
+
+
+let currentInfoMode =
+  "intro";
+
+
+/* =========================================================
+   진행상황
+========================================================= */
 
 function getProgress(){
+
   try{
-    return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
-  }catch(e){
+
+    return JSON.parse(
+      localStorage.getItem(
+        PROGRESS_KEY
+      )
+    ) || {};
+
+  }
+
+  catch(e){
+
     return {};
-  }
-}
 
-function all1to5Done(progress){
-  for(let i=1;i<=5;i++){
-    if(!progress[i] || !progress[i].completed) return false;
-  }
-  return true;
-}
-
-function applyButtons(){
-  const progress = getProgress();
-
-  for(let i=1;i<=5;i++){
-    const btn = document.getElementById("btn"+i);
-    btn.disabled = !!(progress[i] && progress[i].completed);
   }
 
-  document.getElementById("btn6").disabled = !all1to5Done(progress);
 }
 
-function goMission(num){
-  if(num>=1 && num<=5){
-    location.href = `ptbq${num}.html`;
-  }else if(num===6){
-    location.href = "https://baekko.github.io/cnedu/ptbend.html";
-  }
-}
 
-function resetDev(){
-  if(confirm("개발용 초기화를 할까요?")){
-    localStorage.removeItem(PROGRESS_KEY);
-    sessionStorage.removeItem(MODAL_KEY);
-    sessionStorage.removeItem(END_MODAL_KEY);
-    location.reload();
-  }
-}
+/* =========================================================
+   1~5 완료 확인
+========================================================= */
 
-function setModalImage(src){
-  document.getElementById("infoModalImg").src = src;
-}
+function all1to5Done(
+  progress
+){
 
-function openInfoModal(){
-  document.getElementById("infoModal").classList.add("show");
-}
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
 
-function closeInfoModal(){
-  document.getElementById("infoModal").classList.remove("show");
-  document.getElementById("reopenBtn").classList.add("show");
-}
+    if(
+      !progress[i]
+      ||
+      !progress[i].completed
+    ){
 
-window.addEventListener("pageshow", function(){
-  applyButtons();
+      return false;
 
-  const progress = getProgress();
-
-  if(all1to5Done(progress)){
-    document.getElementById("reopenBtn").classList.remove("show");
-
-    if(sessionStorage.getItem(END_MODAL_KEY) !== "true"){
-      sessionStorage.setItem(END_MODAL_KEY, "true");
-      setModalImage("ptbme.png");
-
-      setTimeout(function(){
-        openInfoModal();
-      }, 1000);
     }
 
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================================================
+   FINAL 완료 확인
+========================================================= */
+
+function finalMissionDone(){
+
+  return (
+    localStorage.getItem(
+      FINAL_KEY
+    )
+    ===
+    "true"
+  );
+
+}
+
+
+/* =========================================================
+   버튼 상태
+========================================================= */
+
+function applyButtons(){
+
+  const progress =
+    getProgress();
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    const btn =
+      document.getElementById(
+        "btn" + i
+      );
+
+
+    btn.disabled =
+      !!(
+        progress[i]
+        &&
+        progress[i].completed
+      );
+
+  }
+
+
+  /*
+    FINAL 미션까지 성공해야
+    편지 버튼 활성화
+  */
+
+  document
+    .getElementById(
+      "btn6"
+    )
+    .disabled =
+      !finalMissionDone();
+
+}
+
+
+/* =========================================================
+   문제 이동
+========================================================= */
+
+function goMission(
+  num
+){
+
+  if(
+    num>=1
+    &&
+    num<=5
+  ){
+
+    location.href =
+      `ptbq${num}.html`;
+
+  }
+
+
+  else if(
+    num===6
+    &&
+    finalMissionDone()
+  ){
+
+    location.href =
+      "https://baekko.github.io/cnedu/ptbend.html";
+
+  }
+
+}
+
+
+/* =========================================================
+   안내 이미지
+========================================================= */
+
+function setModalImage(
+  src,
+  mode
+){
+
+  currentInfoMode =
+    mode;
+
+
+  document
+    .getElementById(
+      "infoModalImg"
+    )
+    .src =
+      src;
+
+}
+
+
+function openInfoModal(){
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   안내 이미지 닫기
+========================================================= */
+
+function closeInfoModal(){
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  /*
+    ptbme.png를 닫았고
+    FINAL 미션을 아직 안 풀었으면
+    FINAL 카드 표시
+  */
+
+  if(
+    currentInfoMode === "end"
+    &&
+    !finalMissionDone()
+  ){
+
+    sessionStorage.setItem(
+      FINAL_SHOWN_KEY,
+      "true"
+    );
+
+
+    /*
+      ★ 애니메이션 없이 바로 표시
+    */
+
+    openFinalMission();
+
+
     return;
+
   }
 
-  if(sessionStorage.getItem(MODAL_KEY) !== "true"){
-    sessionStorage.setItem(MODAL_KEY, "true");
-    setModalImage("ptbmm.png");
 
-    setTimeout(function(){
-      openInfoModal();
-    }, 1000);
+  /*
+    그 외에는 다시보기 표시
+  */
+
+  document
+    .getElementById(
+      "reopenBtn"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   FINAL 미션 열기
+========================================================= */
+
+function openFinalMission(){
+
+  const modal =
+    document.getElementById(
+      "finalModal"
+    );
+
+
+  const input =
+    document.getElementById(
+      "finalAnswerInput"
+    );
+
+
+  const message =
+    document.getElementById(
+      "finalMessage"
+    );
+
+
+  document
+    .getElementById(
+      "reopenBtn"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  input.value =
+    "";
+
+
+  message.textContent =
+    "";
+
+
+  message
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  modal
+    .classList
+    .add(
+      "show"
+    );
+
+
+  /*
+    ★ focus() 없음
+
+    휴대폰에서 FINAL 카드가 뜨자마자
+    키보드가 자동으로 올라오지 않음
+  */
+
+}
+
+
+/* =========================================================
+   정답 정리
+========================================================= */
+
+function normalizeFinal(
+  value
+){
+
+  return String(value)
+
+    .replace(
+      /\s+/g,
+      ""
+    )
+
+    .trim()
+
+    .toLowerCase();
+
+}
+
+
+/* =========================================================
+   FINAL 정답 확인
+========================================================= */
+
+function checkFinalAnswer(){
+
+  const input =
+    document
+      .getElementById(
+        "finalAnswerInput"
+      )
+      .value;
+
+
+  const message =
+    document.getElementById(
+      "finalMessage"
+    );
+
+
+  const card =
+    document.getElementById(
+      "finalCard"
+    );
+
+
+  /* 빈칸 */
+
+  if(
+    !input.trim()
+  ){
+
+    message.style.color =
+      "#b3261e";
+
+
+    message.textContent =
+      "편지 코드를 입력해주세요.";
+
+
+    message
+      .classList
+      .add(
+        "show"
+      );
+
+
+    return;
+
   }
-});
+
+
+  /* =====================================================
+     정답
+  ===================================================== */
+
+  if(
+    normalizeFinal(input)
+    ===
+    normalizeFinal(
+      FINAL_ANSWER
+    )
+  ){
+
+    localStorage.setItem(
+      FINAL_KEY,
+      "true"
+    );
+
+
+    message.style.color =
+      "#1f7a3a";
+
+
+    message.textContent =
+      "편지 코드가 확인되었습니다.";
+
+
+    message
+      .classList
+      .add(
+        "show"
+      );
+
+
+    /*
+      편지 버튼 활성화
+    */
+
+    applyButtons();
+
+
+    /*
+      잠시 후 FINAL 카드 닫기
+    */
+
+    setTimeout(
+      function(){
+
+        document
+          .getElementById(
+            "finalModal"
+          )
+          .classList
+          .remove(
+            "show"
+          );
+
+
+        document
+          .getElementById(
+            "reopenBtn"
+          )
+          .classList
+          .add(
+            "show"
+          );
+
+      },
+
+      650
+    );
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     오답
+  ===================================================== */
+
+  message.style.color =
+    "#b3261e";
+
+
+  message.textContent =
+    "코드가 맞지 않습니다.";
+
+
+  message
+    .classList
+    .add(
+      "show"
+    );
+
+
+  card
+    .classList
+    .remove(
+      "final-shake"
+    );
+
+
+  void card.offsetWidth;
+
+
+  card
+    .classList
+    .add(
+      "final-shake"
+    );
+
+}
+
+
+/* =========================================================
+   ENTER 입력
+========================================================= */
+
+document
+  .getElementById(
+    "finalAnswerInput"
+  )
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key ===
+        "Enter"
+      ){
+
+        checkFinalAnswer();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   개발용 초기화
+========================================================= */
+
+function resetDev(){
+
+  if(
+    confirm(
+      "개발용 초기화를 할까요?"
+    )
+  ){
+
+    localStorage.removeItem(
+      PROGRESS_KEY
+    );
+
+
+    localStorage.removeItem(
+      FINAL_KEY
+    );
+
+
+    sessionStorage.removeItem(
+      MODAL_KEY
+    );
+
+
+    sessionStorage.removeItem(
+      END_MODAL_KEY
+    );
+
+
+    sessionStorage.removeItem(
+      FINAL_SHOWN_KEY
+    );
+
+
+    location.reload();
+
+  }
+
+}
+
+
+/* =========================================================
+   페이지 진입
+========================================================= */
+
+window.addEventListener(
+  "pageshow",
+  function(){
+
+    applyButtons();
+
+
+    const progress =
+      getProgress();
+
+
+    /* =====================================================
+       1~5번 완료
+    ===================================================== */
+
+    if(
+      all1to5Done(
+        progress
+      )
+    ){
+
+      document
+        .getElementById(
+          "reopenBtn"
+        )
+        .classList
+        .remove(
+          "show"
+        );
+
+
+      /* FINAL까지 이미 완료 */
+
+      if(
+        finalMissionDone()
+      ){
+
+        setModalImage(
+          "ptbme.png",
+          "end"
+        );
+
+
+        document
+          .getElementById(
+            "reopenBtn"
+          )
+          .classList
+          .add(
+            "show"
+          );
+
+
+        return;
+
+      }
+
+
+      /* ptbme.png 아직 안 봄 */
+
+      if(
+        sessionStorage.getItem(
+          END_MODAL_KEY
+        )
+        !==
+        "true"
+      ){
+
+        sessionStorage.setItem(
+          END_MODAL_KEY,
+          "true"
+        );
+
+
+        setModalImage(
+          "ptbme.png",
+          "end"
+        );
+
+
+        setTimeout(
+          function(){
+
+            openInfoModal();
+
+          },
+
+          1000
+        );
+
+
+        return;
+
+      }
+
+
+      /*
+        ptbme는 이미 봤는데
+        FINAL 미션은 아직 안 풀었음
+
+        새로고침해도 FINAL 카드 표시
+      */
+
+      if(
+        !finalMissionDone()
+      ){
+
+        openFinalMission();
+
+
+        return;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       최초 메인 안내
+    ===================================================== */
+
+    if(
+      sessionStorage.getItem(
+        MODAL_KEY
+      )
+      !==
+      "true"
+    ){
+
+      sessionStorage.setItem(
+        MODAL_KEY,
+        "true"
+      );
+
+
+      setModalImage(
+        "ptbmm.png",
+        "intro"
+      );
+
+
+      setTimeout(
+        function(){
+
+          openInfoModal();
+
+        },
+
+        1000
+      );
+
+    }
+
+  }
+);
+
+
+/* 최초 상태 */
 
 applyButtons();
+
 </script>
+
 </body>
 </html>
