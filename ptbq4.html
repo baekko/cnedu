@@ -1401,26 +1401,36 @@ function closeImageModal(){
 
   /* 성공 편지 → 영상 */
 
-  if(
-    imageModalMode ===
-    "correct"
-    &&
-    pendingScore !== null
-  ){
+ if(
+  imageModalMode ===
+  "correct"
+  &&
+  pendingScore !== null
+){
 
-    const score=
-      pendingScore;
+  const score =
+    pendingScore;
+
+  pendingScore =
+    null;
 
 
-    pendingScore=
-      null;
+  /* 정답보기 사용 = 0점 → 영상 없이 바로 메인으로 */
+  if(score === 0){
 
+    location.href =
+      "ptbm.html";
 
-    playVideoAndReturn(
-      score
-    );
-
+    return;
   }
+
+
+  /* 힌트 미사용 20점 / 힌트 사용 10점만 영상 재생 */
+  playVideoAndReturn(
+    score
+  );
+
+}
 
 }
 
@@ -1734,30 +1744,17 @@ function checkAnswer(){
    영상
 ========================================================= */
 
-function getVideoSrc(
-  score
-){
+function getVideoSrc(score){
 
-  if(
-    score === 20
-  ){
-
+  if(score === 20){
     return "ptbq1.mp4";
-
   }
 
-
-  if(
-    score === 10
-  ){
-
+  if(score === 10){
     return "ptbq2.mp4";
-
   }
 
-
-  return "ptbq3.mp4";
-
+  return "";
 }
 
 
