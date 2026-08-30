@@ -156,23 +156,19 @@ body{
 .mission-image-box{
   width:100%;
 
-  padding:
-    7px;
+  padding:7px;
 
-  margin-bottom:
-    20px;
+  margin-bottom:20px;
 
   border:
     5px solid
     var(--orange);
 
-  border-radius:
-    10px;
+  border-radius:10px;
 
   background:#fff;
 
   display:flex;
-
   align-items:center;
   justify-content:center;
 }
@@ -183,11 +179,9 @@ body{
   width:100%;
   height:auto;
 
-  max-height:
-    125px;
+  max-height:125px;
 
-  object-fit:
-    contain;
+  object-fit:contain;
 }
 
 
@@ -587,34 +581,6 @@ body{
   background:transparent;
 }
 
-.video-fallback{
-  display:none;
-
-  width:100%;
-
-  padding:
-    30px 20px;
-
-  border-radius:24px;
-
-  background:#fff7e8;
-
-  color:#3b2012;
-
-  text-align:center;
-
-  font-size:22px;
-  font-weight:900;
-
-  line-height:1.5;
-
-  white-space:pre-line;
-}
-
-.video-fallback.show{
-  display:block;
-}
-
 
 /* =========================================================
    오답 흔들림
@@ -683,23 +649,18 @@ body{
 
   .mission-title{
     font-size:19px;
-
     margin-bottom:13px;
   }
 
   .mission-kit{
     font-size:21px;
-
     margin-bottom:14px;
   }
 
   .mission-image-box{
     padding:5px;
-
     margin-bottom:13px;
-
     border-width:3px;
-
     border-radius:8px;
   }
 
@@ -730,20 +691,14 @@ body{
 
   .answer-input{
     height:52px;
-
-    padding:
-      0 14px;
-
+    padding:0 14px;
     border-radius:13px;
-
     font-size:16px;
   }
 
   .submit-btn{
     height:52px;
-
     border-radius:13px;
-
     font-size:16px;
   }
 
@@ -753,9 +708,7 @@ body{
 
   .action-btn{
     height:48px;
-
     border-radius:13px;
-
     font-size:14px;
   }
 
@@ -769,7 +722,6 @@ body{
 
   .image-box{
     width:88vw;
-
     padding:12px;
   }
 
@@ -785,25 +737,13 @@ body{
 
   .video-box{
     width:72vw;
-
     max-width:340px;
-
     min-width:0;
-
     border-radius:18px;
   }
 
   .result-video{
     border-radius:18px;
-  }
-
-  .video-fallback{
-    border-radius:18px;
-
-    font-size:18px;
-
-    padding:
-      24px 16px;
   }
 
 }
@@ -817,7 +757,6 @@ body{
 
   .mission-wrap{
     width:90vw;
-
     top:41%;
   }
 
@@ -859,16 +798,12 @@ body{
 
   .answer-input{
     height:50px;
-
-    padding:
-      0 12px;
-
+    padding:0 12px;
     font-size:15px;
   }
 
   .submit-btn{
     height:50px;
-
     font-size:15px;
   }
 
@@ -878,7 +813,6 @@ body{
 
   .action-btn{
     height:46px;
-
     font-size:13px;
   }
 
@@ -1090,7 +1024,7 @@ body{
 
 
 <!-- =====================================================
-     영상
+     결과 영상
 ===================================================== -->
 
 <div
@@ -1106,11 +1040,6 @@ body{
       playsinline
       muted
     ></video>
-
-    <div
-      id="videoFallback"
-      class="video-fallback"
-    ></div>
 
   </div>
 
@@ -1154,7 +1083,6 @@ const missionConfig={
 const PROGRESS_KEY=
   "ptb_progress_v1";
 
-
 let usedHint=false;
 let usedAnswer=false;
 let locked=false;
@@ -1186,9 +1114,7 @@ function getProgress(){
 }
 
 
-function setProgress(
-  progress
-){
+function setProgress(progress){
 
   localStorage.setItem(
     PROGRESS_KEY,
@@ -1202,16 +1128,11 @@ function setProgress(
    정답 비교
 ========================================================= */
 
-function normalize(
-  text
-){
+function normalize(text){
 
   return String(text)
-
     .replace(/\s+/g,"")
-
     .trim()
-
     .toLowerCase();
 
 }
@@ -1223,15 +1144,11 @@ function normalize(
 
 function currentScore(){
 
-  if(
-    usedAnswer
-  ){
+  if(usedAnswer){
     return 0;
   }
 
-  if(
-    usedHint
-  ){
+  if(usedHint){
     return 10;
   }
 
@@ -1244,13 +1161,10 @@ function currentScore(){
    결과 저장
 ========================================================= */
 
-function saveResult(
-  score
-){
+function saveResult(score){
 
   const progress=
     getProgress();
-
 
   progress[
     missionConfig.missionNumber
@@ -1266,10 +1180,7 @@ function saveResult(
 
   };
 
-
-  setProgress(
-    progress
-  );
+  setProgress(progress);
 
 }
 
@@ -1278,35 +1189,20 @@ function saveResult(
    일반 모달
 ========================================================= */
 
-function openModal(
-  title,
-  content
-){
+function openModal(title,content){
 
   document
-    .getElementById(
-      "modalTitle"
-    )
-    .textContent=
-      title;
-
+    .getElementById("modalTitle")
+    .textContent=title;
 
   document
-    .getElementById(
-      "modalContent"
-    )
-    .textContent=
-      content;
-
+    .getElementById("modalContent")
+    .textContent=content;
 
   document
-    .getElementById(
-      "infoModal"
-    )
+    .getElementById("infoModal")
     .classList
-    .add(
-      "show"
-    );
+    .add("show");
 
 }
 
@@ -1314,13 +1210,9 @@ function openModal(
 function closeModal(){
 
   document
-    .getElementById(
-      "infoModal"
-    )
+    .getElementById("infoModal")
     .classList
-    .remove(
-      "show"
-    );
+    .remove("show");
 
 }
 
@@ -1329,31 +1221,18 @@ function closeModal(){
    편지 모달
 ========================================================= */
 
-function openImageModal(
-  src,
-  mode
-){
+function openImageModal(src,mode){
 
-  imageModalMode=
-    mode;
-
+  imageModalMode=mode;
 
   document
-    .getElementById(
-      "imageModalImg"
-    )
-    .src=
-      src;
-
+    .getElementById("imageModalImg")
+    .src=src;
 
   document
-    .getElementById(
-      "imageModal"
-    )
+    .getElementById("imageModal")
     .classList
-    .add(
-      "show"
-    );
+    .add("show");
 
 }
 
@@ -1365,21 +1244,14 @@ function openImageModal(
 function closeImageModal(){
 
   document
-    .getElementById(
-      "imageModal"
-    )
+    .getElementById("imageModal")
     .classList
-    .remove(
-      "show"
-    );
+    .remove("show");
 
 
-  /* 첫 편지 닫기 → 2초 뒤 미션 */
+  /* 첫 편지 → 2초 후 미션 */
 
-  if(
-    imageModalMode ===
-    "intro"
-  ){
+  if(imageModalMode === "intro"){
 
     setTimeout(
       showMission,
@@ -1387,42 +1259,44 @@ function closeImageModal(){
     );
 
     return;
-
   }
 
 
-  /* 성공 편지 닫기 → 영상 */
+  /* 정답 후 편지 */
 
   if(
-  imageModalMode ===
-  "correct"
-  &&
-  pendingScore !== null
-){
+    imageModalMode === "correct"
+    &&
+    pendingScore !== null
+  ){
 
-  const score =
-    pendingScore;
+    const score=
+      pendingScore;
 
-  pendingScore =
-    null;
+    pendingScore=null;
 
 
-  /* 정답보기 사용 = 0점 → 영상 없이 바로 메인으로 */
-  if(score === 0){
+    /*
+      정답보기까지 사용한 경우
+      0점 저장 후 영상 없이 바로 메인으로
+    */
 
-    location.href =
-      "ptbm.html";
+    if(score === 0){
 
-    return;
+      location.href=
+        "ptbm.html";
+
+      return;
+    }
+
+
+    /*
+      20점 / 10점만 결과영상
+    */
+
+    playVideoAndReturn(score);
+
   }
-
-
-  /* 힌트 미사용 20점 / 힌트 사용 10점만 영상 재생 */
-  playVideoAndReturn(
-    score
-  );
-
-}
 
 }
 
@@ -1434,28 +1308,14 @@ function closeImageModal(){
 function showMission(){
 
   document
-    .getElementById(
-      "missionWrap"
-    )
+    .getElementById("missionWrap")
     .classList
-    .add(
-      "show"
-    );
-
+    .add("show");
 
   document
-    .getElementById(
-      "uiWrap"
-    )
+    .getElementById("uiWrap")
     .classList
-    .add(
-      "show"
-    );
-
-
-  /*
-    자동 focus 없음
-  */
+    .add("show");
 
 }
 
@@ -1467,23 +1327,14 @@ function showMission(){
 function hideMission(){
 
   document
-    .getElementById(
-      "missionWrap"
-    )
+    .getElementById("missionWrap")
     .classList
-    .remove(
-      "show"
-    );
-
+    .remove("show");
 
   document
-    .getElementById(
-      "uiWrap"
-    )
+    .getElementById("uiWrap")
     .classList
-    .remove(
-      "show"
-    );
+    .remove("show");
 
 }
 
@@ -1494,24 +1345,15 @@ function hideMission(){
 
 function showHint(){
 
-  if(
-    locked
-  ){
+  if(locked){
     return;
   }
 
-
-  usedHint=
-    true;
-
+  usedHint=true;
 
   document
-    .getElementById(
-      "answerBtn"
-    )
-    .disabled=
-      false;
-
+    .getElementById("answerBtn")
+    .disabled=false;
 
   openModal(
     "힌트",
@@ -1527,23 +1369,15 @@ function showHint(){
 
 function showAnswer(){
 
-  if(
-    locked
-  ){
+  if(locked){
     return;
   }
 
-
-  if(
-    !usedHint
-  ){
+  if(!usedHint){
     return;
   }
 
-
-  usedAnswer=
-    true;
-
+  usedAnswer=true;
 
   openModal(
     "정답",
@@ -1562,16 +1396,9 @@ function getTotalScore(){
   const progress=
     getProgress();
 
+  let total=0;
 
-  let total=
-    0;
-
-
-  for(
-    let i=1;
-    i<=5;
-    i++
-  ){
+  for(let i=1;i<=5;i++){
 
     if(
       progress[i]
@@ -1588,7 +1415,6 @@ function getTotalScore(){
 
   }
 
-
   return total;
 
 }
@@ -1597,11 +1423,8 @@ function getTotalScore(){
 function showScore(){
 
   openModal(
-
     "기억보상",
-
     `현재까지 모은 기억보상은 ${getTotalScore()}입니다.`
-
   );
 
 }
@@ -1613,24 +1436,17 @@ function showScore(){
 
 function checkAnswer(){
 
-  if(
-    locked
-  ){
+  if(locked){
     return;
   }
 
-
   const input=
     document
-      .getElementById(
-        "answerInput"
-      )
+      .getElementById("answerInput")
       .value;
 
 
-  if(
-    !input.trim()
-  ){
+  if(!input.trim()){
 
     openModal(
       "안내",
@@ -1638,7 +1454,6 @@ function checkAnswer(){
     );
 
     return;
-
   }
 
 
@@ -1650,31 +1465,22 @@ function checkAnswer(){
     )
   ){
 
-    locked=
-      true;
-
+    locked=true;
 
     const score=
       currentScore();
 
+    saveResult(score);
 
-    saveResult(
-      score
-    );
-
-
-    pendingScore=
-      score;
-
+    pendingScore=score;
 
     closeModal();
-
 
     hideMission();
 
 
     /*
-      2초 뒤 성공 편지
+      2초 후 성공 편지
     */
 
     setTimeout(
@@ -1686,40 +1492,23 @@ function checkAnswer(){
         );
 
       },
-
       2000
     );
 
-
     return;
-
   }
 
 
   /* 오답 */
 
   const ui=
-    document.getElementById(
-      "uiWrap"
-    );
+    document.getElementById("uiWrap");
 
-
-  ui
-    .classList
-    .remove(
-      "shake"
-    );
-
+  ui.classList.remove("shake");
 
   void ui.offsetWidth;
 
-
-  ui
-    .classList
-    .add(
-      "shake"
-    );
-
+  ui.classList.add("shake");
 
   openModal(
     "오답",
@@ -1730,7 +1519,11 @@ function checkAnswer(){
 
 
 /* =========================================================
-   영상
+   점수별 영상
+
+   20점 = ptbq1.mp4
+   10점 = ptbq2.mp4
+   0점  = 영상 없음
 ========================================================= */
 
 function getVideoSrc(score){
@@ -1747,131 +1540,63 @@ function getVideoSrc(score){
 }
 
 
-function playVideoAndReturn(
-  score
-){
+/* =========================================================
+   영상 재생 후 메인으로
+========================================================= */
+
+function playVideoAndReturn(score){
 
   const videoModal=
-    document.getElementById(
-      "videoModal"
-    );
-
+    document.getElementById("videoModal");
 
   const video=
-    document.getElementById(
-      "resultVideo"
-    );
-
-
-  const fallback=
-    document.getElementById(
-      "videoFallback"
-    );
+    document.getElementById("resultVideo");
 
 
   videoModal
     .classList
-    .add(
-      "show"
-    );
-
-
-  fallback
-    .classList
-    .remove(
-      "show"
-    );
-
-
-  fallback.textContent=
-    "";
-
-
-  video.style.display=
-    "block";
+    .add("show");
 
 
   video.src=
-    getVideoSrc(
-      score
-    );
+    getVideoSrc(score);
+
+
+  video.onended=function(){
+
+    location.href=
+      "ptbm.html";
+
+  };
+
+
+  /*
+    영상 자체에 문제가 생겨도
+    별도 문구 없이 메인으로 이동
+  */
+
+  video.onerror=function(){
+
+    location.href=
+      "ptbm.html";
+
+  };
 
 
   video.load();
-
-
-  const goBack=
-    function(){
-
-      location.href=
-        "ptbm.html";
-
-    };
-
-
-  video.onended=
-    goBack;
-
-
-  video.onerror=
-    function(){
-
-      video.style.display=
-        "none";
-
-
-      fallback.textContent=
-        `${score}점 획득!
-영상 파일을 확인해주세요.`;
-
-
-      fallback
-        .classList
-        .add(
-          "show"
-        );
-
-
-      setTimeout(
-        goBack,
-        1800
-      );
-
-    };
 
 
   const playPromise=
     video.play();
 
 
-  if(
-    playPromise !==
-    undefined
-  ){
+  if(playPromise !== undefined){
 
     playPromise.catch(
       function(){
 
-        video.style.display=
-          "none";
-
-
-        fallback.textContent=
-          `${score}점 획득!
-영상을 재생할 수 없습니다.`;
-
-
-        fallback
-          .classList
-          .add(
-            "show"
-          );
-
-
-        setTimeout(
-          goBack,
-          1800
-        );
+        location.href=
+          "ptbm.html";
 
       }
     );
@@ -1886,21 +1611,13 @@ function playVideoAndReturn(
 ========================================================= */
 
 document
-  .getElementById(
-    "answerInput"
-  )
+  .getElementById("answerInput")
   .addEventListener(
     "keydown",
-
     function(e){
 
-      if(
-        e.key ===
-        "Enter"
-      ){
-
+      if(e.key === "Enter"){
         checkAnswer();
-
       }
 
     }
@@ -1924,7 +1641,6 @@ setTimeout(
     );
 
   },
-
   1000
 );
 
