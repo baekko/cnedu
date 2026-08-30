@@ -2,610 +2,2071 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PTB QUESTION</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>PTB QUESTION 3</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
+  rel="stylesheet"
+>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
 
-html,body{
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
   width:100%;
   height:100%;
+  min-height:100dvh;
   overflow:hidden;
-  font-family:"Pretendard","Noto Sans KR",sans-serif;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
   background:#000;
 }
 
-body{
-  position:relative;
-  background:url("ptbq3.png") no-repeat center center / cover;
+
+/* =========================================================
+   색상
+========================================================= */
+
+:root{
+
+  --paper:#f4ecd1;
+  --paper-border:#7f4b3a;
+  --paper-text:#784738;
+
+  --blue:#235a9e;
+  --orange:#ff884d;
+
+  --button:#5a321d;
+
+  --ui-bottom:5.5vh;
 }
 
-/* 하단 UI */
-.ui-wrap{
-  position:absolute;
+
+/* =========================================================
+   배경
+
+   ★ 미션카드 없는 새 ptbq3.png 사용
+========================================================= */
+
+body{
+  position:relative;
+
+  background:
+    url("ptbq3.png")
+    no-repeat
+    center center / cover;
+}
+
+
+/* =========================================================
+   미션카드
+========================================================= */
+
+.mission-wrap{
+  position:fixed;
+
   left:50%;
-  bottom:7vh;
-  transform:translateX(-50%);
-  width:clamp(420px, 56vw, 560px);
-  z-index:10;
+  top:43%;
+
+  transform:
+    translate(-50%,-50%);
+
+  width:
+    min(86vw,620px);
+
+  display:none;
+
+  z-index:25;
+}
+
+
+.mission-wrap.show{
+  display:block;
+}
+
+
+.mission-card{
+  width:100%;
+
+  padding:
+    30px 28px 27px;
+
+  border:
+    5px solid
+    var(--paper-border);
+
+  border-radius:
+    28px;
+
+  background:
+    var(--paper);
+
+  text-align:center;
+
+  box-shadow:
+    0 14px 30px
+    rgba(0,0,0,.30);
+}
+
+
+/* =========================================================
+   제목
+========================================================= */
+
+.mission-title{
+  color:
+    var(--paper-text);
+
+  font-size:28px;
+  font-weight:900;
+
+  line-height:1.4;
+
+  margin-bottom:18px;
+
+  word-break:keep-all;
+}
+
+
+/* =========================================================
+   키트
+========================================================= */
+
+.mission-kit{
+  color:
+    var(--blue);
+
+  font-size:30px;
+  font-weight:900;
+
+  margin-bottom:22px;
+}
+
+
+/* =========================================================
+   4개 단서박스
+========================================================= */
+
+.clue-grid{
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:10px;
+
+  margin-bottom:21px;
+}
+
+
+.clue-box{
+  min-height:88px;
+
   display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:
+    10px 5px;
+
+  border:
+    4px solid
+    var(--orange);
+
+  border-radius:
+    8px;
+
+  background:#fff;
+
+  color:#000;
+
+  font-size:20px;
+  font-weight:900;
+
+  line-height:1.28;
+
+  text-align:center;
+
+  white-space:pre-line;
+
+  word-break:keep-all;
+}
+
+
+/* =========================================================
+   정답 형식
+========================================================= */
+
+.mission-guide{
+  color:#000;
+
+  font-size:30px;
+  font-weight:900;
+
+  line-height:1.35;
+}
+
+
+/* =========================================================
+   정답 입력 UI
+========================================================= */
+
+.ui-wrap{
+  position:fixed;
+
+  left:50%;
+  bottom:
+    var(--ui-bottom);
+
+  transform:
+    translateX(-50%);
+
+  width:
+    clamp(420px,56vw,560px);
+
+  z-index:35;
+
+  display:none;
+
   flex-direction:column;
+
   gap:14px;
 }
 
+
+.ui-wrap.show{
+  display:flex;
+}
+
+
 .answer-row{
   width:100%;
+
   display:grid;
-  grid-template-columns:minmax(0, 1fr) 86px;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    86px;
+
   gap:12px;
 }
+
 
 .answer-input{
   width:100%;
   height:58px;
+
   border:none;
   border-radius:14px;
-  padding:0 18px;
-  font-size:20px;
+
+  padding:
+    0 18px;
+
   outline:none;
-  background:rgba(255,255,255,.95);
+
+  background:
+    rgba(255,255,255,.97);
+
   color:#222;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:20px;
+  font-weight:700;
+
+  box-shadow:
+    0 8px 18px
+    rgba(0,0,0,.25);
 }
+
 
 .submit-btn{
   height:58px;
+
   border:none;
   border-radius:14px;
+
+  padding:0;
+
+  background:
+    var(--button);
+
+  color:#fff;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
   font-size:18px;
   font-weight:900;
-  color:white;
-  background:#5a321d;
+
   cursor:pointer;
-  padding:0;
+
   box-shadow:
     0 8px 16px rgba(0,0,0,.32),
     inset 0 2px 2px rgba(255,255,255,.22),
     inset 0 -4px 8px rgba(0,0,0,.25);
 }
+
+
+/* =========================================================
+   힌트 / 정답 / 기억보상
+========================================================= */
 
 .action-row{
   width:100%;
+
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
   gap:12px;
 }
 
+
 .action-btn{
   height:54px;
+
   border:none;
   border-radius:14px;
+
+  padding:0;
+
+  background:
+    var(--button);
+
+  color:#fff;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
   font-size:17px;
   font-weight:900;
-  color:white;
-  background:#5a321d;
+
   cursor:pointer;
-  padding:0;
+
   box-shadow:
     0 8px 16px rgba(0,0,0,.32),
     inset 0 2px 2px rgba(255,255,255,.22),
     inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
+
 .submit-btn:active,
 .action-btn:active{
-  transform:translateY(2px) scale(.98);
+  transform:
+    translateY(2px)
+    scale(.98);
 }
+
 
 .action-btn:disabled{
   opacity:.42;
   cursor:default;
 }
 
-/* 글자 모달 */
+
+/* =========================================================
+   글자 모달
+========================================================= */
+
 .modal{
   position:fixed;
+
   inset:0;
+
+  z-index:100;
+
   display:none;
+
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.55);
-  z-index:100;
+
+  background:
+    rgba(0,0,0,.55);
 }
 
-.modal.show{display:flex;}
+
+.modal.show{
+  display:flex;
+}
+
 
 .modal-box{
-  width:min(86vw, 560px);
-  background:#fff7e8;
+  width:
+    min(86vw,560px);
+
+  padding:
+    30px 24px;
+
   border-radius:22px;
-  padding:30px 24px;
+
+  background:
+    var(--paper);
+
   text-align:center;
-  box-shadow:0 18px 40px rgba(0,0,0,.35);
+
+  box-shadow:
+    0 18px 40px
+    rgba(0,0,0,.35);
 }
+
 
 .modal-title{
+  color:#2b160c;
+
   font-size:28px;
   font-weight:900;
+
   margin-bottom:18px;
-  color:#2b160c;
 }
 
+
 .modal-content{
-  font-size:22px;
-  line-height:1.6;
   color:#2b160c;
+
+  font-size:22px;
+  font-weight:700;
+
+  line-height:1.6;
+
   white-space:pre-line;
   word-break:keep-all;
 }
 
+
 .modal-close{
+  height:50px;
+  min-width:100px;
+
   margin-top:22px;
+
+  padding:
+    0 24px;
+
   border:none;
   border-radius:14px;
-  padding:12px 26px;
-  font-size:18px;
-  font-weight:900;
+
+  background:
+    var(--button);
+
   color:#fff;
-  background:#5a321d;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:17px;
+  font-weight:900;
+
   cursor:pointer;
 }
 
-/* 이미지 모달 */
+
+/* =========================================================
+   편지 이미지 모달
+========================================================= */
+
 .image-modal{
   position:fixed;
+
   inset:0;
+
   z-index:150;
+
   display:none;
+
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.55);
+
+  background:
+    rgba(0,0,0,.55);
 }
+
 
 .image-modal.show{
   display:flex;
 }
 
+
 .image-box{
   position:relative;
-  width:min(82vw, 560px);
+
+  width:
+    min(82vw,560px);
+
   max-height:82vh;
-  background:#fff7e8;
-  border-radius:22px;
+
   padding:18px;
-  box-shadow:0 20px 45px rgba(0,0,0,.42);
+
+  border-radius:22px;
+
+  background:#fff7e8;
+
+  box-shadow:
+    0 20px 45px
+    rgba(0,0,0,.42);
 }
 
+
 .image-box img{
-  width:100%;
-  max-height:72vh;
-  object-fit:contain;
   display:block;
+
+  width:100%;
+
+  max-height:72vh;
+
+  object-fit:contain;
+
   border-radius:16px;
 }
 
+
 .image-close{
   position:absolute;
+
   right:-12px;
   top:-12px;
+
   width:42px;
   height:42px;
+
   border:none;
   border-radius:50%;
+
   background:#5a321d;
-  color:white;
+
+  color:#fff;
+
   font-size:24px;
   font-weight:900;
+
   cursor:pointer;
-  box-shadow:0 6px 14px rgba(0,0,0,.35);
+
+  box-shadow:
+    0 6px 14px
+    rgba(0,0,0,.35);
 }
 
-/* 영상 모달 */
+
+/* =========================================================
+   영상
+========================================================= */
+
 .video-modal{
   position:fixed;
+
   inset:0;
+
+  z-index:200;
+
   display:none;
+
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.68);
-  z-index:200;
+
+  background:
+    rgba(0,0,0,.68);
 }
+
 
 .video-modal.show{
   display:flex;
 }
 
+
 .video-box{
-  width:clamp(360px, 58vw, 760px);
+  width:
+    clamp(360px,58vw,760px);
+
   max-height:76vh;
-  border-radius:24px;
+
   overflow:hidden;
+
+  border-radius:24px;
+
   background:transparent;
-  box-shadow:0 22px 55px rgba(0,0,0,.55);
+
+  box-shadow:
+    0 22px 55px
+    rgba(0,0,0,.55);
 }
 
+
 .result-video{
+  display:block;
+
   width:100%;
   height:auto;
-  display:block;
-  background:transparent;
+
   border-radius:24px;
+
+  background:transparent;
 }
+
 
 .video-fallback{
   display:none;
+
   width:100%;
-  padding:30px 20px;
-  text-align:center;
+
+  padding:
+    30px 20px;
+
+  border-radius:24px;
+
   background:#fff7e8;
+
   color:#3b2012;
+
+  text-align:center;
+
   font-size:22px;
   font-weight:900;
+
   line-height:1.5;
-  border-radius:24px;
+
+  white-space:pre-line;
 }
+
 
 .video-fallback.show{
   display:block;
 }
 
+
+/* =========================================================
+   오답 흔들림
+========================================================= */
+
 .shake{
-  animation:shake .25s ease;
+  animation:
+    shake .25s ease;
 }
+
 
 @keyframes shake{
-  0%{transform:translateX(-50%) translateX(0);}
-  25%{transform:translateX(-50%) translateX(-6px);}
-  50%{transform:translateX(-50%) translateX(6px);}
-  75%{transform:translateX(-50%) translateX(-4px);}
-  100%{transform:translateX(-50%) translateX(0);}
+
+  0%{
+    transform:
+      translateX(-50%)
+      translateX(0);
+  }
+
+  25%{
+    transform:
+      translateX(-50%)
+      translateX(-6px);
+  }
+
+  50%{
+    transform:
+      translateX(-50%)
+      translateX(6px);
+  }
+
+  75%{
+    transform:
+      translateX(-50%)
+      translateX(-4px);
+  }
+
+  100%{
+    transform:
+      translateX(-50%)
+      translateX(0);
+  }
+
 }
 
-/* 휴대폰 */
+
+/* =========================================================
+   휴대폰
+========================================================= */
+
 @media(max-width:600px){
+
+  .mission-wrap{
+    width:
+      min(88vw,380px);
+
+    top:42%;
+  }
+
+
+  .mission-card{
+    padding:
+      22px 16px 20px;
+
+    border-width:4px;
+
+    border-radius:22px;
+  }
+
+
+  .mission-title{
+    font-size:19px;
+
+    margin-bottom:12px;
+  }
+
+
+  .mission-kit{
+    font-size:21px;
+
+    margin-bottom:14px;
+  }
+
+
+  .clue-grid{
+    gap:6px;
+
+    margin-bottom:14px;
+  }
+
+
+  .clue-box{
+    min-height:70px;
+
+    padding:
+      7px 2px;
+
+    border-width:3px;
+
+    border-radius:7px;
+
+    font-size:14px;
+  }
+
+
+  .mission-guide{
+    font-size:21px;
+  }
+
+
   .ui-wrap{
-    width:min(88vw, 330px);
-    bottom:5.5vh;
+    width:
+      min(88vw,330px);
+
+    bottom:4.5vh;
+
     gap:11px;
   }
 
+
   .answer-row{
-    grid-template-columns:minmax(0, 1fr) 64px;
+    grid-template-columns:
+      minmax(0,1fr)
+      64px;
+
     gap:8px;
   }
 
+
   .answer-input{
     height:52px;
-    font-size:16px;
-    padding:0 14px;
+
+    padding:
+      0 14px;
+
     border-radius:13px;
+
+    font-size:16px;
   }
+
 
   .submit-btn{
     height:52px;
-    font-size:16px;
+
     border-radius:13px;
+
+    font-size:16px;
   }
+
 
   .action-row{
     gap:8px;
   }
 
+
   .action-btn{
     height:48px;
-    font-size:14px;
+
     border-radius:13px;
+
+    font-size:14px;
   }
 
-  .modal-title{font-size:23px;}
-  .modal-content{font-size:18px;}
+
+  .modal-title{
+    font-size:23px;
+  }
+
+
+  .modal-content{
+    font-size:18px;
+  }
+
 
   .image-box{
     width:88vw;
+
     padding:12px;
   }
+
 
   .image-close{
     right:-8px;
     top:-8px;
+
     width:36px;
     height:36px;
+
     font-size:21px;
   }
 
+
   .video-box{
     width:72vw;
+
     max-width:340px;
+
     min-width:0;
+
     border-radius:18px;
   }
+
 
   .result-video{
     border-radius:18px;
   }
 
+
   .video-fallback{
     border-radius:18px;
+
     font-size:18px;
-    padding:24px 16px;
+
+    padding:
+      24px 16px;
   }
+
 }
 
+
+/* =========================================================
+   작은 휴대폰
+========================================================= */
+
 @media(max-width:390px){
-  .ui-wrap{
-    width:min(90vw, 310px);
+
+  .mission-wrap{
+    width:90vw;
+
+    top:41%;
   }
 
+
+  .mission-card{
+    padding:
+      19px 13px 18px;
+  }
+
+
+  .mission-title{
+    font-size:18px;
+  }
+
+
+  .mission-kit{
+    font-size:20px;
+  }
+
+
+  .clue-grid{
+    gap:5px;
+  }
+
+
+  .clue-box{
+    min-height:66px;
+
+    font-size:13px;
+  }
+
+
+  .mission-guide{
+    font-size:20px;
+  }
+
+
+  .ui-wrap{
+    width:
+      min(90vw,310px);
+
+    bottom:4vh;
+  }
+
+
   .answer-row{
-    grid-template-columns:minmax(0, 1fr) 58px;
+    grid-template-columns:
+      minmax(0,1fr)
+      58px;
+
     gap:7px;
   }
 
+
   .answer-input{
     height:50px;
+
+    padding:
+      0 12px;
+
     font-size:15px;
-    padding:0 12px;
   }
+
 
   .submit-btn{
     height:50px;
+
     font-size:15px;
   }
+
 
   .action-row{
     gap:7px;
   }
 
+
   .action-btn{
     height:46px;
+
     font-size:13px;
   }
+
 }
+
+
+/* =========================================================
+   낮은 화면
+========================================================= */
+
+@media(max-height:700px){
+
+  .mission-wrap{
+    top:38%;
+  }
+
+
+  .mission-card{
+    padding-top:16px;
+    padding-bottom:16px;
+  }
+
+
+  .mission-title{
+    margin-bottom:9px;
+  }
+
+
+  .mission-kit{
+    margin-bottom:9px;
+  }
+
+
+  .clue-grid{
+    margin-bottom:9px;
+  }
+
+
+  .clue-box{
+    min-height:60px;
+  }
+
+}
+
 </style>
 </head>
 
+
 <body>
 
-<div class="ui-wrap" id="uiWrap">
-  <div class="answer-row">
-    <input id="answerInput" class="answer-input" type="text" placeholder="정답을 입력하세요" autocomplete="off">
-    <button class="submit-btn" onclick="checkAnswer()">입력</button>
+
+<!-- =====================================================
+     미션카드
+===================================================== -->
+
+<div
+  class="mission-wrap"
+  id="missionWrap"
+>
+
+  <div class="mission-card">
+
+
+    <div class="mission-title">
+      기억 #3: 체리새우
+    </div>
+
+
+    <div class="mission-kit">
+      사용 키트 없음
+    </div>
+
+
+    <div class="clue-grid">
+
+      <div class="clue-box">선생님
++
+5학년</div>
+
+      <div class="clue-box">인생
++
+세상</div>
+
+      <div class="clue-box">눈웃음
++
+명당</div>
+
+      <div class="clue-box">과시
++
+중학생</div>
+
+    </div>
+
+
+    <div class="mission-guide">
+      정답은 숫자 4개
+    </div>
+
+
   </div>
+
+</div>
+
+
+<!-- =====================================================
+     정답 입력 UI
+===================================================== -->
+
+<div
+  class="ui-wrap"
+  id="uiWrap"
+>
+
+  <div class="answer-row">
+
+
+    <input
+      id="answerInput"
+      class="answer-input"
+      type="text"
+      inputmode="numeric"
+      placeholder="정답을 입력하세요"
+      autocomplete="off"
+    >
+
+
+    <button
+      class="submit-btn"
+      type="button"
+      onclick="checkAnswer()"
+    >
+      입력
+    </button>
+
+
+  </div>
+
 
   <div class="action-row">
-    <button class="action-btn" onclick="showHint()">힌트보기</button>
-    <button class="action-btn" id="answerBtn" onclick="showAnswer()" disabled>정답보기</button>
-    <button class="action-btn" onclick="showScore()">기억보상</button>
+
+
+    <button
+      class="action-btn"
+      type="button"
+      onclick="showHint()"
+    >
+      힌트보기
+    </button>
+
+
+    <button
+      class="action-btn"
+      id="answerBtn"
+      type="button"
+      onclick="showAnswer()"
+      disabled
+    >
+      정답보기
+    </button>
+
+
+    <button
+      class="action-btn"
+      type="button"
+      onclick="showScore()"
+    >
+      기억보상
+    </button>
+
+
   </div>
+
 </div>
 
-<div class="modal" id="infoModal">
+
+<!-- =====================================================
+     일반 모달
+===================================================== -->
+
+<div
+  class="modal"
+  id="infoModal"
+>
+
   <div class="modal-box">
-    <div class="modal-title" id="modalTitle">안내</div>
-    <div class="modal-content" id="modalContent"></div>
-    <button class="modal-close" onclick="closeModal()">닫기</button>
+
+
+    <div
+      class="modal-title"
+      id="modalTitle"
+    >
+      안내
+    </div>
+
+
+    <div
+      class="modal-content"
+      id="modalContent"
+    ></div>
+
+
+    <button
+      class="modal-close"
+      type="button"
+      onclick="closeModal()"
+    >
+      닫기
+    </button>
+
+
   </div>
+
 </div>
 
-<div class="image-modal" id="imageModal">
+
+<!-- =====================================================
+     편지 이미지 모달
+===================================================== -->
+
+<div
+  class="image-modal"
+  id="imageModal"
+>
+
   <div class="image-box">
-    <button class="image-close" onclick="closeImageModal()">×</button>
-    <img id="imageModalImg" src="" alt="안내 이미지">
+
+
+    <button
+      class="image-close"
+      type="button"
+      onclick="closeImageModal()"
+    >
+      ×
+    </button>
+
+
+    <img
+      id="imageModalImg"
+      src=""
+      alt="편지"
+    >
+
+
   </div>
+
 </div>
 
-<div class="video-modal" id="videoModal">
+
+<!-- =====================================================
+     영상
+===================================================== -->
+
+<div
+  class="video-modal"
+  id="videoModal"
+>
+
   <div class="video-box">
-    <video id="resultVideo" class="result-video" playsinline muted></video>
-    <div id="videoFallback" class="video-fallback"></div>
+
+
+    <video
+      id="resultVideo"
+      class="result-video"
+      playsinline
+      muted
+    ></video>
+
+
+    <div
+      id="videoFallback"
+      class="video-fallback"
+    ></div>
+
+
   </div>
+
 </div>
+
 
 <script>
-const PROGRESS_KEY = "ptb_progress_v1";
 
-let usedHint = false;
-let usedAnswer = false;
-let locked = false;
-let pendingScore = null;
-let imageModalMode = "intro";
+/* =========================================================
+   문제 설정
+========================================================= */
 
-const missionConfig = {
-  missionNumber: 3,
-  correctAnswer: "6320",
-  hintText: "단어를 품고 있는 조각을 조합하세요.",
-  answerText: "6320",
-  bgImage: "ptbq3.png",
-  introImage: "ptbq3m.png",
-  correctImage: "ptbq3w.png"
+const missionConfig={
+
+  missionNumber:3,
+
+  correctAnswer:"6320",
+
+  hintText:
+    "단어를 품고 있는 조각을 조합하세요.",
+
+  answerText:
+    "6320",
+
+  bgImage:
+    "ptbq3.png",
+
+  introImage:
+    "ptbq3m.png",
+
+  correctImage:
+    "ptbq3w.png"
+
 };
 
+
+/* =========================================================
+   저장
+========================================================= */
+
+const PROGRESS_KEY=
+  "ptb_progress_v1";
+
+
+let usedHint=false;
+let usedAnswer=false;
+let locked=false;
+
+let pendingScore=null;
+
+let imageModalMode=
+  "intro";
+
+
 function getProgress(){
+
   try{
-    return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
-  }catch(e){
-    return {};
+
+    return JSON.parse(
+      localStorage.getItem(
+        PROGRESS_KEY
+      )
+    ) || {};
+
   }
+
+  catch(e){
+
+    return {};
+
+  }
+
 }
 
-function setProgress(progress){
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+
+function setProgress(
+  progress
+){
+
+  localStorage.setItem(
+    PROGRESS_KEY,
+    JSON.stringify(progress)
+  );
+
 }
 
-function normalize(text){
-  return String(text).replace(/\s+/g,"").trim().toLowerCase();
+
+/* =========================================================
+   정답 비교
+========================================================= */
+
+function normalize(
+  text
+){
+
+  return String(text)
+
+    .replace(
+      /\s+/g,
+      ""
+    )
+
+    .trim()
+
+    .toLowerCase();
+
 }
+
+
+/* =========================================================
+   점수
+========================================================= */
 
 function currentScore(){
-  if(usedAnswer) return 0;
-  if(usedHint) return 10;
+
+  if(
+    usedAnswer
+  ){
+    return 0;
+  }
+
+
+  if(
+    usedHint
+  ){
+    return 10;
+  }
+
+
   return 20;
+
 }
 
-function openModal(title, content){
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalContent").textContent = content;
-  document.getElementById("infoModal").classList.add("show");
+
+/* =========================================================
+   저장
+========================================================= */
+
+function saveResult(
+  score
+){
+
+  const progress=
+    getProgress();
+
+
+  progress[
+    missionConfig.missionNumber
+  ]={
+
+    completed:true,
+
+    score:score,
+
+    usedHint:usedHint,
+
+    usedAnswer:usedAnswer
+
+  };
+
+
+  setProgress(
+    progress
+  );
+
 }
+
+
+/* =========================================================
+   일반 모달
+========================================================= */
+
+function openModal(
+  title,
+  content
+){
+
+  document
+    .getElementById(
+      "modalTitle"
+    )
+    .textContent=
+      title;
+
+
+  document
+    .getElementById(
+      "modalContent"
+    )
+    .textContent=
+      content;
+
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+}
+
 
 function closeModal(){
-  document.getElementById("infoModal").classList.remove("show");
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
 }
 
-function openImageModal(src, mode){
-  imageModalMode = mode;
-  document.getElementById("imageModalImg").src = src;
-  document.getElementById("imageModal").classList.add("show");
+
+/* =========================================================
+   편지 모달
+========================================================= */
+
+function openImageModal(
+  src,
+  mode
+){
+
+  imageModalMode=
+    mode;
+
+
+  document
+    .getElementById(
+      "imageModalImg"
+    )
+    .src=
+      src;
+
+
+  document
+    .getElementById(
+      "imageModal"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
 }
+
+
+/* =========================================================
+   편지 닫기
+========================================================= */
 
 function closeImageModal(){
-  document.getElementById("imageModal").classList.remove("show");
 
-  if(imageModalMode === "correct" && pendingScore !== null){
-    const score = pendingScore;
-    pendingScore = null;
+  document
+    .getElementById(
+      "imageModal"
+    )
+    .classList
+    .remove(
+      "show"
+    );
 
-    if(score === 0){
-      location.href = "ptbm.html";
-      return;
-    }
 
-    playVideoAndReturn(score);
+  /* 첫 편지 → 2초 뒤 미션 */
+
+  if(
+    imageModalMode ===
+    "intro"
+  ){
+
+    setTimeout(
+      showMission,
+      2000
+    );
+
+
+    return;
+
   }
+
+
+  /* 성공 편지 → 영상 */
+
+  if(
+    imageModalMode ===
+    "correct"
+    &&
+    pendingScore !== null
+  ){
+
+    const score=
+      pendingScore;
+
+
+    pendingScore=
+      null;
+
+
+    playVideoAndReturn(
+      score
+    );
+
+  }
+
 }
+
+
+/* =========================================================
+   미션 표시
+========================================================= */
+
+function showMission(){
+
+  document
+    .getElementById(
+      "missionWrap"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+
+  document
+    .getElementById(
+      "uiWrap"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+
+  /*
+    자동 focus 없음
+  */
+
+}
+
+
+/* =========================================================
+   미션 숨김
+========================================================= */
+
+function hideMission(){
+
+  document
+    .getElementById(
+      "missionWrap"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  document
+    .getElementById(
+      "uiWrap"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   힌트
+========================================================= */
 
 function showHint(){
-  if(locked) return;
-  usedHint = true;
-  document.getElementById("answerBtn").disabled = false;
-  openModal("힌트", missionConfig.hintText);
-}
 
-function showAnswer(){
-  if(locked) return;
-  if(!usedHint) return;
-  usedAnswer = true;
-  openModal("정답", missionConfig.answerText);
-}
-
-function getTotalScore(){
-  const progress = getProgress();
-  let total = 0;
-
-  for(let i = 1; i <= 5; i++){
-    if(progress[i] && progress[i].completed){
-      total += Number(progress[i].score || 0);
-    }
-  }
-
-  return total;
-}
-
-function showScore(){
-  openModal("기억보상", `현재까지 모은 기억보상은 ${getTotalScore()}입니다.`);
-}
-
-function saveResult(score){
-  const progress = getProgress();
-
-  progress[missionConfig.missionNumber] = {
-    completed:true,
-    score:score,
-    usedHint:usedHint,
-    usedAnswer:usedAnswer
-  };
-
-  setProgress(progress);
-}
-
-function getVideoSrc(score){
-  if(score === 20) return "ptbq1.mp4";
-  if(score === 10) return "ptbq2.mp4";
-  return "ptbq3.mp4";
-}
-
-function playVideoAndReturn(score){
-  const videoModal = document.getElementById("videoModal");
-  const video = document.getElementById("resultVideo");
-  const fallback = document.getElementById("videoFallback");
-
-  videoModal.classList.add("show");
-  fallback.classList.remove("show");
-  fallback.textContent = "";
-  video.style.display = "block";
-
-  video.src = getVideoSrc(score);
-  video.load();
-
-  const goBack = function(){
-    location.href = "ptbm.html";
-  };
-
-  video.onended = goBack;
-
-  video.onerror = function(){
-    video.style.display = "none";
-    fallback.textContent = `${score}점 획득!\n영상 파일을 넣으면 이곳에서 재생됩니다.`;
-    fallback.classList.add("show");
-
-    setTimeout(goBack, 1800);
-  };
-
-  const playPromise = video.play();
-
-  if(playPromise !== undefined){
-    playPromise.catch(function(){
-      video.style.display = "none";
-      fallback.textContent = `${score}점 획득!\n영상 파일을 넣으면 이곳에서 재생됩니다.`;
-      fallback.classList.add("show");
-
-      setTimeout(goBack, 1800);
-    });
-  }
-}
-
-function checkAnswer(){
-  if(locked) return;
-
-  const input = document.getElementById("answerInput").value;
-
-  if(!input.trim()){
-    openModal("안내", "정답을 입력해주세요.");
+  if(
+    locked
+  ){
     return;
   }
 
-  if(normalize(input) === normalize(missionConfig.correctAnswer)){
-    locked = true;
-    const score = currentScore();
 
-    saveResult(score);
-    closeModal();
+  usedHint=
+    true;
 
-    pendingScore = score;
-    openImageModal(missionConfig.correctImage, "correct");
 
-  }else{
-    const ui = document.getElementById("uiWrap");
-    ui.classList.remove("shake");
-    void ui.offsetWidth;
-    ui.classList.add("shake");
+  document
+    .getElementById(
+      "answerBtn"
+    )
+    .disabled=
+      false;
 
-    openModal("오답", "정답이 아닙니다.");
-  }
+
+  openModal(
+    "힌트",
+    missionConfig.hintText
+  );
+
 }
 
-document.getElementById("answerInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    checkAnswer();
+
+/* =========================================================
+   정답보기
+========================================================= */
+
+function showAnswer(){
+
+  if(
+    locked
+  ){
+    return;
   }
-});
 
-document.body.style.backgroundImage = `url("${missionConfig.bgImage}")`;
-document.title = `PTBQ${missionConfig.missionNumber}`;
 
-setTimeout(function(){
-  openImageModal(missionConfig.introImage, "intro");
-}, 1000);
+  if(
+    !usedHint
+  ){
+    return;
+  }
+
+
+  usedAnswer=
+    true;
+
+
+  openModal(
+    "정답",
+    missionConfig.answerText
+  );
+
+}
+
+
+/* =========================================================
+   기억보상
+========================================================= */
+
+function getTotalScore(){
+
+  const progress=
+    getProgress();
+
+
+  let total=
+    0;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    if(
+      progress[i]
+      &&
+      progress[i].completed
+    ){
+
+      total +=
+        Number(
+          progress[i].score || 0
+        );
+
+    }
+
+  }
+
+
+  return total;
+
+}
+
+
+function showScore(){
+
+  openModal(
+
+    "기억보상",
+
+    `현재까지 모은 기억보상은 ${getTotalScore()}입니다.`
+
+  );
+
+}
+
+
+/* =========================================================
+   정답 확인
+========================================================= */
+
+function checkAnswer(){
+
+  if(
+    locked
+  ){
+    return;
+  }
+
+
+  const input=
+    document
+      .getElementById(
+        "answerInput"
+      )
+      .value;
+
+
+  if(
+    !input.trim()
+  ){
+
+    openModal(
+      "안내",
+      "정답을 입력해주세요."
+    );
+
+
+    return;
+
+  }
+
+
+  /* 정답 */
+
+  if(
+    normalize(input)
+    ===
+    normalize(
+      missionConfig.correctAnswer
+    )
+  ){
+
+    locked=
+      true;
+
+
+    const score=
+      currentScore();
+
+
+    saveResult(
+      score
+    );
+
+
+    pendingScore=
+      score;
+
+
+    closeModal();
+
+
+    hideMission();
+
+
+    /*
+      2초 후 정답 편지
+    */
+
+    setTimeout(
+      function(){
+
+        openImageModal(
+          missionConfig.correctImage,
+          "correct"
+        );
+
+      },
+
+      2000
+    );
+
+
+    return;
+
+  }
+
+
+  /* 오답 */
+
+  const ui=
+    document.getElementById(
+      "uiWrap"
+    );
+
+
+  ui
+    .classList
+    .remove(
+      "shake"
+    );
+
+
+  void ui.offsetWidth;
+
+
+  ui
+    .classList
+    .add(
+      "shake"
+    );
+
+
+  openModal(
+    "오답",
+    "정답이 아닙니다."
+  );
+
+}
+
+
+/* =========================================================
+   영상
+========================================================= */
+
+function getVideoSrc(
+  score
+){
+
+  if(
+    score === 20
+  ){
+
+    return "ptbq1.mp4";
+
+  }
+
+
+  if(
+    score === 10
+  ){
+
+    return "ptbq2.mp4";
+
+  }
+
+
+  return "ptbq3.mp4";
+
+}
+
+
+function playVideoAndReturn(
+  score
+){
+
+  const videoModal=
+    document.getElementById(
+      "videoModal"
+    );
+
+
+  const video=
+    document.getElementById(
+      "resultVideo"
+    );
+
+
+  const fallback=
+    document.getElementById(
+      "videoFallback"
+    );
+
+
+  videoModal
+    .classList
+    .add(
+      "show"
+    );
+
+
+  fallback
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  fallback.textContent=
+    "";
+
+
+  video.style.display=
+    "block";
+
+
+  video.src=
+    getVideoSrc(
+      score
+    );
+
+
+  video.load();
+
+
+  const goBack=
+    function(){
+
+      location.href=
+        "ptbm.html";
+
+    };
+
+
+  video.onended=
+    goBack;
+
+
+  video.onerror=
+    function(){
+
+      video.style.display=
+        "none";
+
+
+      fallback.textContent=
+        `${score}점 획득!
+영상 파일을 확인해주세요.`;
+
+
+      fallback
+        .classList
+        .add(
+          "show"
+        );
+
+
+      setTimeout(
+        goBack,
+        1800
+      );
+
+    };
+
+
+  const playPromise=
+    video.play();
+
+
+  if(
+    playPromise !==
+    undefined
+  ){
+
+    playPromise.catch(
+      function(){
+
+        video.style.display=
+          "none";
+
+
+        fallback.textContent=
+          `${score}점 획득!
+영상을 재생할 수 없습니다.`;
+
+
+        fallback
+          .classList
+          .add(
+            "show"
+          );
+
+
+        setTimeout(
+          goBack,
+          1800
+        );
+
+      }
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ENTER
+========================================================= */
+
+document
+  .getElementById(
+    "answerInput"
+  )
+  .addEventListener(
+    "keydown",
+
+    function(e){
+
+      if(
+        e.key ===
+        "Enter"
+      ){
+
+        checkAnswer();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   최초 실행
+========================================================= */
+
+document.body.style.backgroundImage=
+  `url("${missionConfig.bgImage}")`;
+
+
+setTimeout(
+  function(){
+
+    openImageModal(
+      missionConfig.introImage,
+      "intro"
+    );
+
+  },
+
+  1000
+);
+
 </script>
 
 </body>
