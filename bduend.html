@@ -66,7 +66,6 @@ body{
 
 /* =========================================================
    배경
-   처음에는 bduend1.png
 ========================================================= */
 
 body{
@@ -380,6 +379,43 @@ body{
 
 
 /* =========================================================
+   엔딩 영상
+========================================================= */
+
+.end-video-wrap{
+
+  position:fixed;
+
+  inset:0;
+
+  z-index:999;
+
+  display:none;
+
+  background:#000;
+}
+
+
+.end-video-wrap.show{
+
+  display:block;
+}
+
+
+.end-video{
+
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  object-fit:cover;
+
+  background:#000;
+}
+
+
+/* =========================================================
    애니메이션
 ========================================================= */
 
@@ -420,7 +456,6 @@ body{
         +
         env(safe-area-inset-bottom)
       );
-
   }
 
 
@@ -521,31 +556,6 @@ body{
     line-height:1.4;
   }
 
-}
-
-
-/* =========================================================
-   엔딩 영상
-========================================================= */
-
-.end-video-wrap{
-  position:fixed;
-  inset:0;
-  z-index:999;
-  display:none;
-  background:#000;
-}
-
-.end-video-wrap.show{
-  display:block;
-}
-
-.end-video{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-  background:#000;
 }
 
 </style>
@@ -705,6 +715,7 @@ body{
     playsinline
     webkit-playsinline
     preload="auto"
+    muted
   >
     <source
       src="bduend.mp4"
@@ -963,7 +974,7 @@ function prevTalk(){
    마지막 다음 버튼
 
    다음 클릭
-   → bduend.mp4 재생
+   → bduend.mp4 묵음 재생
    → 영상 종료
    → bduout.html 이동
 ========================================================= */
@@ -995,7 +1006,14 @@ function goNextPage(){
 
 
   /*
-    영상 처음부터 재생
+    영상 강제 묵음
+  */
+  endVideo.muted = true;
+  endVideo.volume = 0;
+
+
+  /*
+    처음부터 재생
   */
   endVideo.currentTime = 0;
 
@@ -1012,15 +1030,14 @@ function goNextPage(){
 
 
   /*
-    재생 시작
+    영상 재생
   */
   const playPromise =
     endVideo.play();
 
 
   /*
-    혹시 모바일 브라우저에서
-    재생이 막히면 컨트롤 표시
+    혹시 재생이 막힐 경우
   */
   if(
     playPromise !== undefined
