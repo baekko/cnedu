@@ -39,8 +39,6 @@ body{
 
 /* =========================================================
    공통 변수
-
-   bduin과 같은 래빗홀 스타일
 ========================================================= */
 
 :root{
@@ -60,23 +58,14 @@ body{
   --arrow-w:82px;
   --arrow-h:68px;
 
-  /*
-    화살표 아래에서
-    말박스가 시작되는 간격
-  */
   --talk-gap:34px;
 
-  /*
-    마지막 다음 버튼 위치
-  */
   --next-bottom:5vh;
-
 }
 
 
 /* =========================================================
    배경
-
    처음에는 bduend1.png
 ========================================================= */
 
@@ -92,9 +81,6 @@ body{
 
 /* =========================================================
    화살표 영역
-
-   ★ 위치 고정
-   ★ 말박스 줄 수와 관계없이 움직이지 않음
 ========================================================= */
 
 .talk-controls{
@@ -130,9 +116,6 @@ body{
 
 /* =========================================================
    말박스 영역
-
-   ★ 화살표를 기준으로 상단 고정
-   ★ 글이 길어지면 아래로만 커짐
 ========================================================= */
 
 .talk-box-wrap{
@@ -300,8 +283,6 @@ body{
 
 /* =========================================================
    마지막 다음 버튼
-
-   bdum의 모험시작 버튼과 같은 스타일
 ========================================================= */
 
 .next-page-btn{
@@ -495,7 +476,6 @@ body{
     --arrow-h:45px;
 
     --talk-gap:22px;
-
   }
 
 
@@ -541,6 +521,31 @@ body{
     line-height:1.4;
   }
 
+}
+
+
+/* =========================================================
+   엔딩 영상
+========================================================= */
+
+.end-video-wrap{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:none;
+  background:#000;
+}
+
+.end-video-wrap.show{
+  display:block;
+}
+
+.end-video{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  background:#000;
 }
 
 </style>
@@ -685,100 +690,59 @@ body{
 </button>
 
 
+<!-- =====================================================
+     엔딩 영상
+===================================================== -->
+
+<div
+  id="endVideoWrap"
+  class="end-video-wrap"
+>
+
+  <video
+    id="endVideo"
+    class="end-video"
+    playsinline
+    webkit-playsinline
+    preload="auto"
+  >
+    <source
+      src="bduend.mp4"
+      type="video/mp4"
+    >
+  </video>
+
+</div>
+
+
 <script>
 
 /* =========================================================
    전체 대사
 
-   0~1   : bduend1.png
-   2~5   : bduend2.png
-   6~10  : bduend3.png
-   11    : bduend2.png
+   1~2번째 : bduend1.png
+   3번째   : bduend2.png
+   4번째   : bduend3.png
 ========================================================= */
 
 const talks = [
 
-  /* =====================================================
-     1~2
-     bduend1.png
-  ===================================================== */
-
   `얼마나 지났을까.
 한참 잠을 자고난 후 눈을 떴어.
-그런데 눈앞에 있던 것은
-커다란 책 열매 나무도, 토끼도 아니었어.`,
+분명 조금 전까지 래빗홀 속 책 열매 나무 아래에
+있었는데 어느새 교실로 돌아와 있었어.`,
 
-  `분명 조금 전까지 래빗홀 속 책 열매 나무 아래에
-있었는데 어느새 교실로 돌아와 있었어.
-‘친구는?’
-급하게 교실 안을 둘러보았지만 그 어디에도 없었어.`,
+  `‘설마…… 전부 꿈이었나?’`,
 
+  `“왜 그렇게 멍하니 있어?”
+고개를 들자, 찾고 있던 친구가 서 있었어.
+어디 갔었냐고 묻기도 전에
+친구가 먼저 웃으며 말했지.
+“나, 진짜 이상한 꿈을 꿨어.”`,
 
-  /* =====================================================
-     3~6
-     bduend2.png
-  ===================================================== */
-
-  `‘설마…… 전부 꿈이었나?’
-곧장 거울 앞으로 달려갔어.
-“토끼야!”
-거울을 향해 소리쳤어.`,
-
-  `“친구 데려온다며!”
-하지만 거울은 조용했어.
-손으로 만져 보아도 평범한 거울일 뿐이었지.`,
-
-  `그날 이후 매일 거울을 찾아갔어.
-아침에도 들여다보고, 수업이 끝난 뒤에도 보고.
-하지만 거울 속에는 언제나
-내 모습만 덩그러니 비칠 뿐이었지.`,
-
-  `처음에는 화가 났지만
-시간이 지날수록 걱정이 되기 시작했어.
-‘친구에게 무슨 일이 생긴 건 아닐까?
-다시 래빗홀로 들어가야 하나?’`,
-
-
-  /* =====================================================
-     7~11
-     bduend3.png
-  ===================================================== */
-
-  `그러던 어느 날이었어.
-그날도 아무 일 없을 거라 생각하며
-거울 앞에서 돌아서려던 순간,
-거울 표면에 작은 물결이 번지더니
-보라토끼가 다시 나타난거야!`,
-
-  `나는 반가워할 틈도 없이 거울 앞으로 달려갔어.
-“친구를 데려온다며!
-나보고 기다리라고 해 놓고 왜 교실로 돌려보낸 거야?
-내 친구는 어디 있어?”`,
-
-  `“미안해.
-사실 나도 친구를 데리고 돌아가려고 했어.”
-토끼가 뜻밖의 말을 꺼냈어.
-“네 친구가…… 아직 돌아가기 싫대.”`,
-
-  `“뭐라고?
-친구를 구하겠다고 그 문제들을 다 풀었는데!”
-나는 어이없는 표정으로 토끼를 바라봤어.`,
-
-  `“네 친구가 너희한테 꼭 이 말을 전해 달라고 했어.
-‘걱정하지 마, 난 잘 지내고 있어.
-래빗홀에는 아직 만나고 싶은 이야기가 너무 많아.
-조금만 더 이곳을 여행하고 돌아갈게.
-그때까지 조금만 기다려 줘!’ 라고 말이야.”`,
-
-
-  /* =====================================================
-     12
-     다시 bduend2.png
-  ===================================================== */
-
-  `토끼는 씩 웃어 보이더니 거울 속으로 사라졌어.
-나는 한동안 말없이 거울을 바라보았지.
-친구가 돌아오면 어떤 이야기를 들려줄까 생각하면서.`
+  `나는 잠시 친구를 바라보다가 웃었어.
+그 꿈이 뭐였는지는 묻지 않았어.
+어차피 나도 같은 꿈을 꾸었으니까.`
 
 ];
 
@@ -799,94 +763,70 @@ const talkControls =
     "talkControls"
   );
 
-
 const talkBoxWrap =
   document.getElementById(
     "talkBoxWrap"
   );
-
 
 const talkBox =
   document.getElementById(
     "talkBox"
   );
 
-
 const prevTalkBtn =
   document.getElementById(
     "prevTalkBtn"
   );
-
 
 const nextTalkBtn =
   document.getElementById(
     "nextTalkBtn"
   );
 
-
 const nextPageBtn =
   document.getElementById(
     "nextPageBtn"
   );
 
+const endVideoWrap =
+  document.getElementById(
+    "endVideoWrap"
+  );
+
+const endVideo =
+  document.getElementById(
+    "endVideo"
+  );
+
 
 /* =========================================================
-   현재 대사에 맞는 배경 이미지 결정
+   현재 말박스에 맞는 배경 결정
 ========================================================= */
 
-function getBackgroundForTalk(
-  index
-){
+function getBackgroundForTalk(index){
 
   /*
     1~2번째
   */
-
-  if(
-    index <= 1
-  ){
+  if(index <= 1){
 
     return "bduend1.png";
-
   }
 
 
   /*
-    3~6번째
+    3번째
   */
-
-  if(
-    index >= 2
-    &&
-    index <= 5
-  ){
+  if(index === 2){
 
     return "bduend2.png";
-
   }
 
 
   /*
-    7~11번째
+    4번째
   */
-
-  if(
-    index >= 6
-    &&
-    index <= 10
-  ){
-
-    return "bduend3.png";
-
-  }
-
-
-  /*
-    마지막 12번째
-  */
-
-  return "bduend2.png";
-
+  return "bduend3.png";
 }
 
 
@@ -901,13 +841,8 @@ function updateBackground(){
       currentTalk
     );
 
-
-  document
-    .body
-    .style
-    .backgroundImage =
-      `url("${image}")`;
-
+  document.body.style.backgroundImage =
+    `url("${image}")`;
 }
 
 
@@ -918,110 +853,72 @@ function updateBackground(){
 function updateTalk(){
 
   /*
-    배경부터 변경
+    배경 변경
   */
-
   updateBackground();
 
 
   /*
-    말 내용
+    말박스 내용
   */
-
   talkBox.textContent =
-    talks[
-      currentTalk
-    ];
+    talks[currentTalk];
 
 
   /*
-    첫 번째 대사
-    → 왼쪽 화살표 숨김
+    첫 번째 말박스에서는
+    이전 화살표 숨김
   */
-
-  if(
-    currentTalk === 0
-  ){
+  if(currentTalk === 0){
 
     prevTalkBtn
       .classList
-      .add(
-        "hidden"
-      );
+      .add("hidden");
 
-  }
-
-  else{
+  }else{
 
     prevTalkBtn
       .classList
-      .remove(
-        "hidden"
-      );
-
+      .remove("hidden");
   }
 
 
   /*
-    마지막 대사인지
+    마지막 말박스 여부
   */
-
   const isLast =
     currentTalk ===
     talks.length - 1;
 
 
-  /* =====================================================
-     마지막 대사
-
-     오른쪽 화살표 제거
-     하단에 다음 버튼
-  ===================================================== */
-
-  if(
-    isLast
-  ){
+  /*
+    마지막 말박스에서는
+    오른쪽 화살표 숨김
+    하단 다음 버튼 표시
+  */
+  if(isLast){
 
     nextTalkBtn.style.visibility =
       "hidden";
 
-
     nextTalkBtn.style.pointerEvents =
       "none";
 
-
     nextPageBtn
       .classList
-      .add(
-        "show"
-      );
+      .add("show");
 
-  }
-
-
-  /* =====================================================
-     마지막이 아닐 때
-
-     오른쪽 화살표 표시
-     다음 버튼 제거
-  ===================================================== */
-
-  else{
+  }else{
 
     nextTalkBtn.style.visibility =
       "visible";
 
-
     nextTalkBtn.style.pointerEvents =
       "auto";
 
-
     nextPageBtn
       .classList
-      .remove(
-        "show"
-      );
-
+      .remove("show");
   }
 
 }
@@ -1040,9 +937,7 @@ function nextTalk(){
 
     currentTalk++;
 
-
     updateTalk();
-
   }
 
 }
@@ -1054,102 +949,143 @@ function nextTalk(){
 
 function prevTalk(){
 
-  if(
-    currentTalk > 0
-  ){
+  if(currentTalk > 0){
 
     currentTalk--;
 
-
     updateTalk();
-
   }
 
 }
 
 
 /* =========================================================
-   마지막 다음
+   마지막 다음 버튼
 
-   → bduout.html
+   다음 클릭
+   → bduend.mp4 재생
+   → 영상 종료
+   → bduout.html 이동
 ========================================================= */
 
 function goNextPage(){
 
-  location.href =
-    "bduout.html";
+  /*
+    말박스와 화살표 숨김
+  */
+  talkControls
+    .classList
+    .remove("show");
+
+  talkBoxWrap
+    .classList
+    .remove("show");
+
+  nextPageBtn
+    .classList
+    .remove("show");
+
+
+  /*
+    영상 화면 표시
+  */
+  endVideoWrap
+    .classList
+    .add("show");
+
+
+  /*
+    영상 처음부터 재생
+  */
+  endVideo.currentTime = 0;
+
+
+  /*
+    영상이 끝나는 순간
+    bduout.html 이동
+  */
+  endVideo.onended = function(){
+
+    location.href =
+      "bduout.html";
+  };
+
+
+  /*
+    재생 시작
+  */
+  const playPromise =
+    endVideo.play();
+
+
+  /*
+    혹시 모바일 브라우저에서
+    재생이 막히면 컨트롤 표시
+  */
+  if(
+    playPromise !== undefined
+  ){
+
+    playPromise.catch(
+      function(){
+
+        endVideo.controls =
+          true;
+      }
+    );
+  }
 
 }
 
 
 /* =========================================================
    처음 실행
-
-   bduin처럼 로드 후 약간 있다가
-   말박스와 화살표 등장
-
-   배경 자체는 처음부터 bduend1.png
 ========================================================= */
 
 function startPage(){
 
-  currentTalk =
-    0;
+  currentTalk = 0;
 
 
+  /*
+    첫 배경
+  */
   updateBackground();
 
 
   /*
-    초기에는 UI 숨김
+    처음에는 UI 숨김
   */
-
   talkControls
     .classList
-    .remove(
-      "show"
-    );
-
+    .remove("show");
 
   talkBoxWrap
     .classList
-    .remove(
-      "show"
-    );
-
+    .remove("show");
 
   nextPageBtn
     .classList
-    .remove(
-      "show"
-    );
+    .remove("show");
 
 
   /*
-    1초 뒤 첫 대화 등장
+    1초 뒤 첫 말박스 등장
   */
-
   setTimeout(
     function(){
 
       updateTalk();
 
-
       talkControls
         .classList
-        .add(
-          "show"
-        );
-
+        .add("show");
 
       talkBoxWrap
         .classList
-        .add(
-          "show"
-        );
+        .add("show");
 
     },
-
     1000
   );
 
