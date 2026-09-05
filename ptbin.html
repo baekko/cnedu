@@ -30,6 +30,9 @@ html, body {
   --arrow-top-gap: clamp(28px, 4vh, 42px);
 
   --next-bottom: clamp(48px, 7vh, 80px);
+
+  /* 첫 화면 오른쪽 화살표 이동 거리 */
+  --first-arrow-shift: clamp(72px, 12vw, 130px);
 }
 
 body {
@@ -60,7 +63,9 @@ body {
   display: block;
 }
 
+
 /* 화살표 영역 */
+
 .arrow-area {
   position: absolute;
   left: 50%;
@@ -72,6 +77,57 @@ body {
   justify-content: center;
   z-index: 10;
 }
+
+
+/* 첫 화면 안내 문구 */
+
+.arrow-guide {
+  position: absolute;
+
+  /*
+    첫 화면에서 오른쪽으로 이동한 화살표의
+    바로 왼쪽에 문구 끝이 붙도록 배치
+  */
+  right:
+    calc(
+      var(--arrow-w)
+      - var(--first-arrow-shift)
+      - 5px
+    );
+
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  color: #fffdf1;
+
+  white-space: nowrap;
+  text-align: right;
+
+  text-shadow:
+    0 2px 5px
+    rgba(0,0,0,.75);
+
+  pointer-events: none;
+
+  display: none;
+
+  z-index: 15;
+}
+
+
+/* 첫 번째 이미지에서만 문구 표시 */
+
+.arrow-area.first-slide .arrow-guide {
+  display: block;
+}
+
+
+/* 화살표 버튼 */
 
 .arrow-btn {
   width: var(--arrow-w);
@@ -85,13 +141,60 @@ body {
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.arrow-btn:hover {
+
+/* 왼쪽 화살표 */
+
+#prevBtn:hover {
   transform: translateY(-3px) scale(1.04);
 }
 
-.arrow-btn:active {
+#prevBtn:active {
   transform: translateY(2px) scale(0.95);
 }
+
+
+/* 오른쪽 화살표 기본 위치 */
+
+#nextArrowBtn {
+  --next-arrow-x: 0px;
+
+  transform:
+    translateX(
+      var(--next-arrow-x)
+    );
+}
+
+
+/*
+  첫 번째 이미지만
+  오른쪽 화살표를 오른쪽으로 이동
+*/
+
+.arrow-area.first-slide #nextArrowBtn {
+  --next-arrow-x:
+    var(--first-arrow-shift);
+}
+
+
+#nextArrowBtn:hover {
+  transform:
+    translateX(
+      var(--next-arrow-x)
+    )
+    translateY(-3px)
+    scale(1.04);
+}
+
+
+#nextArrowBtn:active {
+  transform:
+    translateX(
+      var(--next-arrow-x)
+    )
+    translateY(2px)
+    scale(0.95);
+}
+
 
 .arrow-btn svg {
   width: 100%;
@@ -117,7 +220,9 @@ body {
   pointer-events: none;
 }
 
+
 /* 다음 버튼 */
+
 .next-btn{
   position:absolute;
   left:50%;
@@ -160,8 +265,11 @@ body {
   }
 }
 
+
 /* 휴대폰 */
+
 @media (max-width: 600px) {
+
   :root {
     --card-size: min(82vw, 360px);
     --card-top: 13vh;
@@ -170,17 +278,40 @@ body {
     --arrow-gap: 44px;
     --arrow-top-gap: 24px;
     --next-bottom: 42px;
+
+    /*
+      모바일에서는 화면 밖으로 나가지 않도록
+      오른쪽 이동 거리 조정
+    */
+    --first-arrow-shift: 68px;
   }
 
+
+  .arrow-guide {
+
+    right:
+      calc(
+        var(--arrow-w)
+        - var(--first-arrow-shift)
+        - 4px
+      );
+
+    font-size: 14px;
+  }
+
+
   .next-btn{
-  padding:10px 16px;
-  font-size:15px;
-  white-space:nowrap;
+    padding:10px 16px;
+    font-size:15px;
+    white-space:nowrap;
   }
 }
 
+
 /* 작은 휴대폰 */
+
 @media (max-width: 390px) {
+
   :root {
     --card-size: 80vw;
     --card-top: 12vh;
@@ -189,43 +320,132 @@ body {
     --arrow-gap: 36px;
     --arrow-top-gap: 22px;
     --next-bottom: 36px;
+
+    --first-arrow-shift: 62px;
   }
 
+
+  .arrow-guide {
+
+    right:
+      calc(
+        var(--arrow-w)
+        - var(--first-arrow-shift)
+        - 3px
+      );
+
+    font-size: 13px;
+  }
+
+
   .next-btn{
-  padding:9px 12px;
-  font-size:14px;
-  white-space:nowrap;
+    padding:9px 12px;
+    font-size:14px;
+    white-space:nowrap;
   }
 }
+
 </style>
 </head>
 
 <body>
+
   <div class="intro-wrap">
+
     <div class="card-area">
-      <img id="storyImg" class="story-img" src="ptbin1.png" alt="인트로 이미지">
+      <img
+        id="storyImg"
+        class="story-img"
+        src="ptbin1.png"
+        alt="인트로 이미지"
+      >
     </div>
 
-    <div class="arrow-area">
-      <button id="prevBtn" class="arrow-btn hidden" onclick="prevSlide()" aria-label="이전">
-        <svg viewBox="0 0 120 96" aria-hidden="true">
-          <path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/>
-          <path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/>
+
+    <div
+      class="arrow-area first-slide"
+      id="arrowArea"
+    >
+
+      <button
+        id="prevBtn"
+        class="arrow-btn hidden"
+        onclick="prevSlide()"
+        aria-label="이전"
+      >
+
+        <svg
+          viewBox="0 0 120 96"
+          aria-hidden="true"
+        >
+
+          <path
+            class="arrow-shape"
+            d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"
+          />
+
+          <path
+            class="arrow-highlight"
+            d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"
+          />
+
         </svg>
+
       </button>
 
-      <button id="nextArrowBtn" class="arrow-btn" onclick="nextSlide()" aria-label="다음">
-        <svg viewBox="0 0 120 96" aria-hidden="true">
-          <path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/>
-          <path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/>
+
+      <!-- 첫 번째 이미지에서만 표시되는 안내 문구 -->
+
+      <div
+        id="arrowGuide"
+        class="arrow-guide"
+      >
+        이 버튼을 누르면 다음으로 넘어갑니다
+      </div>
+
+
+      <button
+        id="nextArrowBtn"
+        class="arrow-btn"
+        onclick="nextSlide()"
+        aria-label="다음"
+      >
+
+        <svg
+          viewBox="0 0 120 96"
+          aria-hidden="true"
+        >
+
+          <path
+            class="arrow-shape"
+            d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"
+          />
+
+          <path
+            class="arrow-highlight"
+            d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"
+          />
+
         </svg>
+
       </button>
+
     </div>
 
-    <button id="nextPageBtn" class="next-btn" onclick="goNextPage()">다음</button>
+
+    <button
+      id="nextPageBtn"
+      class="next-btn"
+      onclick="goNextPage()"
+    >
+      다음
+    </button>
+
   </div>
 
+
 <script>
+
 const TOTAL_SLIDES = 11;
 const RETURN_KEY = "ptbin_return_from_next";
 
@@ -233,107 +453,350 @@ let currentSlide = 1;
 let timer = null;
 let nextUnlocked = false;
 
-const storyImg = document.getElementById("storyImg");
-const prevBtn = document.getElementById("prevBtn");
-const nextArrowBtn = document.getElementById("nextArrowBtn");
-const nextPageBtn = document.getElementById("nextPageBtn");
+const storyImg =
+  document.getElementById(
+    "storyImg"
+  );
+
+const arrowArea =
+  document.getElementById(
+    "arrowArea"
+  );
+
+const prevBtn =
+  document.getElementById(
+    "prevBtn"
+  );
+
+const nextArrowBtn =
+  document.getElementById(
+    "nextArrowBtn"
+  );
+
+const nextPageBtn =
+  document.getElementById(
+    "nextPageBtn"
+  );
+
 
 function getNavigationType() {
-  const nav = performance.getEntriesByType("navigation")[0];
-  return nav ? nav.type : "navigate";
+
+  const nav =
+    performance
+      .getEntriesByType(
+        "navigation"
+      )[0];
+
+  return nav
+    ? nav.type
+    : "navigate";
 }
+
+
+/*
+  첫 번째 이미지인지 확인해서
+
+  1번 이미지:
+  - 안내 문구 표시
+  - 오른쪽 화살표 오른쪽 이동
+
+  2번 이미지부터:
+  - 안내 문구 숨김
+  - 오른쪽 화살표 원래 위치
+*/
+
+function updateFirstSlideGuide() {
+
+  if(currentSlide === 1) {
+
+    arrowArea
+      .classList
+      .add(
+        "first-slide"
+      );
+
+  } else {
+
+    arrowArea
+      .classList
+      .remove(
+        "first-slide"
+      );
+
+  }
+
+}
+
 
 function resetIntroState(showNextButton) {
-  currentSlide = 1;
-  nextUnlocked = showNextButton;
 
-  storyImg.src = "ptbin1.png";
-  prevBtn.classList.add("hidden");
-  nextArrowBtn.classList.remove("hidden");
+  currentSlide = 1;
+
+  nextUnlocked =
+    showNextButton;
+
+
+  storyImg.src =
+    "ptbin1.png";
+
+
+  prevBtn
+    .classList
+    .add(
+      "hidden"
+    );
+
+
+  nextArrowBtn
+    .classList
+    .remove(
+      "hidden"
+    );
+
+
+  /*
+    첫 화면 안내 문구와
+    오른쪽 화살표 위치 적용
+  */
+
+  updateFirstSlideGuide();
+
 
   clearTimeout(timer);
+
 
   if (showNextButton) {
-    nextPageBtn.classList.add("show");
+
+    nextPageBtn
+      .classList
+      .add(
+        "show"
+      );
+
   } else {
-    nextPageBtn.classList.remove("show");
+
+    nextPageBtn
+      .classList
+      .remove(
+        "show"
+      );
+
   }
+
 }
+
 
 function updateSlide() {
-  storyImg.src = `ptbin${currentSlide}.png`;
+
+  storyImg.src =
+    `ptbin${currentSlide}.png`;
+
+
+  /*
+    첫 이미지인지에 따라
+    안내문과 오른쪽 화살표 위치 변경
+  */
+
+  updateFirstSlideGuide();
+
 
   if (currentSlide === 1) {
-    prevBtn.classList.add("hidden");
+
+    prevBtn
+      .classList
+      .add(
+        "hidden"
+      );
+
   } else {
-    prevBtn.classList.remove("hidden");
+
+    prevBtn
+      .classList
+      .remove(
+        "hidden"
+      );
+
   }
+
 
   if (currentSlide === TOTAL_SLIDES) {
-    nextArrowBtn.classList.add("hidden");
+
+    nextArrowBtn
+      .classList
+      .add(
+        "hidden"
+      );
+
     startNextButtonTimer();
+
   } else {
-    nextArrowBtn.classList.remove("hidden");
+
+    nextArrowBtn
+      .classList
+      .remove(
+        "hidden"
+      );
+
 
     if (!nextUnlocked) {
-      nextPageBtn.classList.remove("show");
+
+      nextPageBtn
+        .classList
+        .remove(
+          "show"
+        );
+
     }
 
+
     clearTimeout(timer);
+
   }
+
 }
+
 
 function nextSlide() {
-  if (currentSlide < TOTAL_SLIDES) {
+
+  if (
+    currentSlide <
+    TOTAL_SLIDES
+  ) {
+
     currentSlide++;
+
     updateSlide();
+
   }
+
 }
+
 
 function prevSlide() {
-  if (currentSlide > 1) {
+
+  if (
+    currentSlide >
+    1
+  ) {
+
     currentSlide--;
+
     updateSlide();
+
   }
+
 }
+
 
 function startNextButtonTimer() {
+
   clearTimeout(timer);
 
+
   if (nextUnlocked) {
-    nextPageBtn.classList.add("show");
+
+    nextPageBtn
+      .classList
+      .add(
+        "show"
+      );
+
     return;
+
   }
 
-  timer = setTimeout(function () {
-    nextUnlocked = true;
-    nextPageBtn.classList.add("show");
-  }, 2000);
+
+  timer =
+    setTimeout(
+      function () {
+
+        nextUnlocked = true;
+
+        nextPageBtn
+          .classList
+          .add(
+            "show"
+          );
+
+      },
+
+      2000
+    );
+
 }
+
 
 function goNextPage() {
-  sessionStorage.setItem(RETURN_KEY, "true");
-  location.href = "https://baekko.github.io/cnedu/ptbm.html";
+
+  sessionStorage
+    .setItem(
+      RETURN_KEY,
+      "true"
+    );
+
+
+  location.href =
+    "https://baekko.github.io/cnedu/ptbm.html";
+
 }
 
-window.addEventListener("pageshow", function (event) {
-  const navType = getNavigationType();
 
-  if (navType === "reload") {
-    sessionStorage.removeItem(RETURN_KEY);
-    resetIntroState(false);
-    return;
+window.addEventListener(
+  "pageshow",
+
+  function (event) {
+
+    const navType =
+      getNavigationType();
+
+
+    if (
+      navType ===
+      "reload"
+    ) {
+
+      sessionStorage
+        .removeItem(
+          RETURN_KEY
+        );
+
+      resetIntroState(false);
+
+      return;
+
+    }
+
+
+    const cameBackFromNext =
+      event.persisted
+      ||
+      navType ===
+        "back_forward";
+
+
+    if (
+      cameBackFromNext
+      &&
+      sessionStorage
+        .getItem(
+          RETURN_KEY
+        )
+        ===
+        "true"
+    ) {
+
+      resetIntroState(true);
+
+    } else {
+
+      resetIntroState(false);
+
+    }
+
   }
+);
 
-  const cameBackFromNext =
-    event.persisted || navType === "back_forward";
-
-  if (cameBackFromNext && sessionStorage.getItem(RETURN_KEY) === "true") {
-    resetIntroState(true);
-  } else {
-    resetIntroState(false);
-  }
-});
 </script>
+
 </body>
 </html>
