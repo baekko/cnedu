@@ -344,12 +344,42 @@ body {
     white-space:nowrap;
   }
 }
+/* 가로 화면 안내 */
+.landscape-guide{
+  display:none;
+}
 
+@media (orientation: landscape){
+  .landscape-guide{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#111;
+  }
+
+  .landscape-guide-text{
+    font-family:"Gowun Dodum",sans-serif;
+    font-size:20px;
+    font-weight:700;
+    line-height:1.7;
+    text-align:center;
+    color:#fff;
+  }
+}
 </style>
 </head>
 
 <body>
-
+<div class="landscape-guide">
+  <div class="landscape-guide-text">
+    📱<br>
+    원활한 진행을 위해<br>
+    세로 모드를 유지해 주세요.
+  </div>
+</div>
   <div class="intro-wrap">
 
     <div class="card-area">
