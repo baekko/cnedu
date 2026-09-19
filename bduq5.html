@@ -1574,6 +1574,49 @@ function setProgress(progress){
 
 }
 
+/* =========================================================
+   ★ 힌트 / 정답보기 사용 상태 즉시 저장
+   새로고침·뒤로가기·재진입해도 패널티 유지
+========================================================= */
+
+function saveUsageState(){
+
+  const progress = getProgress();
+  const missionNumber = missionConfig.missionNumber;
+  const oldData = progress[missionNumber] || {};
+
+  /* 이미 완료한 문제는 최초 기록을 절대 변경하지 않음 */
+  if(oldData.completed){
+    return;
+  }
+
+  progress[missionNumber] = {
+    completed:false,
+    usedHint:usedHint,
+    usedAnswer:usedAnswer
+  };
+
+  setProgress(progress);
+}
+
+
+function loadUsageState(){
+
+  const progress = getProgress();
+  const missionData = progress[missionConfig.missionNumber];
+
+  if(!missionData){
+    return;
+  }
+
+  usedHint = missionData.usedHint === true;
+  usedAnswer = missionData.usedAnswer === true;
+
+  if(usedHint){
+    document.getElementById("answerBtn").disabled = false;
+  }
+}
+
 
 /* =========================================================
    정답 비교
@@ -1657,34 +1700,20 @@ function getTotalScore(){
 
 function saveResult(score){
 
-  const progress =
-    getProgress();
+  const progress = getProgress();
+  const missionNumber = missionConfig.missionNumber;
+  const oldData = progress[missionNumber] || {};
 
-  const missionNumber =
-    missionConfig.missionNumber;
-
-  /*
-    ★ 이미 한 번 완료한 문제라면
-    최초 점수/힌트/정답보기 기록을 절대 덮어쓰지 않음.
-  */
-  if(
-    progress[missionNumber]
-    &&
-    progress[missionNumber].completed
-  ){
+  /* 이미 완료했다면 최초 점수를 절대 덮어쓰지 않음 */
+  if(oldData.completed){
     return false;
   }
 
-  progress[missionNumber]={
-
+  progress[missionNumber] = {
     completed:true,
-
     score:score,
-
     usedHint:usedHint,
-
     usedAnswer:usedAnswer
-
   };
 
   setProgress(progress);
@@ -1740,6 +1769,8 @@ function showHint(){
 
   usedHint=true;
 
+  saveUsageState();
+
 
   document
     .getElementById("answerBtn")
@@ -1771,6 +1802,8 @@ function showAnswer(){
 
 
   usedAnswer=true;
+
+  saveUsageState();
 
 
   openModal(
@@ -2377,6 +2410,9 @@ document
 ========================================================= */
 
 fillMissionCard();
+
+/* 이전 힌트/정답보기 사용 기록 복원 */
+loadUsageState();
 
 
 /* 2초 후 첫 대화 */
