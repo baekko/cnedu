@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 
 <style>
 
@@ -336,91 +336,148 @@ body{
 
 
 /* =========================================================
-   안내 이미지 모달
+   HTML 편지 모달 - 문제페이지와 동일 스타일
 ========================================================= */
-
 .info-modal{
   position:fixed;
-
   inset:0;
-
   z-index:1000;
-
   display:none;
-
   justify-content:center;
   align-items:center;
-
-  background:
-    rgba(0,0,0,.55);
+  padding:18px;
+  background:rgba(0,0,0,.55);
 }
-
-
 .info-modal.show{
   display:flex;
+  animation:letterFade .28s ease;
 }
-
-
 .info-box{
   position:relative;
-
-  width:
-    min(82vw,560px);
-
-  max-height:82vh;
-
-  background:#fff7e8;
-
-  border-radius:22px;
-
-  padding:18px;
-
-  box-shadow:
-    0 20px 45px
-    rgba(0,0,0,.42);
+  width:min(88vw,520px);
+  height:min(76vh,700px);
+  min-height:560px;
+  padding:118px 46px 82px;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6;
+  border:1px solid #c7a37d;
+  border-radius:5px;
+  box-shadow:0 20px 45px rgba(0,0,0,.42), inset 0 0 35px rgba(130,85,45,.08);
+  animation:letterOpen .38s ease;
 }
-
-
-.info-box img{
-  width:100%;
-
-  max-height:72vh;
-
-  object-fit:contain;
-
-  display:block;
-
-  border-radius:16px;
+.info-box::before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  pointer-events:none;
 }
-
-
+.info-top{
+  position:absolute;
+  top:7%;
+  left:50%;
+  transform:translateX(-50%);
+  color:#a77a50;
+  font-size:28px;
+  letter-spacing:.14em;
+  white-space:nowrap;
+}
+.info-content{
+  position:relative;
+  z-index:2;
+  color:#2d2925;
+  font-family:"Nanum Pen Script","Gowun Dodum",sans-serif;
+  font-size:30px;
+  font-weight:400;
+  line-height:1.42;
+  letter-spacing:.015em;
+  white-space:pre-line;
+  word-break:keep-all;
+  text-align:left;
+}
+.info-bottom{
+  position:absolute;
+  left:50%;
+  bottom:5%;
+  transform:translateX(-50%);
+  color:#b58a61;
+  font-size:18px;
+  letter-spacing:.18em;
+  white-space:nowrap;
+}
 .info-close{
   position:absolute;
-
-  right:-12px;
-  top:-12px;
-
-  width:42px;
+  right:8%;
+  bottom:8%;
+  z-index:4;
   height:42px;
-
+  min-width:76px;
+  padding:0 17px;
   border:none;
-
-  border-radius:50%;
-
+  border-radius:13px;
   background:#5a321d;
-
-  color:white;
-
-  font-size:24px;
+  color:#fff;
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:15px;
   font-weight:900;
-
   cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.28);
+}
+@keyframes letterOpen{
+  from{opacity:0;transform:translateY(12px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes letterFade{from{opacity:0}to{opacity:1}}
 
+
+/* 편지 버튼 활성화 강조 */
+.mission-btn.wide.letter-ready{
+  opacity:1 !important;
+  filter:none !important;
+  animation:letterGlow 1.15s ease-in-out infinite alternate;
+}
+.mission-btn.wide.letter-ready::after{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border:3px solid rgba(255,226,132,.95);
+  border-radius:14px;
+  pointer-events:none;
   box-shadow:
-    0 6px 14px
-    rgba(0,0,0,.35);
+    0 0 8px rgba(255,221,112,.95),
+    0 0 18px rgba(255,205,70,.85),
+    0 0 30px rgba(255,188,45,.55);
+}
+@keyframes letterGlow{
+  from{transform:scale(1);filter:brightness(1.02) drop-shadow(0 0 4px rgba(255,220,110,.6))}
+  to{transform:scale(1.055);filter:brightness(1.18) drop-shadow(0 0 14px rgba(255,218,95,1))}
 }
 
+@media(max-width:600px){
+  .info-box{
+    width:88vw;
+    height:min(74vh,650px);
+    min-height:500px;
+    padding:100px 34px 72px;
+  }
+  .info-content{font-size:25px;line-height:1.42}
+  .info-top{top:6%;font-size:24px}
+  .info-bottom{bottom:4.5%}
+  .info-close{right:7%;bottom:7%}
+}
+@media(max-width:390px){
+  .info-box{
+    width:90vw;
+    height:min(74vh,620px);
+    min-height:480px;
+    padding:92px 29px 68px;
+  }
+  .info-content{font-size:23px;line-height:1.4}
+}
 
 /* =========================================================
    다시보기
@@ -828,24 +885,6 @@ body{
   }
 
 
-  .info-box{
-    width:88vw;
-
-    padding:12px;
-  }
-
-
-  .info-close{
-    right:-8px;
-    top:-8px;
-
-    width:36px;
-    height:36px;
-
-    font-size:21px;
-  }
-
-
   .reopen-btn{
     bottom:36px;
 
@@ -1188,32 +1227,15 @@ body{
 
 
 <!-- =====================================================
-     안내 이미지
+     안내 HTML 편지
 ===================================================== -->
-
-<div
-  class="info-modal"
-  id="infoModal"
->
-
+<div class="info-modal" id="infoModal">
   <div class="info-box">
-
-    <button
-      class="info-close"
-      onclick="closeInfoModal()"
-    >
-      ×
-    </button>
-
-
-    <img
-      id="infoModalImg"
-      src="ptbmm.png"
-      alt="안내 이미지"
-    >
-
+    <div class="info-top">—  ✉  —</div>
+    <div class="info-content" id="infoContent"></div>
+    <div class="info-bottom">— · ♡ · —</div>
+    <button class="info-close" onclick="closeInfoModal()">닫기</button>
   </div>
-
 </div>
 
 
@@ -1337,6 +1359,24 @@ const FINAL_ANSWER =
 let currentInfoMode =
   "intro";
 
+const INTRO_LETTER =
+`책장 속 다섯 권의 책을 자유롭게 선택하고
+문제를 해결하여 주인공의 기억을 회복시켜 주세요.
+책에는 편지를 보낸 사람에 대한
+기억의 흔적이 담겨 있습니다.
+모든 기억을 모으면,
+처음에 주인공이 받았던 편지를
+여러분도 읽을 수 있습니다.
+힌트 보기 또는 정답 보기 사용 시
+기억 보상이 차감됩니다.`;
+
+const END_LETTER =
+`책 속에 남겨진
+기억을 모두 찾았습니다.
+그 기억들은 모두 한 사람의
+마음을 향하고 있었습니다.
+기억의 시작이 된 편지를 확인하세요.`;
+
 
 /* =========================================================
    진행상황
@@ -1449,12 +1489,21 @@ function applyButtons(){
     편지 버튼 활성화
   */
 
-  document
-    .getElementById(
+  const letterBtn =
+    document.getElementById(
       "btn6"
-    )
-    .disabled =
-      !finalMissionDone();
+    );
+
+  const ready =
+    finalMissionDone();
+
+  letterBtn.disabled =
+    !ready;
+
+  letterBtn.classList.toggle(
+    "letter-ready",
+    ready
+  );
 
 }
 
@@ -1497,21 +1546,17 @@ function goMission(
    안내 이미지
 ========================================================= */
 
-function setModalImage(
-  src,
-  mode
-){
+function setModalContent(content,mode){
 
   currentInfoMode =
     mode;
 
-
   document
     .getElementById(
-      "infoModalImg"
+      "infoContent"
     )
-    .src =
-      src;
+    .textContent =
+      content;
 
 }
 
@@ -1957,10 +2002,7 @@ window.addEventListener(
         finalMissionDone()
       ){
 
-        setModalImage(
-          "ptbme.png",
-          "end"
-        );
+        setModalContent(END_LETTER,"end");
 
 
         document
@@ -1994,10 +2036,7 @@ window.addEventListener(
         );
 
 
-        setModalImage(
-          "ptbme.png",
-          "end"
-        );
+        setModalContent(END_LETTER,"end");
 
 
         setTimeout(
@@ -2055,10 +2094,7 @@ window.addEventListener(
       );
 
 
-      setModalImage(
-        "ptbmm.png",
-        "intro"
-      );
+      setModalContent(INTRO_LETTER,"intro");
 
 
       setTimeout(
