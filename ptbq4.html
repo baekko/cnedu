@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link
-  href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap"
   rel="stylesheet"
 >
 
@@ -446,86 +446,23 @@ body{
 }
 
 
-/* =========================================================
-   편지 이미지 모달
-========================================================= */
 
-.image-modal{
-  position:fixed;
-
-  inset:0;
-
-  z-index:150;
-
-  display:none;
-
-  justify-content:center;
-  align-items:center;
-
-  background:
-    rgba(0,0,0,.55);
-}
-
-.image-modal.show{
-  display:flex;
-}
-
-.image-box{
-  position:relative;
-
-  width:
-    min(82vw,560px);
-
-  max-height:82vh;
-
-  padding:18px;
-
-  border-radius:22px;
-
-  background:#fff7e8;
-
-  box-shadow:
-    0 20px 45px
-    rgba(0,0,0,.42);
-}
-
-.image-box img{
-  display:block;
-
-  width:100%;
-
-  max-height:72vh;
-
-  object-fit:contain;
-
-  border-radius:16px;
-}
-
-.image-close{
-  position:absolute;
-
-  right:-12px;
-  top:-12px;
-
-  width:42px;
-  height:42px;
-
-  border:none;
-  border-radius:50%;
-
-  background:#5a321d;
-
-  color:#fff;
-
-  font-size:24px;
-  font-weight:900;
-
-  cursor:pointer;
-
-  box-shadow:
-    0 6px 14px
-    rgba(0,0,0,.35);
-}
+/* HTML 편지 모달 */
+.letter-modal{position:fixed;inset:0;z-index:150;display:none;justify-content:center;align-items:center;padding:18px;background:rgba(0,0,0,.55)}
+.letter-modal.show{display:flex;animation:letterFade .28s ease}
+.letter-paper{position:relative;width:min(88vw,520px);height:min(76vh,700px);min-height:560px;padding:118px 46px 82px;overflow:hidden;background:linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),#f6ead6;border:1px solid #c7a37d;border-radius:5px;box-shadow:0 20px 45px rgba(0,0,0,.42),inset 0 0 35px rgba(130,85,45,.08);animation:letterOpen .38s ease}
+.letter-paper:before{content:"";position:absolute;inset:15px;border:1px solid rgba(166,116,68,.55);pointer-events:none}
+.letter-top{position:absolute;top:7%;left:50%;transform:translateX(-50%);color:#a77a50;font-size:28px;letter-spacing:.14em;white-space:nowrap}
+.letter-content{position:relative;z-index:2;color:#2d2925;font-family:"Nanum Pen Script","Gowun Dodum",sans-serif;font-size:30px;font-weight:400;line-height:1.42;letter-spacing:.015em;display:block;height:auto;white-space:pre-line;word-break:keep-all;text-align:left}
+.letter-bottom{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);color:#b58a61;font-size:18px;letter-spacing:.18em;white-space:nowrap}
+.letter-close{position:absolute;right:8%;bottom:8%;z-index:4;height:42px;min-width:76px;padding:0 17px;border:none;border-radius:13px;background:var(--button);color:#fff;font-family:"Gowun Dodum",sans-serif;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.28)}
+@keyframes letterOpen{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes letterFade{from{opacity:0}to{opacity:1}}
+@keyframes missionReveal{from{opacity:0;transform:translate(-50%,-47%) scale(.97)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes uiReveal{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.mission-wrap.show{display:block;animation:missionReveal .38s ease both}.ui-wrap.show{display:flex;animation:uiReveal .38s ease both}
+@media(max-width:600px){.letter-paper{width:88vw;height:min(74vh,650px);min-height:500px;padding:100px 34px 72px}.letter-content{font-size:25px;line-height:1.42}.letter-top{top:6%;font-size:24px}.letter-bottom{bottom:4.5%}.letter-close{right:7%;bottom:7%}}
+@media(max-width:390px){.letter-paper{width:90vw;height:min(74vh,620px);min-height:480px;padding:92px 29px 68px}.letter-content{font-size:23px;line-height:1.4}}
 
 
 /* =========================================================
@@ -1094,35 +1031,7 @@ body{
 </div>
 
 
-<!-- =====================================================
-     편지 모달
-===================================================== -->
-
-<div
-  class="image-modal"
-  id="imageModal"
->
-
-  <div class="image-box">
-
-    <button
-      class="image-close"
-      type="button"
-      onclick="closeImageModal()"
-    >
-      ×
-    </button>
-
-    <img
-      id="imageModalImg"
-      src=""
-      alt="편지"
-    >
-
-  </div>
-
-</div>
-
+<div class="letter-modal" id="letterModal"><div class="letter-paper"><div class="letter-top">—  ✉  —</div><div class="letter-content" id="letterContent"></div><div class="letter-bottom">— · ♡ · —</div><button class="letter-close" type="button" onclick="closeLetterModal()">닫기</button></div></div>
 
 <!-- =====================================================
      영상
@@ -1173,11 +1082,17 @@ const missionConfig={
   bgImage:
     "ptbq4.png",
 
-  introImage:
-    "ptbq4m.png",
+  introLetter:
+    `누군가는 시간을 건너서라도
+전하고 싶은 마음이 있다고 했다.
+그래서일까?
+편지가 낯설지 않았다.`,
 
-  correctImage:
-    "ptbq4w.png"
+  correctLetter:
+    `시간이 흘러도 사라지지 않는
+마음이 있다는 걸 알 것 같았다.
+시간을 건너 전해진 마음은,
+오늘도 나를 이 도서관으로 이끌었다.`
 
 };
 
@@ -1196,7 +1111,7 @@ let locked=false;
 
 let pendingScore=null;
 
-let imageModalMode=
+let letterModalMode=
   "intro";
 
 
@@ -1230,6 +1145,19 @@ function setProgress(
     JSON.stringify(progress)
   );
 
+}
+function saveUsageState(){
+  const progress=getProgress(), n=missionConfig.missionNumber, old=progress[n]||{};
+  if(old.completed===true) return;
+  progress[n]={completed:false,usedHint:usedHint,usedAnswer:usedAnswer};
+  setProgress(progress);
+}
+function loadUsageState(){
+  const saved=getProgress()[missionConfig.missionNumber];
+  if(!saved) return;
+  usedHint=saved.usedHint===true;
+  usedAnswer=saved.usedAnswer===true;
+  if(usedHint) document.getElementById("answerBtn").disabled=false;
 }
 
 
@@ -1281,33 +1209,12 @@ function currentScore(){
    결과 저장
 ========================================================= */
 
-function saveResult(
-  score
-){
-
-  const progress=
-    getProgress();
-
-
-  progress[
-    missionConfig.missionNumber
-  ]={
-
-    completed:true,
-
-    score:score,
-
-    usedHint:usedHint,
-
-    usedAnswer:usedAnswer
-
-  };
-
-
-  setProgress(
-    progress
-  );
-
+function saveResult(score){
+  const progress=getProgress(), n=missionConfig.missionNumber, old=progress[n]||{};
+  if(old.completed===true) return false;
+  progress[n]={completed:true,score:score,usedHint:usedHint,usedAnswer:usedAnswer};
+  setProgress(progress);
+  return true;
 }
 
 
@@ -1363,107 +1270,25 @@ function closeModal(){
 
 
 /* =========================================================
-   편지 모달
+   HTML 편지
 ========================================================= */
-
-function openImageModal(
-  src,
-  mode
-){
-
-  imageModalMode=
-    mode;
-
-
-  document
-    .getElementById(
-      "imageModalImg"
-    )
-    .src=
-      src;
-
-
-  document
-    .getElementById(
-      "imageModal"
-    )
-    .classList
-    .add(
-      "show"
-    );
-
+function openLetterModal(content,mode){
+  letterModalMode=mode;
+  document.getElementById("letterContent").textContent=content;
+  document.getElementById("letterModal").classList.add("show");
 }
-
-
-/* =========================================================
-   편지 닫기
-========================================================= */
-
-function closeImageModal(){
-
-  document
-    .getElementById(
-      "imageModal"
-    )
-    .classList
-    .remove(
-      "show"
-    );
-
-
-  /* 첫 편지 → 2초 후 미션 */
-
-  if(
-    imageModalMode ===
-    "intro"
-  ){
-
-    setTimeout(
-      showMission,
-      2000
-    );
-
-
-    return;
-
-  }
-
-
-  /* 성공 편지 → 영상 */
-
- if(
-  imageModalMode ===
-  "correct"
-  &&
-  pendingScore !== null
-){
-
-  const score =
-    pendingScore;
-
-  pendingScore =
-    null;
-
-
-  /* 정답보기 사용 = 0점 → 영상 없이 바로 메인으로 */
-  if(score === 0){
-
-    location.href =
-      "ptbm.html";
-
+function closeLetterModal(){
+  document.getElementById("letterModal").classList.remove("show");
+  if(letterModalMode==="intro"){
+    requestAnimationFrame(showMission);
     return;
   }
-
-
-  /* 힌트 미사용 20점 / 힌트 사용 10점만 영상 재생 */
-  playVideoAndReturn(
-    score
-  );
-
+  if(letterModalMode==="correct" && pendingScore!==null){
+    const score=pendingScore; pendingScore=null;
+    if(score===0){location.href="ptbm.html";return;}
+    playVideoAndReturn(score);
+  }
 }
-
-}
-
 
 /* =========================================================
    미션 표시
@@ -1542,6 +1367,8 @@ function showHint(){
   usedHint=
     true;
 
+  saveUsageState();
+
 
   document
     .getElementById(
@@ -1581,6 +1408,8 @@ function showAnswer(){
 
   usedAnswer=
     true;
+
+  saveUsageState();
 
 
   openModal(
@@ -1695,17 +1524,13 @@ function checkAnswer(){
       true;
 
 
-    const score=
-      currentScore();
-
-
-    saveResult(
-      score
-    );
-
-
-    pendingScore=
-      score;
+    const existingResult=getProgress()[missionConfig.missionNumber];
+    if(existingResult && existingResult.completed===true){
+      location.href="ptbm.html";
+      return;
+    }
+    pendingScore=currentScore();
+    saveResult(pendingScore);
 
 
     closeModal();
@@ -1721,10 +1546,7 @@ function checkAnswer(){
     setTimeout(
       function(){
 
-        openImageModal(
-          missionConfig.correctImage,
-          "correct"
-        );
+        openLetterModal(missionConfig.correctLetter,"correct");
 
       },
 
@@ -1956,18 +1778,10 @@ document.body.style.backgroundImage=
   `url("${missionConfig.bgImage}")`;
 
 
-setTimeout(
-  function(){
-
-    openImageModal(
-      missionConfig.introImage,
-      "intro"
-    );
-
-  },
-
-  1000
-);
+loadUsageState();
+setTimeout(function(){
+  openLetterModal(missionConfig.introLetter,"intro");
+},1000);
 
 </script>
 
