@@ -437,24 +437,27 @@ body{
 /* 편지 버튼 활성화 강조 */
 .mission-btn.wide.letter-ready{
   opacity:1 !important;
-  filter:none !important;
-  animation:letterGlow 1.15s ease-in-out infinite alternate;
+
+  /* 버튼 박스 테두리가 아니라 투명 PNG 속 편지 모양 자체에 빛 적용 */
+  animation:letterImageGlow 1.15s ease-in-out infinite alternate;
 }
-.mission-btn.wide.letter-ready::after{
-  content:"";
-  position:absolute;
-  inset:-8px;
-  border:3px solid rgba(255,226,132,.95);
-  border-radius:14px;
-  pointer-events:none;
-  box-shadow:
-    0 0 8px rgba(255,221,112,.95),
-    0 0 18px rgba(255,205,70,.85),
-    0 0 30px rgba(255,188,45,.55);
-}
-@keyframes letterGlow{
-  from{transform:scale(1);filter:brightness(1.02) drop-shadow(0 0 4px rgba(255,220,110,.6))}
-  to{transform:scale(1.055);filter:brightness(1.18) drop-shadow(0 0 14px rgba(255,218,95,1))}
+
+@keyframes letterImageGlow{
+  from{
+    transform:scale(1);
+    filter:
+      brightness(1.03)
+      drop-shadow(0 0 3px rgba(255,226,120,.75))
+      drop-shadow(0 0 6px rgba(255,207,70,.55));
+  }
+  to{
+    transform:scale(1.045);
+    filter:
+      brightness(1.16)
+      drop-shadow(0 0 5px rgba(255,235,145,1))
+      drop-shadow(0 0 10px rgba(255,210,75,.95))
+      drop-shadow(0 0 17px rgba(255,190,40,.72));
+  }
 }
 
 @media(max-width:600px){

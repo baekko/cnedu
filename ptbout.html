@@ -47,9 +47,9 @@ body{
 .score-box{
   position:relative;
   width:min(88vw,520px);
-  height:min(78vh,720px);
-  min-height:590px;
-  padding:105px 46px 92px;
+  height:min(76vh,700px);
+  min-height:560px;
+  padding:118px 46px 82px;
   overflow:hidden;
   background:
     linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
@@ -83,23 +83,25 @@ body{
   z-index:2;
   color:#2d2925;
   font-family:"Nanum Pen Script","Gowun Dodum",sans-serif;
-  font-size:28px;
+  font-size:30px;
   font-weight:400;
-  line-height:1.48;
+  line-height:1.42;
+  letter-spacing:.015em;
   white-space:pre-line;
   word-break:keep-all;
   text-align:left;
 }
 .score-postscript{
-  position:absolute;
-  left:46px;
-  right:46px;
-  bottom:70px;
+  position:relative;
   z-index:2;
+  margin-top:0;
   color:#2d2925;
   font-family:"Nanum Pen Script","Gowun Dodum",sans-serif;
-  font-size:24px;
-  line-height:1.35;
+  font-size:30px;
+  font-weight:400;
+  line-height:1.42;
+  letter-spacing:.015em;
+  white-space:nowrap;
 }
 .score-bottom{
   position:absolute;
@@ -275,7 +277,7 @@ body{
     padding:92px 34px 92px;
   }
   .score-content{font-size:24px;line-height:1.45}
-  .score-postscript{left:34px;right:34px;bottom:68px;font-size:21px}
+  .score-postscript{font-size:25px;line-height:1.42;margin-top:0}
   .score-top{top:5.5%;font-size:24px}
   .score-close{right:6%;bottom:5.5%}
 
@@ -357,6 +359,7 @@ body{
     color:#fff;
   }
 }  
+@media(max-width:390px){.score-box{width:90vw;height:min(74vh,620px);min-height:480px;padding:92px 29px 68px}.score-content,.score-postscript{font-size:23px;line-height:1.4}}
 </style>
 </head>
 
@@ -371,20 +374,17 @@ body{
 <div class="score-modal" id="scoreModal">
   <div class="score-box">
     <div class="score-top">—  ✉  —</div>
-    <div class="score-content">
-게임에서 만난 다섯 권의 책은
+    <div class="score-content">게임에서 만난 다섯 권의 책은
 단순한 문제가 아니라,
 주인공의 마음과 기억이었습니다.
-
 여러분도 책 속에서
 누군가의 마음을 만나고,
 오래도록 기억에 남을
 이야기를 발견하길 바랍니다.
-
-언제나 새로운 이야기가
+언제나 새로운 이야기들이
 도서관에서 여러분을 기다리고 있습니다.
-끝까지 함께해 주셔서 감사합니다.
-    </div>
+끝까지 함께해 주셔서
+감사합니다.</div>
     <div class="score-postscript" id="scorePostscript"></div>
     <div class="score-bottom">— · ♡ · —</div>
     <button class="score-close" onclick="closeScoreModal()">닫기</button>
