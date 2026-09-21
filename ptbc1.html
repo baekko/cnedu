@@ -5,86 +5,221 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PTB CLASS QUESTION</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 html,body{
   width:100%;
   height:100%;
   overflow:hidden;
-  font-family:"Pretendard","Noto Sans KR",sans-serif;
+  font-family:"Gowun Dodum",sans-serif;
   background:#000;
 }
 
+/* =========================
+   배경
+   기본 = 태블릿용
+========================= */
 body{
   position:relative;
-  background:url("ptbcc1.png") no-repeat center center / cover;
+  background:
+    url("ptbc15t.png")
+    no-repeat center center / cover;
 }
 
+/* =========================
+   미션 + 정답 UI 전체
+========================= */
 .ui-wrap{
   position:absolute;
   left:50%;
   bottom:7vh;
   transform:translateX(-50%);
-  width:clamp(420px, 56vw, 560px);
+
+  width:clamp(420px,56vw,560px);
+
   z-index:10;
+
   display:flex;
   flex-direction:column;
   gap:14px;
 }
 
+/* =========================
+   미션 카드
+========================= */
+.mission-card{
+  width:100%;
+
+  background:#f4ecd1;
+  border:3px solid #7f4b3a;
+  border-radius:22px;
+
+  padding:20px 18px 18px;
+
+  color:#2b160c;
+
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.mission-title{
+  text-align:center;
+  font-size:25px;
+  font-weight:700;
+  color:#235a9f;
+  margin-bottom:16px;
+  letter-spacing:.5px;
+}
+
+/* 문제 3칸 */
+.room-grid{
+  width:100%;
+
+  display:grid;
+  grid-template-columns:
+    minmax(0,1fr)
+    minmax(0,1.15fr)
+    minmax(0,1fr);
+
+  gap:10px;
+
+  align-items:start;
+}
+
+.room-box{
+  min-height:82px;
+
+  background:rgba(255,255,255,.92);
+  border:4px solid #7f4b3a;
+  border-radius:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:10px 8px;
+
+  text-align:center;
+
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:20px;
+  font-weight:700;
+  line-height:1.45;
+
+  color:#111;
+}
+
+.room-box.middle{
+  min-height:128px;
+}
+
+.room-box.right{
+  min-height:122px;
+}
+
+.mission-answer-guide{
+  margin-top:18px;
+
+  text-align:center;
+
+  font-size:25px;
+  font-weight:700;
+
+  color:#111;
+}
+
+/* =========================
+   정답 입력
+========================= */
 .answer-row{
   width:100%;
+
   display:grid;
-  grid-template-columns:minmax(0, 1fr) 86px;
+  grid-template-columns:minmax(0,1fr) 86px;
+
   gap:12px;
 }
 
 .answer-input{
   width:100%;
   height:58px;
+
   border:none;
   border-radius:14px;
+
   padding:0 18px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:20px;
+
   outline:none;
+
   background:rgba(255,255,255,.95);
   color:#222;
+
+  box-shadow:0 7px 16px rgba(0,0,0,.22);
 }
 
 .submit-btn{
   height:58px;
+
   border:none;
   border-radius:14px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:18px;
-  font-weight:900;
+  font-weight:700;
+
   color:white;
   background:#5a321d;
+
   cursor:pointer;
   padding:0;
+
   box-shadow:
     0 8px 16px rgba(0,0,0,.32),
     inset 0 2px 2px rgba(255,255,255,.22),
     inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
+/* =========================
+   힌트 버튼
+========================= */
 .action-row{
   width:100%;
+
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
+
   gap:12px;
 }
 
 .action-btn{
   height:54px;
+
   border:none;
   border-radius:14px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:17px;
-  font-weight:900;
+  font-weight:700;
+
   color:white;
   background:#5a321d;
+
   cursor:pointer;
   padding:0;
+
   box-shadow:
     0 8px 16px rgba(0,0,0,.32),
     inset 0 2px 2px rgba(255,255,255,.22),
@@ -101,13 +236,19 @@ body{
   cursor:default;
 }
 
+/* =========================
+   일반 모달
+========================= */
 .modal{
   position:fixed;
   inset:0;
+
   display:none;
   justify-content:center;
   align-items:center;
+
   background:rgba(0,0,0,.55);
+
   z-index:100;
 }
 
@@ -116,62 +257,261 @@ body{
 }
 
 .modal-box{
-  width:min(86vw, 560px);
+  width:min(86vw,560px);
+
   background:#fff7e8;
+
+  border:3px solid #7f4b3a;
   border-radius:22px;
+
   padding:30px 24px;
+
   text-align:center;
+
   box-shadow:0 18px 40px rgba(0,0,0,.35);
 }
 
 .modal-title{
   font-size:28px;
-  font-weight:900;
+  font-weight:700;
+
   margin-bottom:18px;
+
   color:#2b160c;
 }
 
 .modal-content{
   font-size:22px;
   line-height:1.6;
+
   color:#2b160c;
+
   white-space:pre-line;
   word-break:keep-all;
 }
 
 .modal-close{
   margin-top:22px;
+
   border:none;
   border-radius:14px;
+
   padding:12px 26px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:18px;
-  font-weight:900;
+  font-weight:700;
+
   color:#fff;
   background:#5a321d;
+
   cursor:pointer;
 }
 
+/* =========================
+   정답 성공창
+========================= */
+.success-modal{
+  position:fixed;
+  inset:0;
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(0,0,0,.42);
+
+  z-index:500;
+}
+
+.success-modal.show{
+  display:flex;
+}
+
+.success-box{
+  position:relative;
+  z-index:520;
+
+  width:min(82vw,420px);
+
+  padding:30px 24px;
+
+  background:#fff7e8;
+
+  border:4px solid #7f4b3a;
+  border-radius:24px;
+
+  text-align:center;
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.7);
+
+  animation:successPop .42s ease;
+}
+
+.success-title{
+  font-size:34px;
+  font-weight:700;
+
+  color:#2b160c;
+
+  line-height:1.4;
+}
+
+@keyframes successPop{
+  0%{
+    transform:scale(.65);
+    opacity:0;
+  }
+
+  70%{
+    transform:scale(1.06);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* =========================
+   폭죽
+========================= */
+.fireworks-layer{
+  position:fixed;
+  inset:0;
+
+  overflow:hidden;
+
+  pointer-events:none;
+
+  z-index:510;
+}
+
+.firework{
+  position:absolute;
+
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  pointer-events:none;
+
+  animation:fireworkBurst 1.25s ease-out forwards;
+}
+
+@keyframes fireworkBurst{
+  0%{
+    transform:
+      translate(0,0)
+      scale(1);
+
+    opacity:1;
+  }
+
+  70%{
+    opacity:1;
+  }
+
+  100%{
+    transform:
+      translate(var(--tx),var(--ty))
+      scale(.2);
+
+    opacity:0;
+  }
+}
+
+/* =========================
+   오답 흔들림
+========================= */
 .shake{
   animation:shake .25s ease;
 }
 
 @keyframes shake{
-  0%{transform:translateX(-50%) translateX(0);}
-  25%{transform:translateX(-50%) translateX(-6px);}
-  50%{transform:translateX(-50%) translateX(6px);}
-  75%{transform:translateX(-50%) translateX(-4px);}
-  100%{transform:translateX(-50%) translateX(0);}
+  0%{
+    transform:translateX(-50%) translateX(0);
+  }
+
+  25%{
+    transform:translateX(-50%) translateX(-6px);
+  }
+
+  50%{
+    transform:translateX(-50%) translateX(6px);
+  }
+
+  75%{
+    transform:translateX(-50%) translateX(-4px);
+  }
+
+  100%{
+    transform:translateX(-50%) translateX(0);
+  }
 }
 
+/* ==================================================
+   휴대폰
+   ptbc15.png 사용
+================================================== */
 @media(max-width:600px){
+
+  body{
+    background-image:url("ptbc15.png");
+  }
+
   .ui-wrap{
-    width:min(88vw, 330px);
-    bottom:5.5vh;
-    gap:11px;
+    width:min(90vw,350px);
+    bottom:4.5vh;
+    gap:10px;
+  }
+
+  .mission-card{
+    padding:13px 10px 12px;
+    border-width:2px;
+    border-radius:17px;
+  }
+
+  .mission-title{
+    font-size:18px;
+    margin-bottom:10px;
+  }
+
+  .room-grid{
+    gap:6px;
+  }
+
+  .room-box{
+    min-height:58px;
+
+    border-width:3px;
+    border-radius:9px;
+
+    padding:6px 4px;
+
+    font-size:14px;
+    line-height:1.35;
+  }
+
+  .room-box.middle{
+    min-height:87px;
+  }
+
+  .room-box.right{
+    min-height:82px;
+  }
+
+  .mission-answer-guide{
+    margin-top:11px;
+    font-size:18px;
   }
 
   .answer-row{
-    grid-template-columns:minmax(0, 1fr) 64px;
+    grid-template-columns:minmax(0,1fr) 64px;
     gap:8px;
   }
 
@@ -198,20 +538,60 @@ body{
     border-radius:13px;
   }
 
-  .modal-title{font-size:23px;}
-  .modal-content{font-size:18px;}
+  .modal-title{
+    font-size:23px;
+  }
+
+  .modal-content{
+    font-size:18px;
+  }
+
+  .success-title{
+    font-size:28px;
+  }
 }
 
+/* 작은 휴대폰 */
 @media(max-width:390px){
+
   .ui-wrap{
-    width:min(90vw, 310px);
+    width:min(92vw,330px);
+    bottom:3.5vh;
+  }
+
+  .mission-card{
+    padding:11px 8px 10px;
+  }
+
+  .mission-title{
+    font-size:17px;
+    margin-bottom:8px;
+  }
+
+  .room-box{
+    min-height:54px;
+    font-size:13px;
+  }
+
+  .room-box.middle{
+    min-height:80px;
+  }
+
+  .room-box.right{
+    min-height:76px;
+  }
+
+  .mission-answer-guide{
+    margin-top:9px;
+    font-size:17px;
   }
 
   .answer-row{
-    grid-template-columns:minmax(0, 1fr) 58px;
+    grid-template-columns:minmax(0,1fr) 58px;
     gap:7px;
   }
 
+  /* iPhone Safari 자동 확대 방지 */
   .answer-input{
     height:50px;
     font-size:16px;
@@ -232,35 +612,47 @@ body{
     font-size:13px;
   }
 }
-/* 가로 화면 안내 */
+
+/* =========================
+   가로 화면 안내
+========================= */
 .landscape-guide{
   display:none;
 }
 
-@media (orientation: landscape){
+@media(orientation:landscape){
+
   .landscape-guide{
     position:fixed;
     inset:0;
+
     z-index:999999;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     background:#111;
   }
 
   .landscape-guide-text{
     font-family:"Gowun Dodum",sans-serif;
+
     font-size:20px;
     font-weight:700;
     line-height:1.7;
+
     text-align:center;
+
     color:#fff;
   }
-}  
+}
 </style>
 </head>
 
 <body>
+
+<!-- 가로 화면 안내 -->
 <div class="landscape-guide">
   <div class="landscape-guide-text">
     📱<br>
@@ -268,108 +660,537 @@ body{
     세로 모드를 유지해 주세요.
   </div>
 </div>
+
+
+<!-- =========================
+     미션 + 정답 UI
+========================= -->
 <div class="ui-wrap" id="uiWrap">
+
+  <!-- 미션 카드 -->
+  <div class="mission-card">
+
+    <div class="mission-title">
+      A 3 - A 8 키트 사용
+    </div>
+
+    <div class="room-grid">
+
+      <div class="room-box">
+        301호&nbsp;&nbsp;302호
+      </div>
+
+      <div class="room-box middle">
+        201호<br>
+        202호<br>
+        301호
+      </div>
+
+      <div class="room-box right">
+        401호<br>
+        402호
+      </div>
+
+    </div>
+
+    <div class="mission-answer-guide">
+      정답은 한글 3자
+    </div>
+
+  </div>
+
+
+  <!-- 정답 입력 -->
   <div class="answer-row">
-    <input id="answerInput" class="answer-input" type="text" placeholder="정답을 입력하세요" autocomplete="off">
-    <button class="submit-btn" onclick="checkAnswer()">입력</button>
+
+    <input
+      id="answerInput"
+      class="answer-input"
+      type="text"
+      placeholder="정답을 입력하세요"
+      autocomplete="off"
+    >
+
+    <button
+      class="submit-btn"
+      onclick="checkAnswer()"
+    >
+      입력
+    </button>
+
   </div>
 
+
+  <!-- 힌트 -->
   <div class="action-row">
-    <button class="action-btn" onclick="showHint1()">힌트 1</button>
-    <button class="action-btn" id="hint2Btn" onclick="showHint2()" disabled>힌트 2</button>
-    <button class="action-btn" id="answerBtn" onclick="showAnswer()" disabled>정답보기</button>
+
+    <button
+      class="action-btn"
+      onclick="showHint1()"
+    >
+      힌트 1
+    </button>
+
+    <button
+      class="action-btn"
+      id="hint2Btn"
+      onclick="showHint2()"
+      disabled
+    >
+      힌트 2
+    </button>
+
+    <button
+      class="action-btn"
+      id="answerBtn"
+      onclick="showAnswer()"
+      disabled
+    >
+      정답보기
+    </button>
+
   </div>
+
 </div>
 
-<div class="modal" id="infoModal">
+
+<!-- =========================
+     힌트 / 오답 모달
+========================= -->
+<div
+  class="modal"
+  id="infoModal"
+>
+
   <div class="modal-box">
-    <div class="modal-title" id="modalTitle">안내</div>
-    <div class="modal-content" id="modalContent"></div>
-    <button class="modal-close" onclick="closeModal()">닫기</button>
+
+    <div
+      class="modal-title"
+      id="modalTitle"
+    >
+      안내
+    </div>
+
+    <div
+      class="modal-content"
+      id="modalContent"
+    ></div>
+
+    <button
+      class="modal-close"
+      onclick="closeModal()"
+    >
+      닫기
+    </button>
+
   </div>
+
 </div>
+
+
+<!-- =========================
+     정답 성공 화면
+========================= -->
+<div
+  class="success-modal"
+  id="successModal"
+>
+
+  <div
+    class="fireworks-layer"
+    id="fireworksLayer"
+  ></div>
+
+  <div class="success-box">
+
+    <div class="success-title">
+      정답입니다.
+    </div>
+
+  </div>
+
+</div>
+
 
 <script>
 const missionConfig = {
+
   correctAnswer: "거북로",
-  hint1Text: "단서의 글을 읽고 각 평면도가 몇호인지 알아내세요.",
-  hint2Text: "평면도마다 노란색 한글 자음 또는 모음이 보입니다.",
-  answerText: "거북로",
-  successText: "정답입니다.",
-  bgImage: "ptbcc1.png"
+
+  hint1Text:
+    "단서의 글을 읽고 각 평면도가 몇호인지 알아내세요.",
+
+  hint2Text:
+    "평면도마다 노란색 한글 자음 또는 모음이 보입니다.",
+
+  answerText: "거북로"
 };
 
+
 let locked = false;
+
 let usedHint1 = false;
+
 let usedHint2 = false;
 
+
+/* =========================
+   정답 정규화
+========================= */
 function normalize(text){
-  return String(text).replace(/\s+/g,"").trim().toLowerCase();
+
+  return String(text)
+    .replace(/\s+/g,"")
+    .trim()
+    .toLowerCase();
+
 }
 
-function openModal(title, content){
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalContent").textContent = content;
-  document.getElementById("infoModal").classList.add("show");
+
+/* =========================
+   일반 모달
+========================= */
+function openModal(title,content){
+
+  document
+    .getElementById("modalTitle")
+    .textContent = title;
+
+  document
+    .getElementById("modalContent")
+    .textContent = content;
+
+  document
+    .getElementById("infoModal")
+    .classList.add("show");
+
 }
+
 
 function closeModal(){
-  document.getElementById("infoModal").classList.remove("show");
+
+  document
+    .getElementById("infoModal")
+    .classList.remove("show");
+
 }
 
+
+/* =========================
+   힌트
+========================= */
 function showHint1(){
+
   if(locked) return;
 
   usedHint1 = true;
-  document.getElementById("hint2Btn").disabled = false;
-  openModal("힌트 1", missionConfig.hint1Text);
+
+  document
+    .getElementById("hint2Btn")
+    .disabled = false;
+
+  openModal(
+    "힌트 1",
+    missionConfig.hint1Text
+  );
+
 }
 
+
 function showHint2(){
+
   if(locked) return;
+
   if(!usedHint1) return;
 
   usedHint2 = true;
-  document.getElementById("answerBtn").disabled = false;
-  openModal("힌트 2", missionConfig.hint2Text);
+
+  document
+    .getElementById("answerBtn")
+    .disabled = false;
+
+  openModal(
+    "힌트 2",
+    missionConfig.hint2Text
+  );
+
 }
+
 
 function showAnswer(){
+
   if(locked) return;
+
   if(!usedHint2) return;
 
-  openModal("정답보기", missionConfig.answerText);
+  openModal(
+    "정답보기",
+    missionConfig.answerText
+  );
+
 }
 
+
+/* =========================
+   정답 확인
+========================= */
 function checkAnswer(){
+
   if(locked) return;
 
-  const input = document.getElementById("answerInput").value;
+  const input =
+    document
+      .getElementById("answerInput")
+      .value;
 
   if(!input.trim()){
-    openModal("안내", "정답을 입력해주세요.");
+
+    openModal(
+      "안내",
+      "정답을 입력해주세요."
+    );
+
     return;
   }
 
-  if(normalize(input) === normalize(missionConfig.correctAnswer)){
+
+  if(
+    normalize(input) ===
+    normalize(missionConfig.correctAnswer)
+  ){
+
     locked = true;
-    openModal("정답", missionConfig.successText);
+
+    showSuccess();
+
   }else{
-    const ui = document.getElementById("uiWrap");
+
+    const ui =
+      document.getElementById("uiWrap");
+
     ui.classList.remove("shake");
+
     void ui.offsetWidth;
+
     ui.classList.add("shake");
-    openModal("오답", "정답이 아닙니다.");
+
+    openModal(
+      "오답",
+      "정답이 아닙니다."
+    );
+
   }
+
 }
 
-document.getElementById("answerInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    checkAnswer();
-  }
-});
 
-document.body.style.backgroundImage = `url("${missionConfig.bgImage}")`;
+/* =========================
+   정답 성공
+========================= */
+function showSuccess(){
+
+  /* 열려 있는 일반 모달 제거 */
+  closeModal();
+
+  document
+    .getElementById("successModal")
+    .classList.add("show");
+
+
+  /* 첫 폭죽 */
+  launchFireworks();
+
+
+  /*
+    10초 동안 여러 번 폭죽 발생
+  */
+  const fireworkTimer =
+    setInterval(
+      launchFireworks,
+      850
+    );
+
+
+  /*
+    약 10초 후
+    폭죽 종료 + ptbc.html 이동
+  */
+  setTimeout(function(){
+
+    clearInterval(fireworkTimer);
+
+    location.href = "ptbc.html";
+
+  },10000);
+
+}
+
+
+/* =========================
+   폭죽 한 번 생성
+========================= */
+function launchFireworks(){
+
+  const layer =
+    document.getElementById("fireworksLayer");
+
+
+  /*
+    화면의 서로 다른 위치에서
+    3개의 폭죽을 동시에 터뜨림
+  */
+  for(let burst=0; burst<3; burst++){
+
+    const centerX =
+      12 + Math.random() * 76;
+
+    const centerY =
+      12 + Math.random() * 58;
+
+
+    createBurst(
+      layer,
+      centerX,
+      centerY
+    );
+
+  }
+
+}
+
+
+/* =========================
+   폭죽 조각 생성
+========================= */
+function createBurst(
+  layer,
+  centerX,
+  centerY
+){
+
+  const colors = [
+    "#ff4d4d",
+    "#ffd93d",
+    "#6bff75",
+    "#45caff",
+    "#b56cff",
+    "#ff77c8",
+    "#ffffff",
+    "#ff9f43"
+  ];
+
+
+  const particleCount = 26;
+
+
+  for(
+    let i=0;
+    i<particleCount;
+    i++
+  ){
+
+    const particle =
+      document.createElement("span");
+
+    particle.className =
+      "firework";
+
+
+    const angle =
+      Math.PI * 2 *
+      (i / particleCount);
+
+
+    const distance =
+      55 +
+      Math.random() * 95;
+
+
+    const x =
+      Math.cos(angle) *
+      distance;
+
+    const y =
+      Math.sin(angle) *
+      distance;
+
+
+    particle.style.left =
+      centerX + "%";
+
+    particle.style.top =
+      centerY + "%";
+
+
+    particle.style.background =
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+
+    particle.style.setProperty(
+      "--tx",
+      x + "px"
+    );
+
+    particle.style.setProperty(
+      "--ty",
+      y + "px"
+    );
+
+
+    const size =
+      4 +
+      Math.random() * 5;
+
+    particle.style.width =
+      size + "px";
+
+    particle.style.height =
+      size + "px";
+
+
+    layer.appendChild(
+      particle
+    );
+
+
+    /*
+      애니메이션 종료 후
+      DOM에서 제거
+    */
+    setTimeout(function(){
+
+      particle.remove();
+
+    },1400);
+
+  }
+
+}
+
+
+/* =========================
+   Enter 입력
+========================= */
+document
+  .getElementById("answerInput")
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(e.key === "Enter"){
+
+        checkAnswer();
+
+      }
+
+    }
+  );
+
 </script>
 
 </body>
