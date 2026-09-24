@@ -744,6 +744,62 @@ body{
   }
 }
 
+
+/* ==================================================
+   오답/정답 안내 연출 최종 보정
+================================================== */
+.mission-card{
+  transition:opacity .32s ease, transform .32s ease;
+}
+
+.mission-card.reaction-hidden{
+  opacity:0;
+  transform:translateY(6px) scale(.985);
+  pointer-events:none;
+}
+
+/* 오답창도 정답창과 같은 크기/모양 */
+.modal.wrong-mode .modal-box{
+  width:min(90%,420px) !important;
+  padding:28px 22px !important;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+/* 오답에서는 제목/닫기버튼을 사용하지 않고 본문만 크게 표시 */
+.modal.wrong-mode .modal-title,
+.modal.wrong-mode .modal-box button{
+  display:none !important;
+}
+
+.modal.wrong-mode .modal-content{
+  margin:0;
+  font-size:20px;
+  font-weight:900;
+  line-height:1.45;
+}
+
+/* 오답창도 중앙 위치를 유지한 채 자연스럽게 팝업 */
+.modal.wrong-mode .modal-box{
+  animation:wrongPopCard .38s ease;
+}
+
+@keyframes wrongPopCard{
+  0%{
+    transform:translateX(-50%) scale(.72);
+    opacity:0;
+  }
+  70%{
+    transform:translateX(-50%) scale(1.05);
+    opacity:1;
+  }
+  100%{
+    transform:translateX(-50%) scale(1);
+    opacity:1;
+  }
+}
+
 </style>
 </head>
 
@@ -1200,7 +1256,10 @@ function birdHintReaction(){
 function positionReactionBox(box){
   const r = missionCard.getBoundingClientRect();
 
-  box.style.width = r.width + "px";
+  /* 정답/오답 안내창 모두 같은 폭 */
+  const boxWidth = Math.min(window.innerWidth * .90, 420);
+
+  box.style.width = boxWidth + "px";
   box.style.left = (r.left+r.width/2) + "px";
   box.style.top = r.top + "px";
   box.style.transform = "translateX(-50%)";
@@ -1213,7 +1272,7 @@ function getBoxPerch(box){
   return {
     x:r.left+r.width/2,
     /* 오답창 윗선과 새 발이 살짝 겹치도록 10px 아래로 보정 */
-    y:r.top-size*IDLE_FOOT_Y+CARD_OVERLAP+10
+    y:r.top-size*IDLE_FOOT_Y+CARD_OVERLAP+22
   };
 }
 
@@ -1228,6 +1287,9 @@ function birdWrongReaction(){
   const modal = document.getElementById("infoModal");
   const box = document.getElementById("modalBox");
 
+  /* 미션카드를 먼저 자연스럽게 숨김 */
+  missionCard.classList.add("reaction-hidden");
+
   modal.classList.add("wrong-mode");
   positionReactionBox(box);
 
@@ -1237,11 +1299,43 @@ function birdWrongReaction(){
     bird.className = "bird reaction angry";
     setBirdPose("angry",p.x,p.y);
   });
+
+  /* 3초 뒤 오답창과 angry 새를 없애고 카드 복귀 */
+  setTimeout(function(){
+    if(locked) return;
+
+    modal.classList.remove("show");
+    modal.classList.remove("wrong-mode");
+    box.removeAttribute("style");
+
+    birdBusy = false;
+    cancelBirdAnimation();
+
+    /* 미션카드가 다시 자연스럽게 나타남 */
+    missionCard.classList.remove("reaction-hidden");
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        if(locked) return;
+
+        const p = getCardPerch();
+        bird.className = "bird perched";
+        setBirdPose("idle",p.x,p.y);
+
+        scheduleBlink();
+        scheduleFlight();
+      });
+    });
+
+  },3000);
 }
 
 /* 정답: 정답창 = 미션카드 자리 / happy 상태로 화면 위를 비행 */
 function birdCorrectFlight(){
   birdBusy = true;
+
+  /* 정답 안내창이 뜨는 동안 미션카드 숨김 */
+  missionCard.classList.add("reaction-hidden");
 
   clearTimeout(blinkTimer);
   clearTimeout(flightTimer);
@@ -1500,10 +1594,17 @@ function checkAnswer(){
 
     ui.classList.add("shake");
 
-    openModal(
-      "오답",
-      "정답이 아닙니다."
-    );
+    document
+      .getElementById("modalTitle")
+      .textContent = "";
+
+    document
+      .getElementById("modalContent")
+      .textContent = "오답입니다.";
+
+    document
+      .getElementById("infoModal")
+      .classList.add("show");
 
     birdWrongReaction();
 
