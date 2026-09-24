@@ -31,7 +31,7 @@ html,body{
 body{
   position:relative;
   background:
-    url("ptbc15t.png")
+    url("ptbcl.png")
     no-repeat center center / cover;
 }
 
@@ -58,6 +58,7 @@ body{
 ========================= */
 .mission-card{
   width:100%;
+  margin-bottom:22px;
 
   background:#f4ecd1;
   border:3px solid #7f4b3a;
@@ -461,7 +462,7 @@ body{
 @media(max-width:600px){
 
   body{
-    background-image:url("ptbc15.png");
+    background-image:url("ptbcl.png");
   }
 
   .ui-wrap{
@@ -647,6 +648,77 @@ body{
     color:#fff;
   }
 }
+
+/* ==================================================
+   새 캐릭터 - 원래 UI와 독립
+================================================== */
+.bird{
+  position:fixed;
+  left:0;
+  top:0;
+  width:clamp(260px,38vw,390px);
+  height:auto;
+  z-index:30;
+  pointer-events:none;
+  user-select:none;
+  transform:translateX(-50%);
+  transform-origin:50% 78%;
+  filter:drop-shadow(0 9px 9px rgba(70,45,20,.15));
+  will-change:left,top,transform;
+}
+
+.bird.perched{
+  animation:birdBreath 2.8s ease-in-out infinite;
+}
+
+@keyframes birdBreath{
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(-2px);}
+}
+
+.bird.landing{
+  animation:birdLand .48s cubic-bezier(.2,.85,.3,1.2);
+}
+
+@keyframes birdLand{
+  0%{transform:translateX(-50%) translateY(-24px);}
+  65%{transform:translateX(-50%) translateY(3px);}
+  100%{transform:translateX(-50%) translateY(0);}
+}
+
+.bird.reaction{
+  z-index:700;
+}
+
+.bird.angry{
+  animation:birdAngry .18s ease-in-out 7 alternate;
+}
+
+@keyframes birdAngry{
+  from{transform:translateX(-50%) rotate(-5deg);}
+  to{transform:translateX(-50%) rotate(5deg);}
+}
+
+/* 오답/정답 안내창은 기존 미션카드 자리 */
+.modal.wrong-mode,
+.success-modal.card-mode{
+  align-items:flex-start;
+}
+
+.modal.wrong-mode .modal-box,
+.success-modal.card-mode .success-box{
+  position:fixed;
+  margin:0;
+}
+
+@media(max-width:600px){
+  .bird{width:270px;}
+}
+
+@media(max-width:390px){
+  .bird{width:255px;}
+}
+
 </style>
 </head>
 
@@ -665,10 +737,12 @@ body{
 <!-- =========================
      미션 + 정답 UI
 ========================= -->
+<img src="bird_idle.png" id="bird" class="bird" alt="" draggable="false">
+
 <div class="ui-wrap" id="uiWrap">
 
   <!-- 미션 카드 -->
-  <div class="mission-card">
+  <div class="mission-card" id="missionCard">
 
     <div class="mission-title">
       A 3 - A 8 키트 사용
@@ -762,7 +836,7 @@ body{
   id="infoModal"
 >
 
-  <div class="modal-box">
+  <div class="modal-box" id="modalBox">
 
     <div
       class="modal-title"
@@ -801,7 +875,7 @@ body{
     id="fireworksLayer"
   ></div>
 
-  <div class="success-box">
+  <div class="success-box" id="successBox">
 
     <div class="success-title">
       정답입니다.
@@ -813,6 +887,399 @@ body{
 
 
 <script>
+
+const birdFiles = {
+  idle:"bird_idle.png",
+  blink:"bird_blink_aligned.png",
+  fly:"bird_fly.png",
+  angry:"bird_angry.png",
+  happy:"bird_happy.png"
+};
+
+const bird = document.getElementById("bird");
+const missionCard = document.getElementById("missionCard");
+
+let birdBusy = false;
+let blinkTimer = null;
+let flightTimer = null;
+let birdAnimation = null;
+
+/* 600×600 프레임 안에서 실제 캐릭터 위치가 서로 다른 것을 보정 */
+const poseOffset = {
+  idle:  {x: 0.000, y: 0.000},
+  blink: {x: 0.000, y: 0.000},
+  fly:   {x:-0.018, y: 0.018},
+  angry: {x:-0.112, y:-0.012},
+  happy: {x:-0.292, y:-0.015}
+};
+
+/* idle 그림의 발바닥을 카드 윗선에 살짝 겹침 */
+const IDLE_FOOT_Y = 0.750;
+const CARD_OVERLAP = 3;
+
+Object.values(birdFiles).forEach(function(src){
+  const img = new Image();
+  img.src = src;
+});
+
+function getBirdSize(){
+  return bird.getBoundingClientRect().width;
+}
+
+function getCardPerch(){
+  const r = missionCard.getBoundingClientRect();
+  const size = getBirdSize();
+
+  return {
+    x:r.left + r.width/2,
+    y:r.top - size*IDLE_FOOT_Y + CARD_OVERLAP
+  };
+}
+
+function setBirdPose(pose,baseX,baseY){
+  const size = getBirdSize();
+  const off = poseOffset[pose] || poseOffset.idle;
+
+  bird.src = birdFiles[pose];
+  bird.style.left = (baseX + size*off.x) + "px";
+  bird.style.top  = (baseY + size*off.y) + "px";
+}
+
+function cancelBirdAnimation(){
+  if(birdAnimation){
+    try{ birdAnimation.cancel(); }catch(e){}
+    birdAnimation = null;
+  }
+}
+
+function placeBirdOnCard(){
+  if(birdBusy || locked) return;
+
+  cancelBirdAnimation();
+
+  const p = getCardPerch();
+
+  bird.className = "bird perched";
+  setBirdPose("idle",p.x,p.y);
+}
+
+function scheduleBlink(){
+  clearTimeout(blinkTimer);
+
+  if(locked || birdBusy) return;
+
+  blinkTimer = setTimeout(function(){
+    if(locked || birdBusy){
+      scheduleBlink();
+      return;
+    }
+
+    /*
+      핵심:
+      blink PNG 자체를 idle과 픽셀 정렬해 두었기 때문에
+      깜빡일 때 left/top은 단 1px도 건드리지 않는다.
+      src만 교체한다.
+    */
+    bird.src = birdFiles.blink;
+
+    setTimeout(function(){
+      if(!locked && !birdBusy){
+        bird.src = birdFiles.idle;
+        scheduleBlink();
+      }
+    },180);
+
+  },2400 + Math.random()*2600);
+}
+
+function scheduleFlight(){
+  clearTimeout(flightTimer);
+
+  if(locked) return;
+
+  flightTimer = setTimeout(function(){
+    flyAround();
+  },8500 + Math.random()*4500);
+}
+
+
+/* 비행 후 첫 깜빡임 전용.
+   착지 애니메이션이 완전히 끝나고 좌표/transform이 안정된 뒤 실행한다. */
+function schedulePostFlightBlink(){
+  clearTimeout(blinkTimer);
+
+  if(locked || birdBusy) return;
+
+  blinkTimer = setTimeout(function(){
+    if(locked || birdBusy) return;
+
+    /*
+      비행 후에도 위치 계산/left/top 변경 없음.
+      현재 착지 위치에서 이미지 파일만 교체한다.
+    */
+    bird.src = birdFiles.blink;
+
+    setTimeout(function(){
+      if(!locked && !birdBusy){
+        bird.src = birdFiles.idle;
+        scheduleBlink();
+      }
+    },180);
+
+  },3200);
+}
+
+async function flyAround(){
+  if(locked || birdBusy){
+    scheduleFlight();
+    return;
+  }
+
+  birdBusy = true;
+
+  clearTimeout(blinkTimer);
+  clearTimeout(flightTimer);
+  cancelBirdAnimation();
+
+  const start = getCardPerch();
+  const size = getBirdSize();
+  const off = poseOffset.fly;
+  const ox = size*off.x;
+  const oy = size*off.y;
+
+  const card = missionCard.getBoundingClientRect();
+
+  const leftX  = Math.max(size*.35, window.innerWidth*.18);
+  const rightX = Math.min(window.innerWidth-size*.35, window.innerWidth*.82);
+  const topY   = Math.max(-size*.10, window.innerHeight*.035);
+  const midY   = Math.max(
+    topY+45,
+    Math.min(card.top-size*.62, window.innerHeight*.24)
+  );
+
+  bird.className = "bird";
+  setBirdPose("fly",start.x,start.y);
+
+  birdAnimation = bird.animate([
+    {
+      left:(start.x+ox)+"px",
+      top:(start.y+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    },
+    {
+      left:(leftX+ox)+"px",
+      top:(midY+oy)+"px",
+      transform:"translateX(-50%) rotate(-8deg)"
+    },
+    {
+      left:(window.innerWidth/2+ox)+"px",
+      top:(topY+oy)+"px",
+      transform:"translateX(-50%) rotate(2deg)"
+    },
+    {
+      left:(rightX+ox)+"px",
+      top:(midY+oy)+"px",
+      transform:"translateX(-50%) rotate(8deg)"
+    },
+    {
+      left:(start.x+ox)+"px",
+      top:(start.y-28+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    }
+  ],{
+    duration:4400,
+    easing:"cubic-bezier(.45,.05,.25,1)",
+    fill:"forwards"
+  });
+
+  try{
+    await birdAnimation.finished;
+  }catch(e){
+    return;
+  }
+
+  /*
+    중요:
+    fill:forwards 상태를 먼저 제거한다.
+    그 뒤 현재 미션카드 좌표를 새로 계산해서 idle로 착지.
+    따라서 한 번 날고 난 뒤 blink가 이전 비행 좌표로 돌아가지 않는다.
+  */
+  cancelBirdAnimation();
+
+  if(locked) return;
+
+  const landing = getCardPerch();
+
+  bird.className = "bird landing";
+  setBirdPose("idle",landing.x,landing.y);
+
+  setTimeout(function(){
+    if(locked) return;
+
+    cancelBirdAnimation();
+
+    const exact = getCardPerch();
+
+    bird.className = "bird perched";
+    setBirdPose("idle",exact.x,exact.y);
+
+    birdBusy = false;
+
+    /*
+      비행 직후 첫 깜빡임은 별도 안정화 루틴 사용.
+      두 번째/세 번째 비행 후에도 항상 같은 방식으로 초기화된다.
+    */
+    schedulePostFlightBlink();
+    scheduleFlight();
+  },500);
+}
+
+function birdHintReaction(){
+  if(locked || birdBusy) return;
+
+  birdBusy = true;
+  clearTimeout(blinkTimer);
+
+  const p = getCardPerch();
+
+  bird.className = "bird";
+  setBirdPose("idle",p.x,p.y);
+  bird.src = birdFiles.blink;
+
+  const a = bird.animate([
+    {transform:"translateX(-50%) translateY(0)"},
+    {transform:"translateX(-50%) translateY(-7px) rotate(-3deg)"},
+    {transform:"translateX(-50%) translateY(0) rotate(2deg)"},
+    {transform:"translateX(-50%) translateY(0)"}
+  ],{
+    duration:600,
+    easing:"ease-in-out"
+  });
+
+  a.onfinish = function(){
+    try{ a.cancel(); }catch(e){}
+
+    if(!locked){
+      const q = getCardPerch();
+
+      bird.className = "bird perched";
+      setBirdPose("idle",q.x,q.y);
+
+      birdBusy = false;
+      scheduleBlink();
+    }
+  };
+}
+
+/* 안내창을 현재 미션카드와 같은 위치/폭에 배치 */
+function positionReactionBox(box){
+  const r = missionCard.getBoundingClientRect();
+
+  box.style.width = r.width + "px";
+  box.style.left = (r.left+r.width/2) + "px";
+  box.style.top = r.top + "px";
+  box.style.transform = "translateX(-50%)";
+}
+
+function getBoxPerch(box){
+  const r = box.getBoundingClientRect();
+  const size = getBirdSize();
+
+  return {
+    x:r.left+r.width/2,
+    y:r.top-size*IDLE_FOOT_Y+CARD_OVERLAP
+  };
+}
+
+/* 오답: 오답창 = 미션카드 자리 / angry = 그 창 위 */
+function birdWrongReaction(){
+  birdBusy = true;
+
+  clearTimeout(blinkTimer);
+  clearTimeout(flightTimer);
+  cancelBirdAnimation();
+
+  const modal = document.getElementById("infoModal");
+  const box = document.getElementById("modalBox");
+
+  modal.classList.add("wrong-mode");
+  positionReactionBox(box);
+
+  requestAnimationFrame(function(){
+    const p = getBoxPerch(box);
+
+    bird.className = "bird reaction angry";
+    setBirdPose("angry",p.x,p.y);
+  });
+}
+
+/* 정답: 정답창 = 미션카드 자리 / happy 상태로 화면 위를 비행 */
+function birdCorrectFlight(){
+  birdBusy = true;
+
+  clearTimeout(blinkTimer);
+  clearTimeout(flightTimer);
+  cancelBirdAnimation();
+
+  const modal = document.getElementById("successModal");
+  const box = document.getElementById("successBox");
+
+  modal.classList.add("card-mode");
+  positionReactionBox(box);
+
+  const r = box.getBoundingClientRect();
+  const size = getBirdSize();
+  const off = poseOffset.happy;
+  const ox = size*off.x;
+  const oy = size*off.y;
+
+  const startX = r.left+r.width/2;
+  const startY = r.top-size*IDLE_FOOT_Y+CARD_OVERLAP;
+
+  const leftX = Math.max(size*.30,window.innerWidth*.14);
+  const rightX = Math.min(window.innerWidth-size*.30,window.innerWidth*.86);
+  const highY = Math.max(-size*.12,window.innerHeight*.015);
+  const lowY = Math.max(
+    highY+55,
+    Math.min(r.top-size*.48,window.innerHeight*.28)
+  );
+
+  bird.className = "bird reaction";
+  setBirdPose("happy",startX,startY);
+
+  birdAnimation = bird.animate([
+    {
+      left:(startX+ox)+"px",
+      top:(startY+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    },
+    {
+      left:(rightX+ox)+"px",
+      top:(lowY+oy)+"px",
+      transform:"translateX(-50%) rotate(10deg)"
+    },
+    {
+      left:(window.innerWidth/2+ox)+"px",
+      top:(highY+oy)+"px",
+      transform:"translateX(-50%) rotate(-3deg)"
+    },
+    {
+      left:(leftX+ox)+"px",
+      top:(lowY+oy)+"px",
+      transform:"translateX(-50%) rotate(-10deg)"
+    },
+    {
+      left:(startX+ox)+"px",
+      top:(startY-18+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    }
+  ],{
+    duration:3300,
+    easing:"cubic-bezier(.45,.05,.25,1)",
+    iterations:3
+  });
+}
+
 const missionConfig = {
 
   correctAnswer: "거북로",
@@ -852,6 +1319,14 @@ function normalize(text){
 ========================= */
 function openModal(title,content){
 
+  const modal = document.getElementById("infoModal");
+  const box = document.getElementById("modalBox");
+
+  if(title !== "오답"){
+    modal.classList.remove("wrong-mode");
+    box.removeAttribute("style");
+  }
+
   document
     .getElementById("modalTitle")
     .textContent = title;
@@ -869,9 +1344,28 @@ function openModal(title,content){
 
 function closeModal(){
 
+  const modal = document.getElementById("infoModal");
+  const wasWrong = modal.classList.contains("wrong-mode");
+
+  modal.classList.remove("show");
+  modal.classList.remove("wrong-mode");
+
   document
-    .getElementById("infoModal")
-    .classList.remove("show");
+    .getElementById("modalBox")
+    .removeAttribute("style");
+
+  if(wasWrong && !locked){
+    birdBusy = false;
+    cancelBirdAnimation();
+
+    const p = getCardPerch();
+
+    bird.className = "bird perched";
+    setBirdPose("idle",p.x,p.y);
+
+    scheduleBlink();
+    scheduleFlight();
+  }
 
 }
 
@@ -888,6 +1382,8 @@ function showHint1(){
   document
     .getElementById("hint2Btn")
     .disabled = false;
+
+  birdHintReaction();
 
   openModal(
     "힌트 1",
@@ -909,6 +1405,8 @@ function showHint2(){
     .getElementById("answerBtn")
     .disabled = false;
 
+  birdHintReaction();
+
   openModal(
     "힌트 2",
     missionConfig.hint2Text
@@ -922,6 +1420,8 @@ function showAnswer(){
   if(locked) return;
 
   if(!usedHint2) return;
+
+  birdHintReaction();
 
   openModal(
     "정답보기",
@@ -979,6 +1479,8 @@ function checkAnswer(){
       "정답이 아닙니다."
     );
 
+    birdWrongReaction();
+
   }
 
 }
@@ -995,6 +1497,8 @@ function showSuccess(){
   document
     .getElementById("successModal")
     .classList.add("show");
+
+  birdCorrectFlight();
 
 
   /* 첫 폭죽 */
@@ -1190,6 +1694,42 @@ document
 
     }
   );
+
+
+/* 새 시작 */
+window.addEventListener("load",function(){
+  requestAnimationFrame(function(){
+    placeBirdOnCard();
+    scheduleBlink();
+    scheduleFlight();
+  });
+});
+
+window.addEventListener("resize",function(){
+  if(!birdBusy && !locked){
+    placeBirdOnCard();
+  }
+
+  const wrongModal = document.getElementById("infoModal");
+
+  if(wrongModal.classList.contains("wrong-mode")){
+    const box = document.getElementById("modalBox");
+    positionReactionBox(box);
+
+    requestAnimationFrame(function(){
+      const p = getBoxPerch(box);
+      setBirdPose("angry",p.x,p.y);
+    });
+  }
+
+  const successModal = document.getElementById("successModal");
+
+  if(successModal.classList.contains("card-mode")){
+    positionReactionBox(
+      document.getElementById("successBox")
+    );
+  }
+});
 
 </script>
 
