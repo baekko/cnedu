@@ -5,86 +5,222 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PTB CLASS QUESTION</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 html,body{
   width:100%;
   height:100%;
   overflow:hidden;
-  font-family:"Pretendard","Noto Sans KR",sans-serif;
+  font-family:"Gowun Dodum",sans-serif;
   background:#000;
 }
 
+/* =========================
+   배경
+   기본 = 태블릿용
+========================= */
 body{
   position:relative;
-  background:url("ptbcc2.png") no-repeat center center / cover;
+  background:
+    url("ptbcl.png")
+    no-repeat center center / cover;
 }
 
+/* =========================
+   미션 + 정답 UI 전체
+========================= */
 .ui-wrap{
   position:absolute;
   left:50%;
   bottom:7vh;
   transform:translateX(-50%);
-  width:clamp(420px, 56vw, 560px);
+
+  width:clamp(420px,56vw,560px);
+
   z-index:10;
+
   display:flex;
   flex-direction:column;
   gap:14px;
 }
 
+/* =========================
+   미션 카드
+========================= */
+.mission-card{
+  width:100%;
+  margin-bottom:22px;
+
+  background:#f4ecd1;
+  border:3px solid #7f4b3a;
+  border-radius:22px;
+
+  padding:20px 18px 18px;
+
+  color:#2b160c;
+
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.mission-title{
+  text-align:center;
+  font-size:25px;
+  font-weight:700;
+  color:#235a9f;
+  margin-bottom:16px;
+  letter-spacing:.5px;
+}
+
+/* 문제 3칸 */
+.room-grid{
+  width:100%;
+
+  display:grid;
+  grid-template-columns:
+    minmax(0,1fr)
+    minmax(0,1.15fr)
+    minmax(0,1fr);
+
+  gap:10px;
+
+  align-items:start;
+}
+
+.room-box{
+  min-height:82px;
+
+  background:rgba(255,255,255,.92);
+  border:4px solid #7f4b3a;
+  border-radius:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:10px 8px;
+
+  text-align:center;
+
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:20px;
+  font-weight:700;
+  line-height:1.45;
+
+  color:#111;
+}
+
+.room-box.middle{
+  min-height:128px;
+}
+
+.room-box.right{
+  min-height:122px;
+}
+
+.mission-answer-guide{
+  margin-top:18px;
+
+  text-align:center;
+
+  font-size:25px;
+  font-weight:700;
+
+  color:#111;
+}
+
+/* =========================
+   정답 입력
+========================= */
 .answer-row{
   width:100%;
+
   display:grid;
-  grid-template-columns:minmax(0, 1fr) 86px;
+  grid-template-columns:minmax(0,1fr) 86px;
+
   gap:12px;
 }
 
 .answer-input{
   width:100%;
   height:58px;
+
   border:none;
   border-radius:14px;
+
   padding:0 18px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:20px;
+
   outline:none;
+
   background:rgba(255,255,255,.95);
   color:#222;
+
+  box-shadow:0 7px 16px rgba(0,0,0,.22);
 }
 
 .submit-btn{
   height:58px;
+
   border:none;
   border-radius:14px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:18px;
-  font-weight:900;
+  font-weight:700;
+
   color:white;
   background:#5a321d;
+
   cursor:pointer;
   padding:0;
+
   box-shadow:
     0 8px 16px rgba(0,0,0,.32),
     inset 0 2px 2px rgba(255,255,255,.22),
     inset 0 -4px 8px rgba(0,0,0,.25);
 }
 
+/* =========================
+   힌트 버튼
+========================= */
 .action-row{
   width:100%;
+
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
+
   gap:12px;
 }
 
 .action-btn{
   height:54px;
+
   border:none;
   border-radius:14px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:17px;
-  font-weight:900;
+  font-weight:700;
+
   color:white;
   background:#5a321d;
+
   cursor:pointer;
   padding:0;
+
   box-shadow:
     0 8px 16px rgba(0,0,0,.32),
     inset 0 2px 2px rgba(255,255,255,.22),
@@ -101,13 +237,19 @@ body{
   cursor:default;
 }
 
+/* =========================
+   일반 모달
+========================= */
 .modal{
   position:fixed;
   inset:0;
+
   display:none;
   justify-content:center;
   align-items:center;
+
   background:rgba(0,0,0,.55);
+
   z-index:100;
 }
 
@@ -116,62 +258,261 @@ body{
 }
 
 .modal-box{
-  width:min(86vw, 560px);
+  width:min(86vw,560px);
+
   background:#fff7e8;
+
+  border:3px solid #7f4b3a;
   border-radius:22px;
+
   padding:30px 24px;
+
   text-align:center;
+
   box-shadow:0 18px 40px rgba(0,0,0,.35);
 }
 
 .modal-title{
   font-size:28px;
-  font-weight:900;
+  font-weight:700;
+
   margin-bottom:18px;
+
   color:#2b160c;
 }
 
 .modal-content{
   font-size:22px;
   line-height:1.6;
+
   color:#2b160c;
+
   white-space:pre-line;
   word-break:keep-all;
 }
 
 .modal-close{
   margin-top:22px;
+
   border:none;
   border-radius:14px;
+
   padding:12px 26px;
+
+  font-family:"Gowun Dodum",sans-serif;
   font-size:18px;
-  font-weight:900;
+  font-weight:700;
+
   color:#fff;
   background:#5a321d;
+
   cursor:pointer;
 }
 
+/* =========================
+   정답 성공창
+========================= */
+.success-modal{
+  position:fixed;
+  inset:0;
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(0,0,0,.42);
+
+  z-index:500;
+}
+
+.success-modal.show{
+  display:flex;
+}
+
+.success-box{
+  position:relative;
+  z-index:520;
+
+  width:min(82vw,420px);
+
+  padding:30px 24px;
+
+  background:#fff7e8;
+
+  border:4px solid #7f4b3a;
+  border-radius:24px;
+
+  text-align:center;
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.7);
+
+  animation:successPop .42s ease;
+}
+
+.success-title{
+  font-size:34px;
+  font-weight:700;
+
+  color:#2b160c;
+
+  line-height:1.4;
+}
+
+@keyframes successPop{
+  0%{
+    transform:scale(.65);
+    opacity:0;
+  }
+
+  70%{
+    transform:scale(1.06);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* =========================
+   폭죽
+========================= */
+.fireworks-layer{
+  position:fixed;
+  inset:0;
+
+  overflow:hidden;
+
+  pointer-events:none;
+
+  z-index:510;
+}
+
+.firework{
+  position:absolute;
+
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  pointer-events:none;
+
+  animation:fireworkBurst 1.25s ease-out forwards;
+}
+
+@keyframes fireworkBurst{
+  0%{
+    transform:
+      translate(0,0)
+      scale(1);
+
+    opacity:1;
+  }
+
+  70%{
+    opacity:1;
+  }
+
+  100%{
+    transform:
+      translate(var(--tx),var(--ty))
+      scale(.2);
+
+    opacity:0;
+  }
+}
+
+/* =========================
+   오답 흔들림
+========================= */
 .shake{
   animation:shake .25s ease;
 }
 
 @keyframes shake{
-  0%{transform:translateX(-50%) translateX(0);}
-  25%{transform:translateX(-50%) translateX(-6px);}
-  50%{transform:translateX(-50%) translateX(6px);}
-  75%{transform:translateX(-50%) translateX(-4px);}
-  100%{transform:translateX(-50%) translateX(0);}
+  0%{
+    transform:translateX(-50%) translateX(0);
+  }
+
+  25%{
+    transform:translateX(-50%) translateX(-6px);
+  }
+
+  50%{
+    transform:translateX(-50%) translateX(6px);
+  }
+
+  75%{
+    transform:translateX(-50%) translateX(-4px);
+  }
+
+  100%{
+    transform:translateX(-50%) translateX(0);
+  }
 }
 
+/* ==================================================
+   휴대폰
+   ptbc15.png 사용
+================================================== */
 @media(max-width:600px){
+
+  body{
+    background-image:url("ptbcl.png");
+  }
+
   .ui-wrap{
-    width:min(88vw, 330px);
-    bottom:5.5vh;
-    gap:11px;
+    width:min(90vw,350px);
+    bottom:4.5vh;
+    gap:10px;
+  }
+
+  .mission-card{
+    padding:13px 10px 12px;
+    border-width:2px;
+    border-radius:17px;
+  }
+
+  .mission-title{
+    font-size:18px;
+    margin-bottom:10px;
+  }
+
+  .room-grid{
+    gap:6px;
+  }
+
+  .room-box{
+    min-height:58px;
+
+    border-width:3px;
+    border-radius:9px;
+
+    padding:6px 4px;
+
+    font-size:14px;
+    line-height:1.35;
+  }
+
+  .room-box.middle{
+    min-height:87px;
+  }
+
+  .room-box.right{
+    min-height:82px;
+  }
+
+  .mission-answer-guide{
+    margin-top:11px;
+    font-size:18px;
   }
 
   .answer-row{
-    grid-template-columns:minmax(0, 1fr) 64px;
+    grid-template-columns:minmax(0,1fr) 64px;
     gap:8px;
   }
 
@@ -198,20 +539,60 @@ body{
     border-radius:13px;
   }
 
-  .modal-title{font-size:23px;}
-  .modal-content{font-size:18px;}
+  .modal-title{
+    font-size:23px;
+  }
+
+  .modal-content{
+    font-size:18px;
+  }
+
+  .success-title{
+    font-size:28px;
+  }
 }
 
+/* 작은 휴대폰 */
 @media(max-width:390px){
+
   .ui-wrap{
-    width:min(90vw, 310px);
+    width:min(92vw,330px);
+    bottom:3.5vh;
+  }
+
+  .mission-card{
+    padding:11px 8px 10px;
+  }
+
+  .mission-title{
+    font-size:17px;
+    margin-bottom:8px;
+  }
+
+  .room-box{
+    min-height:54px;
+    font-size:13px;
+  }
+
+  .room-box.middle{
+    min-height:80px;
+  }
+
+  .room-box.right{
+    min-height:76px;
+  }
+
+  .mission-answer-guide{
+    margin-top:9px;
+    font-size:17px;
   }
 
   .answer-row{
-    grid-template-columns:minmax(0, 1fr) 58px;
+    grid-template-columns:minmax(0,1fr) 58px;
     gap:7px;
   }
 
+  /* iPhone Safari 자동 확대 방지 */
   .answer-input{
     height:50px;
     font-size:16px;
@@ -232,35 +613,195 @@ body{
     font-size:13px;
   }
 }
-/* 가로 화면 안내 */
+
+/* =========================
+   가로 화면 안내
+========================= */
 .landscape-guide{
   display:none;
 }
 
-@media (orientation: landscape){
+@media(orientation:landscape){
+
   .landscape-guide{
     position:fixed;
     inset:0;
+
     z-index:999999;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     background:#111;
   }
 
   .landscape-guide-text{
     font-family:"Gowun Dodum",sans-serif;
+
     font-size:20px;
     font-weight:700;
     line-height:1.7;
+
     text-align:center;
+
     color:#fff;
   }
-}  
+}
+
+/* ==================================================
+   새 캐릭터 - 원래 UI와 독립
+================================================== */
+.bird{
+  position:fixed;
+  left:0;
+  top:0;
+  width:clamp(260px,38vw,390px);
+  height:auto;
+  z-index:30;
+  pointer-events:none;
+  user-select:none;
+  transform:translateX(-50%);
+  transform-origin:50% 78%;
+  filter:drop-shadow(0 9px 9px rgba(70,45,20,.15));
+  will-change:left,top,transform;
+}
+
+.bird.perched{
+  animation:birdBreath 2.8s ease-in-out infinite;
+}
+
+@keyframes birdBreath{
+  0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(-2px);}
+}
+
+.bird.landing{
+  animation:birdLand .48s cubic-bezier(.2,.85,.3,1.2);
+}
+
+@keyframes birdLand{
+  0%{transform:translateX(-50%) translateY(-24px);}
+  65%{transform:translateX(-50%) translateY(3px);}
+  100%{transform:translateX(-50%) translateY(0);}
+}
+
+.bird.reaction{
+  z-index:700;
+}
+
+.bird.angry{
+  animation:birdAngry .18s ease-in-out 7 alternate;
+}
+
+@keyframes birdAngry{
+  from{transform:translateX(-50%) rotate(-5deg);}
+  to{transform:translateX(-50%) rotate(5deg);}
+}
+
+/* 오답/정답 안내창은 기존 미션카드 자리 */
+.modal.wrong-mode,
+.success-modal.card-mode{
+  align-items:flex-start;
+}
+
+.modal.wrong-mode .modal-box,
+.success-modal.card-mode .success-box{
+  position:fixed;
+  margin:0;
+}
+
+@media(max-width:600px){
+  .bird{width:270px;}
+}
+
+@media(max-width:390px){
+  .bird{width:255px;}
+}
+
+
+/* ==================================================
+   오답/정답 반응창 위치 보정
+================================================== */
+
+/* 정답창: JS의 translateX(-50%)를 팝 애니메이션 내내 유지 */
+.success-modal.card-mode .success-box{
+  animation:successPopCard .42s ease;
+}
+
+@keyframes successPopCard{
+  0%{
+    transform:translateX(-50%) scale(.65);
+    opacity:0;
+  }
+  70%{
+    transform:translateX(-50%) scale(1.06);
+    opacity:1;
+  }
+  100%{
+    transform:translateX(-50%) scale(1);
+    opacity:1;
+  }
+}
+
+
+/* ===== 오답/정답 때 미션카드만 숨김 ===== */
+.mission-card{
+  transition:opacity .30s ease, transform .30s ease;
+}
+.mission-card.reaction-hidden{
+  opacity:0;
+  transform:translateY(5px) scale(.99);
+  pointer-events:none;
+}
+
+/* 오답창: 정답창과 같은 폭/간결한 표시 */
+.modal.wrong-mode .modal-box{
+  width:min(90%,420px) !important;
+  padding:28px 22px !important;
+  text-align:center;
+}
+.modal.wrong-mode .modal-title,
+.modal.wrong-mode .modal-box button{
+  display:none !important;
+}
+.modal.wrong-mode .modal-content{
+  margin:0;
+  font-size:20px;
+  font-weight:900;
+  line-height:1.45;
+}
+
+
+/* ===== 문제 2~5 미션카드 전용 ===== */
+.rule-box,.blog-box{background:#fff;border:4px solid #d99654;border-radius:12px;color:#111;text-align:center;font-weight:700;}
+.rule-box{padding:18px 10px;font-size:24px;}
+.blog-box{padding:17px 12px;}
+.blog-title{font-size:23px;margin-bottom:16px;}
+.blog-days{font-size:20px;white-space:nowrap;}
+.number-flow{display:grid;grid-template-columns:1fr 34px 1fr;grid-template-rows:auto 26px auto;align-items:center;gap:5px 4px;}
+.num-panel{position:relative;min-height:100px;background:#fff;border:4px solid #ff8b18;border-radius:11px;padding:12px 8px;display:flex;gap:9px;flex-wrap:wrap;align-content:flex-start;justify-content:space-around;font-size:18px;font-weight:700;color:#111;}
+.num-panel .dark{background:#000;color:#fff;border-radius:50%;padding:2px 5px;}
+.num-panel .low{margin-left:58%;}.num-panel .low2{margin-left:48%;}.num-panel .low3{margin-left:65%;}
+.flow-arrow,.flow-left,.flow-down{font-size:31px;font-weight:900;text-align:center;color:#000;line-height:1;}.flow-down{grid-column:3;}.flow-left{font-size:34px;}
+.word-flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;grid-template-rows:auto 24px auto;align-items:center;gap:5px 3px;}
+.word-box{background:#fff;border:4px solid #ff8b18;border-radius:11px;min-height:92px;padding:12px 7px;text-align:center;font-size:18px;font-weight:700;line-height:1.1;color:#111;}
+.word-arrow,.word-left,.word-down{text-align:center;font-size:30px;font-weight:900;color:#000;line-height:1;}.word-down{grid-column:5;}.word-left{font-size:34px;}
+.mission-card-p2{padding-top:20px;padding-bottom:18px}.mission-card-p3{padding-top:20px}.mission-card-p4,.mission-card-p5{padding:18px 14px 16px}
+@media(max-width:600px){
+ .rule-box{padding:14px 8px;font-size:18px}.blog-box{padding:12px 8px}.blog-title{font-size:17px;margin-bottom:11px}.blog-days{font-size:14px}
+ .number-flow{grid-template-columns:1fr 25px 1fr;grid-template-rows:auto 20px auto;gap:3px}.num-panel{min-height:72px;border-width:3px;padding:7px 4px;gap:4px;font-size:12px}.num-panel .low{margin-left:55%}.flow-arrow,.flow-left,.flow-down{font-size:24px}
+ .word-flow{grid-template-columns:1fr 23px 1fr 23px 1fr;grid-template-rows:auto 18px auto;gap:3px 1px}.word-box{min-height:67px;border-width:3px;padding:8px 3px;font-size:12px}.word-arrow,.word-left,.word-down{font-size:22px}
+ .mission-card-p4,.mission-card-p5{padding:12px 8px 11px}
+}
+@media(max-width:390px){.blog-days{font-size:13px}.word-box{font-size:11px}.num-panel{font-size:11px}}
+
 </style>
 </head>
 
 <body>
+
+<!-- 가로 화면 안내 -->
 <div class="landscape-guide">
   <div class="landscape-guide-text">
     📱<br>
@@ -268,108 +809,1045 @@ body{
     세로 모드를 유지해 주세요.
   </div>
 </div>
+
+
+<!-- =========================
+     미션 + 정답 UI
+========================= -->
+<img src="bird_idle.png" id="bird" class="bird" alt="" draggable="false">
+
 <div class="ui-wrap" id="uiWrap">
+
+  <!-- 미션 카드 -->
+  <div class="mission-card mission-card-p2" id="missionCard">
+  <div class="mission-title">B 3 - B 9 키트 사용</div>
+  <div class="rule-box">암호 해독 규칙을 준수 한다</div>
+  <div class="mission-answer-guide">정답은 숫자 6개</div>
+</div>
+
+
+  <!-- 정답 입력 -->
   <div class="answer-row">
-    <input id="answerInput" class="answer-input" type="text" placeholder="정답을 입력하세요" autocomplete="off">
-    <button class="submit-btn" onclick="checkAnswer()">입력</button>
+
+    <input
+      id="answerInput"
+      class="answer-input"
+      type="text"
+      placeholder="정답을 입력하세요"
+      autocomplete="off"
+    >
+
+    <button
+      class="submit-btn"
+      onclick="checkAnswer()"
+    >
+      입력
+    </button>
+
   </div>
 
+
+  <!-- 힌트 -->
   <div class="action-row">
-    <button class="action-btn" onclick="showHint1()">힌트 1</button>
-    <button class="action-btn" id="hint2Btn" onclick="showHint2()" disabled>힌트 2</button>
-    <button class="action-btn" id="answerBtn" onclick="showAnswer()" disabled>정답보기</button>
+
+    <button
+      class="action-btn"
+      onclick="showHint1()"
+    >
+      힌트 1
+    </button>
+
+    <button
+      class="action-btn"
+      id="hint2Btn"
+      onclick="showHint2()"
+      disabled
+    >
+      힌트 2
+    </button>
+
+    <button
+      class="action-btn"
+      id="answerBtn"
+      onclick="showAnswer()"
+      disabled
+    >
+      정답보기
+    </button>
+
   </div>
+
 </div>
 
-<div class="modal" id="infoModal">
-  <div class="modal-box">
-    <div class="modal-title" id="modalTitle">안내</div>
-    <div class="modal-content" id="modalContent"></div>
-    <button class="modal-close" onclick="closeModal()">닫기</button>
+
+<!-- =========================
+     힌트 / 오답 모달
+========================= -->
+<div
+  class="modal"
+  id="infoModal"
+>
+
+  <div class="modal-box" id="modalBox">
+
+    <div
+      class="modal-title"
+      id="modalTitle"
+    >
+      안내
+    </div>
+
+    <div
+      class="modal-content"
+      id="modalContent"
+    ></div>
+
+    <button
+      class="modal-close"
+      onclick="closeModal()"
+    >
+      닫기
+    </button>
+
   </div>
+
 </div>
+
+
+<!-- =========================
+     정답 성공 화면
+========================= -->
+<div
+  class="success-modal"
+  id="successModal"
+>
+
+  <div
+    class="fireworks-layer"
+    id="fireworksLayer"
+  ></div>
+
+  <div class="success-box" id="successBox">
+
+    <div class="success-title">
+      정답입니다.
+    </div>
+
+  </div>
+
+</div>
+
 
 <script>
-const missionConfig = {
-  correctAnswer: "794532",
-  hint1Text: "잘못된 그림은 B6입니다.",
-  hint2Text: "새는 9마리, 고양이는 5마리입니다.",
-  answerText: "794532",
-  successText: "정답입니다.",
-  bgImage: "ptbcc2.png"
+
+const birdFiles = {
+  idle:"bird_idle.png",
+  blink:"bird_blink_aligned.png",
+  fly:"bird_fly.png",
+  angry:"bird_angry.png",
+  happy:"bird_happy.png"
 };
 
-let locked = false;
-let usedHint1 = false;
-let usedHint2 = false;
+const bird = document.getElementById("bird");
+const missionCard = document.getElementById("missionCard");
 
-function normalize(text){
-  return String(text).replace(/\s+/g,"").trim().toLowerCase();
+let birdBusy = false;
+let blinkTimer = null;
+let flightTimer = null;
+let birdAnimation = null;
+
+/* 600×600 프레임 안에서 실제 캐릭터 위치가 서로 다른 것을 보정 */
+const poseOffset = {
+  idle:  {x: 0.000, y: 0.000},
+  blink: {x: 0.000, y: 0.000},
+  fly:   {x:-0.018, y: 0.018},
+  angry: {x:-0.112, y:-0.012},
+  happy: {x:-0.292, y:-0.015}
+};
+
+/* idle 그림의 발바닥을 카드 윗선에 살짝 겹침 */
+const IDLE_FOOT_Y = 0.750;
+const CARD_OVERLAP = 3;
+
+Object.values(birdFiles).forEach(function(src){
+  const img = new Image();
+  img.src = src;
+});
+
+function getBirdSize(){
+  return bird.getBoundingClientRect().width;
 }
 
-function openModal(title, content){
-  document.getElementById("modalTitle").textContent = title;
-  document.getElementById("modalContent").textContent = content;
-  document.getElementById("infoModal").classList.add("show");
+function getCardPerch(){
+  const r = missionCard.getBoundingClientRect();
+  const size = getBirdSize();
+
+  return {
+    x:r.left + r.width/2,
+    y:r.top - size*IDLE_FOOT_Y + CARD_OVERLAP
+  };
 }
 
-function closeModal(){
-  document.getElementById("infoModal").classList.remove("show");
+function setBirdPose(pose,baseX,baseY){
+  const size = getBirdSize();
+  const off = poseOffset[pose] || poseOffset.idle;
+
+  bird.src = birdFiles[pose];
+  bird.style.left = (baseX + size*off.x) + "px";
+  bird.style.top  = (baseY + size*off.y) + "px";
 }
 
-function showHint1(){
+function cancelBirdAnimation(){
+  if(birdAnimation){
+    try{ birdAnimation.cancel(); }catch(e){}
+    birdAnimation = null;
+  }
+}
+
+function placeBirdOnCard(){
+  if(birdBusy || locked) return;
+
+  cancelBirdAnimation();
+
+  const p = getCardPerch();
+
+  bird.className = "bird perched";
+  setBirdPose("idle",p.x,p.y);
+}
+
+function scheduleBlink(){
+  clearTimeout(blinkTimer);
+
+  if(locked || birdBusy) return;
+
+  blinkTimer = setTimeout(function(){
+    if(locked || birdBusy){
+      scheduleBlink();
+      return;
+    }
+
+    /*
+      핵심:
+      blink PNG 자체를 idle과 픽셀 정렬해 두었기 때문에
+      깜빡일 때 left/top은 단 1px도 건드리지 않는다.
+      src만 교체한다.
+    */
+    bird.src = birdFiles.blink;
+
+    setTimeout(function(){
+      if(!locked && !birdBusy){
+        bird.src = birdFiles.idle;
+        scheduleBlink();
+      }
+    },180);
+
+  },2400 + Math.random()*2600);
+}
+
+function scheduleFlight(){
+  clearTimeout(flightTimer);
+
   if(locked) return;
 
-  usedHint1 = true;
-  document.getElementById("hint2Btn").disabled = false;
-  openModal("힌트 1", missionConfig.hint1Text);
+  flightTimer = setTimeout(function(){
+    flyAround();
+  },8500 + Math.random()*4500);
 }
 
-function showHint2(){
-  if(locked) return;
-  if(!usedHint1) return;
 
-  usedHint2 = true;
-  document.getElementById("answerBtn").disabled = false;
-  openModal("힌트 2", missionConfig.hint2Text);
+/* 비행 후 첫 깜빡임 전용.
+   착지 애니메이션이 완전히 끝나고 좌표/transform이 안정된 뒤 실행한다. */
+function schedulePostFlightBlink(){
+  clearTimeout(blinkTimer);
+
+  if(locked || birdBusy) return;
+
+  blinkTimer = setTimeout(function(){
+    if(locked || birdBusy) return;
+
+    /*
+      비행 후에도 위치 계산/left/top 변경 없음.
+      현재 착지 위치에서 이미지 파일만 교체한다.
+    */
+    bird.src = birdFiles.blink;
+
+    setTimeout(function(){
+      if(!locked && !birdBusy){
+        bird.src = birdFiles.idle;
+        scheduleBlink();
+      }
+    },180);
+
+  },3200);
 }
 
-function showAnswer(){
-  if(locked) return;
-  if(!usedHint2) return;
-
-  openModal("정답보기", missionConfig.answerText);
-}
-
-function checkAnswer(){
-  if(locked) return;
-
-  const input = document.getElementById("answerInput").value;
-
-  if(!input.trim()){
-    openModal("안내", "정답을 입력해주세요.");
+async function flyAround(){
+  if(locked || birdBusy){
+    scheduleFlight();
     return;
   }
 
-  if(normalize(input) === normalize(missionConfig.correctAnswer)){
-    locked = true;
-    openModal("정답", missionConfig.successText);
-  }else{
-    const ui = document.getElementById("uiWrap");
-    ui.classList.remove("shake");
-    void ui.offsetWidth;
-    ui.classList.add("shake");
-    openModal("오답", "정답이 아닙니다.");
+  birdBusy = true;
+
+  clearTimeout(blinkTimer);
+  clearTimeout(flightTimer);
+  cancelBirdAnimation();
+
+  const start = getCardPerch();
+  const size = getBirdSize();
+  const off = poseOffset.fly;
+  const ox = size*off.x;
+  const oy = size*off.y;
+
+  const card = missionCard.getBoundingClientRect();
+
+  const leftX  = Math.max(size*.35, window.innerWidth*.18);
+  const rightX = Math.min(window.innerWidth-size*.35, window.innerWidth*.82);
+  const topY   = Math.max(-size*.10, window.innerHeight*.035);
+  const midY   = Math.max(
+    topY+45,
+    Math.min(card.top-size*.62, window.innerHeight*.24)
+  );
+
+  bird.className = "bird";
+  setBirdPose("fly",start.x,start.y);
+
+  birdAnimation = bird.animate([
+    {
+      left:(start.x+ox)+"px",
+      top:(start.y+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    },
+    {
+      left:(leftX+ox)+"px",
+      top:(midY+oy)+"px",
+      transform:"translateX(-50%) rotate(-8deg)"
+    },
+    {
+      left:(window.innerWidth/2+ox)+"px",
+      top:(topY+oy)+"px",
+      transform:"translateX(-50%) rotate(2deg)"
+    },
+    {
+      left:(rightX+ox)+"px",
+      top:(midY+oy)+"px",
+      transform:"translateX(-50%) rotate(8deg)"
+    },
+    {
+      left:(start.x+ox)+"px",
+      top:(start.y-28+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    }
+  ],{
+    duration:4400,
+    easing:"cubic-bezier(.45,.05,.25,1)",
+    fill:"forwards"
+  });
+
+  try{
+    await birdAnimation.finished;
+  }catch(e){
+    return;
   }
+
+  /*
+    중요:
+    fill:forwards 상태를 먼저 제거한다.
+    그 뒤 현재 미션카드 좌표를 새로 계산해서 idle로 착지.
+    따라서 한 번 날고 난 뒤 blink가 이전 비행 좌표로 돌아가지 않는다.
+  */
+  cancelBirdAnimation();
+
+  if(locked) return;
+
+  const landing = getCardPerch();
+
+  bird.className = "bird landing";
+  setBirdPose("idle",landing.x,landing.y);
+
+  setTimeout(function(){
+    if(locked) return;
+
+    cancelBirdAnimation();
+
+    const exact = getCardPerch();
+
+    bird.className = "bird perched";
+    setBirdPose("idle",exact.x,exact.y);
+
+    birdBusy = false;
+
+    /*
+      비행 직후 첫 깜빡임은 별도 안정화 루틴 사용.
+      두 번째/세 번째 비행 후에도 항상 같은 방식으로 초기화된다.
+    */
+    schedulePostFlightBlink();
+    scheduleFlight();
+  },500);
 }
 
-document.getElementById("answerInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    checkAnswer();
+function birdHintReaction(){
+  if(locked || birdBusy) return;
+
+  birdBusy = true;
+  clearTimeout(blinkTimer);
+
+  const p = getCardPerch();
+
+  bird.className = "bird";
+  setBirdPose("idle",p.x,p.y);
+  bird.src = birdFiles.blink;
+
+  const a = bird.animate([
+    {transform:"translateX(-50%) translateY(0)"},
+    {transform:"translateX(-50%) translateY(-7px) rotate(-3deg)"},
+    {transform:"translateX(-50%) translateY(0) rotate(2deg)"},
+    {transform:"translateX(-50%) translateY(0)"}
+  ],{
+    duration:600,
+    easing:"ease-in-out"
+  });
+
+  a.onfinish = function(){
+    try{ a.cancel(); }catch(e){}
+
+    if(!locked){
+      const q = getCardPerch();
+
+      bird.className = "bird perched";
+      setBirdPose("idle",q.x,q.y);
+
+      birdBusy = false;
+      scheduleBlink();
+    }
+  };
+}
+
+/* 안내창을 현재 미션카드와 같은 위치/폭에 배치 */
+function positionReactionBox(box){
+  const r = missionCard.getBoundingClientRect();
+
+  box.style.width = r.width + "px";
+  box.style.left = (r.left+r.width/2) + "px";
+  box.style.top = r.top + "px";
+  box.style.transform = "translateX(-50%)";
+}
+
+function getBoxPerch(box){
+  const r = box.getBoundingClientRect();
+  const size = getBirdSize();
+
+  return {
+    x:r.left+r.width/2,
+    /* 오답창 윗선과 새 발이 살짝 겹치도록 10px 아래로 보정 */
+    y:r.top-size*IDLE_FOOT_Y+CARD_OVERLAP+10
+  };
+}
+
+/* 오답: 오답창 = 미션카드 자리 / angry = 그 창 위 */
+
+/*
+  오답 전용 착지점.
+  평상시 새 착지 좌표는 건드리지 않는다.
+  angry PNG의 '발바닥'이 오답창 윗선에 닿도록 별도 보정.
+*/
+function getWrongBoxPerch(box){
+  const r = box.getBoundingClientRect();
+  const size = getBirdSize();
+
+  return {
+    x:r.left + r.width/2,
+    y:r.top - size*IDLE_FOOT_Y + CARD_OVERLAP + 10
+  };
+}
+
+function birdWrongReaction(){
+  birdBusy = true;
+
+  clearTimeout(blinkTimer);
+  clearTimeout(flightTimer);
+  cancelBirdAnimation();
+
+  const modal = document.getElementById("infoModal");
+  const box = document.getElementById("modalBox");
+
+  missionCard.classList.add("reaction-hidden");
+
+  modal.classList.add("wrong-mode");
+  positionReactionBox(box);
+
+  requestAnimationFrame(function(){
+    const p = getWrongBoxPerch(box);
+
+    bird.className = "bird reaction angry";
+    setBirdPose("angry",p.x,p.y);
+  });
+
+  setTimeout(function(){
+    if(locked) return;
+
+    modal.classList.remove("show");
+    modal.classList.remove("wrong-mode");
+    box.removeAttribute("style");
+
+    birdBusy = false;
+    cancelBirdAnimation();
+
+    missionCard.classList.remove("reaction-hidden");
+
+    /*
+      카드의 0.30초 복귀 transition이 끝나기 전에 좌표를 읽으면
+      중간 위치가 저장되어 새가 아래로 내려간다.
+      transition 종료 후 기존 정상 착지 함수를 그대로 다시 실행한다.
+    */
+    bird.style.visibility = "hidden";
+
+    setTimeout(function(){
+      if(locked) return;
+
+      birdBusy = false;
+      cancelBirdAnimation();
+
+      /* 처음 로드 때와 완전히 같은 착지 경로 */
+      placeBirdOnCard();
+
+      bird.style.visibility = "visible";
+
+      scheduleBlink();
+      scheduleFlight();
+
+    },360);
+
+  },3000);
+}
+
+/* 정답: 정답창 = 미션카드 자리 / happy 상태로 화면 위를 비행 */
+function birdCorrectFlight(){
+  birdBusy = true;
+
+  missionCard.classList.add("reaction-hidden");
+
+  clearTimeout(blinkTimer);
+  clearTimeout(flightTimer);
+  cancelBirdAnimation();
+
+  const modal = document.getElementById("successModal");
+  const box = document.getElementById("successBox");
+
+  modal.classList.add("card-mode");
+  positionReactionBox(box);
+
+  const r = box.getBoundingClientRect();
+  const size = getBirdSize();
+  const off = poseOffset.happy;
+  const ox = size*off.x;
+  const oy = size*off.y;
+
+  const startX = r.left+r.width/2;
+  const startY = r.top-size*IDLE_FOOT_Y+CARD_OVERLAP;
+
+  const leftX = Math.max(size*.30,window.innerWidth*.14);
+  const rightX = Math.min(window.innerWidth-size*.30,window.innerWidth*.86);
+  const highY = Math.max(-size*.12,window.innerHeight*.015);
+  const lowY = Math.max(
+    highY+55,
+    Math.min(r.top-size*.48,window.innerHeight*.28)
+  );
+
+  bird.className = "bird reaction";
+  setBirdPose("happy",startX,startY);
+
+  birdAnimation = bird.animate([
+    {
+      left:(startX+ox)+"px",
+      top:(startY+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    },
+    {
+      left:(rightX+ox)+"px",
+      top:(lowY+oy)+"px",
+      transform:"translateX(-50%) rotate(10deg)"
+    },
+    {
+      left:(window.innerWidth/2+ox)+"px",
+      top:(highY+oy)+"px",
+      transform:"translateX(-50%) rotate(-3deg)"
+    },
+    {
+      left:(leftX+ox)+"px",
+      top:(lowY+oy)+"px",
+      transform:"translateX(-50%) rotate(-10deg)"
+    },
+    {
+      left:(startX+ox)+"px",
+      top:(startY-18+oy)+"px",
+      transform:"translateX(-50%) rotate(0deg)"
+    }
+  ],{
+    duration:3300,
+    easing:"cubic-bezier(.45,.05,.25,1)",
+    iterations:3
+  });
+}
+
+const missionConfig = {
+
+  correctAnswer: "794532",
+
+  hint1Text:
+    "잘못된 그림은 B6입니다.",
+
+  hint2Text:
+    "새는 9마리, 고양이는 5마리입니다.",
+
+  answerText: "794532"
+};
+
+
+let locked = false;
+
+let usedHint1 = false;
+
+let usedHint2 = false;
+
+
+/* =========================
+   정답 정규화
+========================= */
+function normalize(text){
+
+  return String(text)
+    .replace(/\s+/g,"")
+    .trim()
+    .toLowerCase();
+
+}
+
+
+/* =========================
+   일반 모달
+========================= */
+function openModal(title,content){
+
+  const modal = document.getElementById("infoModal");
+  const box = document.getElementById("modalBox");
+
+  if(title !== "오답"){
+    modal.classList.remove("wrong-mode");
+    box.removeAttribute("style");
+  }
+
+  document
+    .getElementById("modalTitle")
+    .textContent = title;
+
+  document
+    .getElementById("modalContent")
+    .textContent = content;
+
+  document
+    .getElementById("infoModal")
+    .classList.add("show");
+
+}
+
+
+function closeModal(){
+
+  const modal = document.getElementById("infoModal");
+  const wasWrong = modal.classList.contains("wrong-mode");
+
+  modal.classList.remove("show");
+  modal.classList.remove("wrong-mode");
+
+  document
+    .getElementById("modalBox")
+    .removeAttribute("style");
+
+  if(wasWrong && !locked){
+    birdBusy = false;
+    cancelBirdAnimation();
+
+    const p = getCardPerch();
+
+    bird.className = "bird perched";
+    setBirdPose("idle",p.x,p.y);
+
+    scheduleBlink();
+    scheduleFlight();
+  }
+
+}
+
+
+/* =========================
+   힌트
+========================= */
+function showHint1(){
+
+  if(locked) return;
+
+  usedHint1 = true;
+
+  document
+    .getElementById("hint2Btn")
+    .disabled = false;
+
+  birdHintReaction();
+
+  openModal(
+    "힌트 1",
+    missionConfig.hint1Text
+  );
+
+}
+
+
+function showHint2(){
+
+  if(locked) return;
+
+  if(!usedHint1) return;
+
+  usedHint2 = true;
+
+  document
+    .getElementById("answerBtn")
+    .disabled = false;
+
+  birdHintReaction();
+
+  openModal(
+    "힌트 2",
+    missionConfig.hint2Text
+  );
+
+}
+
+
+function showAnswer(){
+
+  if(locked) return;
+
+  if(!usedHint2) return;
+
+  birdHintReaction();
+
+  openModal(
+    "정답보기",
+    missionConfig.answerText
+  );
+
+}
+
+
+/* =========================
+   정답 확인
+========================= */
+function checkAnswer(){
+
+  if(locked) return;
+
+  const input =
+    document
+      .getElementById("answerInput")
+      .value;
+
+  if(!input.trim()){
+
+    openModal(
+      "안내",
+      "정답을 입력해주세요."
+    );
+
+    return;
+  }
+
+
+  if(
+    normalize(input) ===
+    normalize(missionConfig.correctAnswer)
+  ){
+
+    locked = true;
+
+    showSuccess();
+
+  }else{
+
+    const ui =
+      document.getElementById("uiWrap");
+
+    ui.classList.remove("shake");
+
+    void ui.offsetWidth;
+
+    ui.classList.add("shake");
+
+    document
+      .getElementById("modalTitle")
+      .textContent = "";
+
+    document
+      .getElementById("modalContent")
+      .textContent = "오답입니다.";
+
+    document
+      .getElementById("infoModal")
+      .classList.add("show");
+
+    birdWrongReaction();
+
+  }
+
+}
+
+
+/* =========================
+   정답 성공
+========================= */
+function showSuccess(){
+
+  /* 열려 있는 일반 모달 제거 */
+  closeModal();
+
+  document
+    .getElementById("successModal")
+    .classList.add("show");
+
+  birdCorrectFlight();
+
+
+  /* 첫 폭죽 */
+  launchFireworks();
+
+
+  /*
+    10초 동안 여러 번 폭죽 발생
+  */
+  const fireworkTimer =
+    setInterval(
+      launchFireworks,
+      850
+    );
+
+
+  /*
+    약 10초 후
+    폭죽 종료 + ptbc.html 이동
+  */
+  setTimeout(function(){
+
+    clearInterval(fireworkTimer);
+
+    location.href = "ptbc.html";
+
+  },10000);
+
+}
+
+
+/* =========================
+   폭죽 한 번 생성
+========================= */
+function launchFireworks(){
+
+  const layer =
+    document.getElementById("fireworksLayer");
+
+
+  /*
+    화면의 서로 다른 위치에서
+    3개의 폭죽을 동시에 터뜨림
+  */
+  for(let burst=0; burst<3; burst++){
+
+    const centerX =
+      12 + Math.random() * 76;
+
+    const centerY =
+      12 + Math.random() * 58;
+
+
+    createBurst(
+      layer,
+      centerX,
+      centerY
+    );
+
+  }
+
+}
+
+
+/* =========================
+   폭죽 조각 생성
+========================= */
+function createBurst(
+  layer,
+  centerX,
+  centerY
+){
+
+  const colors = [
+    "#ff4d4d",
+    "#ffd93d",
+    "#6bff75",
+    "#45caff",
+    "#b56cff",
+    "#ff77c8",
+    "#ffffff",
+    "#ff9f43"
+  ];
+
+
+  const particleCount = 26;
+
+
+  for(
+    let i=0;
+    i<particleCount;
+    i++
+  ){
+
+    const particle =
+      document.createElement("span");
+
+    particle.className =
+      "firework";
+
+
+    const angle =
+      Math.PI * 2 *
+      (i / particleCount);
+
+
+    const distance =
+      55 +
+      Math.random() * 95;
+
+
+    const x =
+      Math.cos(angle) *
+      distance;
+
+    const y =
+      Math.sin(angle) *
+      distance;
+
+
+    particle.style.left =
+      centerX + "%";
+
+    particle.style.top =
+      centerY + "%";
+
+
+    particle.style.background =
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+
+    particle.style.setProperty(
+      "--tx",
+      x + "px"
+    );
+
+    particle.style.setProperty(
+      "--ty",
+      y + "px"
+    );
+
+
+    const size =
+      4 +
+      Math.random() * 5;
+
+    particle.style.width =
+      size + "px";
+
+    particle.style.height =
+      size + "px";
+
+
+    layer.appendChild(
+      particle
+    );
+
+
+    /*
+      애니메이션 종료 후
+      DOM에서 제거
+    */
+    setTimeout(function(){
+
+      particle.remove();
+
+    },1400);
+
+  }
+
+}
+
+
+/* =========================
+   Enter 입력
+========================= */
+document
+  .getElementById("answerInput")
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(e.key === "Enter"){
+
+        checkAnswer();
+
+      }
+
+    }
+  );
+
+
+/* 새 시작 */
+window.addEventListener("load",function(){
+  requestAnimationFrame(function(){
+    placeBirdOnCard();
+    scheduleBlink();
+    scheduleFlight();
+  });
+});
+
+window.addEventListener("resize",function(){
+  if(!birdBusy && !locked){
+    placeBirdOnCard();
+  }
+
+  const wrongModal = document.getElementById("infoModal");
+
+  if(wrongModal.classList.contains("wrong-mode")){
+    const box = document.getElementById("modalBox");
+    positionReactionBox(box);
+
+    requestAnimationFrame(function(){
+      const p = getBoxPerch(box);
+      setBirdPose("angry",p.x,p.y);
+    });
+  }
+
+  const successModal = document.getElementById("successModal");
+
+  if(successModal.classList.contains("card-mode")){
+    positionReactionBox(
+      document.getElementById("successBox")
+    );
   }
 });
 
-document.body.style.backgroundImage = `url("${missionConfig.bgImage}")`;
 </script>
 
 </body>
