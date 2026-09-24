@@ -1296,19 +1296,28 @@ function birdWrongReaction(){
 
     missionCard.classList.remove("reaction-hidden");
 
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        if(locked) return;
+    /*
+      카드의 0.30초 복귀 transition이 끝나기 전에 좌표를 읽으면
+      중간 위치가 저장되어 새가 아래로 내려간다.
+      transition 종료 후 기존 정상 착지 함수를 그대로 다시 실행한다.
+    */
+    bird.style.visibility = "hidden";
 
-        /* 평상시 착지는 직전 완벽했던 함수 그대로 */
-        const p = getCardPerch();
-        bird.className = "bird perched";
-        setBirdPose("idle",p.x,p.y);
+    setTimeout(function(){
+      if(locked) return;
 
-        scheduleBlink();
-        scheduleFlight();
-      });
-    });
+      birdBusy = false;
+      cancelBirdAnimation();
+
+      /* 처음 로드 때와 완전히 같은 착지 경로 */
+      placeBirdOnCard();
+
+      bird.style.visibility = "visible";
+
+      scheduleBlink();
+      scheduleFlight();
+
+    },360);
 
   },3000);
 }
