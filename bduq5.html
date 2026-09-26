@@ -1121,6 +1121,174 @@ body{
     color:#fff;
   }
 }
+
+/* =========================================================
+   PTBQ 스타일 UI 통일 (래빗홀 녹색 유지)
+   - 입력창/입력/힌트/정답보기/당근개수: PTBQ 형태
+   - 미션카드: PTBQ 편지지형
+========================================================= */
+
+/* PTBQ와 동일한 기본 폰트 */
+.answer-input,
+.submit-btn,
+.action-btn,
+.mission-card,
+.mission-title,
+.mission-kit,
+.mission-question,
+.mission-guide{
+  font-family:"Gowun Dodum",sans-serif !important;
+}
+
+/* 입력 UI: PTBQ의 크기/둥근모서리/그림자 */
+.ui-wrap{
+  width:clamp(420px,56vw,560px) !important;
+  gap:14px !important;
+}
+.answer-row{
+  grid-template-columns:minmax(0,1fr) 86px !important;
+  gap:12px !important;
+}
+.answer-input{
+  height:58px !important;
+  border:none !important;
+  border-radius:14px !important;
+  padding:0 18px !important;
+  outline:none !important;
+  background:rgba(255,255,255,.97) !important;
+  color:#222 !important;
+  font-size:20px !important;
+  font-weight:700 !important;
+  box-shadow:0 8px 18px rgba(0,0,0,.25) !important;
+}
+.submit-btn{
+  height:58px !important;
+  border:none !important;
+  border-radius:14px !important;
+  padding:0 !important;
+  background:var(--green) !important;
+  color:#fff !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25) !important;
+}
+.action-row{
+  gap:12px !important;
+}
+.action-btn{
+  height:54px !important;
+  border:none !important;
+  border-radius:14px !important;
+  padding:0 !important;
+  background:var(--green) !important;
+  color:#fff !important;
+  font-size:17px !important;
+  font-weight:900 !important;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25) !important;
+}
+.submit-btn:active,
+.action-btn:active{
+  transform:translateY(2px) scale(.98) !important;
+}
+.action-btn:disabled{
+  opacity:.42 !important;
+  cursor:default !important;
+}
+
+/* PTBQ 편지지형 미션카드 */
+.mission-card{
+  position:relative !important;
+  overflow:hidden !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  background:
+    linear-gradient(rgba(255,250,240,.82),rgba(248,237,217,.82)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.34),
+    inset 0 0 35px rgba(130,85,45,.08) !important;
+  padding:34px 36px 31px !important;
+}
+.mission-card::before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  pointer-events:none;
+  z-index:0;
+}
+.mission-card > *{
+  position:relative;
+  z-index:1;
+}
+/* 카드 내부 글자도 PTBQ 비율로 */
+.mission-title{
+  color:#784738 !important;
+  font-size:28px !important;
+  font-weight:900 !important;
+  line-height:1.4 !important;
+  margin-bottom:20px !important;
+}
+.mission-kit{
+  color:#235a9e !important;
+  font-size:30px !important;
+  font-weight:900 !important;
+  margin-bottom:22px !important;
+}
+.mission-question{
+  padding:14px 12px !important;
+  margin-bottom:20px !important;
+  border:3px solid #d58a58 !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.78) !important;
+  color:#000 !important;
+  font-size:24px !important;
+  font-weight:900 !important;
+  line-height:1.4 !important;
+}
+.mission-guide{
+  color:#000 !important;
+  font-size:30px !important;
+  font-weight:900 !important;
+  line-height:1.35 !important;
+}
+
+@media(max-width:600px){
+  .mission-card{padding:27px 26px 24px !important;}
+  .mission-card::before{inset:11px;}
+  .mission-title{font-size:19px !important;margin-bottom:13px !important;}
+  .mission-kit{font-size:21px !important;margin-bottom:14px !important;}
+  .mission-question{padding:10px 8px !important;margin-bottom:13px !important;border-width:2px !important;font-size:18px !important;}
+  .mission-guide{font-size:21px !important;}
+  .ui-wrap{width:min(88vw,330px) !important;gap:11px !important;}
+  .answer-row{grid-template-columns:minmax(0,1fr) 64px !important;gap:8px !important;}
+  .answer-input{height:52px !important;padding:0 14px !important;border-radius:13px !important;font-size:16px !important;}
+  .submit-btn{height:52px !important;border-radius:13px !important;font-size:16px !important;}
+  .action-row{gap:8px !important;}
+  .action-btn{height:48px !important;border-radius:13px !important;font-size:14px !important;}
+}
+@media(max-width:390px){
+  .mission-card{padding:24px 22px 22px !important;}
+  .mission-card::before{inset:10px;}
+  .ui-wrap{width:min(90vw,310px) !important;}
+  .answer-row{grid-template-columns:minmax(0,1fr) 58px !important;gap:7px !important;}
+  .answer-input{height:50px !important;padding:0 12px !important;font-size:16px !important;}
+  .submit-btn{height:50px !important;font-size:15px !important;}
+  .action-row{gap:7px !important;}
+  .action-btn{height:46px !important;font-size:13px !important;}
+}
+@media(max-height:700px){
+  .mission-card{padding-top:22px !important;padding-bottom:20px !important;}
+}
+
 </style>
 </head>
 
