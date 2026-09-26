@@ -284,6 +284,102 @@ body{
   .final-card::before{inset:10px}
 }
 
+
+/* =========================================================
+   선택버튼 이미지 / 코드입력창 최종 조정
+========================================================= */
+.choice-btn .icon{display:none !important;}
+.choice-icon{
+  display:block;
+  width:58%;
+  height:42%;
+  object-fit:contain;
+  flex:0 0 auto;
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.20));
+}
+
+/* 코드카드 폭/위 여백 축소 */
+.final-card{
+  width:min(76vw,460px) !important;
+  padding:24px 28px 25px !important;
+}
+.final-kit{
+  margin-bottom:10px !important;
+}
+.final-question{
+  margin-bottom:16px !important;
+}
+
+/* 입력창 + 우측 입력/닫기 2버튼 */
+.final-answer-row{
+  grid-template-columns:minmax(0,1fr) 82px !important;
+  gap:10px !important;
+  align-items:stretch;
+}
+.code-buttons{
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  gap:6px;
+  height:58px;
+}
+.final-submit,
+.final-close{
+  width:100%;
+  min-width:0;
+  height:auto !important;
+  border:none;
+  border-radius:8px;
+  color:#fff;
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:13px !important;
+  font-weight:900;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,.25),
+    inset 0 1px 1px rgba(255,255,255,.22);
+}
+.final-submit{background:#5a321d !important;}
+.final-close{background:#7a6659;}
+.final-submit:active,
+.final-close:active{transform:translateY(1px);}
+
+@media(max-width:600px){
+  .choice-icon{
+    width:60%;
+    height:40%;
+  }
+  .final-card{
+    width:min(82vw,340px) !important;
+    padding:20px 20px 20px !important;
+  }
+  .final-kit{
+    margin-bottom:7px !important;
+  }
+  .final-question{
+    margin-bottom:13px !important;
+  }
+  .final-answer-row{
+    grid-template-columns:minmax(0,1fr) 66px !important;
+    gap:8px !important;
+  }
+  .code-buttons{
+    height:52px;
+    gap:5px;
+  }
+  .final-submit,
+  .final-close{
+    border-radius:7px;
+    font-size:11px !important;
+  }
+}
+@media(max-width:390px){
+  .final-card{
+    width:84vw !important;
+    padding:18px 18px 18px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -295,39 +391,41 @@ body{
 <main class="choice-grid" aria-label="북돋움 프로그램 선택">
   <button class="choice-btn elementary-game" type="button"
     onclick="openCode('초등학생 게임용','1111','bdut.html')">
-    <span class="icon" aria-hidden="true">🔑</span>
+    <img class="choice-icon" src="ptbg.png" alt="">
     <span class="label">초등학생<span class="type">게임용</span></span>
   </button>
 
   <button class="choice-btn teen-game" type="button"
     onclick="openCode('중·고등학생 게임용','3333','ptbt.html')">
-    <span class="icon" aria-hidden="true">🔑</span>
+    <img class="choice-icon" src="ptbg.png" alt="">
     <span class="label">중·고등학생<span class="type">게임용</span></span>
   </button>
 
   <button class="choice-btn elementary-class" type="button"
     onclick="openCode('초등학생 수업용','2222','bduc.html')">
-    <span class="icon" aria-hidden="true">📖</span>
+    <img class="choice-icon" src="ptbl.png" alt="">
     <span class="label">초등학생<span class="type">수업용</span></span>
   </button>
 
   <button class="choice-btn teen-class" type="button"
     onclick="openCode('중·고등학생 수업용','4444','ptbc.html')">
-    <span class="icon" aria-hidden="true">📖</span>
+    <img class="choice-icon" src="ptbl.png" alt="">
     <span class="label">중·고등학생<span class="type">수업용</span></span>
   </button>
 </main>
 
 <div class="code-modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeTitle">
   <div class="final-card">
-    <button class="close-btn" type="button" onclick="closeCode()" aria-label="닫기">×</button>
     <div class="final-kit" id="codeTitle">프로그램 선택</div>
     <div class="final-question">코드 입력</div>
     <div class="final-answer-row">
       <input id="codeInput" class="final-answer-input" type="text"
         inputmode="numeric" pattern="[0-9]*" maxlength="4"
         placeholder="코드 4자리" autocomplete="off">
-      <button class="final-submit" type="button" onclick="checkCode()">입력</button>
+      <div class="code-buttons">
+        <button class="final-submit" type="button" onclick="checkCode()">입력</button>
+        <button class="final-close" type="button" onclick="closeCode()">닫기</button>
+      </div>
     </div>
     <div class="code-message" id="codeMessage"></div>
   </div>
