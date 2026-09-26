@@ -818,6 +818,44 @@ body{
   .mission-clue-box{font-size:16px;padding:10px 7px;}
 }
 
+
+/* ==================================================
+   미션카드 테두리 통일 - ptbc5 기준
+   외곽: #7f4b3a / 3px (모바일 2px)
+   안쪽: #b58c79 / 3px (모바일 2px)
+================================================== */
+.mission-card{
+  border-color:#7f4b3a !important;
+  border-width:3px !important;
+  border-style:solid !important;
+}
+
+.room-box,
+.rule-box,
+.blog-box,
+.num-panel,
+.word-box,
+.mission-clue-box{
+  border-color:#b58c79 !important;
+  border-width:3px !important;
+  border-style:solid !important;
+}
+
+@media(max-width:600px){
+  .mission-card{
+    border-width:2px !important;
+  }
+
+  .room-box,
+  .rule-box,
+  .blog-box,
+  .num-panel,
+  .word-box,
+  .mission-clue-box{
+    border-width:2px !important;
+  }
+}
+
 </style>
 </head>
 
