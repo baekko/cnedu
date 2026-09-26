@@ -1,225 +1,298 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PLAY THE BOOK</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;min-height:100dvh;overflow:hidden;
+  font-family:"Gowun Dodum",sans-serif;background:#54a9ee;
+}
+body{
+  position:relative;
+  background:url("ptbcl_select.png") no-repeat center center / cover;
+}
+:root{
+  --elem-game:#4f7d32;
+  --elem-game-dark:#29451b;
+  --elem-class:#e67e32;
+  --elem-class-dark:#8d461c;
+  --teen-game:#315f9d;
+  --teen-game-dark:#17385f;
+  --teen-class:#6b4028;
+  --teen-class-dark:#3b2115;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
+/* 2열 2행 선택 버튼 */
+.choice-grid{
+  position:fixed;
+  left:50%;
+  top:59%;
+  transform:translate(-50%,-50%);
+  width:min(84vw,650px);
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+  z-index:20;
+}
+.choice-btn{
+  aspect-ratio:1 / 1;
+  min-width:0;
+  border:3px solid var(--dark);
+  border-radius:24px;
+  background:var(--color);
+  color:#fffdf1;
+  font-family:"Gowun Dodum",sans-serif;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:
+    0 8px 14px rgba(0,0,0,.28),
+    inset 0 3px 3px rgba(255,255,255,.24),
+    inset 0 -7px 12px rgba(0,0,0,.16);
+  text-shadow:0 2px 3px rgba(0,0,0,.24);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  transition:transform .15s ease,filter .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.choice-btn:hover{transform:translateY(-4px) scale(1.025);filter:brightness(1.04)}
+.choice-btn:active{transform:translateY(2px) scale(.97)}
+.choice-btn .icon{
+  font-size:clamp(42px,7vw,66px);
+  line-height:1;
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.20));
+}
+.choice-btn .label{
+  font-size:clamp(20px,3vw,28px);
+  line-height:1.25;
+  text-align:center;
+  word-break:keep-all;
+}
+.choice-btn .type{
+  display:block;
+  margin-top:5px;
+  font-size:.78em;
+}
+.elementary-game{--color:var(--elem-game);--dark:var(--elem-game-dark)}
+.elementary-class{--color:var(--elem-class);--dark:var(--elem-class-dark)}
+.teen-game{--color:var(--teen-game);--dark:var(--teen-game-dark)}
+.teen-class{--color:var(--teen-class);--dark:var(--teen-class-dark)}
+
+/* 코드 입력 모달 */
+.code-modal{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(0,0,0,.58);
+}
+.code-modal.show{display:flex}
+.final-card{
+  position:relative;
+  width:min(86vw,560px);
+  padding:30px 28px 27px;
+  border:5px solid #7f4b3a;
+  border-radius:28px;
+  background:#f4ecd1;
+  box-shadow:0 14px 30px rgba(0,0,0,.30);
+  text-align:center;
+  animation:cardIn .22s ease both;
+}
+.final-card::before{
+  content:"";position:absolute;inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  border-radius:14px;pointer-events:none;
+}
+.final-card>*{position:relative;z-index:1}
+.final-kit{
+  color:#235a9e;font-size:25px;font-weight:900;margin-bottom:20px;
+}
+.final-question{
+  min-height:66px;padding:12px 18px;margin-bottom:24px;
+  border:5px solid #ff884d;border-radius:10px;background:#fff;
+  color:#000;font-size:25px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+}
+.final-answer-row{
+  width:100%;display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:12px;
+}
+.final-answer-input{
+  width:100%;height:58px;border:none;border-radius:14px;padding:0 18px;
+  outline:none;background:rgba(255,255,255,.97);color:#222;
+  font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:700;
+  box-shadow:0 8px 18px rgba(0,0,0,.20);
+}
+.final-submit{
+  height:58px;border:none;border-radius:14px;background:#5a321d;color:#fff;
+  font-family:"Gowun Dodum",sans-serif;font-size:18px;font-weight:900;
+  cursor:pointer;box-shadow:0 8px 16px rgba(0,0,0,.28),inset 0 2px 2px rgba(255,255,255,.22);
+}
+.final-submit:active{transform:translateY(2px) scale(.98)}
+.code-message{
+  min-height:24px;margin-top:13px;color:#8c3b2c;font-size:16px;font-weight:900;
+}
+.close-btn{
+  position:absolute;right:12px;top:9px;z-index:5;
+  width:38px;height:38px;border:0;background:transparent;color:#7f4b3a;
+  font-family:"Gowun Dodum",sans-serif;font-size:26px;font-weight:900;cursor:pointer;
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(10px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
 }
 
-:root {
-  --btn-w: clamp(140px, 30vw, 305px);
-  --btn-h: clamp(200px, 50vw, 350px);
-  --btn-gap: clamp(26px, 4vw, 70px);
-  --btn-bottom: clamp(140px, 25vh, 275px);
-}
-
-body {
-  position: relative;
-}
-
-/* 배경 동영상 */
-.bg-video {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-}
-
-.button-area {
-  position: absolute;
-  left: 50%;
-  bottom: var(--btn-bottom);
-  transform: translateX(-50%);
-  display: flex;
-  gap: var(--btn-gap);
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.button-area.hide {
-  display: none;
-}
-
-.choice-btn {
-  width: var(--btn-w);
-  height: var(--btn-h);
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  position: relative;
-  padding: 0;
-  transition: transform 0.18s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.choice-btn img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  filter:
-    drop-shadow(0 12px 16px rgba(0,0,0,0.55))
-    drop-shadow(0 4px 5px rgba(0,0,0,0.4));
-  transition: filter 0.18s ease, transform 0.18s ease;
-}
-
-.choice-btn:hover {
-  transform: translateY(-5px) scale(1.03);
-}
-
-.choice-btn:active {
-  transform: translateY(1px) scale(0.98);
-}
-
-.choice-btn.selected img {
-  filter:
-    brightness(1.15)
-    saturate(1.12)
-    drop-shadow(0 0 2px rgba(255,255,210,1))
-    drop-shadow(0 0 6px rgba(255,235,130,1))
-    drop-shadow(0 0 14px rgba(255,205,60,0.95))
-    drop-shadow(0 0 26px rgba(255,160,35,0.75))
-    drop-shadow(0 12px 16px rgba(0,0,0,0.55));
-}
-
-.choice-btn.selected {
-  animation: buttonFlash 0.42s ease;
-}
-
-@keyframes buttonFlash {
-  0% { transform: scale(1); }
-  45% { transform: scale(1.045); }
-  100% { transform: scale(1); }
-}
-
-@media (max-width: 430px) {
-  :root {
-    --btn-w: 120px;
-    --btn-h: 200px;
-    --btn-gap: 10px;
-    --btn-bottom: 160px;
-  }
-}
-  /* 가로 화면 안내 */
-.landscape-guide{
-  display:none;
-}
-
-@media (orientation: landscape){
+/* 가로 화면 안내 */
+.landscape-guide{display:none}
+@media (orientation:landscape){
   .landscape-guide{
-    position:fixed;
-    inset:0;
-    z-index:999999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#111;
+    position:fixed;inset:0;z-index:999999;display:flex;
+    align-items:center;justify-content:center;background:#111;
   }
-
   .landscape-guide-text{
-    font-family:"Gowun Dodum",sans-serif;
-    font-size:20px;
-    font-weight:700;
-    line-height:1.7;
-    text-align:center;
-    color:#fff;
+    font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:700;
+    line-height:1.7;text-align:center;color:#fff;
   }
+}
+
+@media(max-width:600px){
+  .choice-grid{
+    top:61%;
+    width:min(86vw,390px);
+    gap:14px;
+  }
+  .choice-btn{border-width:3px;border-radius:18px;gap:9px}
+  .choice-btn .icon{font-size:42px}
+  .choice-btn .label{font-size:17px}
+  .final-card{
+    width:min(88vw,380px);padding:22px 18px 20px;
+    border-width:4px;border-radius:22px;
+  }
+  .final-card::before{inset:11px;border-radius:11px}
+  .final-kit{font-size:21px;margin-bottom:14px}
+  .final-question{
+    min-height:56px;padding:10px 12px;margin-bottom:20px;
+    border-width:3px;font-size:18px;
+  }
+  .final-answer-row{grid-template-columns:minmax(0,1fr) 64px;gap:8px}
+  .final-answer-input{height:52px;padding:0 14px;border-radius:13px;font-size:16px}
+  .final-submit{height:52px;border-radius:13px;font-size:16px}
+  .code-message{font-size:14px}
+}
+@media(max-width:390px){
+  .choice-grid{width:88vw;gap:11px;top:61.5%}
+  .choice-btn{border-radius:16px}
+  .choice-btn .icon{font-size:37px}
+  .choice-btn .label{font-size:15px}
+  .final-card{width:90vw;padding:19px 15px 18px}
+  .final-card::before{inset:10px}
 }
 </style>
 </head>
 
 <body>
 <div class="landscape-guide">
-  <div class="landscape-guide-text">
-    📱<br>
-    원활한 진행을 위해<br>
-    세로 모드를 유지해 주세요.
-  </div>
+  <div class="landscape-guide-text">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div>
 </div>
-<video id="bgVideo" class="bg-video" muted playsinline preload="auto">
-  <source src="ptb.mp4" type="video/mp4">
-</video>
 
-<div class="button-area" id="buttonArea">
-  <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/bdus.html')" aria-label="초등학생용">
-    <img src="ptb7.png" alt="초등학생용">
+<main class="choice-grid" aria-label="북돋움 프로그램 선택">
+  <button class="choice-btn elementary-game" type="button"
+    onclick="openCode('초등학생 게임용','1111','bdut.html')">
+    <span class="icon" aria-hidden="true">🔑</span>
+    <span class="label">초등학생<span class="type">게임용</span></span>
   </button>
 
-  <button class="choice-btn" onclick="goPage(this, 'https://baekko.github.io/cnedu/ptbs.html')" aria-label="중고등학생용">
-    <img src="ptb13.png" alt="중고등학생용">
+  <button class="choice-btn teen-game" type="button"
+    onclick="openCode('중·고등학생 게임용','3333','ptbt.html')">
+    <span class="icon" aria-hidden="true">🔑</span>
+    <span class="label">중·고등학생<span class="type">게임용</span></span>
   </button>
+
+  <button class="choice-btn elementary-class" type="button"
+    onclick="openCode('초등학생 수업용','2222','bduc.html')">
+    <span class="icon" aria-hidden="true">📖</span>
+    <span class="label">초등학생<span class="type">수업용</span></span>
+  </button>
+
+  <button class="choice-btn teen-class" type="button"
+    onclick="openCode('중·고등학생 수업용','4444','ptbc.html')">
+    <span class="icon" aria-hidden="true">📖</span>
+    <span class="label">중·고등학생<span class="type">수업용</span></span>
+  </button>
+</main>
+
+<div class="code-modal" id="codeModal" role="dialog" aria-modal="true" aria-labelledby="codeTitle">
+  <div class="final-card">
+    <button class="close-btn" type="button" onclick="closeCode()" aria-label="닫기">×</button>
+    <div class="final-kit" id="codeTitle">프로그램 선택</div>
+    <div class="final-question">코드 입력</div>
+    <div class="final-answer-row">
+      <input id="codeInput" class="final-answer-input" type="text"
+        inputmode="numeric" pattern="[0-9]*" maxlength="4"
+        placeholder="코드 4자리" autocomplete="off">
+      <button class="final-submit" type="button" onclick="checkCode()">입력</button>
+    </div>
+    <div class="code-message" id="codeMessage"></div>
+  </div>
 </div>
 
 <script>
-let isMoving = false;
-let targetUrl = "";
-let moveTimer = null;
+const codeModal = document.getElementById("codeModal");
+const codeInput = document.getElementById("codeInput");
+const codeTitle = document.getElementById("codeTitle");
+const codeMessage = document.getElementById("codeMessage");
 
-const bgVideo = document.getElementById("bgVideo");
-const buttonArea = document.getElementById("buttonArea");
+let selectedCode = "";
+let selectedPage = "";
 
-function resetPage() {
-  isMoving = false;
-  targetUrl = "";
-
-  clearTimeout(moveTimer);
-
-  buttonArea.classList.remove("hide");
-
-  document.querySelectorAll(".choice-btn").forEach(function(btn) {
-    btn.classList.remove("selected");
-  });
-
-  bgVideo.pause();
-  bgVideo.currentTime = 0;
+function openCode(title, code, page){
+  selectedCode = code;
+  selectedPage = page;
+  codeTitle.textContent = title;
+  codeInput.value = "";
+  codeMessage.textContent = "";
+  codeModal.classList.add("show");
 }
 
-function goPage(button, url) {
-  if (isMoving) return;
-
-  isMoving = true;
-  targetUrl = url;
-
-  button.classList.add("selected");
-
-  setTimeout(function () {
-    buttonArea.classList.add("hide");
-
-    bgVideo.currentTime = 0;
-
-    bgVideo.play().catch(function () {
-      moveTimer = setTimeout(function () {
-        location.href = targetUrl;
-      }, 3000);
-    });
-  }, 1000);
+function closeCode(){
+  codeModal.classList.remove("show");
+  codeInput.blur();
+  selectedCode = "";
+  selectedPage = "";
 }
 
-bgVideo.addEventListener("ended", function () {
-  moveTimer = setTimeout(function () {
-    location.href = targetUrl;
-  }, 1000);
+function checkCode(){
+  const value = codeInput.value.trim();
+
+  if(!value){
+    codeMessage.textContent = "코드를 입력해주세요.";
+    return;
+  }
+
+  if(value === selectedCode){
+    codeMessage.textContent = "";
+    location.href = selectedPage;
+    return;
+  }
+
+  codeMessage.textContent = "코드가 맞지 않습니다.";
+  codeInput.select();
+}
+
+codeInput.addEventListener("keydown", function(e){
+  if(e.key === "Enter") checkCode();
 });
 
-window.addEventListener("pageshow", resetPage);
-window.addEventListener("load", resetPage);
+codeModal.addEventListener("click", function(e){
+  if(e.target === codeModal) closeCode();
+});
 </script>
-
 </body>
 </html>
