@@ -810,10 +810,108 @@ body{
   }
 }
 
+
+/* ==================================================
+   PLAY THE BOOK 로고 광택
+   배경이미지는 그대로 두고 PLAY / BOOK 영역에만 빛을 통과시킴
+================================================== */
+.logo-shine-layer{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+/* PLAY, BOOK 두 영역을 따로 잘라 THE 부분에서는 광택이 보이지 않게 함 */
+.logo-shine{
+  position:absolute;
+  top:4.4vh;
+  height:8.2vh;
+  overflow:hidden;
+  mix-blend-mode:screen;
+}
+
+/* 로고의 화면상 위치에 맞춘 영역 */
+.logo-shine.play{
+  left:calc(50% - 25.5vw);
+  width:18.5vw;
+}
+.logo-shine.book{
+  left:calc(50% + 4.2vw);
+  width:21.5vw;
+}
+
+/* 실제 지나가는 사선 광택 */
+.logo-shine::after{
+  content:"";
+  position:absolute;
+  top:-35%;
+  left:-45%;
+  width:32%;
+  height:170%;
+  opacity:0;
+  transform:skewX(-18deg);
+  background:linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.10) 20%,
+    rgba(255,255,255,.72) 50%,
+    rgba(255,255,255,.10) 80%,
+    rgba(255,255,255,0) 100%
+  );
+  filter:blur(1px);
+}
+
+/* PLAY 먼저 */
+.logo-shine.play::after{
+  animation:shinePlay 5.8s ease-in-out infinite;
+}
+
+/* THE를 건너뛴 뒤 BOOK */
+.logo-shine.book::after{
+  animation:shineBook 5.8s ease-in-out infinite;
+}
+
+@keyframes shinePlay{
+  0%,10%{left:-45%;opacity:0;}
+  13%{opacity:.9;}
+  31%{left:115%;opacity:.9;}
+  34%,100%{left:115%;opacity:0;}
+}
+@keyframes shineBook{
+  0%,34%{left:-45%;opacity:0;}
+  38%{opacity:.9;}
+  58%{left:115%;opacity:.9;}
+  61%,100%{left:115%;opacity:0;}
+}
+
+@media(max-width:600px){
+  .logo-shine{
+    top:4.1vh;
+    height:7.2vh;
+  }
+  .logo-shine.play{
+    left:calc(50% - 39vw);
+    width:29vw;
+  }
+  .logo-shine.book{
+    left:calc(50% + 6.5vw);
+    width:33vw;
+  }
+}
+
 </style>
 </head>
 
 <body>
+
+<!-- PLAY THE BOOK 로고 광택 오버레이 -->
+<div class="logo-shine-layer" aria-hidden="true">
+  <div class="logo-shine play"></div>
+  <div class="logo-shine book"></div>
+</div>
+
 
 <!-- 가로 화면 안내 -->
 <div class="landscape-guide">
