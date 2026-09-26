@@ -395,151 +395,21 @@ body{
   </video>
 
 </div>
-
-
-<!-- =====================================================
-     다음 버튼
-===================================================== -->
-
-<button
-  id="nextBtn"
-  class="next-btn"
-  type="button"
-  onclick="goNext()"
->
-  래빗홀 게임 시작
-</button>
-
-
 <script>
-
-const video =
-  document.getElementById(
-    "bgVideo"
-  );
-
-
-const nextBtn =
-  document.getElementById(
-    "nextBtn"
-  );
-
-
-let nextTimer =
-  null;
-
-
-/* =========================================================
-   페이지 시작
-========================================================= */
+const video = document.getElementById("bgVideo");
 
 function startPage(){
-
-  nextBtn
-    .classList
-    .remove(
-      "show"
-    );
-
-
-  clearTimeout(
-    nextTimer
-  );
-
-
   video.pause();
-
-  video.currentTime =
-    0;
-
-
-  video
-    .play()
-    .catch(
-      function(){
-
-        /*
-          모바일에서 자동재생이 막혀도
-          12초 뒤에는 다음 버튼 표시
-        */
-
-      }
-    );
-
-
-  /* =====================================================
-     12초 후 다음 버튼
-  ===================================================== */
-
-  nextTimer =
-    setTimeout(
-      function(){
-
-        nextBtn
-          .classList
-          .add(
-            "show"
-          );
-
-      },
-
-      12000
-    );
-
+  video.currentTime = 0;
+  video.play().catch(function(){});
 }
 
+video.addEventListener("ended", function(){
+  location.href = "https://baekko.github.io/cnedu/bduin.html";
+});
 
-/* =========================================================
-   영상이 끝나도 화면 유지
-========================================================= */
-
-video.addEventListener(
-  "ended",
-
-  function(){
-
-    video.pause();
-
-  }
-);
-
-
-/* =========================================================
-   다음 페이지
-========================================================= */
-
-function goNext(){
-
-  location.href =
-    "https://baekko.github.io/cnedu/bduin.html";
-
-}
-
-
-/* =========================================================
-   최초 실행
-========================================================= */
-
-window.addEventListener(
-  "load",
-  startPage
-);
-
-
-/* =========================================================
-   뒤로가기로 다시 왔을 때도 처음부터
-========================================================= */
-
-window.addEventListener(
-  "pageshow",
-
-  function(){
-
-    startPage();
-
-  }
-);
-
+window.addEventListener("load", startPage);
+window.addEventListener("pageshow", startPage);
 </script>
 
 </body>
