@@ -380,6 +380,47 @@ body{
   }
 }
 
+
+/* =========================================================
+   코드 안내문 - 필요할 때만 하단 공간 확장
+========================================================= */
+.code-message{
+  min-height:0 !important;
+  height:0;
+  margin-top:0 !important;
+  overflow:hidden;
+  opacity:0;
+  font-size:16px;
+  font-weight:900;
+  line-height:1.45;
+  transition:
+    height .18s ease,
+    margin-top .18s ease,
+    opacity .18s ease;
+}
+.code-message:not(:empty){
+  height:auto;
+  min-height:24px !important;
+  margin-top:13px !important;
+  opacity:1;
+}
+@media(max-width:600px){
+  .code-message{
+    font-size:14px;
+  }
+  .code-message:not(:empty){
+    min-height:20px !important;
+    margin-top:10px !important;
+  }
+}
+
+
+/* 초등학생 게임용 - PLAY 로고 L 느낌의 밝은 녹색 */
+.elementary-game{
+  --color:#69c94b !important;
+  --dark:#34782b !important;
+}
+
 </style>
 </head>
 
