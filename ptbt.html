@@ -137,44 +137,23 @@ html,body{
   </video>
 </div>
 
-<button id="nextBtn" class="next-btn" onclick="goNext()">다음</button>
-
 <script>
 const video = document.getElementById("bgVideo");
-const nextBtn = document.getElementById("nextBtn");
-
-let nextTimer = null;
 
 function startPage(){
-  nextBtn.classList.remove("show");
-
-  clearTimeout(nextTimer);
-
   video.pause();
   video.currentTime = 0;
-
   video.play().catch(function(){
-    // 모바일에서 자동재생이 막히는 경우에도 버튼은 12초 후 표시
+    // 모바일 브라우저의 자동재생 정책에 따라 재생이 제한될 수 있음
   });
-
-  nextTimer = setTimeout(function(){
-    nextBtn.classList.add("show");
-  }, 12000);
 }
 
 video.addEventListener("ended", function(){
-  video.pause();
+  location.href = "ptbm.html";
 });
-
-function goNext(){
-  location.href = "https://baekko.github.io/cnedu/ptbin.html";
-}
 
 window.addEventListener("load", startPage);
-
-window.addEventListener("pageshow", function(){
-  startPage();
-});
+window.addEventListener("pageshow", startPage);
 </script>
 
 </body>
