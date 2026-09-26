@@ -1064,6 +1064,68 @@ body{
   }
 
 }
+/* =========================================================
+   FINAL 편지 코드 카드 - ptbq1 미션카드 기준
+========================================================= */
+.final-card{
+  position:relative;
+  width:min(86vw,620px);
+  padding:30px 28px 27px;
+  border:5px solid #7f4b3a;
+  border-radius:28px;
+  background:#f4ecd1;
+  box-shadow:0 14px 30px rgba(0,0,0,.30);
+}
+.final-card::before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  border-radius:14px;
+  pointer-events:none;
+}
+.final-card > *{position:relative;z-index:1;}
+.final-kit{
+  color:#235a9e;
+  font-size:30px;
+  font-weight:900;
+  margin-bottom:22px;
+}
+.final-question{
+  min-height:66px;
+  padding:12px 18px;
+  margin-bottom:24px;
+  border:5px solid #ff884d;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  font-size:25px;
+  font-weight:900;
+}
+@media(max-width:600px){
+  .final-card{
+    width:min(88vw,380px);
+    padding:22px 18px 20px;
+    border-width:4px;
+    border-radius:22px;
+  }
+  .final-card::before{inset:11px;border-radius:11px;}
+  .final-kit{font-size:21px;margin-bottom:14px;}
+  .final-question{
+    min-height:56px;
+    padding:10px 12px;
+    margin-bottom:20px;
+    border-width:3px;
+    font-size:18px;
+  }
+}
+@media(max-width:390px){
+  .final-card{width:90vw;padding:19px 15px 18px;}
+  .final-card::before{inset:10px;}
+  .final-kit{font-size:20px;}
+  .final-question{font-size:17px;margin-bottom:18px;}
+}
+
 /* 가로 화면 안내 */
 .landscape-guide{
   display:none;
