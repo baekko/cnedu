@@ -724,6 +724,11 @@ body{
 
 }
 
+
+/* 개발용 테스트 초기화 */
+.dev-reset{position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:1000;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:8px 12px;background:rgba(20,20,20,.72);color:#fff;font-family:"Gowun Dodum",sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25);}
+.dev-reset:active{transform:scale(.96);}
+
 </style>
 </head>
 
@@ -960,6 +965,10 @@ body{
 
 </div>
 
+
+
+<!-- 개발용 초기화 -->
+<button class="dev-reset" type="button" onclick="devReset()">테스트 초기화</button>
 
 <script>
 
@@ -1676,6 +1685,19 @@ function goMission(
   location.href =
     `https://baekko.github.io/cnedu/bduq${number}.html`;
 
+}
+
+
+/* =========================================================
+   개발용 테스트 초기화
+========================================================= */
+function devReset(){
+  localStorage.removeItem(PROGRESS_KEY);
+  localStorage.removeItem(INTRO_DONE_KEY);
+  sessionStorage.removeItem("bdum_intro_done");
+  sessionStorage.removeItem("bdum_end_video_started");
+  clearTimeout(storyTimer);
+  location.reload();
 }
 
 
