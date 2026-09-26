@@ -1196,6 +1196,108 @@ body{
   }
 }
 
+
+/* =========================================================
+   FINAL 코드 입력창 - 방금 수정한 PTB 선택페이지 스타일
+========================================================= */
+.final-card{
+  position:relative !important;
+  overflow:hidden !important;
+  width:min(76vw,460px) !important;
+  padding:24px 28px 25px !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  background:
+    linear-gradient(rgba(255,250,240,.82),rgba(248,237,217,.82)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.34),
+    inset 0 0 35px rgba(130,85,45,.08) !important;
+}
+.final-card::before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  border-radius:0 !important;
+  pointer-events:none;
+  z-index:0;
+}
+.final-card > *{position:relative;z-index:1;}
+
+.final-kit{
+  color:#784738 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:28px !important;
+  font-weight:900 !important;
+  line-height:1.4 !important;
+  margin-bottom:10px !important;
+}
+.final-question{
+  min-height:auto !important;
+  padding:0 !important;
+  margin-bottom:16px !important;
+  border:none !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#235a9e !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:30px !important;
+  font-weight:900 !important;
+}
+
+/* 안내문은 평소 공간을 차지하지 않고 오류/안내 때만 확장 */
+.final-message{
+  display:block !important;
+  min-height:0 !important;
+  height:0;
+  margin-top:0 !important;
+  overflow:hidden;
+  opacity:0;
+  line-height:1.45;
+  transition:height .18s ease, margin-top .18s ease, opacity .18s ease;
+}
+.final-message.show{
+  height:auto;
+  min-height:24px !important;
+  margin-top:13px !important;
+  opacity:1;
+}
+
+@media(max-width:600px){
+  .final-card{
+    width:min(82vw,340px) !important;
+    padding:20px 20px 20px !important;
+    border-width:1px !important;
+    border-radius:5px !important;
+  }
+  .final-card::before{
+    inset:11px;
+    border-radius:0 !important;
+  }
+  .final-kit{
+    font-size:19px !important;
+    margin-bottom:7px !important;
+  }
+  .final-question{
+    font-size:21px !important;
+    margin-bottom:13px !important;
+  }
+  .final-message.show{
+    min-height:20px !important;
+    margin-top:10px !important;
+  }
+}
+@media(max-width:390px){
+  .final-card{
+    width:84vw !important;
+    padding:18px 18px 18px !important;
+  }
+  .final-card::before{inset:10px;}
+}
+
 </style>
 </head>
 
