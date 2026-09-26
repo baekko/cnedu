@@ -963,9 +963,9 @@ let birdAnimation = null;
 const poseOffset = {
   idle:  {x: 0.000, y: 0.000},
   blink: {x: 0.000, y: 0.000},
-  fly:   {x:-0.018, y: 0.018},
-  angry: {x:-0.112, y:-0.012},
-  happy: {x:-0.292, y:-0.015}
+  fly:   {x:-0.162, y: 0.050},
+  angry: {x:-0.201, y:-0.005},
+  happy: {x:-0.373, y:-0.003}
 };
 
 /* idle 그림의 발바닥을 카드 윗선에 살짝 겹침 */
@@ -1138,7 +1138,7 @@ async function flyAround(){
     },
     {
       left:(start.x+ox)+"px",
-      top:(start.y-28+oy)+"px",
+      top:(start.y+oy)+"px",
       transform:"translateX(-50%) rotate(0deg)"
     }
   ],{
@@ -1165,7 +1165,9 @@ async function flyAround(){
 
   const landing = getCardPerch();
 
-  bird.className = "bird landing";
+  /* 비행 마지막 프레임이 시작 좌표로 정확히 돌아온 뒤
+     같은 기준점에서 idle로 교체한다. 별도 낙하/착지 이동 없음. */
+  bird.className = "bird perched";
   setBirdPose("idle",landing.x,landing.y);
 
   setTimeout(function(){
@@ -1186,7 +1188,7 @@ async function flyAround(){
     */
     schedulePostFlightBlink();
     scheduleFlight();
-  },500);
+  },40);
 }
 
 function birdHintReaction(){
@@ -1383,7 +1385,7 @@ function birdCorrectFlight(){
     },
     {
       left:(startX+ox)+"px",
-      top:(startY-18+oy)+"px",
+      top:(startY+oy)+"px",
       transform:"translateX(-50%) rotate(0deg)"
     }
   ],{
