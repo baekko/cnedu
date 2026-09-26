@@ -1287,6 +1287,26 @@ body{
   .mission-card{padding-top:22px !important;padding-bottom:20px !important;}
 }
 
+
+
+/* =========================================================
+   미션카드 내부 문제 영역 테두리 통일
+   - 그림형 / 텍스트형 모두 PTBQ 기준으로 동일
+========================================================= */
+.mission-image-box,
+.mission-question{
+  border:3px solid #d58a58 !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.78) !important;
+}
+@media(max-width:600px){
+  .mission-image-box,
+  .mission-question{
+    border-width:2px !important;
+    border-radius:8px !important;
+  }
+}
+
 </style>
 </head>
 
