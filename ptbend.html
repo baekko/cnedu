@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PLAY THE BOOK END</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -275,6 +278,51 @@ body{
     color:#fff;
   }
 }  
+
+/* =========================================================
+   PTB 공통 버튼 - bdut '래빗홀 게임 시작' 버튼 스타일
+   색상은 기존 PTB 갈색 유지
+========================================================= */
+.ptb-bdut-button-style{
+  height:58px !important;
+  min-width:145px !important;
+  padding:0 28px !important;
+  border:3px solid #2d160b !important;
+  border-radius:15px !important;
+  background:#5b351d !important;
+  color:#fffdf1 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:20px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  cursor:pointer;
+  box-shadow:
+    0 5px 8px rgba(0,0,0,.30),
+    inset 0 2px 2px rgba(255,255,255,.25) !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease;
+}
+@media(max-width:600px){
+  .ptb-bdut-button-style{
+    height:46px !important;
+    min-width:110px !important;
+    padding:0 18px !important;
+    border-width:3px !important;
+    border-radius:13px !important;
+    font-size:15px !important;
+  }
+}
+@media(max-width:390px){
+  .ptb-bdut-button-style{
+    height:44px !important;
+    min-width:105px !important;
+    padding:0 15px !important;
+    font-size:14px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -309,7 +357,7 @@ body{
 
   <div class="bottom-btn-area">
     <button id="reopenBtn" class="bottom-btn" onclick="openInfoModal()">편지 다시보기</button>
-    <button id="nextPageBtn" class="bottom-btn" onclick="goNextPage()">다음</button>
+    <button id="nextPageBtn" class="bottom-btn ptb-bdut-button-style" onclick="goNextPage()">다음</button>
   </div>
 </div>
 
