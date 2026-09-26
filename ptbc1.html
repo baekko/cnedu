@@ -774,69 +774,46 @@ body{
 
 
 /* ==================================================
-   PLAY / BOOK 로고 광택
-   ptbcl.png 원본 1252×2000 좌표를 background-size:cover와 동일하게 계산
+   미션카드 테두리 통일 - ptbc5 기준
+   외곽: #7f4b3a / 3px (모바일 2px)
+   안쪽: #b58c79 / 3px (모바일 2px)
 ================================================== */
-.logo-shine-stage{
-  position:fixed;
-  inset:0;
-  z-index:2;
-  pointer-events:none;
-  overflow:hidden;
+.mission-card{
+  border-color:#7f4b3a !important;
+  border-width:3px !important;
+  border-style:solid !important;
 }
-.logo-shine-window{
-  position:absolute;
-  overflow:hidden;
+
+.room-box,
+.rule-box,
+.blog-box,
+.num-panel,
+.word-box,
+.mission-clue-box{
+  border-color:#b58c79 !important;
+  border-width:3px !important;
+  border-style:solid !important;
 }
-.logo-shine-beam{
-  position:absolute;
-  top:-30%;
-  left:-42%;
-  width:28%;
-  height:160%;
-  opacity:0;
-  transform:skewX(-18deg);
-  background:linear-gradient(
-    90deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,.12) 25%,
-    rgba(255,255,255,.80) 50%,
-    rgba(255,255,255,.12) 75%,
-    rgba(255,255,255,0) 100%
-  );
-  filter:blur(.7px);
-  mix-blend-mode:screen;
-}
-.logo-shine-window.play .logo-shine-beam{
-  animation:ptbShinePlay 6s ease-in-out infinite;
-}
-.logo-shine-window.book .logo-shine-beam{
-  animation:ptbShineBook 6s ease-in-out infinite;
-}
-@keyframes ptbShinePlay{
-  0%,8%{left:-42%;opacity:0}
-  11%{opacity:.95}
-  29%{left:114%;opacity:.95}
-  32%,100%{left:114%;opacity:0}
-}
-@keyframes ptbShineBook{
-  0%,34%{left:-42%;opacity:0}
-  38%{opacity:.95}
-  58%{left:114%;opacity:.95}
-  61%,100%{left:114%;opacity:0}
+
+@media(max-width:600px){
+  .mission-card{
+    border-width:2px !important;
+  }
+
+  .room-box,
+  .rule-box,
+  .blog-box,
+  .num-panel,
+  .word-box,
+  .mission-clue-box{
+    border-width:2px !important;
+  }
 }
 
 </style>
 </head>
 
 <body>
-
-<!-- 배경 로고 광택: ptbcl.png의 PLAY / BOOK 위치를 cover 좌표로 추적 -->
-<div class="logo-shine-stage" aria-hidden="true">
-  <div class="logo-shine-window play" id="shinePlay"><span class="logo-shine-beam"></span></div>
-  <div class="logo-shine-window book" id="shineBook"><span class="logo-shine-beam"></span></div>
-</div>
-
 
 <!-- 가로 화면 안내 -->
 <div class="landscape-guide">
@@ -1022,9 +999,9 @@ let birdAnimation = null;
 const poseOffset = {
   idle:  {x: 0.000, y: 0.000},
   blink: {x: 0.000, y: 0.000},
-  fly:   {x:-0.018, y: 0.018},
-  angry: {x:-0.112, y:-0.012},
-  happy: {x:-0.292, y:-0.015}
+  fly:   {x:-0.162, y: 0.050},
+  angry: {x:-0.201, y:-0.005},
+  happy: {x:-0.373, y:-0.003}
 };
 
 /* idle 그림의 발바닥을 카드 윗선에 살짝 겹침 */
@@ -1197,7 +1174,7 @@ async function flyAround(){
     },
     {
       left:(start.x+ox)+"px",
-      top:(start.y-28+oy)+"px",
+      top:(start.y+oy)+"px",
       transform:"translateX(-50%) rotate(0deg)"
     }
   ],{
@@ -1224,7 +1201,9 @@ async function flyAround(){
 
   const landing = getCardPerch();
 
-  bird.className = "bird landing";
+  /* 비행 마지막 프레임이 시작 좌표로 정확히 돌아온 뒤
+     같은 기준점에서 idle로 교체한다. 별도 낙하/착지 이동 없음. */
+  bird.className = "bird perched";
   setBirdPose("idle",landing.x,landing.y);
 
   setTimeout(function(){
@@ -1245,7 +1224,7 @@ async function flyAround(){
     */
     schedulePostFlightBlink();
     scheduleFlight();
-  },500);
+  },40);
 }
 
 function birdHintReaction(){
@@ -1442,7 +1421,7 @@ function birdCorrectFlight(){
     },
     {
       left:(startX+ox)+"px",
-      top:(startY-18+oy)+"px",
+      top:(startY+oy)+"px",
       transform:"translateX(-50%) rotate(0deg)"
     }
   ],{
@@ -1909,40 +1888,6 @@ window.addEventListener("resize",function(){
     );
   }
 });
-
-
-/* ptbcl.png = 1252×2000.
-   원본 이미지 안의 글자 영역:
-   PLAY 약 x=397~852, y=204~367
-   BOOK 약 x=407~835, y=365~505
-   THE 영역은 별도 window가 없으므로 광택이 표시되지 않는다. */
-function positionLogoShine(){
-  const IW=1252, IH=2000;
-  const vw=window.innerWidth, vh=window.innerHeight;
-
-  /* CSS background: center center / cover 와 같은 계산 */
-  const scale=Math.max(vw/IW, vh/IH);
-  const drawW=IW*scale, drawH=IH*scale;
-  const offsetX=(vw-drawW)/2;
-  const offsetY=(vh-drawH)/2;
-
-  const regions={
-    shinePlay:{x:397,y:204,w:455,h:163},
-    shineBook:{x:407,y:365,w:428,h:140}
-  };
-
-  Object.keys(regions).forEach(function(id){
-    const r=regions[id];
-    const el=document.getElementById(id);
-    if(!el) return;
-    el.style.left=(offsetX+r.x*scale)+"px";
-    el.style.top=(offsetY+r.y*scale)+"px";
-    el.style.width=(r.w*scale)+"px";
-    el.style.height=(r.h*scale)+"px";
-  });
-}
-window.addEventListener("load",positionLogoShine);
-window.addEventListener("resize",positionLogoShine);
 
 </script>
 
