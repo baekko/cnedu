@@ -3,414 +3,309 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-<title>RABBIT HOLE TITLE</title>
-
+<title>RABBIT HOLE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html,
-body{
-  width:100%;
-  height:100%;
-  min-height:100dvh;
-  overflow:hidden;
-
-  background:#000;
-
-  font-family:
-    "Gowun Dodum",
-    sans-serif;
-}
-
-
-/* =========================================================
-   래빗홀 버튼 색상
-========================================================= */
-
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
 :root{
-
-  --green:#4f7d32;
-  --green-dark:#29451b;
-
+ --green:#4f7d32;--green-dark:#29451b;
+ --paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e;
+ --media-w:min(88vw,600px);
+ --media-h:calc(var(--media-w) * 1.6);
+ --media-top:50%;
+ --arrow-w:clamp(58px,10vw,82px);
+ --arrow-h:clamp(48px,8.3vw,68px);
+ --arrow-gap:clamp(72px,14vw,150px);
+ --arrow-top-gap:clamp(12px,1.8vh,22px);
 }
-
-
-/* =========================================================
-   배경 영상
-========================================================= */
-
-.video-bg{
-  position:fixed;
-
-  inset:0;
-
-  z-index:1;
-
-  overflow:hidden;
-
-  background:#000;
+body{position:relative;background:url("bdutg.png") no-repeat center center/cover}
+.wrap{position:relative;width:100%;height:100%}
+.media-box{
+ position:absolute;left:50%;top:50%;
+ transform:translate(-50%, calc(-50% - (var(--arrow-h) + var(--arrow-top-gap))/2));
+ width:var(--media-w);height:var(--media-h);
+ max-height:calc(100dvh - var(--arrow-h) - var(--arrow-top-gap) - 34px);
+ z-index:5;border:6px solid #cdb7e9;background:#111;overflow:hidden;
+ box-shadow:0 18px 36px rgba(0,0,0,.38);
 }
-
-
-.video-bg video{
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-
-  display:block;
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.story-img{display:none}
+.talk-box{
+ position:absolute;z-index:12;left:50%;bottom:4.5%;transform:translateX(-50%);
+ width:calc(100% - 24px);padding:14px 17px;border:2px solid var(--paper-border);
+ background:rgba(244,236,209,.96);color:var(--paper-text);
+ font-size:clamp(13px,2.1vw,19px);font-weight:700;line-height:1.45;
+ text-align:left;word-break:keep-all;white-space:pre-line;
+ box-shadow:0 6px 12px rgba(0,0,0,.25);display:none;
 }
-
-
-/* =========================================================
-   다음 버튼
-
-   ★ bdum의 모험시작 버튼 스타일과 동일
-========================================================= */
-
-.next-btn{
-
-  position:fixed;
-
-  left:50%;
-
-  bottom:
-    clamp(
-      42px,
-      6vh,
-      70px
-    );
-
-  transform:
-    translateX(-50%);
-
-  z-index:20;
-
-  display:none;
-
-
-  /* 버튼 크기 */
-
-  height:58px;
-
-  min-width:145px;
-
-  padding:
-    0 28px;
-
-
-  /* 테두리 */
-
-  border:
-    3px solid
-    var(--green-dark);
-
-  border-radius:15px;
-
-
-  /* 색상 */
-
-  background:
-    var(--green);
-
-  color:#fffdf1;
-
-
-  /* 글씨 */
-
-  font-family:
-    "Gowun Dodum",
-    sans-serif;
-
-  font-size:20px;
-
-  font-weight:900;
-
-  line-height:1;
-
-  white-space:nowrap;
-
-
-  /* 버튼 효과 */
-
-  cursor:pointer;
-
-  box-shadow:
-    0 5px 8px
-    rgba(0,0,0,.30),
-
-    inset 0 2px 2px
-    rgba(255,255,255,.25);
-
-
-  text-shadow:
-    0 1px 2px
-    rgba(0,0,0,.25);
-
-
-  -webkit-tap-highlight-color:
-    transparent;
-
-  transition:
-    transform .15s ease;
+.talk-box.show{display:block;animation:fade .25s ease}
+.arrow-area{
+ position:absolute;left:50%;
+ top:calc(50% + min(var(--media-h), calc(100dvh - var(--arrow-h) - var(--arrow-top-gap) - 34px))/2 + var(--arrow-top-gap) - (var(--arrow-h) + var(--arrow-top-gap))/2);
+ transform:translateX(-50%);display:none;gap:var(--arrow-gap);
+ align-items:center;justify-content:center;z-index:20;
 }
-
-
-/* =========================================================
-   버튼 등장
-========================================================= */
-
-.next-btn.show{
-
-  display:block;
-
-  animation:
-    fadeUp .35s ease;
+.arrow-area.show{display:flex;animation:fade .3s ease}
+.arrow-btn{width:var(--arrow-w);height:var(--arrow-h);border:0;background:transparent;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.arrow-btn svg{width:100%;height:100%;display:block;filter:drop-shadow(0 7px 8px rgba(0,0,0,.40)) drop-shadow(0 2px 2px rgba(0,0,0,.30))}
+.arrow-shape{fill:var(--green);stroke:var(--green-dark);stroke-width:3}
+.arrow-highlight{fill:rgba(255,255,255,.25)}
+.arrow-btn.hidden{visibility:hidden;pointer-events:none}
+.arrow-btn:active{transform:translateY(2px) scale(.94)}
+.start-btn{
+ position:absolute;left:50%;
+ top:calc(50% + min(var(--media-h), calc(100dvh - var(--arrow-h) - var(--arrow-top-gap) - 34px))/2 + var(--arrow-top-gap) - (var(--arrow-h) + var(--arrow-top-gap))/2);
+ transform:translateX(-50%);z-index:25;display:none;height:58px;min-width:220px;padding:0 28px;
+ border:3px solid var(--green-dark);border-radius:15px;background:var(--green);color:#fffdf1;
+ font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:900;white-space:nowrap;cursor:pointer;
+ box-shadow:0 5px 8px rgba(0,0,0,.30),inset 0 2px 2px rgba(255,255,255,.25);
+ text-shadow:0 1px 2px rgba(0,0,0,.25)
 }
-
-
-/* =========================================================
-   버튼 마우스 효과
-========================================================= */
-
-.next-btn:hover{
-
-  transform:
-    translateX(-50%)
-    translateY(-2px)
-    scale(1.03);
+.start-btn.show{display:block;animation:fadeUp .35s ease}
+.start-btn:active{transform:translateX(-50%) translateY(2px) scale(.96)}
+.arrow-guide{
+ position:absolute;right:calc(var(--arrow-w) + 6px);top:50%;transform:translateY(-50%);
+ color:#fffdf1;font-size:14px;font-weight:700;white-space:nowrap;text-align:right;
+ text-shadow:0 2px 5px rgba(0,0,0,.75);display:none;pointer-events:none;
 }
-
-
-/* =========================================================
-   버튼 누름
-========================================================= */
-
-.next-btn:active{
-
-  transform:
-    translateX(-50%)
-    translateY(2px)
-    scale(.96);
-}
-
-
-/* =========================================================
-   등장 애니메이션
-========================================================= */
-
-@keyframes fadeUp{
-
-  from{
-
-    opacity:0;
-
-    transform:
-      translateX(-50%)
-      translateY(14px);
-  }
-
-  to{
-
-    opacity:1;
-
-    transform:
-      translateX(-50%)
-      translateY(0);
-  }
-
-}
-
-
-/* =========================================================
-   휴대폰
-
-   ★ bdum 모험시작 버튼과 동일한 크기
-========================================================= */
+.arrow-guide.show{display:block}
+.landscape-guide{display:none}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
 @media(max-width:600px){
-
-  .next-btn{
-
-    bottom:
-      calc(
-        36px
-        +
-        env(safe-area-inset-bottom)
-      );
-
-    height:46px;
-
-    min-width:110px;
-
-    padding:
-      0 18px;
-
-    border-width:3px;
-
-    border-radius:13px;
-
-    font-size:15px;
-  }
-
+ :root{
+   --media-w:min(88vw,390px);
+   --media-top:clamp(14px,2.2vh,22px);
+   --arrow-w:58px;--arrow-h:48px;--arrow-gap:90px;--arrow-top-gap:12px;
+ }
+ .media-box{border-width:5px;max-height:calc(100dvh - 90px)}
+ .arrow-area,.start-btn{top:calc(var(--media-top) + min(var(--media-h), calc(100dvh - 90px)) + var(--arrow-top-gap))}
+ .talk-box{width:80%;padding:10px 12px;font-size:13px;line-height:1.4}
+ .start-btn{height:46px;min-width:180px;padding:0 18px;border-radius:13px;font-size:15px}
+ .arrow-guide{font-size:12px}
 }
-
-
-/* =========================================================
-   작은 휴대폰
-========================================================= */
-
 @media(max-width:390px){
-
-  .next-btn{
-
-    bottom:
-      calc(
-        30px
-        +
-        env(safe-area-inset-bottom)
-      );
-
-    height:44px;
-
-    min-width:105px;
-
-    padding:
-      0 15px;
-
-    font-size:14px;
-  }
-
+ :root{--media-w:86vw;--arrow-w:54px;--arrow-h:45px;--arrow-gap:74px}
+ .talk-box{width:79%;padding:9px 11px;font-size:12.5px}
+ .start-btn{height:44px;min-width:170px;padding:0 15px;font-size:14px}
 }
-
-
-/* =========================================================
-   ★ 래빗홀 공통 색상 잠금
-   휴대폰 / 태블릿 / PC에서 색이 달라 보이지 않도록
-   색상과 말박스 불투명도를 동일하게 고정
-========================================================= */
-
-:root{
-  --green:#4f7d32;
-  --green-light:#79a94d;
-  --green-dark:#29451b;
-
-  --paper:#f4ecd1;
-  --paper-border:#7f4b3a;
-  --paper-text:#8c4a2e;
-}
-
-.talk-box,
-.mission-card,
-.info-box{
-  background:var(--paper) !important;
-}
-
-.talk-box{
-  color:var(--paper-text) !important;
-  border-color:var(--paper-border) !important;
-}
-
-.round-btn,
-.adventure-btn,
-.next-page-btn,
-.next-btn,
-.submit-btn,
-.action-btn,
-.modal-close{
-  background:var(--green) !important;
-  color:#fffdf1 !important;
-  border-color:var(--green-dark) !important;
-}
-
-.arrow-shape{
-  fill:var(--green) !important;
-  stroke:var(--green-dark) !important;
-}
-/* 가로 화면 안내 */
-.landscape-guide{
-  display:none;
-}
-
-@media (orientation: landscape){
-  .landscape-guide{
-    position:fixed;
-    inset:0;
-    z-index:999999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#111;
-  }
-
-  .landscape-guide-text{
-    font-family:"Gowun Dodum",sans-serif;
-    font-size:20px;
-    font-weight:700;
-    line-height:1.7;
-    text-align:center;
-    color:#fff;
-  }
+@media(orientation:landscape){
+ .landscape-guide{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#111}
+ .landscape-guide-text{font-size:20px;font-weight:700;line-height:1.7;text-align:center;color:#fff}
 }
 </style>
 </head>
-
-
 <body>
-<div class="landscape-guide">
-  <div class="landscape-guide-text">
-    📱<br>
-    원활한 진행을 위해<br>
-    세로 모드를 유지해 주세요.
-  </div>
+<div class="landscape-guide"><div class="landscape-guide-text">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div></div>
+
+<div class="wrap">
+ <div class="media-box">
+  <video id="titleVideo" class="media" src="bdut.mp4" muted playsinline preload="auto"></video>
+  <img id="storyImg" class="media story-img" src="bduin1.png" alt="래빗홀 인트로">
+  <video id="endVideo" class="media" src="bduin.mp4" muted playsinline preload="auto" style="display:none"></video>
+  <div id="talkBox" class="talk-box"></div>
+ </div>
+
+ <button id="startBtn" class="start-btn" type="button" onclick="startStory()">래빗홀 게임 시작</button>
+
+ <div id="arrowArea" class="arrow-area">
+  <button id="prevBtn" class="arrow-btn hidden" type="button" onclick="prevTalk()" aria-label="이전">
+   <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
+  </button>
+  <div id="arrowGuide" class="arrow-guide">이 버튼을 누르면 다음으로 넘어갑니다</div>
+  <button id="nextBtn" class="arrow-btn" type="button" onclick="nextTalk()" aria-label="다음">
+   <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
+  </button>
+ </div>
 </div>
 
-<!-- =====================================================
-     타이틀 영상
-===================================================== -->
-
-<div class="video-bg">
-
-  <video
-    id="bgVideo"
-    muted
-    playsinline
-  >
-
-    <source
-      src="bdut.mp4"
-      type="video/mp4"
-    >
-
-  </video>
-
-</div>
 <script>
-const video = document.getElementById("bgVideo");
+const scene1Talks=[`교실 뒤 벽에 걸려 있는 커다란 금빛 거울.
+평소엔 그저 평범한 거울이었어.`,
 
-function startPage(){
-  video.pause();
-  video.currentTime = 0;
-  video.play().catch(function(){});
+  `그런데 며칠 전부터 내 친구가
+쉬는 시간만 되면 혼자 거울 앞에 서서
+한참 동안 거울 속을 바라보는 거야.`,
+
+  `“너 거기서 뭐 해?”
+물어봐도 친구는 대답하지 않았어.`,
+
+  `그러던 어느 날,
+친구가 거울을 향해 작은 목소리로 무언가를 말했어.`,
+
+  `그리고 잠깐 다른 곳을 바라본 사이
+친구가 사라졌어.`,
+
+  `교실에도, 복도에도 없었어.
+가방과 책은 그대로인데 친구만 흔적도 없이
+사라졌어.`,
+
+  `나는 친구가 마지막으로 서 있던 거울이 
+자꾸만 신경 쓰였어.`,
+
+  `혹시 친구가 사라진 이유가
+저 거울과 관련 있는 건 아닐까?`];
+const scene2Talks=[`친구를 찾기 위해 천천히 거울 앞으로 다가갔어.
+그리고 거울을 한참 바라봤어.`,
+
+  `아무 일도 일어나지 않아 자리를 뜨려 한 순간,
+그 녀석이 나타났어.`];
+const scene3Talks=[`“놀라지 마. 이 거울은 ‘래빗홀’이야.
+너와 나의 신비한 세계를 이어 주는 문이지.”
+“내 친구 어디 있어? 네가 데려갔지?”
+나는 토끼를 보자마자 다급하게 물었어.`,
+
+  `“데려간 건 맞지만, 납치한 건 아니야!
+네 친구는 매일 이 거울 앞에서
+거울 너머에는 무엇이 있는지 궁금해했어.
+그래서 내가 특별히 래빗홀의 모험에 초대했지.
+지금은 신나게 이곳저곳을 여행하고 있을걸?”`,
+
+  `하지만 나는 믿을 수 없었어.
+“거짓말하지 마. 내 친구 돌려보내!”`,
+
+  `“정 못 믿겠으면 네가 직접 들어와서
+친구를 데려가.”
+토끼가 거울 너머로 손짓했어.
+“대신 한 가지 규칙이 있어.”`,
+
+  `“래빗홀은 복잡해서 나가는 길을 찾기 어려워.
+이곳에는 여러 개의 신비한 장소가 있고,
+그곳에 숨겨진 문제를 하나씩 해결해야
+다음 장소로 이동할 수 있거든.”`,
+
+  `“모든 문제를 풀고 나면 
+친구를 만날 수 있을 거야.”`,
+
+  `잠시 망설였지만 친구를 찾기 위해
+래빗홀로 들어가기로 했어.
+나는 천천히 거울을 향해 손을 뻗었고 그 순간!`];
+
+let currentScene=1;
+let currentTalk=0;
+let arrowGuideDismissed=false;
+let ending=false;
+
+const titleVideo=document.getElementById("titleVideo");
+const storyImg=document.getElementById("storyImg");
+const endVideo=document.getElementById("endVideo");
+const talkBox=document.getElementById("talkBox");
+const arrowArea=document.getElementById("arrowArea");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
+const startBtn=document.getElementById("startBtn");
+const arrowGuide=document.getElementById("arrowGuide");
+
+function getTalks(){
+ if(currentScene===1) return scene1Talks;
+ if(currentScene===2) return scene2Talks;
+ return scene3Talks;
 }
 
-video.addEventListener("ended", function(){
-  location.href = "https://baekko.github.io/cnedu/bduin.html";
+function showTalk(){
+ const talks=getTalks();
+ storyImg.src=`bduin${currentScene}.png`;
+ storyImg.style.display="block";
+ talkBox.textContent=talks[currentTalk];
+ talkBox.classList.add("show");
+ arrowArea.classList.add("show");
+
+ const first=currentScene===1 && currentTalk===0;
+ prevBtn.classList.toggle("hidden",first);
+ if(first && !arrowGuideDismissed) arrowGuide.classList.add("show");
+ else arrowGuide.classList.remove("show");
+}
+
+function startStory(){
+ startBtn.classList.remove("show");
+ titleVideo.style.display="none";
+ currentScene=1;
+ currentTalk=0;
+ showTalk();
+}
+
+function nextTalk(){
+ if(ending) return;
+ if(!arrowGuideDismissed){
+   arrowGuideDismissed=true;
+   arrowGuide.classList.remove("show");
+ }
+ const talks=getTalks();
+
+ if(currentTalk<talks.length-1){
+   currentTalk++;
+   showTalk();
+   return;
+ }
+ if(currentScene<3){
+   currentScene++;
+   currentTalk=0;
+   showTalk();
+   return;
+ }
+ playEndVideo();
+}
+
+function prevTalk(){
+ if(ending) return;
+ if(currentTalk>0){
+   currentTalk--;
+   showTalk();
+   return;
+ }
+ if(currentScene===2){
+   currentScene=1;
+   currentTalk=scene1Talks.length-1;
+   showTalk();
+   return;
+ }
+ if(currentScene===3){
+   currentScene=2;
+   currentTalk=scene2Talks.length-1;
+   showTalk();
+ }
+}
+
+function playEndVideo(){
+ ending=true;
+ talkBox.classList.remove("show");
+ arrowArea.classList.remove("show");
+ storyImg.style.display="none";
+ endVideo.style.display="block";
+ endVideo.currentTime=0;
+ endVideo.onended=function(){location.href="bdum.html"};
+ endVideo.onerror=function(){location.href="bdum.html"};
+ const p=endVideo.play();
+ if(p) p.catch(function(){location.href="bdum.html"});
+}
+
+function startPage(){
+ ending=false;
+ currentScene=1;
+ currentTalk=0;
+ arrowGuideDismissed=false;
+ talkBox.classList.remove("show");
+ arrowArea.classList.remove("show");
+ startBtn.classList.remove("show");
+ storyImg.style.display="none";
+ endVideo.pause();
+ endVideo.style.display="none";
+ titleVideo.style.display="block";
+ titleVideo.currentTime=0;
+ const p=titleVideo.play();
+ if(p) p.catch(function(){startBtn.classList.add("show")});
+}
+
+titleVideo.addEventListener("ended",function(){
+ /* 마지막 프레임은 그대로 둔 채 시작 버튼만 표시 */
+ startBtn.classList.add("show");
 });
-
-window.addEventListener("load", startPage);
-window.addEventListener("pageshow", startPage);
+window.addEventListener("load",startPage);
+window.addEventListener("pageshow",function(e){if(e.persisted)startPage()});
 </script>
-
 </body>
 </html>
