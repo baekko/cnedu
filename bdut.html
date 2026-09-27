@@ -13,7 +13,7 @@ html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;background:#0
 :root{
  --green:#4f7d32;--green-dark:#29451b;
  --paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e;
- --media-w:min(88vw,600px);
+ --media-w:min(88vw,600px,calc((100dvh - 120px) * 0.625));
  --media-h:calc(var(--media-w) * 1.6);
  --media-top:50%;
  --arrow-w:clamp(58px,10vw,82px);
@@ -22,30 +22,31 @@ html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;background:#0
  --arrow-top-gap:clamp(12px,1.8vh,22px);
 }
 body{position:relative;background:url("bdutg.png") no-repeat center center/cover}
-.wrap{position:relative;width:100%;height:100%}
+.wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;width:100%}
 .media-box{
- position:absolute;left:50%;top:50%;
- transform:translate(-50%, calc(-50% - (var(--arrow-h) + var(--arrow-top-gap))/2));
- width:var(--media-w);height:var(--media-h);
- max-height:calc(100dvh - var(--arrow-h) - var(--arrow-top-gap) - 34px);
+ position:relative !important;left:auto !important;top:auto !important;transform:none !important;
+ width:var(--media-w);aspect-ratio:25/40;height:auto;
+ max-height:none !important;
  z-index:5;border:6px solid #cdb7e9;background:#111;overflow:hidden;
  box-shadow:0 18px 36px rgba(0,0,0,.38);
 }
 .media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .story-img{display:none}
 .talk-box{
- position:absolute;z-index:12;left:50%;bottom:4.5%;transform:translateX(-50%);
- width:calc(100% - 24px);padding:14px 17px;border:2px solid var(--paper-border);
+ position:absolute;z-index:12;left:5px !important;right:5px !important;bottom:4.5%;transform:none;
+ width:auto !important;max-width:none !important;
+ padding:10px 12px;border:2px solid var(--paper-border);
  background:rgba(244,236,209,.96);color:var(--paper-text);
- font-size:clamp(13px,2.1vw,19px);font-weight:700;line-height:1.45;
+ font-size:clamp(12px,1.9vw,18px);font-weight:700;line-height:1.4;
  text-align:left;word-break:keep-all;white-space:pre-line;
  box-shadow:0 6px 12px rgba(0,0,0,.25);display:none;
 }
 .talk-box.show{display:block;animation:fade .25s ease}
 .arrow-area{
- position:absolute;left:50%;
- top:calc(50% + min(var(--media-h), calc(100dvh - var(--arrow-h) - var(--arrow-top-gap) - 34px))/2 + var(--arrow-top-gap) - (var(--arrow-h) + var(--arrow-top-gap))/2);
- transform:translateX(-50%);display:none;gap:var(--arrow-gap);
+ position:relative !important;left:auto !important;top:auto !important;bottom:auto !important;
+ transform:none !important;margin:0 !important;
+ display:none;gap:var(--arrow-gap);height:var(--arrow-h);
  align-items:center;justify-content:center;z-index:20;
 }
 .arrow-area.show{display:flex;animation:fade .3s ease}
@@ -56,41 +57,36 @@ body{position:relative;background:url("bdutg.png") no-repeat center center/cover
 .arrow-btn.hidden{visibility:hidden;pointer-events:none}
 .arrow-btn:active{transform:translateY(2px) scale(.94)}
 .start-btn{
- position:absolute;left:50%;
- top:calc(50% + min(var(--media-h), calc(100dvh - var(--arrow-h) - var(--arrow-top-gap) - 34px))/2 + var(--arrow-top-gap) - (var(--arrow-h) + var(--arrow-top-gap))/2);
- transform:translateX(-50%);z-index:25;display:none;height:58px;min-width:220px;padding:0 28px;
+ position:relative !important;left:auto !important;top:auto !important;bottom:auto !important;
+ transform:none !important;margin:0 !important;z-index:25;display:none;
+ height:58px;min-width:220px;padding:0 28px;
  border:3px solid var(--green-dark);border-radius:15px;background:var(--green);color:#fffdf1;
  font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:900;white-space:nowrap;cursor:pointer;
  box-shadow:0 5px 8px rgba(0,0,0,.30),inset 0 2px 2px rgba(255,255,255,.25);
  text-shadow:0 1px 2px rgba(0,0,0,.25)
 }
 .start-btn.show{display:block;animation:fadeUp .35s ease}
-.start-btn:active{transform:translateX(-50%) translateY(2px) scale(.96)}
-.arrow-guide{
- position:absolute;right:calc(var(--arrow-w) + 6px);top:50%;transform:translateY(-50%);
- color:#fffdf1;font-size:14px;font-weight:700;white-space:nowrap;text-align:right;
- text-shadow:0 2px 5px rgba(0,0,0,.75);display:none;pointer-events:none;
-}
-.arrow-guide.show{display:block}
+.start-btn:active{transform:translateY(2px) scale(.96) !important}
+.arrow-guide{display:none !important}
+.arrow-guide.show{display:none !important}
 .landscape-guide{display:none}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
 @media(max-width:600px){
  :root{
-   --media-w:min(88vw,390px);
+   --media-w:min(88vw,390px,calc((100dvh - 108px) * 0.625));
    --media-top:clamp(14px,2.2vh,22px);
    --arrow-w:58px;--arrow-h:48px;--arrow-gap:90px;--arrow-top-gap:12px;
  }
- .media-box{border-width:5px;max-height:calc(100dvh - 90px)}
- .arrow-area,.start-btn{top:calc(var(--media-top) + min(var(--media-h), calc(100dvh - 90px)) + var(--arrow-top-gap))}
- .talk-box{width:80%;padding:10px 12px;font-size:13px;line-height:1.4}
+ .media-box{border-width:5px}
+ .talk-box{left:5px !important;right:5px !important;width:auto !important;padding:9px 10px;font-size:12px;line-height:1.38}
  .start-btn{height:46px;min-width:180px;padding:0 18px;border-radius:13px;font-size:15px}
  .arrow-guide{font-size:12px}
 }
 @media(max-width:390px){
- :root{--media-w:86vw;--arrow-w:54px;--arrow-h:45px;--arrow-gap:74px}
- .talk-box{width:79%;padding:9px 11px;font-size:12.5px}
+ :root{--media-w:min(86vw,calc((100dvh - 104px) * 0.625));--arrow-w:54px;--arrow-h:45px;--arrow-gap:74px}
+ .talk-box{left:5px !important;right:5px !important;width:auto !important;padding:8px 9px;font-size:11.5px}
  .start-btn{height:44px;min-width:170px;padding:0 15px;font-size:14px}
 }
 @media(orientation:landscape){
@@ -103,6 +99,7 @@ body{position:relative;background:url("bdutg.png") no-repeat center center/cover
 <div class="landscape-guide"><div class="landscape-guide-text">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div></div>
 
 <div class="wrap">
+ <div class="stage">
  <div class="media-box">
   <video id="titleVideo" class="media" src="bdut.mp4" muted playsinline preload="auto"></video>
   <img id="storyImg" class="media story-img" src="bduin1.png" alt="래빗홀 인트로">
@@ -116,10 +113,11 @@ body{position:relative;background:url("bdutg.png") no-repeat center center/cover
   <button id="prevBtn" class="arrow-btn hidden" type="button" onclick="prevTalk()" aria-label="이전">
    <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
   </button>
-  <div id="arrowGuide" class="arrow-guide">이 버튼을 누르면 다음으로 넘어갑니다</div>
+  
   <button id="nextBtn" class="arrow-btn" type="button" onclick="nextTalk()" aria-label="다음">
    <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
   </button>
+ </div>
  </div>
 </div>
 
