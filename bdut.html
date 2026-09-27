@@ -1,128 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>RABBIT HOLE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
-:root{
- --green:#4f7d32;--green-dark:#29451b;
- --paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e;
- --media-w:min(88vw,600px,calc((100dvh - 120px) * 0.625));
- --media-h:calc(var(--media-w) * 1.6);
- --media-top:50%;
- --arrow-w:clamp(58px,10vw,82px);
- --arrow-h:clamp(48px,8.3vw,68px);
- --arrow-gap:clamp(72px,14vw,150px);
- --arrow-top-gap:clamp(12px,1.8vh,22px);
-}
-body{position:relative;background:url("bdutg.png") no-repeat center center/cover}
-.wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.stage{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;width:100%}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
+:root{--green:#4f7d32;--dark:#29451b;--paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e}
+body{background:url("bdutg.png") center/cover no-repeat}
+.screen{height:100dvh;display:flex;align-items:center;justify-content:center}
+.stage{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
 .media-box{
- position:relative !important;left:auto !important;top:auto !important;transform:none !important;
- width:var(--media-w);aspect-ratio:25/40;height:auto;
- max-height:none !important;
- z-index:5;border:6px solid #cdb7e9;background:#111;overflow:hidden;
- box-shadow:0 18px 36px rgba(0,0,0,.38);
+ width:min(88vw,390px,calc((100dvh - 108px)*.625));
+ aspect-ratio:25/40;position:relative;overflow:hidden;background:#111;
+ border:5px solid #cdb7e9;box-shadow:0 16px 32px rgba(0,0,0,.38)
 }
-.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.story-img{display:none}
-.talk-box{
- position:absolute;z-index:12;left:5px !important;right:5px !important;bottom:4.5%;transform:none;
- width:auto !important;max-width:none !important;
- padding:10px 12px;border:2px solid var(--paper-border);
- background:rgba(244,236,209,.96);color:var(--paper-text);
- font-size:clamp(12px,1.9vw,18px);font-weight:700;line-height:1.4;
- text-align:left;word-break:keep-all;white-space:pre-line;
- box-shadow:0 6px 12px rgba(0,0,0,.25);display:none;
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#storyImg,#endVideo{display:none}
+.talk{
+ display:none;position:absolute;z-index:5;left:5px;right:5px;bottom:4.5%;
+ padding:9px 10px;border:2px solid var(--paper-border);background:rgba(244,236,209,.96);
+ color:var(--paper-text);font-size:12px;font-weight:700;line-height:1.38;
+ white-space:pre-line;word-break:keep-all;box-shadow:0 5px 10px rgba(0,0,0,.22)
 }
-.talk-box.show{display:block;animation:fade .25s ease}
-.arrow-area{
- position:relative !important;left:auto !important;top:auto !important;bottom:auto !important;
- transform:none !important;margin:0 !important;
- display:none;gap:var(--arrow-gap);height:var(--arrow-h);
- align-items:center;justify-content:center;z-index:20;
+.control-slot{height:48px;position:relative;display:flex;align-items:center;justify-content:center}
+.arrows{height:48px;display:flex;align-items:center;justify-content:center;gap:90px;visibility:hidden}
+.arrows.on{visibility:visible}
+.arrow{
+ width:58px;height:48px;border:0;padding:0;background:transparent;cursor:pointer;
+ touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+ outline:none;box-shadow:none;
 }
-.arrow-area.show{display:flex;animation:fade .3s ease}
-.arrow-btn{width:var(--arrow-w);height:var(--arrow-h);border:0;background:transparent;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.arrow-btn svg{width:100%;height:100%;display:block;filter:drop-shadow(0 7px 8px rgba(0,0,0,.40)) drop-shadow(0 2px 2px rgba(0,0,0,.30))}
-.arrow-shape{fill:var(--green);stroke:var(--green-dark);stroke-width:3}
-.arrow-highlight{fill:rgba(255,255,255,.25)}
-.arrow-btn.hidden{visibility:hidden;pointer-events:none}
-.arrow-btn:active{transform:translateY(2px) scale(.94)}
-.start-btn{
- position:relative !important;left:auto !important;top:auto !important;bottom:auto !important;
- transform:none !important;margin:0 !important;z-index:25;display:none;
- height:58px;min-width:220px;padding:0 28px;
- border:3px solid var(--green-dark);border-radius:15px;background:var(--green);color:#fffdf1;
- font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:900;white-space:nowrap;cursor:pointer;
- box-shadow:0 5px 8px rgba(0,0,0,.30),inset 0 2px 2px rgba(255,255,255,.25);
- text-shadow:0 1px 2px rgba(0,0,0,.25)
+.arrow:focus,.arrow:focus-visible,.arrow:active{
+ outline:none;box-shadow:none;background:transparent;
 }
-.start-btn.show{display:block;animation:fadeUp .35s ease}
-.start-btn:active{transform:translateY(2px) scale(.96) !important}
-.arrow-guide{display:none !important}
-.arrow-guide.show{display:none !important}
-.landscape-guide{display:none}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-
-@media(max-width:600px){
- :root{
-   --media-w:min(88vw,390px,calc((100dvh - 108px) * 0.625));
-   --media-top:clamp(14px,2.2vh,22px);
-   --arrow-w:58px;--arrow-h:48px;--arrow-gap:90px;--arrow-top-gap:12px;
- }
- .media-box{border-width:5px}
- .talk-box{left:5px !important;right:5px !important;width:auto !important;padding:9px 10px;font-size:12px;line-height:1.38}
- .start-btn{height:46px;min-width:180px;padding:0 18px;border-radius:13px;font-size:15px}
- .arrow-guide{font-size:12px}
+.arrow svg{display:block;width:100%;height:100%;filter:drop-shadow(0 5px 6px rgba(0,0,0,.4))}
+.shape{fill:var(--green);stroke:var(--dark);stroke-width:3}
+.hi{fill:rgba(255,255,255,.25)}
+.arrow.hidden{visibility:hidden}
+#startBtn{
+ position:absolute;height:46px;min-width:180px;padding:0 18px;border:3px solid var(--dark);border-radius:13px;
+ background:var(--green);color:#fffdf1;font:900 15px "Gowun Dodum",sans-serif;
+ box-shadow:0 5px 8px rgba(0,0,0,.3);display:none;cursor:pointer
 }
+#startBtn.on{display:block}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.12;transform:scale(1.08)}}
+#nextBtn.blink{animation:blink .55s linear infinite}
+.landscape{display:none}
 @media(max-width:390px){
- :root{--media-w:min(86vw,calc((100dvh - 104px) * 0.625));--arrow-w:54px;--arrow-h:45px;--arrow-gap:74px}
- .talk-box{left:5px !important;right:5px !important;width:auto !important;padding:8px 9px;font-size:11.5px}
- .start-btn{height:44px;min-width:170px;padding:0 15px;font-size:14px}
+ .media-box{width:min(86vw,calc((100dvh - 104px)*.625))}
+ .talk{font-size:11px;padding:8px 9px}
+ .arrows{gap:74px}
 }
 @media(orientation:landscape){
- .landscape-guide{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#111}
- .landscape-guide-text{font-size:20px;font-weight:700;line-height:1.7;text-align:center;color:#fff}
+ .landscape{display:flex;position:fixed;inset:0;z-index:999;align-items:center;justify-content:center;background:#111;color:#fff;text-align:center;line-height:1.7;font-weight:700}
 }
 </style>
 </head>
 <body>
-<div class="landscape-guide"><div class="landscape-guide-text">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div></div>
-
-<div class="wrap">
+<div class="landscape">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div>
+<div class="screen">
  <div class="stage">
- <div class="media-box">
-  <video id="titleVideo" class="media" src="bdut.mp4" muted playsinline preload="auto"></video>
-  <img id="storyImg" class="media story-img" src="bduin1.png" alt="래빗홀 인트로">
-  <video id="endVideo" class="media" src="bduin.mp4" muted playsinline preload="auto" style="display:none"></video>
-  <div id="talkBox" class="talk-box"></div>
- </div>
-
- <button id="startBtn" class="start-btn" type="button" onclick="startStory()">래빗홀 게임 시작</button>
-
- <div id="arrowArea" class="arrow-area">
-  <button id="prevBtn" class="arrow-btn hidden" type="button" onclick="prevTalk()" aria-label="이전">
-   <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
-  </button>
-  
-  <button id="nextBtn" class="arrow-btn" type="button" onclick="nextTalk()" aria-label="다음">
-   <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
-  </button>
- </div>
+  <div class="media-box">
+   <video id="titleVideo" class="media" src="bdut.mp4" muted playsinline preload="auto"></video>
+   <img id="storyImg" class="media" src="bduin1.png" alt="">
+   <video id="endVideo" class="media" src="bduin.mp4" muted playsinline preload="auto"></video>
+   <div id="talk" class="talk"></div>
+  </div>
+  <div class="control-slot">
+   <button id="startBtn" type="button">래빗홀 게임 시작</button>
+   <div id="arrows" class="arrows">
+    <button id="prevBtn" class="arrow hidden" type="button" aria-label="이전">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="hi" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
+    </button>
+    <button id="nextBtn" class="arrow" type="button" aria-label="다음">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="hi" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
+    </button>
+   </div>
+  </div>
  </div>
 </div>
-
 <script>
-const scene1Talks=[`교실 뒤 벽에 걸려 있는 커다란 금빛 거울.
+const scenes=[
+ [`교실 뒤 벽에 걸려 있는 커다란 금빛 거울.
 평소엔 그저 평범한 거울이었어.`,
 
   `그런데 며칠 전부터 내 친구가
@@ -146,13 +110,13 @@ const scene1Talks=[`교실 뒤 벽에 걸려 있는 커다란 금빛 거울.
 자꾸만 신경 쓰였어.`,
 
   `혹시 친구가 사라진 이유가
-저 거울과 관련 있는 건 아닐까?`];
-const scene2Talks=[`친구를 찾기 위해 천천히 거울 앞으로 다가갔어.
+저 거울과 관련 있는 건 아닐까?`],
+ [`친구를 찾기 위해 천천히 거울 앞으로 다가갔어.
 그리고 거울을 한참 바라봤어.`,
 
   `아무 일도 일어나지 않아 자리를 뜨려 한 순간,
-그 녀석이 나타났어.`];
-const scene3Talks=[`“놀라지 마. 이 거울은 ‘래빗홀’이야.
+그 녀석이 나타났어.`],
+ [`“놀라지 마. 이 거울은 ‘래빗홀’이야.
 너와 나의 신비한 세계를 이어 주는 문이지.”
 “내 친구 어디 있어? 네가 데려갔지?”
 나는 토끼를 보자마자 다급하게 물었어.`,
@@ -181,129 +145,92 @@ const scene3Talks=[`“놀라지 마. 이 거울은 ‘래빗홀’이야.
 
   `잠시 망설였지만 친구를 찾기 위해
 래빗홀로 들어가기로 했어.
-나는 천천히 거울을 향해 손을 뻗었고 그 순간!`];
-
-let currentScene=1;
-let currentTalk=0;
-let arrowGuideDismissed=false;
-let ending=false;
-
+나는 천천히 거울을 향해 손을 뻗었고 그 순간!`]
+];
+let scene=0, talkIndex=0, ending=false, firstNext=true;
 const titleVideo=document.getElementById("titleVideo");
 const storyImg=document.getElementById("storyImg");
 const endVideo=document.getElementById("endVideo");
-const talkBox=document.getElementById("talkBox");
-const arrowArea=document.getElementById("arrowArea");
+const talk=document.getElementById("talk");
+const arrows=document.getElementById("arrows");
 const prevBtn=document.getElementById("prevBtn");
 const nextBtn=document.getElementById("nextBtn");
 const startBtn=document.getElementById("startBtn");
-const arrowGuide=document.getElementById("arrowGuide");
 
-function getTalks(){
- if(currentScene===1) return scene1Talks;
- if(currentScene===2) return scene2Talks;
- return scene3Talks;
-}
-
-function showTalk(){
- const talks=getTalks();
- storyImg.src=`bduin${currentScene}.png`;
+function render(){
+ storyImg.src="bduin"+(scene+1)+".png";
  storyImg.style.display="block";
- talkBox.textContent=talks[currentTalk];
- talkBox.classList.add("show");
- arrowArea.classList.add("show");
-
- const first=currentScene===1 && currentTalk===0;
- prevBtn.classList.toggle("hidden",first);
- if(first && !arrowGuideDismissed) arrowGuide.classList.add("show");
- else arrowGuide.classList.remove("show");
+ talk.textContent=scenes[scene][talkIndex];
+ talk.style.display="block";
+ prevBtn.classList.toggle("hidden",scene===0 && talkIndex===0);
 }
 
 function startStory(){
- startBtn.classList.remove("show");
+ startBtn.classList.remove("on");
  titleVideo.style.display="none";
- currentScene=1;
- currentTalk=0;
- showTalk();
+ scene=0; talkIndex=0; ending=false; firstNext=true;
+ render();
+ arrows.classList.add("on");
+ nextBtn.classList.add("blink");
 }
 
-function nextTalk(){
+function next(){
  if(ending) return;
- if(!arrowGuideDismissed){
-   arrowGuideDismissed=true;
-   arrowGuide.classList.remove("show");
- }
- const talks=getTalks();
 
- if(currentTalk<talks.length-1){
-   currentTalk++;
-   showTalk();
+ // 같은 클릭에서 깜빡임을 끄고 곧바로 다음 대사까지 진행한다.
+ if(firstNext){
+   firstNext=false;
+   nextBtn.classList.remove("blink");
+ }
+
+ if(talkIndex < scenes[scene].length-1){
+   talkIndex++;
+   render();
    return;
  }
- if(currentScene<3){
-   currentScene++;
-   currentTalk=0;
-   showTalk();
+ if(scene < scenes.length-1){
+   scene++;
+   talkIndex=0;
+   render();
    return;
  }
- playEndVideo();
+ playEnding();
 }
 
-function prevTalk(){
+function prev(){
  if(ending) return;
- if(currentTalk>0){
-   currentTalk--;
-   showTalk();
-   return;
- }
- if(currentScene===2){
-   currentScene=1;
-   currentTalk=scene1Talks.length-1;
-   showTalk();
-   return;
- }
- if(currentScene===3){
-   currentScene=2;
-   currentTalk=scene2Talks.length-1;
-   showTalk();
- }
+ if(talkIndex>0){talkIndex--;render();return}
+ if(scene>0){scene--;talkIndex=scenes[scene].length-1;render()}
 }
 
-function playEndVideo(){
+function playEnding(){
  ending=true;
- talkBox.classList.remove("show");
- arrowArea.classList.remove("show");
+ arrows.classList.remove("on");
+ talk.style.display="none";
  storyImg.style.display="none";
  endVideo.style.display="block";
  endVideo.currentTime=0;
- endVideo.onended=function(){location.href="bdum.html"};
- endVideo.onerror=function(){location.href="bdum.html"};
- const p=endVideo.play();
- if(p) p.catch(function(){location.href="bdum.html"});
+ endVideo.onended=()=>location.href="bdum.html";
+ endVideo.onerror=()=>location.href="bdum.html";
+ endVideo.play().catch(()=>location.href="bdum.html");
 }
 
-function startPage(){
- ending=false;
- currentScene=1;
- currentTalk=0;
- arrowGuideDismissed=false;
- talkBox.classList.remove("show");
- arrowArea.classList.remove("show");
- startBtn.classList.remove("show");
- storyImg.style.display="none";
- endVideo.pause();
- endVideo.style.display="none";
- titleVideo.style.display="block";
- titleVideo.currentTime=0;
- const p=titleVideo.play();
- if(p) p.catch(function(){startBtn.classList.add("show")});
-}
+startBtn.addEventListener("click",startStory);
+nextBtn.addEventListener("click",next);
+prevBtn.addEventListener("click",prev);
 
-titleVideo.addEventListener("ended",function(){
- /* 마지막 프레임은 그대로 둔 채 시작 버튼만 표시 */
- startBtn.classList.add("show");
-});
-window.addEventListener("load",startPage);
-window.addEventListener("pageshow",function(e){if(e.persisted)startPage()});
+function reset(){
+ scene=0;talkIndex=0;ending=false;firstNext=true;
+ arrows.classList.remove("on");
+ nextBtn.classList.remove("blink");
+ startBtn.classList.remove("on");
+ talk.style.display="none";storyImg.style.display="none";endVideo.style.display="none";
+ titleVideo.style.display="block";titleVideo.currentTime=0;
+ titleVideo.onended=()=>startBtn.classList.add("on");
+ titleVideo.play().catch(()=>startBtn.classList.add("on"));
+}
+window.addEventListener("load",reset);
+window.addEventListener("pageshow",e=>{if(e.persisted)reset()});
 </script>
 </body>
 </html>
