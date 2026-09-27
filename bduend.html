@@ -1,771 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>RABBIT HOLE END</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-
 <style>
-
-/* =========================================================
-   기본
-========================================================= */
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
+:root{--green:#4f7d32;--dark:#29451b;--paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e}
+body{background:url("bdutg.png") center/cover no-repeat}
+.screen{height:100dvh;display:flex;align-items:center;justify-content:center}
+.stage{width:100%;display:flex;flex-direction:column;align-items:center;gap:24px}
+.media-box{
+ width:min(88vw,390px,calc((100dvh - 108px)*.625));
+ aspect-ratio:25/40;position:relative;overflow:hidden;background:#111;
+ border:5px solid #cdb7e9;box-shadow:0 16px 32px rgba(0,0,0,.38)
 }
-
-html,
-body{
-  width:100%;
-  height:100%;
-  min-height:100dvh;
-  overflow:hidden;
-
-  font-family:
-    "Gowun Dodum",
-    sans-serif;
-
-  background:#000;
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#endVideo{display:none}
+.talk{
+ position:absolute;z-index:5;left:5px;right:5px;bottom:4.5%;
+ padding:9px 10px;border:2px solid var(--paper-border);background:rgba(244,236,209,.96);
+ color:var(--paper-text);font-size:12px;font-weight:700;line-height:1.38;
+ white-space:pre-line;word-break:keep-all;box-shadow:0 5px 10px rgba(0,0,0,.22)
 }
-
-
-/* =========================================================
-   공통 변수
-========================================================= */
-
-:root{
-
-  --green:#4f7d32;
-  --green-light:#79a94d;
-  --green-dark:#29451b;
-
-  --paper:#f4ecd1;
-  --paper-border:#7f4b3a;
-  --paper-text:#8c4a2e;
-
-  --talk-width:min(88vw,600px);
-
-  --control-bottom:31vh;
-
-  --arrow-w:82px;
-  --arrow-h:68px;
-
-  --talk-gap:34px;
-
-  --next-bottom:5vh;
+.control-slot{height:48px;display:flex;align-items:center;justify-content:center}
+.arrows{height:48px;display:flex;align-items:center;justify-content:center;gap:90px}
+.arrow{
+ width:58px;height:48px;border:0;padding:0;background:transparent;cursor:pointer;
+ touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline:none;box-shadow:none
 }
-
-
-/* =========================================================
-   배경
-========================================================= */
-
-body{
-  position:relative;
-
-  background:
-    url("bduend1.png")
-    no-repeat
-    center center / cover;
-}
-
-
-/* =========================================================
-   화살표 영역
-========================================================= */
-
-.talk-controls{
-
-  position:fixed;
-
-  left:50%;
-  bottom:var(--control-bottom);
-
-  transform:
-    translateX(-50%);
-
-  width:var(--talk-width);
-  height:var(--arrow-h);
-
-  display:none;
-
-  align-items:center;
-  justify-content:space-between;
-
-  z-index:40;
-}
-
-
-.talk-controls.show{
-
-  display:flex;
-
-  animation:
-    fadeSimple .35s ease;
-}
-
-
-/* =========================================================
-   말박스 영역
-========================================================= */
-
-.talk-box-wrap{
-
-  position:fixed;
-
-  left:50%;
-
-  top:
-    calc(
-      100dvh
-      - var(--control-bottom)
-      + var(--talk-gap)
-    );
-
-  transform:
-    translateX(-50%);
-
-  width:var(--talk-width);
-
-  display:none;
-
-  z-index:30;
-}
-
-
-.talk-box-wrap.show{
-
-  display:block;
-
-  animation:
-    fadeSimple .35s ease;
-}
-
-
-/* =========================================================
-   말박스
-========================================================= */
-
-.talk-box{
-
-  width:100%;
-
-  padding:
-    22px 25px;
-
-  border:
-    3px solid
-    var(--paper-border);
-
-  background:
-    var(--paper);
-
-  color:
-    var(--paper-text);
-
-  font-size:23px;
-
-  font-weight:700;
-
-  line-height:1.55;
-
-  word-break:keep-all;
-
-  white-space:pre-line;
-
-  box-shadow:
-    0 7px 14px
-    rgba(0,0,0,.22);
-}
-
-
-/* =========================================================
-   화살표 버튼
-========================================================= */
-
-.arrow-btn{
-
-  width:var(--arrow-w);
-  height:var(--arrow-h);
-
-  flex:
-    0 0 var(--arrow-w);
-
-  border:none;
-
-  background:transparent;
-
-  padding:0;
-
-  cursor:pointer;
-
-  -webkit-tap-highlight-color:
-    transparent;
-
-  touch-action:
-    manipulation;
-
-  transition:
-    transform .15s ease;
-}
-
-
-.arrow-btn:hover{
-
-  transform:
-    translateY(-2px)
-    scale(1.03);
-}
-
-
-.arrow-btn:active{
-
-  transform:
-    translateY(2px)
-    scale(.94);
-}
-
-
-.arrow-btn svg{
-
-  width:100%;
-  height:100%;
-
-  display:block;
-
-  filter:
-    drop-shadow(
-      0 7px 8px
-      rgba(0,0,0,.40)
-    )
-    drop-shadow(
-      0 2px 2px
-      rgba(0,0,0,.30)
-    );
-}
-
-
-.arrow-shape{
-
-  fill:
-    var(--green);
-
-  stroke:
-    var(--green-dark);
-
-  stroke-width:3;
-}
-
-
-.arrow-highlight{
-
-  fill:
-    rgba(255,255,255,.25);
-}
-
-
-.arrow-btn.hidden{
-
-  visibility:hidden;
-
-  pointer-events:none;
-}
-
-
-/* =========================================================
-   마지막 다음 버튼
-========================================================= */
-
-.next-page-btn{
-
-  position:fixed;
-
-  left:50%;
-
-  bottom:
-    var(--next-bottom);
-
-  transform:
-    translateX(-50%);
-
-  z-index:60;
-
-  display:none;
-
-  height:58px;
-
-  min-width:130px;
-
-  padding:
-    0 28px;
-
-  border:
-    3px solid
-    var(--green-dark);
-
-  border-radius:15px;
-
-  background:
-    var(--green);
-
-  color:#fffdf1;
-
-  font-family:
-    "Gowun Dodum",
-    sans-serif;
-
-  font-size:20px;
-
-  font-weight:900;
-
-  line-height:1;
-
-  white-space:nowrap;
-
-  cursor:pointer;
-
-  box-shadow:
-    0 5px 8px
-    rgba(0,0,0,.30),
-
-    inset 0 2px 2px
-    rgba(255,255,255,.25);
-
-  text-shadow:
-    0 1px 2px
-    rgba(0,0,0,.25);
-
-  -webkit-tap-highlight-color:
-    transparent;
-
-  transition:
-    transform .15s ease;
-}
-
-
-.next-page-btn.show{
-
-  display:block;
-
-  animation:
-    fadeSimple .35s ease;
-}
-
-
-.next-page-btn:hover{
-
-  transform:
-    translateX(-50%)
-    translateY(-2px)
-    scale(1.03);
-}
-
-
-.next-page-btn:active{
-
-  transform:
-    translateX(-50%)
-    translateY(2px)
-    scale(.96);
-}
-
-
-/* =========================================================
-   엔딩 영상
-========================================================= */
-
-.end-video-wrap{
-  position:fixed;
-  inset:0;
-  z-index:999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:#000;
-}
-
-
-.end-video-wrap.show{
-  display:flex;
-}
-
-
-.end-video{
-  display:block;
-  width:auto;
-  height:auto;
-  max-width:75vw;
-  max-height:75dvh;
-  object-fit:contain;
-  background:#000;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 12px 30px rgba(0,0,0,.55);
-}
-
-
-/* =========================================================
-   애니메이션
-========================================================= */
-
-@keyframes fadeSimple{
-
-  from{
-    opacity:0;
-  }
-
-  to{
-    opacity:1;
-  }
-
-}
-
-
-/* =========================================================
-   휴대폰
-========================================================= */
-
-@media(max-width:600px){
-
-  :root{
-
-    --talk-width:
-      min(92vw,360px);
-
-    --control-bottom:28vh;
-
-    --arrow-w:58px;
-    --arrow-h:48px;
-
-    --talk-gap:24px;
-
-    --next-bottom:
-      calc(
-        3vh
-        +
-        env(safe-area-inset-bottom)
-      );
-  }
-
-
-  .talk-box{
-
-    padding:
-      15px 17px;
-
-    border-width:2px;
-
-    font-size:16px;
-
-    line-height:1.5;
-
-    box-shadow:
-      0 5px 10px
-      rgba(0,0,0,.22);
-  }
-
-
-  .next-page-btn{
-
-    height:46px;
-
-    min-width:100px;
-
-    padding:
-      0 18px;
-
-    border-width:3px;
-
-    border-radius:13px;
-
-    font-size:15px;
-  }
-
-}
-
-
-/* =========================================================
-   작은 휴대폰
-========================================================= */
-
+.arrow:focus,.arrow:focus-visible,.arrow:active{outline:none;box-shadow:none;background:transparent}
+.arrow svg{display:block;width:100%;height:100%;filter:drop-shadow(0 5px 6px rgba(0,0,0,.4))}
+.shape{fill:var(--green);stroke:var(--dark);stroke-width:3}
+.hi{fill:rgba(255,255,255,.25)}
+.arrow.hidden{visibility:hidden;pointer-events:none}
+.landscape{display:none}
 @media(max-width:390px){
-
-  :root{
-
-    --talk-width:92vw;
-
-    --control-bottom:27vh;
-
-    --arrow-w:54px;
-    --arrow-h:45px;
-
-    --talk-gap:22px;
-  }
-
-
-  .talk-box{
-
-    padding:
-      13px 15px;
-
-    font-size:15px;
-
-    line-height:1.45;
-  }
-
-
-  .next-page-btn{
-
-    height:44px;
-
-    min-width:94px;
-
-    padding:
-      0 15px;
-
-    font-size:14px;
-  }
-
+ .media-box{width:min(86vw,calc((100dvh - 104px)*.625))}
+ .talk{font-size:11px;padding:8px 9px}
+ .arrows{gap:74px}
 }
-
-
-/* =========================================================
-   화면 높이가 낮은 기기
-========================================================= */
-
-@media(max-height:700px){
-
-  .talk-box{
-
-    padding:
-      11px 14px;
-
-    font-size:14px;
-
-    line-height:1.4;
-  }
-
-}
-/* 가로 화면 안내 */
-.landscape-guide{
-  display:none;
-}
-
-@media (orientation: landscape){
-  .landscape-guide{
-    position:fixed;
-    inset:0;
-    z-index:999999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#111;
-  }
-
-  .landscape-guide-text{
-    font-family:"Gowun Dodum",sans-serif;
-    font-size:20px;
-    font-weight:700;
-    line-height:1.7;
-    text-align:center;
-    color:#fff;
-  }
+@media(orientation:landscape){
+ .landscape{display:flex;position:fixed;inset:0;z-index:999;align-items:center;justify-content:center;background:#111;color:#fff;text-align:center;line-height:1.7;font-weight:700}
 }
 </style>
 </head>
-
-
 <body>
-<div class="landscape-guide">
-  <div class="landscape-guide-text">
-    📱<br>
-    원활한 진행을 위해<br>
-    세로 모드를 유지해 주세요.
+<div class="landscape">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div>
+
+<div class="screen">
+ <div class="stage">
+  <div class="media-box">
+   <img id="storyImg" class="media" src="bduend1.png" alt="">
+   <video id="endVideo" class="media" src="bduend.mp4" muted playsinline webkit-playsinline preload="auto"></video>
+   <div id="talk" class="talk"></div>
   </div>
+
+  <div class="control-slot">
+   <div id="arrows" class="arrows">
+    <button id="prevBtn" class="arrow hidden" type="button" aria-label="이전">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="hi" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
+    </button>
+    <button id="nextBtn" class="arrow" type="button" aria-label="다음">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="hi" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
+    </button>
+   </div>
+  </div>
+ </div>
 </div>
-
-<!-- =====================================================
-     화살표
-===================================================== -->
-
-<div
-  id="talkControls"
-  class="talk-controls"
->
-
-
-  <!-- 왼쪽 -->
-
-  <button
-    id="prevTalkBtn"
-    class="arrow-btn hidden"
-    type="button"
-    onclick="prevTalk()"
-    aria-label="이전"
-  >
-
-    <svg
-      viewBox="0 0 120 96"
-      aria-hidden="true"
-    >
-
-      <path
-        class="arrow-shape"
-        d="
-        M84 10
-        Q92 15 92 26
-        L92 70
-        Q92 81 84 86
-        Q76 91 67 84
-        L22 54
-        Q13 48 22 42
-        L67 12
-        Q76 5 84 10 Z
-        "
-      />
-
-      <path
-        class="arrow-highlight"
-        d="
-        M78 18
-        Q84 21 84 28
-        L84 36
-        L39 48
-        L78 22 Z
-        "
-      />
-
-    </svg>
-
-  </button>
-
-
-  <!-- 오른쪽 -->
-
-  <button
-    id="nextTalkBtn"
-    class="arrow-btn"
-    type="button"
-    onclick="nextTalk()"
-    aria-label="다음"
-  >
-
-    <svg
-      viewBox="0 0 120 96"
-      aria-hidden="true"
-    >
-
-      <path
-        class="arrow-shape"
-        d="
-        M36 10
-        Q28 15 28 26
-        L28 70
-        Q28 81 36 86
-        Q44 91 53 84
-        L98 54
-        Q107 48 98 42
-        L53 12
-        Q44 5 36 10 Z
-        "
-      />
-
-      <path
-        class="arrow-highlight"
-        d="
-        M42 18
-        Q36 21 36 28
-        L36 36
-        L81 48
-        L42 22 Z
-        "
-      />
-
-    </svg>
-
-  </button>
-
-</div>
-
-
-<!-- =====================================================
-     말박스
-===================================================== -->
-
-<div
-  id="talkBoxWrap"
-  class="talk-box-wrap"
->
-
-  <div
-    id="talkBox"
-    class="talk-box"
-  ></div>
-
-</div>
-
-
-<!-- =====================================================
-     마지막 다음 버튼
-===================================================== -->
-
-<button
-  id="nextPageBtn"
-  class="next-page-btn"
-  type="button"
-  onclick="goNextPage()"
->
-  다음
-</button>
-
-
-<!-- =====================================================
-     엔딩 영상
-===================================================== -->
-
-<div
-  id="endVideoWrap"
-  class="end-video-wrap"
->
-
-  <video
-    id="endVideo"
-    class="end-video"
-    playsinline
-    webkit-playsinline
-    preload="auto"
-    muted
-  >
-    <source
-      src="bduend.mp4"
-      type="video/mp4"
-    >
-  </video>
-
-</div>
-
 
 <script>
-
-/* =========================================================
-   전체 대사
-
-   1~2번째 : bduend1.png
-   3번째   : bduend2.png
-   4번째   : bduend3.png
-========================================================= */
-
-const talks = [
-
-  `얼마나 지났을까.
+const talks=[`얼마나 지났을까.
 한참 잠을 자고난 후 눈을 떴어.
 분명 조금 전까지 래빗홀 속 책 열매 나무 아래에
 있었는데 어느새 교실로 돌아와 있었어.`,
@@ -780,372 +89,75 @@ const talks = [
 
   `나는 잠시 친구를 바라보다가 웃었어.
 그 꿈이 뭐였는지는 묻지 않았어.
-어차피 나도 같은 꿈을 꾸었으니까.`
+어차피 나도 같은 꿈을 꾸었으니까.`];
+let currentTalk=0;
+let ending=false;
 
-];
+const storyImg=document.getElementById("storyImg");
+const endVideo=document.getElementById("endVideo");
+const talk=document.getElementById("talk");
+const arrows=document.getElementById("arrows");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
 
-
-/* =========================================================
-   현재 말박스 번호
-========================================================= */
-
-let currentTalk = 0;
-
-
-/* =========================================================
-   요소
-========================================================= */
-
-const talkControls =
-  document.getElementById(
-    "talkControls"
-  );
-
-const talkBoxWrap =
-  document.getElementById(
-    "talkBoxWrap"
-  );
-
-const talkBox =
-  document.getElementById(
-    "talkBox"
-  );
-
-const prevTalkBtn =
-  document.getElementById(
-    "prevTalkBtn"
-  );
-
-const nextTalkBtn =
-  document.getElementById(
-    "nextTalkBtn"
-  );
-
-const nextPageBtn =
-  document.getElementById(
-    "nextPageBtn"
-  );
-
-const endVideoWrap =
-  document.getElementById(
-    "endVideoWrap"
-  );
-
-const endVideo =
-  document.getElementById(
-    "endVideo"
-  );
-
-
-/* =========================================================
-   현재 말박스에 맞는 배경 결정
-========================================================= */
-
-function getBackgroundForTalk(index){
-
-  /*
-    1~2번째
-  */
-  if(index <= 1){
-
-    return "bduend1.png";
-  }
-
-
-  /*
-    3번째
-  */
-  if(index === 2){
-
-    return "bduend2.png";
-  }
-
-
-  /*
-    4번째
-  */
-  return "bduend3.png";
+function imageForTalk(index){
+ if(index<=1) return "bduend1.png";
+ if(index===2) return "bduend2.png";
+ return "bduend3.png";
 }
 
-
-/* =========================================================
-   배경 변경
-========================================================= */
-
-function updateBackground(){
-
-  const image =
-    getBackgroundForTalk(
-      currentTalk
-    );
-
-  document.body.style.backgroundImage =
-    `url("${image}")`;
+function render(){
+ storyImg.src=imageForTalk(currentTalk);
+ storyImg.style.display="block";
+ talk.textContent=talks[currentTalk];
+ talk.style.display="block";
+ prevBtn.classList.toggle("hidden",currentTalk===0);
 }
 
-
-/* =========================================================
-   대사 표시
-========================================================= */
-
-function updateTalk(){
-
-  /*
-    배경 변경
-  */
-  updateBackground();
-
-
-  /*
-    말박스 내용
-  */
-  talkBox.textContent =
-    talks[currentTalk];
-
-
-  /*
-    첫 번째 말박스에서는
-    이전 화살표 숨김
-  */
-  if(currentTalk === 0){
-
-    prevTalkBtn
-      .classList
-      .add("hidden");
-
-  }else{
-
-    prevTalkBtn
-      .classList
-      .remove("hidden");
-  }
-
-
-  /*
-    마지막 말박스 여부
-  */
-  const isLast =
-    currentTalk ===
-    talks.length - 1;
-
-
-  /*
-    마지막 말박스에서는
-    오른쪽 화살표 숨김
-    하단 다음 버튼 표시
-  */
-  if(isLast){
-
-    nextTalkBtn.style.visibility =
-      "hidden";
-
-    nextTalkBtn.style.pointerEvents =
-      "none";
-
-    nextPageBtn
-      .classList
-      .add("show");
-
-  }else{
-
-    nextTalkBtn.style.visibility =
-      "visible";
-
-    nextTalkBtn.style.pointerEvents =
-      "auto";
-
-    nextPageBtn
-      .classList
-      .remove("show");
-  }
-
+function next(){
+ if(ending) return;
+ if(currentTalk < talks.length-1){
+   currentTalk++;
+   render();
+   return;
+ }
+ playEnding();
 }
 
-
-/* =========================================================
-   다음 화살표
-========================================================= */
-
-function nextTalk(){
-
-  if(
-    currentTalk <
-    talks.length - 1
-  ){
-
-    currentTalk++;
-
-    updateTalk();
-  }
-
+function prev(){
+ if(ending || currentTalk===0) return;
+ currentTalk--;
+ render();
 }
 
-
-/* =========================================================
-   이전 화살표
-========================================================= */
-
-function prevTalk(){
-
-  if(currentTalk > 0){
-
-    currentTalk--;
-
-    updateTalk();
-  }
-
+function playEnding(){
+ ending=true;
+ arrows.style.visibility="hidden";
+ talk.style.display="none";
+ storyImg.style.display="none";
+ endVideo.style.display="block";
+ endVideo.muted=true;
+ endVideo.volume=0;
+ endVideo.currentTime=0;
+ endVideo.onended=function(){location.href="bduout.html"};
+ const p=endVideo.play();
+ if(p) p.catch(function(){endVideo.controls=true});
 }
 
-
-/* =========================================================
-   마지막 다음 버튼
-
-   다음 클릭
-   → bduend.mp4 묵음 재생
-   → 영상 종료
-   → bduout.html 이동
-========================================================= */
-
-function goNextPage(){
-
-  /*
-    말박스와 화살표 숨김
-  */
-  talkControls
-    .classList
-    .remove("show");
-
-  talkBoxWrap
-    .classList
-    .remove("show");
-
-  nextPageBtn
-    .classList
-    .remove("show");
-
-
-  /*
-    영상 화면 표시
-  */
-  endVideoWrap
-    .classList
-    .add("show");
-
-
-  /*
-    영상 강제 묵음
-  */
-  endVideo.muted = true;
-  endVideo.volume = 0;
-
-
-  /*
-    처음부터 재생
-  */
-  endVideo.currentTime = 0;
-
-
-  /*
-    영상이 끝나는 순간
-    bduout.html 이동
-  */
-  endVideo.onended = function(){
-
-    location.href =
-      "bduout.html";
-  };
-
-
-  /*
-    영상 재생
-  */
-  const playPromise =
-    endVideo.play();
-
-
-  /*
-    혹시 재생이 막힐 경우
-  */
-  if(
-    playPromise !== undefined
-  ){
-
-    playPromise.catch(
-      function(){
-
-        endVideo.controls =
-          true;
-      }
-    );
-  }
-
-}
-
-
-/* =========================================================
-   처음 실행
-========================================================= */
+nextBtn.addEventListener("click",next);
+prevBtn.addEventListener("click",prev);
 
 function startPage(){
-
-  currentTalk = 0;
-
-
-  /*
-    첫 배경
-  */
-  updateBackground();
-
-
-  /*
-    처음에는 UI 숨김
-  */
-  talkControls
-    .classList
-    .remove("show");
-
-  talkBoxWrap
-    .classList
-    .remove("show");
-
-  nextPageBtn
-    .classList
-    .remove("show");
-
-
-  /*
-    1초 뒤 첫 말박스 등장
-  */
-  setTimeout(
-    function(){
-
-      updateTalk();
-
-      talkControls
-        .classList
-        .add("show");
-
-      talkBoxWrap
-        .classList
-        .add("show");
-
-    },
-    1000
-  );
-
+ currentTalk=0;
+ ending=false;
+ endVideo.pause();
+ endVideo.style.display="none";
+ endVideo.controls=false;
+ arrows.style.visibility="visible";
+ render();
 }
-
-
-/* =========================================================
-   실행
-========================================================= */
-
-window.addEventListener(
-  "load",
-  startPage
-);
-
+window.addEventListener("load",startPage);
+window.addEventListener("pageshow",function(e){if(e.persisted)startPage()});
 </script>
-
 </body>
 </html>
