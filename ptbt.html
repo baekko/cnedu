@@ -80,6 +80,17 @@ body{position:relative;background:url("ptbin.png") no-repeat center center/cover
  .caption{font-size:13px;padding:9px 10px}
  .next-btn{height:44px;min-width:105px;padding:0 15px;font-size:14px}
 }
+.start-game-btn{
+position:absolute;left:50%;top:calc(var(--card-top) + var(--card-size) + var(--arrow-top-gap));
+transform:translateX(-50%);z-index:20;display:none;height:58px;min-width:220px;padding:0 28px;
+border:3px solid #2d160b;border-radius:15px;background:#5b351d;color:#fffdf1;
+font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:900;line-height:1;white-space:nowrap;cursor:pointer;
+box-shadow:0 5px 8px rgba(0,0,0,.30),inset 0 2px 2px rgba(255,255,255,.25);text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.start-game-btn.show{display:block;animation:fadeUp .35s ease}
+.start-game-btn:active{transform:translateX(-50%) translateY(2px) scale(.98)}
+@media(max-width:600px){.start-game-btn{height:46px;min-width:180px;padding:0 18px;border-radius:13px;font-size:15px}}
+@media(max-width:390px){.start-game-btn{height:44px;min-width:170px;padding:0 15px;font-size:14px}}
+
 </style>
 </head>
 <body>
@@ -98,6 +109,7 @@ body{position:relative;background:url("ptbin.png") no-repeat center center/cover
    <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
   </button>
  </div>
+ <button id="startGameBtn" class="start-game-btn" type="button" onclick="beginSlides()">편지왔어요 게임 시작</button>
  <button id="nextPageBtn" class="next-btn" onclick="location.href='ptbm.html'">다음</button>
 </div>
 <script>
@@ -122,6 +134,7 @@ const arrows=document.getElementById("arrowArea");
 const prev=document.getElementById("prevBtn");
 const next=document.getElementById("nextArrowBtn");
 const nextPage=document.getElementById("nextPageBtn");
+const startGameBtn=document.getElementById("startGameBtn");
 
 function showSlide(){
  const s=slides[current];
@@ -138,6 +151,7 @@ function prevSlide(){if(current>0){current--;showSlide();}}
 function beginSlides(){
  video.pause();
  video.style.display="none";
+ startGameBtn.classList.remove("show");
  arrows.classList.remove("video-mode");
  current=0;
  showSlide();
@@ -145,15 +159,22 @@ function beginSlides(){
 function startPage(){
  current=0;
  nextPage.classList.remove("show");
+ startGameBtn.classList.remove("show");
  arrows.classList.add("video-mode");
  caption.className="caption hidden";
  img.classList.remove("show");
  video.style.display="block";
  video.currentTime=0;
  const p=video.play();
- if(p) p.catch(function(){beginSlides();});
+ if(p) p.catch(function(){
+  video.style.display="none";
+  startGameBtn.classList.add("show");
+});
 }
-video.addEventListener("ended",beginSlides);
+video.addEventListener("ended",function(){
+ video.style.display="none";
+ startGameBtn.classList.add("show");
+});
 window.addEventListener("load",startPage);
 window.addEventListener("pageshow",function(e){if(e.persisted)startPage();});
 </script>
