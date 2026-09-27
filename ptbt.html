@@ -167,12 +167,11 @@ function startPage(){
  video.currentTime=0;
  const p=video.play();
  if(p) p.catch(function(){
-  video.style.display="none";
   startGameBtn.classList.add("show");
 });
 }
 video.addEventListener("ended",function(){
- video.style.display="none";
+ /* 마지막 프레임을 그대로 유지한 채 시작 버튼만 표시 */
  startGameBtn.classList.add("show");
 });
 window.addEventListener("load",startPage);
