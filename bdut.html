@@ -68,7 +68,16 @@ body{background:url("bdutg.png") center/cover no-repeat}
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.12;transform:scale(1.08)}}
 #nextBtn.blink{animation:blink .55s linear infinite}
 
-#finalNextBtn{width:clamp(70px,18cqw,104px);height:clamp(42px,12cqw,68px);border:clamp(3px,.7cqw,4px) solid var(--dark);border-radius:clamp(13px,3cqw,18px);background:var(--green);color:#fffdf1;font-family:"Gowun Dodum",sans-serif;font-size:clamp(14px,3.5cqw,20px);font-weight:900;box-shadow:0 5px 8px rgba(0,0,0,.30);cursor:pointer;display:none}
+#finalNextBtn{
+ width:clamp(70px,18cqw,104px);height:clamp(42px,12cqw,68px);
+ border:clamp(3px,.7cqw,4px) solid var(--dark);
+ border-radius:clamp(13px,3cqw,18px);
+ background:var(--green);color:#fffdf1;
+ font-family:"Gowun Dodum",sans-serif;
+ font-size:clamp(14px,3.5cqw,20px);font-weight:900;
+ box-shadow:0 5px 8px rgba(0,0,0,.30);
+ cursor:pointer;display:none;
+}
 #finalNextBtn.on{display:block}
 </style>
 </head>
@@ -87,6 +96,7 @@ body{background:url("bdutg.png") center/cover no-repeat}
     <button id="nextBtn" class="arrow" type="button" aria-label="다음">
      <svg viewBox="0 0 120 96"><path class="shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="hi" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
     </button>
+    <button id="finalNextBtn" type="button">다음</button>
    </div>
    <div id="talk" class="talk"></div>
   </div>
