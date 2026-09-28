@@ -1471,6 +1471,278 @@ body > .landscape-guide{
   container-type:inline-size !important;
 }
 
+
+
+/* =========================================================
+   최종 수정: PTBQ 안내창 / 미션카드 글자 크기 통일
+========================================================= */
+
+/* PTBQ의 .modal → Rabbit Hole의 .info-modal */
+.rabbit-frame .info-modal{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:100 !important;
+  display:none !important;
+  justify-content:center !important;
+  align-items:center !important;
+  padding:0 !important;
+  background:rgba(0,0,0,.55) !important;
+}
+.rabbit-frame .info-modal.show{
+  display:flex !important;
+}
+
+/* PTBQ의 .modal-box → Rabbit Hole의 .info-box */
+.rabbit-frame .info-box{
+  position:relative !important;
+  width:88% !important;
+  height:38cqw !important;
+  min-height:0 !important;
+  padding:9cqw 5cqw 9cqw !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  background:
+    linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.38),
+    inset 0 0 24px rgba(130,85,45,.08) !important;
+  text-align:center !important;
+}
+.rabbit-frame .info-box::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:3% !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+  pointer-events:none !important;
+}
+
+/* PTBQ 최종 제목/본문 규격 */
+.rabbit-frame .modal-title{
+  position:relative !important;
+  z-index:2 !important;
+  top:0 !important;
+  left:auto !important;
+  transform:none !important;
+  margin:0 !important;
+  color:#2d2925 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4cqw !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  letter-spacing:.02em !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+.rabbit-frame .modal-content{
+  position:relative !important;
+  z-index:2 !important;
+  width:100% !important;
+  margin-top:5.4cqw !important;
+  color:#2d2925 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4.6cqw !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+}
+.rabbit-frame .modal-close{
+  position:absolute !important;
+  z-index:4 !important;
+  right:5cqw !important;
+  bottom:2.5cqw !important;
+  width:auto !important;
+  min-width:13cqw !important;
+  height:6.5cqw !important;
+  margin:0 !important;
+  padding:0 2.5cqw !important;
+  border:none !important;
+  border-radius:9px !important;
+  background:var(--green) !important;
+  color:#fff !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:3cqw !important;
+  font-weight:900 !important;
+}
+
+/* PTBQ 최종 미션카드 글자 비율 */
+.rabbit-frame .mission-card,
+.rabbit-frame .mission-card *{
+  word-break:keep-all !important;
+}
+.rabbit-frame .mission-title{
+  white-space:nowrap !important;
+  overflow:visible !important;
+  font-size:4.2cqw !important;
+  line-height:1.4 !important;
+  letter-spacing:-.035em !important;
+}
+.rabbit-frame .mission-kit{
+  white-space:nowrap !important;
+  font-size:4.6cqw !important;
+  line-height:1.38 !important;
+  letter-spacing:-.025em !important;
+}
+.rabbit-frame .mission-guide,
+.rabbit-frame .mission-desc,
+.rabbit-frame .mission-text,
+.rabbit-frame .mission-instruction,
+.rabbit-frame .mission-card p,
+.rabbit-frame .mission-card li,
+.rabbit-frame .mission-card label,
+.rabbit-frame .mission-card .caption,
+.rabbit-frame .mission-card .sub,
+.rabbit-frame .mission-card .small{
+  font-size:3.55cqw !important;
+  line-height:1.38 !important;
+  letter-spacing:-.025em !important;
+}
+
+
+
+/* ===== PTBQ 안내창 세로 간격/2줄 본문/닫기버튼 겹침 방지 ===== */
+.rabbit-frame .info-box{
+  height:auto !important;
+  min-height:31cqw !important;
+  padding:5.8cqw 4.5cqw 11.5cqw !important;
+  overflow:visible !important;
+}
+.rabbit-frame .modal-title{
+  margin:0 !important;
+  font-size:4cqw !important;
+  line-height:1.25 !important;
+}
+.rabbit-frame .modal-content{
+  margin-top:5.4cqw !important;
+  font-size:4.6cqw !important;
+  line-height:1.35 !important;
+  min-height:6.3cqw !important;
+}
+.rabbit-frame .modal-close{
+  right:4.5cqw !important;
+  bottom:2.8cqw !important;
+  height:6.5cqw !important;
+  min-width:13cqw !important;
+}
+
+
+
+/* ===== PTBQ와 동일하게: 모달 제목을 편지창 상단에 고정 ===== */
+.rabbit-frame .info-box{
+  position:relative !important;
+  min-height:31cqw !important;
+  padding:12.5cqw 4.5cqw 11.5cqw !important;
+}
+.rabbit-frame .modal-title{
+  position:absolute !important;
+  z-index:3 !important;
+  top:2.6cqw !important;
+  left:4.5cqw !important;
+  right:4.5cqw !important;
+  width:auto !important;
+  margin:0 !important;
+  transform:none !important;
+  font-size:4cqw !important;
+  line-height:1.2 !important;
+  text-align:center !important;
+}
+.rabbit-frame .modal-content{
+  position:relative !important;
+  z-index:2 !important;
+  margin:0 !important;
+  min-height:6.3cqw !important;
+  font-size:4.6cqw !important;
+  line-height:1.35 !important;
+  text-align:center !important;
+}
+.rabbit-frame .modal-close{
+  position:absolute !important;
+  z-index:4 !important;
+  right:4.5cqw !important;
+  bottom:2.8cqw !important;
+}
+
+
+
+/* ===== PTBQ 최신 모달 최종값 직접 복제 ===== */
+.rabbit-frame .info-box{
+  position:relative !important;
+  width:88% !important;
+  height:38cqw !important;
+  min-height:0 !important;
+  padding:9cqw 5cqw 9cqw !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  background:linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),#f6ead6 !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  box-shadow:0 14px 30px rgba(0,0,0,.38),inset 0 0 24px rgba(130,85,45,.08) !important;
+}
+.rabbit-frame .info-box::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:3% !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+  pointer-events:none !important;
+}
+.rabbit-frame .modal-title{
+  position:absolute !important;
+  top:2.8cqw !important;
+  left:50% !important;
+  right:auto !important;
+  width:auto !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+  color:#a77a50 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4cqw !important;
+  font-weight:700 !important;
+  line-height:normal !important;
+  letter-spacing:.02em !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+.rabbit-frame .modal-content{
+  position:relative !important;
+  z-index:2 !important;
+  width:100% !important;
+  margin:5.4cqw 0 0 0 !important;
+  color:#2d2925 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4.6cqw !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+}
+.rabbit-frame .modal-close{
+  position:absolute !important;
+  right:5cqw !important;
+  bottom:2.5cqw !important;
+  z-index:4 !important;
+  height:6.5cqw !important;
+  min-width:13cqw !important;
+  width:auto !important;
+  margin:0 !important;
+  padding:0 2.5cqw !important;
+  border:none !important;
+  border-radius:9px !important;
+  background:var(--green) !important;
+  color:#fff !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:3cqw !important;
+  font-weight:900 !important;
+}
+
 </style>
 </head>
 
@@ -2145,9 +2417,13 @@ function showAnswer(){
 
 function showReward(){
 
+  const total = getTotalScore();
+
   openModal(
     "당근 갯수",
-    `현재까지 획득한 당근은 ${getTotalScore()}개입니다.`
+    total === 0
+      ? "현재까지 획득한 당근은 0개입니다."
+      : "🥕".repeat(total)
   );
 
 }
