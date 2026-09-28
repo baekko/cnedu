@@ -51,7 +51,7 @@ body{background:url("bdutg.png") center/cover no-repeat}
  .landscape{display:flex;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;background:#111;color:#fff;text-align:center;line-height:1.7;font-weight:700}
 }
 
-#storyImg,#endVideo{display:none}
+#storyImg{display:none}
 .talk{display:none}
 .arrows{visibility:hidden}
 .arrows.on{visibility:visible}
@@ -67,6 +67,9 @@ body{background:url("bdutg.png") center/cover no-repeat}
 #startBtn:focus,#startBtn:focus-visible,#startBtn:active{outline:none}
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.12;transform:scale(1.08)}}
 #nextBtn.blink{animation:blink .55s linear infinite}
+
+#finalNextBtn{width:clamp(70px,18cqw,104px);height:clamp(42px,12cqw,68px);border:clamp(3px,.7cqw,4px) solid var(--dark);border-radius:clamp(13px,3cqw,18px);background:var(--green);color:#fffdf1;font-family:"Gowun Dodum",sans-serif;font-size:clamp(14px,3.5cqw,20px);font-weight:900;box-shadow:0 5px 8px rgba(0,0,0,.30);cursor:pointer;display:none}
+#finalNextBtn.on{display:block}
 </style>
 </head>
 <body>
@@ -76,7 +79,6 @@ body{background:url("bdutg.png") center/cover no-repeat}
   <div class="media-box">
    <video id="titleVideo" class="media" src="bdut.mp4" muted playsinline preload="auto"></video>
    <img id="storyImg" class="media" src="bduin1.png" alt="">
-   <video id="endVideo" class="media" src="bduin.mp4" muted playsinline preload="auto"></video>
    <button id="startBtn" type="button">래빗홀 게임 시작</button>
    <div id="arrows" class="arrows">
     <button id="prevBtn" class="arrow hidden" type="button" aria-label="이전">
@@ -156,12 +158,12 @@ const scenes=[
 let scene=0, talkIndex=0, ending=false, firstNext=true;
 const titleVideo=document.getElementById("titleVideo");
 const storyImg=document.getElementById("storyImg");
-const endVideo=document.getElementById("endVideo");
 const talk=document.getElementById("talk");
 const arrows=document.getElementById("arrows");
 const prevBtn=document.getElementById("prevBtn");
 const nextBtn=document.getElementById("nextBtn");
 const startBtn=document.getElementById("startBtn");
+const finalNextBtn=document.getElementById("finalNextBtn");
 
 function render(){
  storyImg.src="bduin"+(scene+1)+".png";
@@ -169,6 +171,9 @@ function render(){
  talk.textContent=scenes[scene][talkIndex];
  talk.style.display="block";
  prevBtn.classList.toggle("hidden",scene===0 && talkIndex===0);
+ const isLast=scene===scenes.length-1 && talkIndex===scenes[scene].length-1;
+ nextBtn.style.display=isLast?"none":"block";
+ finalNextBtn.classList.toggle("on",isLast);
 }
 
 function startStory(){
@@ -200,7 +205,7 @@ function next(){
    render();
    return;
  }
- playEnding();
+ return;
 }
 
 function prev(){
@@ -209,28 +214,19 @@ function prev(){
  if(scene>0){scene--;talkIndex=scenes[scene].length-1;render()}
 }
 
-function playEnding(){
- ending=true;
- arrows.classList.remove("on");
- talk.style.display="none";
- storyImg.style.display="none";
- endVideo.style.display="block";
- endVideo.currentTime=0;
- endVideo.onended=()=>location.href="bdum.html";
- endVideo.onerror=()=>location.href="bdum.html";
- endVideo.play().catch(()=>location.href="bdum.html");
-}
 
 startBtn.addEventListener("click",startStory);
 nextBtn.addEventListener("click",next);
 prevBtn.addEventListener("click",prev);
+finalNextBtn.addEventListener("click",()=>location.href="bdum.html");
 
 function reset(){
  scene=0;talkIndex=0;ending=false;firstNext=true;
  arrows.classList.remove("on");
  nextBtn.classList.remove("blink");
  startBtn.classList.remove("on");
- talk.style.display="none";storyImg.style.display="none";endVideo.style.display="none";
+ talk.style.display="none";storyImg.style.display="none";
+ finalNextBtn.classList.remove("on");nextBtn.style.display="block";
  titleVideo.style.display="block";titleVideo.currentTime=0;
  titleVideo.onended=()=>startBtn.classList.add("on");
  titleVideo.play().catch(()=>startBtn.classList.add("on"));
