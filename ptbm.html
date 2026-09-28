@@ -1365,6 +1365,192 @@ body{display:flex!important;align-items:center!important;justify-content:center!
 .ptb-frame{
   background:url("ptbm.png") center center / cover no-repeat !important;
 }
+
+/* PTBM 원본 배경 복원: 최신 원본은 ptbin.png 사용 */
+body{
+  background:url("ptbin.png") no-repeat center center / cover !important;
+}
+.ptb-frame{
+  background:transparent !important;
+}
+
+/* ===== PTBM 편지 알림: Q페이지 25:40 박스의 11줄 편지와 실제 크기 완전 동일 ===== */
+.ptb-frame .info-box{
+  width:calc(min(90vw,((100dvh - 24px)*.625)) * .88) !important;
+  height:calc(min(90vw,((100dvh - 24px)*.625)) * 1.216) !important;
+  min-height:0 !important;
+  padding:
+    calc(min(90vw,((100dvh - 24px)*.625)) * .23)
+    calc(min(90vw,((100dvh - 24px)*.625)) * .09)
+    calc(min(90vw,((100dvh - 24px)*.625)) * .16) !important;
+  box-sizing:border-box !important;
+  border:1px solid #c7a37d !important;
+}
+.ptb-frame .info-box::before{
+  inset:calc(min(90vw,((100dvh - 24px)*.625)) * .03) !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+}
+.ptb-frame .info-content{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .05) !important;line-height:1.36 !important;}
+.ptb-frame .info-top{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .046) !important;}
+.ptb-frame .info-bottom{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .03) !important;}
+.ptb-frame .info-close{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .027) !important;}
+
+/* ===== PTBM 편지: Q페이지 편지와 실제 크기/버튼까지 완전 동일 ===== */
+.ptb-frame .info-box{
+  width:calc(min(90vw,((100dvh - 24px)*.625)) * .88) !important;
+  height:calc(min(90vw,((100dvh - 24px)*.625)) * 1.216) !important;
+  min-height:0 !important;
+  padding:
+    calc(min(90vw,((100dvh - 24px)*.625)) * .23)
+    calc(min(90vw,((100dvh - 24px)*.625)) * .09)
+    calc(min(90vw,((100dvh - 24px)*.625)) * .16) !important;
+  box-sizing:border-box!important;border:1px solid #c7a37d!important;
+}
+.ptb-frame .info-box::before{
+  inset:calc(min(90vw,((100dvh - 24px)*.625)) * .03) !important;
+  border:1px solid rgba(166,116,68,.55)!important;
+}
+.ptb-frame .info-content{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .05)!important;line-height:1.36!important;}
+.ptb-frame .info-top{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .046)!important;}
+.ptb-frame .info-bottom{font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .03)!important;}
+.ptb-frame .info-close{
+  right:7% !important;bottom:6.5% !important;
+  width:calc(min(90vw,((100dvh - 24px)*.625)) * .18) !important;
+  min-width:0 !important;
+  height:calc(min(90vw,((100dvh - 24px)*.625)) * .10) !important;
+  padding:0 !important;border-radius:13px !important;
+  font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .027) !important;
+}
+
+/* ===== PTBM 편지 알림: Q페이지와 같은 25:40 좌표계에서 직접 렌더링 ===== */
+/* ptbm 자체 배경은 원래대로 전체화면 */
+body{
+  background:url("ptbin.png") no-repeat center center / cover !important;
+}
+
+/* 외곽 이미지박스는 보이지 않지만, Q와 똑같은 25:40 크기의 투명 좌표계만 사용 */
+.ptb-frame{
+  width:min(90vw,calc((100dvh - 24px)*.625)) !important;
+  height:auto !important;
+  aspect-ratio:25/40 !important;
+  position:relative !important;
+  overflow:visible !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  container-type:inline-size !important;
+}
+
+/* Q의 letter-paper와 완전히 같은 수치 */
+.ptb-frame .info-modal{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  display:flex;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+}
+.ptb-frame .info-box{
+  position:relative !important;
+  width:88% !important;
+  height:76% !important;
+  min-height:0 !important;
+  padding:23% 9% 16% !important;
+  box-sizing:border-box !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+}
+.ptb-frame .info-box::before{
+  inset:3% !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+}
+
+/* Q와 같은 폰트/크기/행간 */
+.ptb-frame .info-content{
+  font-family:"Nanum Pen Script","Gowun Dodum",sans-serif !important;
+  font-size:5cqw !important;
+  font-weight:400 !important;
+  line-height:1.36 !important;
+  letter-spacing:.01em !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+}
+.ptb-frame .info-top{
+  font-family:"Nanum Pen Script","Gowun Dodum",sans-serif !important;
+  font-size:4.6cqw !important;
+}
+.ptb-frame .info-bottom{
+  font-family:"Nanum Pen Script","Gowun Dodum",sans-serif !important;
+  font-size:3cqw !important;
+}
+
+/* Q의 닫기 버튼과 완전히 같은 수치 */
+.ptb-frame .info-close{
+  right:7% !important;
+  bottom:6.5% !important;
+  width:18cqw !important;
+  min-width:18cqw !important;
+  height:10cqw !important;
+  padding:0 !important;
+  border-radius:13px !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:2.7cqw !important;
+  font-weight:900 !important;
+}
+
+body{background:url("ptbin.png") no-repeat center center/cover!important;}
+.ptb-frame{width:min(90vw,calc((100dvh - 24px)*.625))!important;height:auto!important;aspect-ratio:25/40!important;position:relative!important;overflow:visible!important;background:transparent!important;border:0!important;box-shadow:none!important;container-type:inline-size!important;}
+.ptb-frame .info-modal{position:absolute!important;inset:0!important;padding:0!important;display:none!important;justify-content:center!important;align-items:center!important;}
+.ptb-frame .info-modal.show{display:flex!important;}
+.ptb-frame .info-box{position:relative!important;width:88%!important;height:76%!important;min-height:0!important;padding:23% 9% 16%!important;box-sizing:border-box!important;border:1px solid #c7a37d!important;border-radius:5px!important;}
+.ptb-frame .info-box::before{inset:3%!important;border:1px solid rgba(166,116,68,.55)!important;}
+.ptb-frame .info-content{font-family:"Nanum Pen Script","Gowun Dodum",sans-serif!important;font-size:5cqw!important;font-weight:400!important;line-height:1.36!important;letter-spacing:.01em!important;}
+.ptb-frame .info-top{top:6%!important;font-size:4.6cqw!important;}
+.ptb-frame .info-bottom{bottom:4.5%!important;font-size:3cqw!important;}
+.ptb-frame .info-close{right:7%!important;bottom:6.5%!important;width:18cqw!important;min-width:18cqw!important;height:10cqw!important;padding:0!important;border-radius:13px!important;font-family:"Gowun Dodum",sans-serif!important;font-size:2.7cqw!important;font-weight:900!important;cursor:pointer!important;pointer-events:auto!important;z-index:20!important;}
+
+/* ===== PTBM 실측 차이 보정 =====
+   Q페이지는 *{box-sizing:border-box} 상태에서 5px 테두리가 있어
+   25:40 프레임의 실제 content 폭이 10px 작다.
+   PTBM은 테두리를 없애면서 content 폭이 10px 커져 편지지가 더 크게 보였음.
+   보이지 않는 5px 투명 테두리로 Q와 content box를 정확히 동일화한다. */
+.ptb-frame{
+  border:5px solid transparent !important;
+  box-shadow:none !important;
+  background:transparent !important;
+}
+
+/* 책장 밑 타원형은 원본 .bookshelf::after 장식이었음: 제거 */
+.bookshelf::after{
+  display:none !important;
+  content:none !important;
+}
+
+/* Q와 동일한 편지/닫기버튼 수치 재고정 */
+.ptb-frame .info-modal{
+  position:absolute !important;inset:0 !important;padding:0 !important;
+  display:none !important;justify-content:center !important;align-items:center !important;
+}
+.ptb-frame .info-modal.show{display:flex !important;}
+.ptb-frame .info-box{
+  position:relative !important;width:88% !important;height:76% !important;min-height:0 !important;
+  padding:23% 9% 16% !important;box-sizing:border-box !important;
+  border:1px solid #c7a37d !important;border-radius:5px !important;
+}
+.ptb-frame .info-box::before{inset:3% !important;border:1px solid rgba(166,116,68,.55) !important;}
+.ptb-frame .info-content{
+  font-family:"Nanum Pen Script","Gowun Dodum",sans-serif !important;
+  font-size:5cqw !important;font-weight:400 !important;line-height:1.36 !important;letter-spacing:.01em !important;
+}
+.ptb-frame .info-top{top:6% !important;font-size:4.6cqw !important;}
+.ptb-frame .info-bottom{bottom:4.5% !important;font-size:3cqw !important;}
+.ptb-frame .info-close{
+  right:7% !important;bottom:6.5% !important;width:18cqw !important;min-width:18cqw !important;height:10cqw !important;
+  padding:0 !important;border-radius:13px !important;font-family:"Gowun Dodum",sans-serif !important;
+  font-size:2.7cqw !important;font-weight:900 !important;pointer-events:auto !important;z-index:20 !important;
+}
 </style>
 </head>
 
