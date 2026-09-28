@@ -1294,6 +1294,22 @@ body{display:flex!important;align-items:center!important;justify-content:center!
 .ptb-frame .letter-top{top:6%!important;font-size:4.6cqw!important;}
 .ptb-frame .letter-bottom{bottom:4.5%!important;font-size:3cqw!important;}
 .ptb-frame .letter-close{right:7%!important;bottom:6.5%!important;width:18cqw!important;min-width:18cqw!important;height:10cqw!important;padding:0!important;border-radius:13px!important;font-family:"Gowun Dodum",sans-serif!important;font-size:2.7cqw!important;font-weight:900!important;}
+
+/* ===== 안내창: 제목 아래 한 줄 띄우고 본문 시작 ===== */
+.ptb-frame .modal-content{
+  margin-top:5.4cqw !important;
+}
+
+/* ===== Q2 미션카드 가장 안쪽 외곽선까지 다른 페이지와 동일한 갈색 ===== */
+.ptb-frame .mission-card::before,
+.ptb-frame .mission-card::after{
+  border-color:rgba(166,116,68,.55) !important;
+}
+.ptb-frame .mission-card .inner-border,
+.ptb-frame .mission-card .mission-inner,
+.ptb-frame .mission-card .card-inner{
+  border-color:rgba(166,116,68,.55) !important;
+}
 </style>
 </head>
 
