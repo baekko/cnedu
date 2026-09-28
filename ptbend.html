@@ -106,6 +106,16 @@ body{position:relative;background:url("ptbin.png") no-repeat center center/cover
  .landscape-guide{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#111}
  .landscape-guide-text{font-size:20px;font-weight:700;line-height:1.7;text-align:center;color:#fff}
 }
+
+
+/* 이미지/영상 경계의 서브픽셀 흰선 제거 */
+.card-area .story-img,
+.card-area .story-media{
+  inset:-1px !important;
+  width:calc(100% + 2px) !important;
+  height:calc(100% + 2px) !important;
+}
+
 </style>
 </head>
 <body>
