@@ -1323,6 +1323,143 @@ body{
   }
 }
 
+
+/* =========================================================
+   25:40 박스형 외곽 레이아웃
+   - 최신 원본의 말박스/미션카드/입력UI/대사/JS는 변경하지 않음
+========================================================= */
+body{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  background:#111 url("bdutg.png") center center / cover no-repeat fixed !important;
+}
+
+.rabbit-frame{
+  position:relative;
+  width:min(88vw, calc((100dvh - 24px) * .625));
+  aspect-ratio:25 / 40;
+  max-height:calc(100dvh - 24px);
+  overflow:hidden;
+  flex:0 0 auto;
+  border:5px solid #cdb7e9;
+  box-sizing:border-box;
+  background:url("bduq11.png") center center / cover no-repeat;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+  transform:translateZ(0);
+  isolation:isolate;
+}
+
+/* transform이 있는 프레임을 fixed 요소의 기준영역으로 사용 */
+.rabbit-frame > *{
+  max-width:100%;
+}
+
+@media(max-width:600px){
+  .rabbit-frame{ border-width:4px; }
+}
+
+@media(max-width:390px){
+  .rabbit-frame{ border-width:3px; }
+}
+
+/* 가로모드 안내는 기존처럼 화면 전체를 덮음 */
+body > .landscape-guide{
+  position:fixed !important;
+  inset:0 !important;
+}
+
+
+/* ===== 25:40 프레임 내부 대사 UI 위치 보정 ===== */
+.rabbit-frame .talk-box-wrap{
+  position:absolute !important;
+  left:5px !important;
+  right:5px !important;
+  width:auto !important;
+  top:calc(100% - 2.5% - clamp(96px,25cqw,160px)) !important;
+  bottom:auto !important;
+  transform:none !important;
+  z-index:30 !important;
+}
+.rabbit-frame .talk-box{
+  width:100% !important;
+  height:auto !important;
+  max-height:clamp(96px,25cqw,160px) !important;
+  padding:clamp(8px,2.2cqw,14px) clamp(9px,2.5cqw,16px) !important;
+  border-width:clamp(2px,.55cqw,3px) !important;
+  font-size:clamp(11px,3cqw,18px) !important;
+  line-height:1.38 !important;
+  overflow:hidden !important;
+}
+.rabbit-frame .talk-controls{
+  position:absolute !important;
+  left:5px !important;
+  right:5px !important;
+  width:auto !important;
+  top:calc(100% - 2.5% - clamp(96px,25cqw,160px) - clamp(42px,12cqw,68px) - clamp(6px,2cqw,12px)) !important;
+  bottom:auto !important;
+  height:clamp(42px,12cqw,68px) !important;
+  transform:none !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  z-index:40 !important;
+}
+.rabbit-frame .arrow-btn{
+  width:clamp(54px,15cqw,82px) !important;
+  height:clamp(45px,12.5cqw,68px) !important;
+  flex:0 0 clamp(54px,15cqw,82px) !important;
+}
+
+
+/* ===== 수정 1: 미션카드 ↔ 하단 입력 UI 좌우선 통일 ===== */
+.rabbit-frame{
+  --game-panel-w:min(88%, 560px);
+}
+.rabbit-frame .mission-wrap,
+.rabbit-frame .ui-wrap{
+  width:var(--game-panel-w) !important;
+  max-width:var(--game-panel-w) !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  box-sizing:border-box !important;
+}
+.rabbit-frame .mission-wrap{
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+}
+.rabbit-frame .mission-card{
+  width:100% !important;
+  box-sizing:border-box !important;
+  padding:clamp(18px,5.5cqw,30px) clamp(16px,5cqw,28px) !important;
+  border-width:clamp(3px,1cqw,5px) !important;
+}
+.rabbit-frame .mission-title{
+  font-size:clamp(18px,5.1cqw,28px) !important;
+  margin-bottom:clamp(12px,3.8cqw,22px) !important;
+}
+.rabbit-frame .mission-kit{
+  font-size:clamp(20px,5.6cqw,31px) !important;
+  margin-bottom:clamp(13px,4cqw,24px) !important;
+}
+.rabbit-frame .mission-question,
+.rabbit-frame .mission-image-box{
+  margin-bottom:clamp(12px,3.8cqw,22px) !important;
+}
+.rabbit-frame .mission-guide{
+  font-size:clamp(21px,6.2cqw,34px) !important;
+}
+
+
+/* ===== 미션카드 테두리: 최신 원본 스타일 복원 ===== */
+.rabbit-frame .mission-card{
+  border-width:1px !important;
+}
+.rabbit-frame .mission-card::before,
+.rabbit-frame .mission-card::after{
+  border-width:1px !important;
+}
+
 </style>
 </head>
 
@@ -1335,7 +1472,7 @@ body{
     세로 모드를 유지해 주세요.
   </div>
 </div>
-
+<div class="rabbit-frame">
 <!-- =====================================================
      화살표 / 미션시작 / 나무로
 ===================================================== -->
@@ -1599,7 +1736,7 @@ body{
   </div>
 
 </div>
-
+</div>
 
 <script>
 

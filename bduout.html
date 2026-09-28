@@ -742,6 +742,65 @@ body{
     color:#fff;
   }
 }
+
+/* =========================================================
+   25:40 박스형 외곽 레이아웃
+   - 최신 원본의 말박스/미션카드/입력UI/대사/JS는 변경하지 않음
+========================================================= */
+body{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  background:#111 url("bdutg.png") center center / cover no-repeat fixed !important;
+}
+
+.rabbit-frame{
+  position:relative;
+  width:min(88vw, calc((100dvh - 24px) * .625));
+  aspect-ratio:25 / 40;
+  max-height:calc(100dvh - 24px);
+  overflow:hidden;
+  flex:0 0 auto;
+  border:5px solid #cdb7e9;
+  box-sizing:border-box;
+  background:url("bduout.png") center center / cover no-repeat;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+  transform:translateZ(0);
+  isolation:isolate;
+}
+
+/* transform이 있는 프레임을 fixed 요소의 기준영역으로 사용 */
+.rabbit-frame > *{
+  max-width:100%;
+}
+
+@media(max-width:600px){
+  .rabbit-frame{ border-width:4px; }
+}
+
+@media(max-width:390px){
+  .rabbit-frame{ border-width:3px; }
+}
+
+/* 가로모드 안내는 기존처럼 화면 전체를 덮음 */
+body > .landscape-guide{
+  position:fixed !important;
+  inset:0 !important;
+}
+
+
+/* BDUOUT 엔딩 말박스도 같은 규격 */
+.rabbit-frame .ending-message{
+  box-sizing:border-box !important;
+  width:calc(100% - 10px) !important;
+  max-width:none !important;
+  padding:clamp(8px,2.2cqw,14px) clamp(9px,2.5cqw,16px) !important;
+  border-width:clamp(2px,.55cqw,3px) !important;
+  font-size:clamp(11px,3cqw,18px) !important;
+  line-height:1.38 !important;
+}
+
 </style>
 </head>
 
@@ -754,7 +813,7 @@ body{
     세로 모드를 유지해 주세요.
   </div>
 </div>
-
+<div class="rabbit-frame">
 <!-- =====================================================
      중앙 엔딩 말박스
 ===================================================== -->
@@ -864,7 +923,7 @@ body{
   </div>
 
 </div>
-
+</div>
 
 <script>
 
