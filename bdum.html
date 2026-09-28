@@ -804,23 +804,33 @@ body > .landscape-guide{
 }
 
 
-/* ===== BDUM: 말박스만 수정 =====
-   배경/책 좌표/intro-stage/화살표 위치는 변경하지 않음 */
-.rabbit-frame .talk-box{
-  left:6% !important;
-  right:auto !important;
-  width:88% !important;
-  max-width:none !important;
+/* ===== BDUT / BDUEND 기준 외곽 이미지박스 완전 통일 ===== */
+.rabbit-frame{
+  width:min(90vw,calc((100dvh - 24px)*.625)) !important;
+  aspect-ratio:25/40 !important;
+  max-height:none !important;
+  position:relative !important;
+  overflow:hidden !important;
+  flex:none !important;
+  border:5px solid #cdb7e9 !important;
   box-sizing:border-box !important;
-
-  padding:clamp(8px,2.2cqw,14px) clamp(9px,2.5cqw,16px) !important;
-  border-width:clamp(2px,.55cqw,3px) !important;
-  font-size:clamp(11px,3cqw,18px) !important;
-  line-height:1.38 !important;
+  box-shadow:0 16px 32px rgba(0,0,0,.38) !important;
+  container-type:inline-size !important;
 }
 
 
-/* BDUM 말박스 좌우 여백을 BDUOUT과 동일하게 */
+/* ===== BDUM 실제 구조 기준 수정 =====
+   .talk-box-wrap은 DOM에 없으므로 사용하지 않음.
+   intro-stage를 25:40 프레임 폭에 맞추고 말박스만 좌우 5px 안쪽 배치. */
+.rabbit-frame .intro-stage{
+  position:absolute !important;
+  width:100% !important;
+  max-width:none !important;
+  left:0 !important;
+  right:0 !important;
+  transform:none !important;
+  box-sizing:border-box !important;
+}
 .rabbit-frame .talk-box{
   left:5px !important;
   right:5px !important;
