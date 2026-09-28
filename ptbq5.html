@@ -894,6 +894,72 @@ body{
   }
 }
 
+
+/* ===== 최신 원본 기준 25:40 박스형 ===== */
+html,body{width:100%!important;height:100%!important;min-height:100dvh!important;overflow:hidden!important;}
+body{display:flex!important;align-items:center!important;justify-content:center!important;background:#17110d!important;}
+.ptb-frame{
+ width:min(90vw,calc((100dvh - 24px)*.625));
+ aspect-ratio:25/40;
+ position:relative;
+ overflow:hidden;
+ background:url("ptbq5.png") center center/cover no-repeat;
+ border:5px solid #7f4b3a;
+ box-shadow:0 16px 32px rgba(0,0,0,.38);
+ container-type:inline-size;
+}
+.ptb-frame .mission-wrap,.ptb-frame .ui-wrap,.ptb-frame .bottom-btn-area{position:absolute!important;}
+.ptb-frame .modal,.ptb-frame .letter-modal,.ptb-frame .video-modal,.ptb-frame .score-modal,.ptb-frame .reset-modal{position:absolute!important;}
+
+/* 미션카드의 최신 디자인은 건드리지 않고, 카드 전체 폭만 입력 UI와 동일 */
+.ptb-frame .mission-wrap,
+.ptb-frame .ui-wrap{
+ left:5% !important;
+ right:5% !important;
+ width:auto !important;
+ max-width:none !important;
+}
+.ptb-frame .mission-wrap{
+ transform:translateY(-50%) !important;
+}
+.ptb-frame .ui-wrap{
+ transform:none !important;
+}
+/* 최신 원본의 1px 편지지 외곽선/안쪽선 강제 보존 */
+.ptb-frame .mission-card{width:100% !important;box-sizing:border-box!important;border-width:1px!important;}
+.ptb-frame .mission-card::before{border-width:1px!important;}
+
+/* ===== 편지 알림창 공통 규격: 전 페이지 동일 / 본문 11줄 기준 ===== */
+.ptb-frame .letter-modal{position:absolute!important;inset:0!important;padding:0!important;}
+.ptb-frame .letter-paper{
+  width:88% !important;
+  height:76% !important;
+  min-height:0 !important;
+  padding:23% 9% 16% !important;
+  box-sizing:border-box !important;
+}
+.ptb-frame .letter-paper::before{inset:3% !important;}
+.ptb-frame .letter-content{
+  font-size:6.0cqw !important;
+  line-height:1.36 !important;
+  letter-spacing:.01em !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+}
+.ptb-frame .letter-top{top:6% !important;font-size:5.6cqw !important;}
+.ptb-frame .letter-bottom{bottom:4.5% !important;font-size:4cqw !important;}
+.ptb-frame .letter-close{
+  right:7% !important;bottom:6.5% !important;
+  height:10cqw !important;min-width:18cqw !important;
+  padding:0 4cqw !important;font-size:3.7cqw !important;
+}
+
+/* 편지 알림창 폰트 전체 1단계 축소 */
+.ptb-frame .letter-content{font-size:5.0cqw !important;}
+.ptb-frame .letter-top{font-size:4.6cqw !important;}
+.ptb-frame .letter-bottom{font-size:3.0cqw !important;}
+.ptb-frame .letter-close{font-size:2.7cqw !important;}
 </style>
 </head>
 
@@ -906,6 +972,8 @@ body{
     세로 모드를 유지해 주세요.
   </div>
 </div>
+<div class="ptb-frame">
+
 
 <!-- =====================================================
      미션카드
@@ -1070,6 +1138,8 @@ body{
 </div>
 
 
+
+</div>
 <script>
 
 /* =========================================================

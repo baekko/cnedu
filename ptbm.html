@@ -1298,6 +1298,68 @@ body{
   .final-card::before{inset:10px;}
 }
 
+
+/* ===== 최신 원본 기준 25:40 박스형 ===== */
+html,body{width:100%!important;height:100%!important;min-height:100dvh!important;overflow:hidden!important;}
+body{display:flex!important;align-items:center!important;justify-content:center!important;background:#17110d!important;}
+.ptb-frame{
+ width:min(90vw,calc((100dvh - 24px)*.625));
+ aspect-ratio:25/40;
+ position:relative;
+ overflow:hidden;
+ background:url("ptbm.png") center center/cover no-repeat;
+ border:5px solid #7f4b3a;
+ box-shadow:0 16px 32px rgba(0,0,0,.38);
+ container-type:inline-size;
+}
+.ptb-frame .mission-wrap,.ptb-frame .ui-wrap,.ptb-frame .bottom-btn-area{position:absolute!important;}
+.ptb-frame .modal,.ptb-frame .letter-modal,.ptb-frame .video-modal,.ptb-frame .score-modal,.ptb-frame .reset-modal{position:absolute!important;}
+
+/* ===== PTBM 안내편지도 문제페이지와 완전히 동일한 공통 규격 ===== */
+.ptb-frame .info-modal{position:absolute!important;inset:0!important;padding:0!important;}
+.ptb-frame .info-box{
+  width:88% !important;height:76% !important;min-height:0 !important;
+  padding:23% 9% 16% !important;box-sizing:border-box!important;
+}
+.ptb-frame .info-box::before{inset:3% !important;}
+.ptb-frame .info-content{
+  font-size:6.0cqw !important;line-height:1.36 !important;letter-spacing:.01em !important;
+  white-space:pre-line !important;word-break:keep-all !important;overflow:visible !important;
+}
+.ptb-frame .info-top{top:6% !important;font-size:5.6cqw !important;}
+.ptb-frame .info-bottom{bottom:4.5% !important;font-size:4cqw !important;}
+.ptb-frame .info-close{right:7%!important;bottom:6.5%!important;height:10cqw!important;min-width:18cqw!important;padding:0 4cqw!important;font-size:3.7cqw!important;}
+
+/* PTBM만 이미지 박스 제거 */
+.ptb-frame{
+  width:100vw !important;
+  height:100dvh !important;
+  aspect-ratio:auto !important;
+  border:0 !important;
+  box-shadow:none !important;
+  background:none !important;
+}
+/* PTBM 편지창은 다른 페이지와 같은 25:40 기준 실제 크기 유지 */
+.ptb-frame .info-box{
+  width:min(79.2vw,calc((100dvh - 24px)*.55)) !important;
+  height:min(68.4vh,calc((100dvh - 24px)*.76)) !important;
+  padding:
+    calc(min(90vw,((100dvh - 24px)*.625)) * .23)
+    calc(min(90vw,((100dvh - 24px)*.625)) * .09)
+    calc(min(90vw,((100dvh - 24px)*.625)) * .16) !important;
+}
+.ptb-frame .info-content{
+  font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .05) !important;
+}
+.ptb-frame .info-top{
+  font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .046) !important;
+}
+.ptb-frame .info-bottom{
+  font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .03) !important;
+}
+.ptb-frame .info-close{
+  font-size:calc(min(90vw,((100dvh - 24px)*.625)) * .027) !important;
+}
 </style>
 </head>
 
@@ -1310,6 +1372,8 @@ body{
     세로 모드를 유지해 주세요.
   </div>
 </div>
+<div class="ptb-frame">
+
 
 <!-- =====================================================
      책장
@@ -1538,6 +1602,8 @@ body{
 </button>
 
 
+
+</div>
 <script>
 
 /* =========================================================
