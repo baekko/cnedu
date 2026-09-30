@@ -840,6 +840,28 @@ body > .landscape-guide{
 }
 
 </style>
+<style>
+/* BDUM: 액자만 해제. 배경/책은 원래 전체화면, 말박스는 현재 크기 유지 */
+body{display:block!important;padding:0!important;background:#1788EB!important}
+.rabbit-frame{position:static!important;width:100%!important;height:100dvh!important;max-height:none!important;aspect-ratio:auto!important;overflow:visible!important;border:0!important;background:transparent!important;box-shadow:none!important;transform:none!important;isolation:auto!important;container-type:normal!important}
+.rabbit-frame .scene{position:fixed!important;left:50%!important;top:50%!important;width:max(100vw,calc(100dvh * 1024 / 1455))!important;height:max(100dvh,calc(100vw * 1455 / 1024))!important;transform:translate(-50%,-50%)!important;overflow:hidden!important}
+.rabbit-frame .tree-bg{width:100%!important;height:100%!important;object-fit:fill!important}
+.rabbit-frame .intro-stage{position:fixed!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;width:min(90vw,calc((100dvh - 24px)*.625))!important;max-width:none!important;box-sizing:border-box!important}
+.rabbit-frame .talk-box{left:5px!important;right:5px!important;width:auto!important;max-width:none!important;box-sizing:border-box!important;padding:clamp(8px,2.2vw,14px) clamp(9px,2.5vw,16px)!important;border-width:clamp(2px,.55vw,3px)!important;font-size:clamp(11px,3vw,18px)!important;line-height:1.38!important}
+</style>
+<style>
+/* 말박스만 다른 25:40 이미지박스 페이지와 동일한 기준으로 계산 */
+.rabbit-frame .intro-stage{
+  width:min(90vw,calc((100dvh - 24px)*.625)) !important;
+  container-type:inline-size !important;
+}
+.rabbit-frame .talk-box{
+  padding:clamp(8px,2.2cqw,14px) clamp(9px,2.5cqw,16px) !important;
+  border-width:clamp(2px,.55cqw,3px) !important;
+  font-size:clamp(11px,3cqw,18px) !important;
+  line-height:1.38 !important;
+}
+</style>
 </head>
 
 
@@ -870,7 +892,7 @@ body > .landscape-guide{
 <div class="scene">
 
   <img
-    src="bdum.png"
+    src="bdum.jpg"
     class="tree-bg"
     alt=""
   >
