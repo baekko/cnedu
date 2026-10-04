@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAY THE BOOK END</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
+:root{
+ --card-size:clamp(330px,75vw,670px);
+ --card-top:clamp(95px,14vh,150px);
+ --arrow-w:clamp(78px,11vw,120px);
+ --arrow-h:clamp(66px,9vw,96px);
+ --arrow-gap:clamp(50px,8vw,90px);
+ --arrow-top-gap:clamp(28px,4vh,42px);
+ --bottom-btn-bottom:clamp(42px,6vh,70px);
+}
+body{position:relative;background:url("ptbin.png") no-repeat center center/cover}
+.end-wrap{position:relative;width:100%;height:100%}
+.card-area{
+ position:absolute;left:50%;top:var(--card-top);transform:translateX(-50%) translateY(10px);
+ width:var(--card-size);height:var(--card-size);z-index:5;
+ border:7px solid #7f4b3a;background:#15110f;overflow:hidden;
+ box-shadow:0 18px 36px rgba(0,0,0,.38);
+ opacity:0;visibility:hidden;
+ transition:opacity .65s ease, transform .65s ease, visibility 0s linear .65s;
+}
+.card-area.reveal{
+ opacity:1;visibility:visible;
+ transform:translateX(-50%) translateY(0);
+ transition:opacity .65s ease, transform .65s ease, visibility 0s;
+}
+.story-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.caption{
+ position:absolute;z-index:8;left:50%;bottom:7%;transform:translateX(-50%);
+ width:82%;padding:15px 18px;color:#fff;
+ font-size:clamp(16px,2.2vw,24px);font-weight:700;line-height:1.45;
+ text-align:center;word-break:keep-all;
+ border:1px solid rgba(255,255,255,.42);
+ box-shadow:0 5px 12px rgba(0,0,0,.24);
+ text-shadow:0 1px 2px rgba(0,0,0,.20);
+}
+.caption.gray{background:rgba(184,150,132,.95)}
+.caption.brown{background:rgba(139,72,40,.96)}
+.caption.hidden{display:none}
+.arrow-area{
+ position:absolute;left:50%;top:calc(var(--card-top) + var(--card-size) + var(--arrow-top-gap));
+ transform:translateX(-50%) translateY(10px);display:flex;gap:var(--arrow-gap);
+ align-items:center;justify-content:center;z-index:10;
+ opacity:0;visibility:hidden;
+ transition:opacity .65s ease .12s, transform .65s ease .12s, visibility 0s linear .77s;
+}
+.arrow-area.reveal{
+ opacity:1;visibility:visible;
+ transform:translateX(-50%) translateY(0);
+ transition:opacity .65s ease .12s, transform .65s ease .12s, visibility 0s;
+}
+.arrow-btn{width:var(--arrow-w);height:var(--arrow-h);border:0;background:transparent;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
+.arrow-btn svg{width:100%;height:100%;display:block;filter:drop-shadow(0 9px 10px rgba(0,0,0,.42)) drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.arrow-shape{fill:#5b351d;stroke:#2d160b;stroke-width:3}
+.arrow-highlight{fill:rgba(255,255,255,.22)}
+.arrow-btn.hidden{visibility:hidden;pointer-events:none}
+.arrow-btn:active{transform:translateY(2px) scale(.95)}
+
+.bottom-btn-area{
+ position:absolute;left:50%;bottom:var(--bottom-btn-bottom);transform:translateX(-50%);
+ z-index:20;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:nowrap
+}
+.bottom-btn{
+ display:none;height:58px;min-width:145px;padding:0 28px;
+ border:3px solid #2d160b;border-radius:15px;background:#5b351d;color:#fffdf1;
+ font-family:"Gowun Dodum",sans-serif;font-size:20px;font-weight:900;line-height:1;
+ white-space:nowrap;cursor:pointer;
+ box-shadow:0 5px 8px rgba(0,0,0,.30),inset 0 2px 2px rgba(255,255,255,.25);
+ text-shadow:0 1px 2px rgba(0,0,0,.25)
+}
+.bottom-btn.show{display:block;animation:fadeUp .35s ease}
+.bottom-btn:active{transform:scale(.96)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.info-modal{position:fixed;inset:0;z-index:1000;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.55)}
+.info-modal.show{display:flex}
+.info-box{position:relative;width:min(82vw,560px);max-height:82vh;background:#fff7e8;border-radius:22px;padding:18px;box-shadow:0 20px 45px rgba(0,0,0,.42)}
+.info-box img{width:100%;max-height:72vh;object-fit:contain;display:block;border-radius:16px}
+.info-close{position:absolute;right:-12px;top:-12px;width:42px;height:42px;border:0;border-radius:50%;background:#5a321d;color:#fff;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.landscape-guide{display:none}
+
+@media(max-width:600px){
+ :root{--card-size:min(82vw,360px);--card-top:13vh;--arrow-w:72px;--arrow-h:62px;--arrow-gap:44px;--arrow-top-gap:24px;--bottom-btn-bottom:36px}
+ .card-area{border-width:5px}
+ .caption{width:84%;padding:10px 12px;font-size:14px;line-height:1.42}
+ .bottom-btn{height:46px;min-width:110px;padding:0 18px;border-radius:13px;font-size:15px}
+ .info-box{width:88vw;padding:12px}
+ .info-close{right:-8px;top:-8px;width:36px;height:36px;font-size:21px}
+}
+@media(max-width:390px){
+ :root{--card-size:80vw;--card-top:12vh;--arrow-w:64px;--arrow-h:56px;--arrow-gap:36px;--arrow-top-gap:22px;--bottom-btn-bottom:30px}
+ .caption{font-size:13px;padding:9px 10px}
+ .bottom-btn{height:44px;min-width:105px;padding:0 15px;font-size:14px}
+}
+@media(orientation:landscape){
+ .landscape-guide{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#111}
+ .landscape-guide-text{font-size:20px;font-weight:700;line-height:1.7;text-align:center;color:#fff}
+}
+
+
+/* 이미지/영상 경계의 서브픽셀 흰선 제거 */
+.card-area .story-img,
+.card-area .story-media{
+  inset:-1px !important;
+  width:calc(100% + 2px) !important;
+  height:calc(100% + 2px) !important;
+}
+
+</style>
+</head>
+<body>
+<div class="landscape-guide"><div class="landscape-guide-text">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div></div>
+
+<div class="end-wrap">
+ <div class="card-area">
+  <img id="storyImg" class="story-img" src="ptbin444.png" alt="엔딩 이미지">
+  <div id="caption" class="caption gray"></div>
+ </div>
+
+ <div class="arrow-area">
+  <button id="prevBtn" class="arrow-btn hidden" onclick="prevSlide()" aria-label="이전">
+   <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="arrow-highlight" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
+  </button>
+  <button id="nextArrowBtn" class="arrow-btn" onclick="nextSlide()" aria-label="다음">
+   <svg viewBox="0 0 120 96"><path class="arrow-shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="arrow-highlight" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
+  </button>
+ </div>
+
+ <div class="bottom-btn-area">
+  <button id="reopenBtn" class="bottom-btn" onclick="openInfoModal()">편지 다시보기</button>
+  <button id="nextPageBtn" class="bottom-btn" onclick="goNextPage()">다음</button>
+ </div>
+</div>
+
+<div class="info-modal" id="infoModal">
+ <div class="info-box">
+  <button class="info-close" onclick="closeInfoModal()">×</button>
+  <img src="ptbq6.png" alt="안내 이미지">
+ </div>
+</div>
+
+<script>
+const slides=[
+  {img:"ptbin444.png", text:"어제의 내가 오늘의 나에게 보낸<br>편지를 읽고 미소가 지어졌다.", tone:"gray"},
+  {img:"ptbend111.png", text:"잠에서 깨면 기억을 잃는 나에게<br>이렇게까지 전하고 싶었던 하루라면,<br>그 하루를 다시 만나고 싶다.", tone:"gray"},
+  {img:"ptbend111.png", text:"서가를 천천히 걸었다.<br>책을 만났고, 그 속으로 들어갔다.<br>그리고 울고 웃었다.", tone:"gray"},
+  {img:"ptbend222.png", text:"한 장 한 장을 넘길 때마다<br>새로운 세상을 만나는 기분이 들었다.<br>그래서 이 곳은 나를 설레게 한다.", tone:"gray"},
+  {img:"ptbend333.png", text:"창가에 앉아 책을 읽는 시간이 좋았다.<br>따뜻하게 스며들던 햇살도,<br>하루를 포근하게 물들이던 노을도.", tone:"gray"},
+  {img:"ptbend333.png", text:"창가에 앉아 노을을 보는 것이 좋았다.<br>아무 말 없이 흘러가는 이 순간도,<br>오늘 만난 이야기들도.", tone:"gray"},
+  {img:"ptbend444.png", text:"오늘의 나는 참 많이 웃었다.<br>내일의 나도 같은 하루를 만나길.", tone:"gray"},
+  {img:"ptbend444.png", text:"내일의 나에게 닿기를 바라며,<br>나에게 보낼 편지를 써내려갔다.<br>내일의 나에게 보여주고 싶은 책과 함께.", tone:"gray"},
+  {img:"ptbin444.png", text:"선생님...", tone:"brown"},
+  {img:"ptbin222.png", text:"그래, 말하렴.<br>언제나 기다리고 있단다.", tone:"brown"},
+  {img:"ptbin444.png", text:"내일도 저에게 전화해서 '도서관에<br>네게 온 편지가 있다'고 전해주세요.", tone:"brown"},
+  {img:"ptbend555.png", text:"", tone:"none"}
+];
+let current=0;
+const storyImg=document.getElementById("storyImg");
+const caption=document.getElementById("caption");
+const cardArea=document.querySelector(".card-area");
+const arrowArea=document.querySelector(".arrow-area");
+const prevBtn=document.getElementById("prevBtn");
+const nextArrowBtn=document.getElementById("nextArrowBtn");
+const reopenBtn=document.getElementById("reopenBtn");
+const nextPageBtn=document.getElementById("nextPageBtn");
+
+function updateSlide(){
+ const s=slides[current];
+ storyImg.src=s.img;
+ if(s.tone==="none"){
+   caption.className="caption hidden";
+   caption.innerHTML="";
+ }else{
+   caption.className="caption "+s.tone;
+   caption.innerHTML=s.text;
+ }
+ prevBtn.classList.toggle("hidden",current===0);
+ nextArrowBtn.classList.toggle("hidden",current===slides.length-1);
+ nextPageBtn.classList.toggle("show",current===slides.length-1);
+}
+
+function nextSlide(){if(current<slides.length-1){current++;updateSlide();}}
+function prevSlide(){if(current>0){current--;updateSlide();}}
+
+function openInfoModal(){document.getElementById("infoModal").classList.add("show")}
+function closeInfoModal(){
+ document.getElementById("infoModal").classList.remove("show");
+ reopenBtn.classList.add("show");
+ requestAnimationFrame(function(){
+   cardArea.classList.add("reveal");
+   arrowArea.classList.add("reveal");
+ });
+}
+function goNextPage(){location.href="ptbout.html"}
+
+setTimeout(openInfoModal,1000);
+updateSlide();
+</script>
+</body>
+</html>

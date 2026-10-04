@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAY THE BOOK OUTRO</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:"Pretendard","Noto Sans KR",sans-serif;
+}
+
+body{
+  position:relative;
+  background:url("ptbout.png") no-repeat center center / cover;
+}
+
+/* 엔딩 HTML 편지 모달 */
+.score-modal{
+  position:fixed;
+  inset:0;
+  z-index:900;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:18px;
+  background:rgba(0,0,0,.55);
+}
+.score-modal.show{
+  display:flex;
+  animation:letterFade .28s ease;
+}
+.score-box{
+  position:relative;
+  width:min(88vw,520px);
+  height:min(76vh,700px);
+  min-height:560px;
+  padding:118px 46px 82px;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6;
+  border:1px solid #c7a37d;
+  border-radius:5px;
+  box-shadow:0 20px 45px rgba(0,0,0,.42),inset 0 0 35px rgba(130,85,45,.08);
+  animation:letterOpen .38s ease;
+}
+.score-box::before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  pointer-events:none;
+}
+.score-top{
+  position:absolute;
+  top:6%;
+  left:50%;
+  transform:translateX(-50%);
+  color:#a77a50;
+  font-size:28px;
+  letter-spacing:.14em;
+  white-space:nowrap;
+}
+.score-content{
+  position:relative;
+  z-index:2;
+  color:#2d2925;
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:30px;
+  font-weight:400;
+  line-height:1.42;
+  letter-spacing:.015em;
+  white-space:pre-line;
+  word-break:keep-all;
+  text-align:left;
+}
+.score-postscript{
+  position:relative;
+  z-index:2;
+  margin-top:0;
+  color:#2d2925;
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:30px;
+  font-weight:400;
+  line-height:1.42;
+  letter-spacing:.015em;
+  white-space:nowrap;
+}
+.score-bottom{
+  position:absolute;
+  left:50%;
+  bottom:3.8%;
+  transform:translateX(-50%);
+  color:#b58a61;
+  font-size:18px;
+  letter-spacing:.18em;
+  white-space:nowrap;
+}
+.score-close{
+  position:absolute;
+  right:7%;
+  bottom:6%;
+  z-index:4;
+  height:42px;
+  min-width:76px;
+  padding:0 17px;
+  border:none;
+  border-radius:13px;
+  background:#5a321d;
+  color:#fff;
+  font-family:"Gowun Dodum",sans-serif;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.28);
+}
+@keyframes letterOpen{
+  from{opacity:0;transform:translateY(12px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes letterFade{from{opacity:0}to{opacity:1}}
+
+/* 하단 버튼 영역 */
+.bottom-btn-area{
+  position:fixed;
+  left:50%;
+  bottom:clamp(42px,6vh,70px);
+  transform:translateX(-50%);
+  z-index:20;
+  display:flex;
+  gap:14px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:nowrap;
+}
+
+.bottom-btn{
+  border:none;
+  border-radius:999px;
+  padding:13px 32px;
+  background:rgba(80,46,24,.88);
+  color:#fff8e8;
+  font-size:clamp(17px,2.4vw,24px);
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.35),
+    inset 0 2px 2px rgba(255,255,255,.25),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.bottom-btn:active{
+  transform:scale(.96);
+}
+
+.reopen-btn{
+  display:none;
+}
+
+.reopen-btn.show{
+  display:block;
+}
+
+/* 리셋 모달 */
+.reset-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.58);
+}
+
+.reset-modal.show{
+  display:flex;
+}
+
+.reset-box{
+  width:min(86vw,420px);
+  border-radius:22px;
+  padding:28px 24px;
+  background:rgba(255,247,232,.96);
+  text-align:center;
+  box-shadow:0 20px 45px rgba(0,0,0,.42);
+}
+
+.reset-title{
+  color:#2b160c;
+  font-size:26px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.reset-desc{
+  color:#4a2a18;
+  font-size:17px;
+  font-weight:700;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+
+.reset-input{
+  width:100%;
+  height:52px;
+  border:2px solid rgba(90,50,29,.35);
+  border-radius:14px;
+  padding:0 14px;
+  font-size:22px;
+  font-weight:900;
+  text-align:center;
+  outline:none;
+  color:#2b160c;
+  background:white;
+  margin-bottom:18px;
+}
+
+.reset-input:focus{
+  border-color:#5a321d;
+}
+
+.reset-actions{
+  display:flex;
+  gap:10px;
+}
+
+.reset-action-btn{
+  flex:1;
+  height:48px;
+  border:none;
+  border-radius:14px;
+  color:white;
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
+  background:#5a321d;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.28),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+.reset-action-btn.cancel{
+  background:#8a6a55;
+}
+
+.reset-message{
+  min-height:22px;
+  margin-top:14px;
+  font-size:15px;
+  font-weight:800;
+  color:#b3261e;
+}
+
+@media(max-width:600px){  .score-box{
+    width:88vw;
+    height:min(78vh,690px);
+    min-height:560px;
+    padding:92px 34px 92px;
+  }
+  .score-content{font-size:24px;line-height:1.45}
+  .score-postscript{font-size:25px;line-height:1.42;margin-top:0}
+  .score-top{top:5.5%;font-size:24px}
+  .score-close{right:6%;bottom:5.5%}
+
+  .bottom-btn-area{
+    bottom:36px;
+    gap:8px;
+  }
+
+  .bottom-btn{
+    padding:10px 16px;
+    font-size:15px;
+  }
+
+  .reset-box{
+    width:88vw;
+    padding:24px 18px;
+  }
+
+  .reset-title{
+    font-size:23px;
+  }
+
+  .reset-desc{
+    font-size:15px;
+  }
+
+  .reset-input{
+    height:48px;
+    font-size:20px;
+  }
+
+  .reset-action-btn{
+    height:46px;
+    font-size:16px;
+  }
+}
+
+@media(max-width:390px){
+  .bottom-btn-area{
+    bottom:30px;
+    gap:6px;
+  }
+
+  .bottom-btn{
+    padding:9px 12px;
+    font-size:14px;
+  }
+
+  .reset-title{
+    font-size:21px;
+  }
+
+  .reset-desc{
+    font-size:14px;
+  }
+}
+/* 가로 화면 안내 */
+.landscape-guide{
+  display:none;
+}
+
+@media (orientation: landscape){
+  .landscape-guide{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#111;
+  }
+
+  .landscape-guide-text{
+    font-family:"Gowun Dodum",sans-serif;
+    font-size:20px;
+    font-weight:700;
+    line-height:1.7;
+    text-align:center;
+    color:#fff;
+  }
+}  
+@media(max-width:390px){.score-box{width:90vw;height:min(74vh,620px);min-height:480px;padding:92px 29px 68px}.score-content,.score-postscript{font-size:23px;line-height:1.4}}
+
+/* =========================================================
+   PTB 공통 버튼 - bdut '래빗홀 게임 시작' 버튼 스타일
+   색상은 기존 PTB 갈색 유지
+========================================================= */
+.ptb-bdut-button-style{
+  height:58px !important;
+  min-width:145px !important;
+  padding:0 28px !important;
+  border:3px solid #2d160b !important;
+  border-radius:15px !important;
+  background:#5b351d !important;
+  color:#fffdf1 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:20px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  cursor:pointer;
+  box-shadow:
+    0 5px 8px rgba(0,0,0,.30),
+    inset 0 2px 2px rgba(255,255,255,.25) !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease;
+}
+@media(max-width:600px){
+  .ptb-bdut-button-style{
+    height:46px !important;
+    min-width:110px !important;
+    padding:0 18px !important;
+    border-width:3px !important;
+    border-radius:13px !important;
+    font-size:15px !important;
+  }
+}
+@media(max-width:390px){
+  .ptb-bdut-button-style{
+    height:44px !important;
+    min-width:105px !important;
+    padding:0 15px !important;
+    font-size:14px !important;
+  }
+}
+
+
+/* ===== 최신 원본 기준 25:40 박스형 ===== */
+html,body{width:100%!important;height:100%!important;min-height:100dvh!important;overflow:hidden!important;}
+body{display:flex!important;align-items:center!important;justify-content:center!important;background:#17110d!important;}
+.ptb-frame{
+ width:min(90vw,calc((100dvh - 24px)*.625));
+ aspect-ratio:25/40;
+ position:relative;
+ overflow:hidden;
+ background:url("ptbout.png") center center/cover no-repeat;
+ border:5px solid #7f4b3a;
+ box-shadow:0 16px 32px rgba(0,0,0,.38);
+ container-type:inline-size;
+}
+.ptb-frame .mission-wrap,.ptb-frame .ui-wrap,.ptb-frame .bottom-btn-area{position:absolute!important;}
+.ptb-frame .modal,.ptb-frame .letter-modal,.ptb-frame .video-modal,.ptb-frame .score-modal,.ptb-frame .reset-modal{position:absolute!important;}
+
+/* ===== PTBOUT 엔딩 편지도 다른 페이지와 완전히 동일 / 11줄 기준 ===== */
+.ptb-frame .score-modal{position:absolute!important;inset:0!important;padding:0!important;}
+.ptb-frame .score-box{
+  width:88% !important;height:76% !important;min-height:0 !important;
+  padding:23% 9% 16% !important;box-sizing:border-box!important;
+}
+.ptb-frame .score-box::before{inset:3% !important;}
+.ptb-frame .score-content,
+.ptb-frame .score-postscript{
+  font-size:6.0cqw !important;line-height:1.36 !important;letter-spacing:.01em !important;
+  white-space:pre-line !important;word-break:keep-all !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+}
+.ptb-frame .score-postscript{margin-top:0!important;white-space:nowrap!important;}
+.ptb-frame .score-top{top:6% !important;font-size:5.6cqw !important;}
+.ptb-frame .score-bottom{bottom:4.5% !important;font-size:4cqw !important;}
+.ptb-frame .score-close{right:7%!important;bottom:6.5%!important;height:10cqw!important;min-width:18cqw!important;padding:0 4cqw!important;font-size:3.7cqw!important;}
+
+/* 편지 알림창 폰트 전체 1단계 축소 */
+.ptb-frame .score-content,
+.ptb-frame .score-postscript{font-size:5.0cqw !important;}
+.ptb-frame .score-top{font-size:4.6cqw !important;}
+.ptb-frame .score-bottom{font-size:3.0cqw !important;}
+.ptb-frame .score-close{font-size:2.7cqw !important;}
+
+/* ===== PTBOUT도 동일한 11줄 편지 규격 ===== */
+.ptb-frame .score-box{width:88% !important;height:76% !important;min-height:0 !important;padding:23% 9% 16% !important;box-sizing:border-box!important;border:1px solid #c7a37d!important;}
+.ptb-frame .score-box::before{inset:3%!important;border:1px solid rgba(166,116,68,.55)!important;}
+.ptb-frame .score-content,.ptb-frame .score-postscript{font-size:5cqw!important;line-height:1.36!important;}
+.ptb-frame .score-top{font-size:4.6cqw!important;}.ptb-frame .score-bottom{font-size:3cqw!important;}.ptb-frame .score-close{font-size:2.7cqw!important;}
+</style>
+
+<style>
+/* 엔딩 편지 알림창 본문 글씨 축소 */
+.ptb-frame .score-content,
+.ptb-frame .score-postscript{font-size:3.8cqw !important;}
+</style>
+
+
+<style>
+/* 엔딩 편지: 본문과 추신 사이 한 줄 여백 */
+.ptb-frame .score-postscript{
+  margin-top:1.36em !important;
+}
+</style>
+
+</head>
+
+<body>
+<div class="landscape-guide">
+  <div class="landscape-guide-text">
+    📱<br>
+    원활한 진행을 위해<br>
+    세로 모드를 유지해 주세요.
+  </div>
+</div>
+<div class="ptb-frame">
+
+<div class="score-modal" id="scoreModal">
+  <div class="score-box">
+    <div class="score-top">—  ✉  —</div>
+    <div class="score-content">게임에서 만난 다섯 권의 책은
+단순한 문제가 아니라,
+주인공의 마음과 기억이었습니다.
+여러분도 책 속에서
+누군가의 마음을 만나고,
+오래도록 기억에 남을
+이야기를 발견하길 바랍니다.
+언제나 새로운 이야기들이
+도서관에서 여러분을 기다리고 있습니다.
+</div>
+    <div class="score-postscript" id="scorePostscript"></div>
+    <div class="score-bottom">— · ♡ · —</div>
+    <button class="score-close" onclick="closeScoreModal()">닫기</button>
+  </div>
+</div>
+
+<div class="bottom-btn-area">
+  <button class="bottom-btn reopen-btn ptb-bdut-button-style" id="reopenBtn" onclick="openScoreModal()">다시보기</button>
+  <button class="bottom-btn reset-btn ptb-bdut-button-style" onclick="openResetModal()">RESET</button>
+</div>
+
+<div class="reset-modal" id="resetModal">
+  <div class="reset-box">
+    <div class="reset-title">관리자 초기화</div>
+    <div class="reset-desc">리셋 암호를 입력하세요.</div>
+
+    <input
+      id="resetInput"
+      class="reset-input"
+      type="password"
+      inputmode="numeric"
+      maxlength="8"
+      autocomplete="off"
+      placeholder="암호 입력"
+    >
+
+    <div class="reset-actions">
+      <button class="reset-action-btn cancel" onclick="closeResetModal()">취소</button>
+      <button class="reset-action-btn" onclick="checkResetPassword()">확인</button>
+    </div>
+
+    <div class="reset-message" id="resetMessage"></div>
+  </div>
+</div>
+
+
+</div>
+<script>
+const PROGRESS_KEY = "ptb_progress_v1";
+const RESET_PASSWORD = "1216";
+
+function getProgress(){
+  try{
+    return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+  }catch(e){
+    return {};
+  }
+}
+
+function getTotalScore(){
+  const progress = getProgress();
+  let total = 0;
+
+  for(let i=1; i<=5; i++){
+    if(progress[i] && progress[i].completed){
+      total += Number(progress[i].score || 0);
+    }
+  }
+
+  return total;
+}
+
+function openScoreModal(){
+  const score = getTotalScore();
+
+  document
+    .getElementById("scorePostscript")
+    .textContent =
+      `추신: 여러분이 회복시킨 기억은 ${score}점입니다.`;
+
+  document
+    .getElementById("scoreModal")
+    .classList
+    .add("show");
+}
+
+function closeScoreModal(){
+  document.getElementById("scoreModal").classList.remove("show");
+  document.getElementById("reopenBtn").classList.add("show");
+}
+
+function openResetModal(){
+  const modal = document.getElementById("resetModal");
+  const input = document.getElementById("resetInput");
+  const message = document.getElementById("resetMessage");
+
+  message.style.color = "#b3261e";
+  message.textContent = "";
+  input.value = "";
+  modal.classList.add("show");
+
+  setTimeout(function(){
+    input.focus();
+  },100);
+}
+
+function closeResetModal(){
+  document.getElementById("resetModal").classList.remove("show");
+}
+
+function checkResetPassword(){
+  const input = document.getElementById("resetInput").value.trim();
+  const message = document.getElementById("resetMessage");
+
+  if(input !== RESET_PASSWORD){
+    message.style.color = "#b3261e";
+    message.textContent = "암호가 맞지 않습니다.";
+    return;
+  }
+
+  localStorage.removeItem("ptb_progress_v1");
+
+  sessionStorage.removeItem("ptbm_modal_seen_once");
+  sessionStorage.removeItem("ptbm_end_modal_seen_once");
+  sessionStorage.removeItem("ptbin_return_from_next");
+
+  message.style.color = "#1f7a3a";
+  message.textContent = "초기화되었습니다.";
+
+  setTimeout(function(){
+    location.href = "../index.html";
+  },800);
+}
+
+document.getElementById("resetInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    checkResetPassword();
+  }
+});
+
+document.getElementById("resetModal").addEventListener("click", function(e){
+  if(e.target.id === "resetModal"){
+    closeResetModal();
+  }
+});
+
+document.getElementById("scoreModal").addEventListener("click", function(e){
+  if(e.target.id === "scoreModal"){
+    closeScoreModal();
+  }
+});
+
+setTimeout(function(){
+  openScoreModal();
+},1000);
+</script>
+
+</body>
+</html>

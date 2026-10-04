@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>PTB QUESTION 1</title>
+
+<!-- 래빗홀과 같은 웹폰트 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap"
+  rel="stylesheet"
+>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+  overflow:hidden;
+  background:#000;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+}
+
+
+/* =========================================================
+   색상
+========================================================= */
+
+:root{
+
+  --paper:#f4ecd1;
+  --paper-border:#7f4b3a;
+  --paper-text:#784738;
+
+  --blue:#235a9e;
+  --orange:#ff884d;
+
+  /* 편지왔어요 기존 버튼색 */
+  --button:#5a321d;
+
+  --ui-bottom:5.5vh;
+}
+
+
+/* =========================================================
+   배경
+
+   ★ 이제 미션카드가 없는 새 ptbq1.png 사용
+========================================================= */
+
+body{
+  position:relative;
+
+  background:
+    url("ptbq1.png")
+    no-repeat
+    center center / cover;
+}
+
+
+/* =========================================================
+   미션카드
+========================================================= */
+
+.mission-wrap{
+  position:fixed;
+
+  left:50%;
+  top:43%;
+
+  transform:
+    translate(-50%,-50%);
+
+  width:
+    min(86vw,620px);
+
+  display:none;
+
+  z-index:25;
+}
+
+
+.mission-wrap.show{
+  display:block;
+}
+
+
+/* 카드 본체 */
+
+.mission-card{
+  width:100%;
+
+  padding:
+    30px 28px 27px;
+
+  border:
+    5px solid
+    var(--paper-border);
+
+  border-radius:
+    28px;
+
+  background:
+    var(--paper);
+
+  text-align:center;
+
+  box-shadow:
+    0 14px 30px
+    rgba(0,0,0,.30);
+}
+
+
+/* 기억 #1 */
+
+.mission-title{
+  color:
+    var(--paper-text);
+
+  font-size:
+    28px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.4;
+
+  margin-bottom:
+    20px;
+
+  word-break:
+    keep-all;
+}
+
+
+/* A1, A2 키트 사용 */
+
+.mission-kit{
+  color:
+    var(--blue);
+
+  font-size:
+    30px;
+
+  font-weight:
+    900;
+
+  margin-bottom:
+    22px;
+}
+
+
+/* =========================================================
+   주황색 문제 그림 영역
+========================================================= */
+
+.mission-image-box{
+  width:100%;
+
+  padding:
+    7px;
+
+  margin-bottom:
+    20px;
+
+  border:
+    5px solid
+    var(--orange);
+
+  border-radius:
+    10px;
+
+  background:#fff;
+
+  display:flex;
+
+  justify-content:center;
+  align-items:center;
+}
+
+
+.mission-image{
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-height:
+    125px;
+
+  object-fit:
+    contain;
+}
+
+
+/* 정답은 알파벳 7자 */
+
+.mission-guide{
+  color:#000;
+
+  font-size:
+    30px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.35;
+}
+
+
+/* =========================================================
+   하단 정답 UI
+
+   ★ 기존 ptbq 스타일 유지
+   ★ 처음에는 숨김
+========================================================= */
+
+.ui-wrap{
+  position:fixed;
+
+  left:50%;
+  bottom:
+    var(--ui-bottom);
+
+  transform:
+    translateX(-50%);
+
+  width:
+    clamp(420px,56vw,560px);
+
+  z-index:35;
+
+  display:none;
+
+  flex-direction:column;
+
+  gap:14px;
+}
+
+
+.ui-wrap.show{
+  display:flex;
+}
+
+
+/* 입력창 + 입력 */
+
+.answer-row{
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    86px;
+
+  gap:12px;
+}
+
+
+.answer-input{
+  width:100%;
+  height:58px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:
+    0 18px;
+
+  outline:none;
+
+  background:
+    rgba(255,255,255,.97);
+
+  color:#222;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:20px;
+
+  font-weight:700;
+
+  box-shadow:
+    0 8px 18px
+    rgba(0,0,0,.25);
+}
+
+
+.submit-btn{
+  height:58px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:0;
+
+  background:
+    var(--button);
+
+  color:#fff;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+
+/* =========================================================
+   힌트 / 정답 / 기억보상
+========================================================= */
+
+.action-row{
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  gap:12px;
+}
+
+
+.action-btn{
+  height:54px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:0;
+
+  background:
+    var(--button);
+
+  color:#fff;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:17px;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.32),
+    inset 0 2px 2px rgba(255,255,255,.22),
+    inset 0 -4px 8px rgba(0,0,0,.25);
+}
+
+
+.submit-btn:active,
+.action-btn:active{
+  transform:
+    translateY(2px)
+    scale(.98);
+}
+
+
+.action-btn:disabled{
+  opacity:.42;
+
+  cursor:default;
+}
+
+
+/* =========================================================
+   글자 안내 모달
+========================================================= */
+
+.modal{
+  position:fixed;
+
+  inset:0;
+
+  z-index:100;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  background:
+    rgba(0,0,0,.55);
+}
+
+
+.modal.show{
+  display:flex;
+}
+
+
+.modal-box{
+  width:
+    min(86vw,560px);
+
+  padding:
+    30px 24px;
+
+  border-radius:
+    22px;
+
+  background:
+    var(--paper);
+
+  text-align:center;
+
+  box-shadow:
+    0 18px 40px
+    rgba(0,0,0,.35);
+}
+
+
+.modal-title{
+  color:
+    #2b160c;
+
+  font-size:
+    28px;
+
+  font-weight:
+    900;
+
+  margin-bottom:
+    18px;
+}
+
+
+.modal-content{
+  color:
+    #2b160c;
+
+  font-size:
+    22px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1.6;
+
+  white-space:
+    pre-line;
+
+  word-break:
+    keep-all;
+}
+
+
+.modal-close{
+  height:50px;
+
+  min-width:
+    100px;
+
+  margin-top:
+    22px;
+
+  padding:
+    0 24px;
+
+  border:none;
+
+  border-radius:
+    14px;
+
+  background:
+    var(--button);
+
+  color:#fff;
+
+  font-family:
+    "Gowun Dodum",
+    sans-serif;
+
+  font-size:
+    17px;
+
+  font-weight:
+    900;
+
+  cursor:pointer;
+}
+
+
+/* =========================================================
+   HTML 편지 모달
+========================================================= */
+.letter-modal{
+  position:fixed; inset:0; z-index:150; display:none;
+  justify-content:center; align-items:center;
+  padding:18px; background:rgba(0,0,0,.55);
+}
+.letter-modal.show{display:flex; animation:letterFade .28s ease;}
+.letter-paper{
+  position:relative;
+
+  /* ★ 앞으로 ptbq1~5 모든 편지에서 동일하게 사용할 고정 크기 */
+  width:min(88vw,520px);
+  height:min(76vh,700px);
+  min-height:560px;
+
+  /* 상단 장식 아래에서 글이 바로 시작 */
+  padding:118px 46px 82px;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6;
+
+  border:1px solid #c7a37d;
+  border-radius:5px;
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.42),
+    inset 0 0 35px rgba(130,85,45,.08);
+
+  animation:letterOpen .38s ease;
+}
+.letter-paper:before{
+  content:""; position:absolute; inset:15px;
+  border:1px solid rgba(166,116,68,.55); pointer-events:none;
+}
+.letter-top{
+  position:absolute; top:7%; left:50%; transform:translateX(-50%);
+  color:#a77a50; font-size:28px; letter-spacing:.14em; white-space:nowrap;
+}
+.letter-content{
+  position:relative;
+  z-index:2;
+
+  color:#2d2925;
+
+  font-family:
+    "Nanum Pen Script",
+    "Gowun Dodum",
+    sans-serif;
+
+  /* ★ 11줄까지 동일한 편지 크기 안에 들어가도록 고정 */
+  font-size:30px;
+  font-weight:400;
+  line-height:1.42;
+  letter-spacing:.015em;
+
+  /* ★ 문장이 적어도 세로로 벌리지 않고 무조건 위에서부터 */
+  display:block;
+  height:auto;
+  white-space:pre-line;
+  word-break:keep-all;
+  text-align:left;
+}
+.letter-bottom{
+  position:absolute; left:50%; bottom:5%; transform:translateX(-50%);
+  color:#b58a61; font-size:18px; letter-spacing:.18em; white-space:nowrap;
+}
+.letter-close{
+  position:absolute; right:8%; bottom:8%; z-index:4;
+  height:42px; min-width:76px; padding:0 17px;
+  border:none; border-radius:13px; background:var(--button); color:#fff;
+  font-family:"Gowun Dodum",sans-serif; font-size:15px; font-weight:900;
+  cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.28);
+}
+@keyframes letterOpen{
+  from{opacity:0;transform:translateY(12px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes letterFade{from{opacity:0}to{opacity:1}}
+@keyframes missionReveal{
+  from{opacity:0;transform:translate(-50%,-47%) scale(.97)}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+@keyframes uiReveal{
+  from{opacity:0;transform:translateX(-50%) translateY(10px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+.mission-wrap.show{display:block;animation:missionReveal .38s ease both;}
+.ui-wrap.show{display:flex;animation:uiReveal .38s ease both;}
+
+@media(max-width:600px){
+  .letter-paper{
+    width:88vw;
+    height:min(74vh,650px);
+    min-height:500px;
+    padding:100px 34px 72px;
+  }
+
+  .letter-content{
+    font-size:25px;
+    line-height:1.42;
+  }
+
+  .letter-top{
+    top:6%;
+    font-size:24px;
+  }
+
+  .letter-bottom{
+    bottom:4.5%;
+  }
+
+  .letter-close{
+    right:7%;
+    bottom:7%;
+  }
+}
+
+@media(max-width:390px){
+  .letter-paper{
+    width:90vw;
+    height:min(74vh,620px);
+    min-height:480px;
+    padding:92px 29px 68px;
+  }
+
+  .letter-content{
+    font-size:23px;
+    line-height:1.4;
+  }
+}
+
+
+/* =========================================================
+   영상
+========================================================= */
+
+.video-modal{
+  position:fixed;
+
+  inset:0;
+
+  z-index:200;
+
+  display:none;
+
+  justify-content:center;
+  align-items:center;
+
+  background:
+    rgba(0,0,0,.68);
+}
+
+
+.video-modal.show{
+  display:flex;
+}
+
+
+.video-box{
+  width:
+    clamp(360px,58vw,760px);
+
+  max-height:
+    76vh;
+
+  overflow:hidden;
+
+  border-radius:
+    24px;
+
+  background:
+    transparent;
+
+  box-shadow:
+    0 22px 55px
+    rgba(0,0,0,.55);
+}
+
+
+.result-video{
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  border-radius:
+    24px;
+
+  background:
+    transparent;
+}
+
+
+.video-fallback{
+  display:none;
+
+  width:100%;
+
+  padding:
+    30px 20px;
+
+  border-radius:
+    24px;
+
+  background:
+    #fff7e8;
+
+  color:
+    #3b2012;
+
+  text-align:center;
+
+  font-size:
+    22px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.5;
+
+  white-space:
+    pre-line;
+}
+
+
+.video-fallback.show{
+  display:block;
+}
+
+
+/* =========================================================
+   오답 흔들림
+========================================================= */
+
+.shake{
+  animation:
+    shake .25s ease;
+}
+
+
+@keyframes shake{
+
+  0%{
+    transform:
+      translateX(-50%)
+      translateX(0);
+  }
+
+  25%{
+    transform:
+      translateX(-50%)
+      translateX(-6px);
+  }
+
+  50%{
+    transform:
+      translateX(-50%)
+      translateX(6px);
+  }
+
+  75%{
+    transform:
+      translateX(-50%)
+      translateX(-4px);
+  }
+
+  100%{
+    transform:
+      translateX(-50%)
+      translateX(0);
+  }
+
+}
+
+
+/* =========================================================
+   휴대폰
+========================================================= */
+
+@media(max-width:600px){
+
+  .mission-wrap{
+    width:
+      min(88vw,380px);
+
+    top:42%;
+  }
+
+
+  .mission-card{
+    padding:
+      22px 18px 20px;
+
+    border-width:
+      4px;
+
+    border-radius:
+      22px;
+  }
+
+
+  .mission-title{
+    font-size:
+      19px;
+
+    margin-bottom:
+      13px;
+  }
+
+
+  .mission-kit{
+    font-size:
+      21px;
+
+    margin-bottom:
+      14px;
+  }
+
+
+  .mission-image-box{
+    padding:5px;
+
+    margin-bottom:
+      13px;
+
+    border-width:
+      3px;
+
+    border-radius:
+      8px;
+  }
+
+
+  .mission-image{
+    max-height:
+      78px;
+  }
+
+
+  .mission-guide{
+    font-size:
+      21px;
+  }
+
+
+  /* 정답 UI */
+
+  .ui-wrap{
+    width:
+      min(88vw,330px);
+
+    bottom:4.5vh;
+
+    gap:11px;
+  }
+
+
+  .answer-row{
+    grid-template-columns:
+      minmax(0,1fr)
+      64px;
+
+    gap:8px;
+  }
+
+
+  .answer-input{
+    height:52px;
+
+    padding:
+      0 14px;
+
+    border-radius:
+      13px;
+
+    font-size:
+      16px;
+  }
+
+
+  .submit-btn{
+    height:52px;
+
+    border-radius:
+      13px;
+
+    font-size:
+      16px;
+  }
+
+
+  .action-row{
+    gap:8px;
+  }
+
+
+  .action-btn{
+    height:48px;
+
+    border-radius:
+      13px;
+
+    font-size:
+      14px;
+  }
+
+
+  .modal-title{
+    font-size:23px;
+  }
+
+
+  .modal-content{
+    font-size:18px;
+  }
+
+
+  .image-box{
+    width:88vw;
+
+    padding:12px;
+  }
+
+
+  .image-close{
+    right:-8px;
+    top:-8px;
+
+    width:36px;
+    height:36px;
+
+    font-size:21px;
+  }
+
+
+  .video-box{
+    width:72vw;
+
+    max-width:340px;
+
+    min-width:0;
+
+    border-radius:18px;
+  }
+
+
+  .result-video{
+    border-radius:18px;
+  }
+
+
+  .video-fallback{
+    border-radius:18px;
+
+    font-size:18px;
+
+    padding:
+      24px 16px;
+  }
+
+}
+
+
+/* =========================================================
+   작은 휴대폰
+========================================================= */
+
+@media(max-width:390px){
+
+  .mission-wrap{
+    width:90vw;
+
+    top:41%;
+  }
+
+
+  .mission-card{
+    padding:
+      19px 15px 18px;
+  }
+
+
+  .mission-title{
+    font-size:18px;
+  }
+
+
+  .mission-kit{
+    font-size:20px;
+  }
+
+
+  .mission-image{
+    max-height:
+      70px;
+  }
+
+
+  .mission-guide{
+    font-size:20px;
+  }
+
+
+  .ui-wrap{
+    width:
+      min(90vw,310px);
+
+    bottom:4vh;
+  }
+
+
+  .answer-row{
+    grid-template-columns:
+      minmax(0,1fr)
+      58px;
+
+    gap:7px;
+  }
+
+
+  .answer-input{
+    height:50px;
+
+    padding:
+      0 12px;
+
+    font-size:16px;
+  }
+
+
+  .submit-btn{
+    height:50px;
+
+    font-size:15px;
+  }
+
+
+  .action-row{
+    gap:7px;
+  }
+
+
+  .action-btn{
+    height:46px;
+
+    font-size:13px;
+  }
+
+}
+
+
+/* =========================================================
+   낮은 화면
+========================================================= */
+
+@media(max-height:700px){
+
+  .mission-wrap{
+    top:38%;
+  }
+
+
+  .mission-card{
+    padding-top:16px;
+    padding-bottom:16px;
+  }
+
+
+  .mission-title{
+    margin-bottom:10px;
+  }
+
+
+  .mission-kit{
+    margin-bottom:10px;
+  }
+
+
+  .mission-image-box{
+    margin-bottom:10px;
+  }
+
+}
+/* 가로 화면 안내 */
+.landscape-guide{
+  display:none;
+}
+
+@media (orientation: landscape){
+  .landscape-guide{
+    position:fixed;
+    inset:0;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#111;
+  }
+
+  .landscape-guide-text{
+    font-family:"Gowun Dodum",sans-serif;
+    font-size:20px;
+    font-weight:700;
+    line-height:1.7;
+    text-align:center;
+    color:#fff;
+  }
+}
+
+/* =========================================================
+   미션카드 편지지형 디자인
+   - 기존 Gowun Dodum 폰트/문구/문제이미지 유지
+   - 알림편지의 종이 질감과 이중 테두리만 차용
+   - 상단 편지 아이콘 / 하단 하트 장식 없음
+========================================================= */
+.mission-card{
+  position:relative;
+  overflow:hidden;
+
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+
+  background:
+    linear-gradient(rgba(255,250,240,.82),rgba(248,237,217,.82)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.34),
+    inset 0 0 35px rgba(130,85,45,.08) !important;
+
+  padding:34px 36px 31px !important;
+}
+
+/* 편지지 안쪽의 얇은 테두리 */
+.mission-card::before{
+  content:"";
+  position:absolute;
+  inset:15px;
+  border:1px solid rgba(166,116,68,.55);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* 내용은 안쪽 테두리보다 위 */
+.mission-card > *{
+  position:relative;
+  z-index:1;
+}
+
+/* 폰트는 기존 미션카드 그대로 유지 */
+.mission-title,
+.mission-kit,
+.mission-guide{
+  font-family:"Gowun Dodum",sans-serif !important;
+}
+
+/* 문제 그림 박스도 종이와 어울리게 너무 두껍지 않게 */
+.mission-image-box{
+  border-width:3px !important;
+  border-color:#d58a58 !important;
+  background:rgba(255,255,255,.78) !important;
+}
+
+@media(max-width:600px){
+  .mission-card{
+    padding:27px 26px 24px !important;
+  }
+  .mission-card::before{
+    inset:11px;
+  }
+  .mission-image-box{
+    border-width:2px !important;
+  }
+}
+
+@media(max-width:390px){
+  .mission-card{
+    padding:24px 22px 22px !important;
+  }
+  .mission-card::before{
+    inset:10px;
+  }
+}
+
+@media(max-height:700px){
+  .mission-card{
+    padding-top:22px !important;
+    padding-bottom:20px !important;
+  }
+}
+
+
+/* ===== 최신 원본 기준 25:40 박스형 ===== */
+html,body{width:100%!important;height:100%!important;min-height:100dvh!important;overflow:hidden!important;}
+body{display:flex!important;align-items:center!important;justify-content:center!important;background:#17110d!important;}
+.ptb-frame{
+ width:min(90vw,calc((100dvh - 24px)*.625));
+ aspect-ratio:25/40;
+ position:relative;
+ overflow:hidden;
+ background:url("ptbq1.png") center center/cover no-repeat;
+ border:5px solid #7f4b3a;
+ box-shadow:0 16px 32px rgba(0,0,0,.38);
+ container-type:inline-size;
+}
+.ptb-frame .mission-wrap,.ptb-frame .ui-wrap,.ptb-frame .bottom-btn-area{position:absolute!important;}
+.ptb-frame .modal,.ptb-frame .letter-modal,.ptb-frame .video-modal,.ptb-frame .score-modal,.ptb-frame .reset-modal{position:absolute!important;}
+
+/* 미션카드의 최신 디자인은 건드리지 않고, 카드 전체 폭만 입력 UI와 동일 */
+.ptb-frame .mission-wrap,
+.ptb-frame .ui-wrap{
+ left:5% !important;
+ right:5% !important;
+ width:auto !important;
+ max-width:none !important;
+}
+.ptb-frame .mission-wrap{
+ transform:translateY(-50%) !important;
+}
+.ptb-frame .ui-wrap{
+ transform:none !important;
+}
+/* 최신 원본의 1px 편지지 외곽선/안쪽선 강제 보존 */
+.ptb-frame .mission-card{width:100% !important;box-sizing:border-box!important;border-width:1px!important;}
+.ptb-frame .mission-card::before{border-width:1px!important;}
+
+/* ===== 편지 알림창 공통 규격: 전 페이지 동일 / 본문 11줄 기준 ===== */
+.ptb-frame .letter-modal{position:absolute!important;inset:0!important;padding:0!important;}
+.ptb-frame .letter-paper{
+  width:88% !important;
+  height:76% !important;
+  min-height:0 !important;
+  padding:23% 9% 16% !important;
+  box-sizing:border-box !important;
+}
+.ptb-frame .letter-paper::before{inset:3% !important;}
+.ptb-frame .letter-content{
+  font-size:6.0cqw !important;
+  line-height:1.36 !important;
+  letter-spacing:.01em !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+}
+.ptb-frame .letter-top{top:6% !important;font-size:5.6cqw !important;}
+.ptb-frame .letter-bottom{bottom:4.5% !important;font-size:4cqw !important;}
+.ptb-frame .letter-close{
+  right:7% !important;bottom:6.5% !important;
+  height:10cqw !important;min-width:18cqw !important;
+  padding:0 4cqw !important;font-size:3.7cqw !important;
+}
+
+/* 편지 알림창 폰트 전체 1단계 축소 */
+.ptb-frame .letter-content{font-size:5.0cqw !important;}
+.ptb-frame .letter-top{font-size:4.6cqw !important;}
+.ptb-frame .letter-bottom{font-size:3.0cqw !important;}
+.ptb-frame .letter-close{font-size:2.7cqw !important;}
+
+/* ===== 미션 제목: 한 줄 고정 ===== */
+.ptb-frame .mission-title{
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+  font-size:5.0cqw !important;
+  letter-spacing:-0.025em !important;
+}
+
+/* ===== 힌트/정답보기: 편지 알림창과 같은 디자인, 2줄 기준 ===== */
+.ptb-frame .modal{
+  position:absolute !important;
+  inset:0 !important;
+  display:none;
+  justify-content:center !important;
+  align-items:center !important;
+  padding:0 !important;
+  background:rgba(0,0,0,.55) !important;
+}
+.ptb-frame .modal.show{display:flex !important;}
+.ptb-frame .modal-box{
+  position:relative !important;
+  width:88% !important;
+  height:35% !important;
+  min-height:0 !important;
+  padding:17% 9% 12% !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  background:
+    linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  box-shadow:0 20px 45px rgba(0,0,0,.42),inset 0 0 35px rgba(130,85,45,.08) !important;
+}
+.ptb-frame .modal-box::before{
+  content:"";
+  position:absolute;
+  inset:3%;
+  border:1px solid rgba(166,116,68,.55);
+  pointer-events:none;
+}
+.ptb-frame .modal-title{
+  position:absolute !important;
+  top:9% !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+  color:#a77a50 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4.6cqw !important;
+  font-weight:400 !important;
+  letter-spacing:.14em !important;
+  white-space:nowrap !important;
+}
+.ptb-frame .modal-content{
+  position:relative !important;
+  z-index:2 !important;
+  margin:0 !important;
+  color:#2d2925 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:5.0cqw !important;
+  font-weight:400 !important;
+  line-height:1.36 !important;
+  letter-spacing:.01em !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+  text-align:left !important;
+}
+.ptb-frame .modal-close{
+  position:absolute !important;
+  right:7% !important;
+  bottom:8% !important;
+  z-index:4 !important;
+  height:10cqw !important;
+  min-width:18cqw !important;
+  padding:0 4cqw !important;
+  border:none !important;
+  border-radius:13px !important;
+  background:var(--button) !important;
+  color:#fff !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:2.7cqw !important;
+  font-weight:900 !important;
+  box-shadow:0 6px 14px rgba(0,0,0,.28) !important;
+}
+
+/* ===== 미션카드 내부: 기존 문장 줄바꿈 방지 ===== */
+.ptb-frame .mission-card,
+.ptb-frame .mission-card *{
+  word-break:keep-all !important;
+}
+.ptb-frame .mission-title{
+  white-space:nowrap !important;
+  font-size:3.8cqw !important;
+  letter-spacing:-.035em !important;
+}
+.ptb-frame .mission-desc,
+.ptb-frame .mission-text,
+.ptb-frame .mission-guide,
+.ptb-frame .mission-instruction,
+.ptb-frame .mission-card p,
+.ptb-frame .mission-card li,
+.ptb-frame .mission-card label,
+.ptb-frame .mission-card .caption,
+.ptb-frame .mission-card .sub,
+.ptb-frame .mission-card .small{
+  font-size:3.55cqw !important;
+  line-height:1.38 !important;
+  letter-spacing:-.025em !important;
+}
+.ptb-frame .mission-card p,
+.ptb-frame .mission-card .mission-desc,
+.ptb-frame .mission-card .mission-text,
+.ptb-frame .mission-card .mission-guide,
+.ptb-frame .mission-card .mission-instruction,
+.ptb-frame .mission-card .caption,
+.ptb-frame .mission-card .sub,
+.ptb-frame .mission-card .small{
+  white-space:nowrap !important;
+}
+/* 원본에서 명시적으로 넣은 <br> 줄은 그대로 유지 */
+
+/* ===== 최종 공통 편지 알림 규격: 11줄 / 모든 문제페이지 동일 ===== */
+.ptb-frame .letter-paper{
+  width:88% !important;height:76% !important;min-height:0 !important;
+  padding:23% 9% 16% !important;box-sizing:border-box !important;
+  border:1px solid #c7a37d !important;
+}
+.ptb-frame .letter-paper::before{inset:3% !important;border:1px solid rgba(166,116,68,.55) !important;}
+.ptb-frame .letter-content{font-size:5cqw !important;line-height:1.36 !important;}
+.ptb-frame .letter-top{font-size:4.6cqw !important;}
+.ptb-frame .letter-bottom{font-size:3cqw !important;}
+.ptb-frame .letter-close{font-size:2.7cqw !important;}
+
+/* ===== 힌트/정답: 편지지 2중 외곽선 + 2줄 최소 높이 ===== */
+.ptb-frame .modal-box{
+  width:88% !important;
+  height:38cqw !important;
+  min-height:0 !important;
+  padding:9cqw 5cqw 9cqw !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  background:linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),#f6ead6 !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  box-shadow:0 14px 30px rgba(0,0,0,.38),inset 0 0 24px rgba(130,85,45,.08) !important;
+}
+.ptb-frame .modal-box::before{
+  content:"" !important;position:absolute !important;inset:3% !important;
+  border:1px solid rgba(166,116,68,.55) !important;pointer-events:none !important;
+}
+.ptb-frame .modal-title{
+  top:2.8cqw !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:3.5cqw !important;font-weight:700 !important;letter-spacing:.02em !important;
+}
+.ptb-frame .modal-content{
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:3.8cqw !important;font-weight:700 !important;line-height:1.35 !important;
+  letter-spacing:0 !important;white-space:pre-line !important;word-break:keep-all !important;
+}
+.ptb-frame .modal-close{
+  right:5cqw !important;bottom:2.5cqw !important;
+  height:6.5cqw !important;min-width:13cqw !important;padding:0 2.5cqw !important;
+  font-family:"Gowun Dodum",sans-serif !important;font-size:3cqw !important;
+  border-radius:9px !important;
+}
+
+/* ===== 편지 알림 최종 공통 규격 ===== */
+.ptb-frame .letter-paper{
+  width:88% !important;height:76% !important;min-height:0 !important;
+  padding:23% 9% 16% !important;box-sizing:border-box!important;
+  border:1px solid #c7a37d !important;
+}
+.ptb-frame .letter-paper::before{inset:3% !important;border:1px solid rgba(166,116,68,.55)!important;}
+.ptb-frame .letter-content{font-size:5cqw!important;line-height:1.36!important;}
+.ptb-frame .letter-top{font-size:4.6cqw!important;}
+.ptb-frame .letter-bottom{font-size:3cqw!important;}
+.ptb-frame .letter-close{
+  right:7% !important;bottom:6.5% !important;
+  width:18cqw !important;min-width:18cqw !important;height:10cqw !important;
+  padding:0 !important;border-radius:13px !important;font-size:2.7cqw !important;
+}
+/* 힌트/정답: 글씨 확대 + 가운데 정렬 */
+.ptb-frame .modal-content{
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4.6cqw !important;font-weight:700 !important;line-height:1.35 !important;
+  text-align:center !important;white-space:pre-line !important;word-break:keep-all !important;
+  width:100% !important;
+}
+.ptb-frame .modal-title{
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:4cqw !important;text-align:center !important;
+}
+
+.ptb-frame .letter-modal{position:absolute!important;inset:0!important;padding:0!important;display:none!important;justify-content:center!important;align-items:center!important;}
+.ptb-frame .letter-modal.show{display:flex!important;}
+.ptb-frame .letter-paper{position:relative!important;width:88%!important;height:76%!important;min-height:0!important;padding:23% 9% 16%!important;box-sizing:border-box!important;border:1px solid #c7a37d!important;border-radius:5px!important;}
+.ptb-frame .letter-paper::before{inset:3%!important;border:1px solid rgba(166,116,68,.55)!important;}
+.ptb-frame .letter-content{font-family:"Gowun Dodum",sans-serif!important;font-size:5cqw!important;font-weight:400!important;line-height:1.36!important;letter-spacing:.01em!important;}
+.ptb-frame .letter-top{top:6%!important;font-size:4.6cqw!important;}
+.ptb-frame .letter-bottom{bottom:4.5%!important;font-size:3cqw!important;}
+.ptb-frame .letter-close{right:7%!important;bottom:6.5%!important;width:18cqw!important;min-width:18cqw!important;height:10cqw!important;padding:0!important;border-radius:13px!important;font-family:"Gowun Dodum",sans-serif!important;font-size:2.7cqw!important;font-weight:900!important;}
+
+/* ===== 안내창: 제목 아래 한 줄 띄우고 본문 시작 ===== */
+.ptb-frame .modal-content{
+  margin-top:5.4cqw !important;
+}
+</style>
+
+<style>
+/* 편지 알림창 본문 글씨 축소 */
+.ptb-frame .letter-content{font-size:3.8cqw !important;}
+</style>
+
+</head>
+
+
+<body>
+<div class="landscape-guide">
+  <div class="landscape-guide-text">
+    📱<br>
+    원활한 진행을 위해<br>
+    세로 모드를 유지해 주세요.
+  </div>
+</div>
+<div class="ptb-frame">
+
+
+<!-- =====================================================
+     미션카드
+===================================================== -->
+
+<div
+  class="mission-wrap"
+  id="missionWrap"
+>
+
+  <div class="mission-card">
+
+
+    <div class="mission-title">
+      기억 #1: 순례주택
+    </div>
+
+
+    <div class="mission-kit">
+      A 1, A 2 키트 사용
+    </div>
+
+
+    <div class="mission-image-box">
+
+      <img
+        class="mission-image"
+        src="ptbq111.png"
+        alt="순례주택 미션 그림"
+      >
+
+    </div>
+
+
+    <div class="mission-guide">
+      정답은 알파벳 7자
+    </div>
+
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     정답 입력 UI
+===================================================== -->
+
+<div
+  class="ui-wrap"
+  id="uiWrap"
+>
+
+  <div class="answer-row">
+
+    <input
+      id="answerInput"
+      class="answer-input"
+      type="text"
+      placeholder="정답을 입력하세요"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+    >
+
+
+    <button
+      class="submit-btn"
+      type="button"
+      onclick="checkAnswer()"
+    >
+      입력
+    </button>
+
+  </div>
+
+
+  <div class="action-row">
+
+    <button
+      class="action-btn"
+      type="button"
+      onclick="showHint()"
+    >
+      힌트보기
+    </button>
+
+
+    <button
+      class="action-btn"
+      id="answerBtn"
+      type="button"
+      onclick="showAnswer()"
+      disabled
+    >
+      정답보기
+    </button>
+
+
+    <button
+      class="action-btn"
+      type="button"
+      onclick="showScore()"
+    >
+      기억보상
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     글자 모달
+===================================================== -->
+
+<div
+  class="modal"
+  id="infoModal"
+>
+
+  <div class="modal-box">
+
+    <div
+      class="modal-title"
+      id="modalTitle"
+    >
+      안내
+    </div>
+
+
+    <div
+      class="modal-content"
+      id="modalContent"
+    ></div>
+
+
+    <button
+      class="modal-close"
+      type="button"
+      onclick="closeModal()"
+    >
+      닫기
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     HTML 편지 모달
+===================================================== -->
+<div class="letter-modal" id="letterModal">
+  <div class="letter-paper">
+    <div class="letter-top">—  ✉  —</div>
+    <div class="letter-content" id="letterContent"></div>
+    <div class="letter-bottom">— · ♡ · —</div>
+    <button class="letter-close" type="button" onclick="closeLetterModal()">닫기</button>
+  </div>
+</div>
+
+<!-- =====================================================
+     결과 영상
+===================================================== -->
+
+<div
+  class="video-modal"
+  id="videoModal"
+>
+
+  <div class="video-box">
+
+    <video
+      id="resultVideo"
+      class="result-video"
+      playsinline
+      muted
+    ></video>
+
+
+    <div
+      id="videoFallback"
+      class="video-fallback"
+    ></div>
+
+  </div>
+
+</div>
+
+
+
+</div>
+<script>
+
+/* =========================================================
+   문제 설정
+========================================================= */
+
+const missionConfig = {
+
+  missionNumber:1,
+
+  correctAnswer:"library",
+
+  hintText:
+    "집모양을 맞추면 단어가 보입니다.",
+
+  answerText:
+    "library",
+
+  /*
+    미션카드가 없는 새로운 배경
+  */
+  bgImage:
+    "ptbq1.png",
+
+  introLetter:
+    `오늘도 나는 이 도서관으로 돌아왔다.
+이상하게도 이곳에 오면 
+마음이 편안해진다.
+마치 아주 오래전부터,
+매일 이곳을 찾아왔던 사람처럼.`,
+
+  correctLetter:
+    `이 책을 읽고 알았다.
+집은 머무는 곳이 아니라,
+다시 돌아오고 싶은 곳이라는 걸.`
+
+};
+
+
+/* =========================================================
+   저장
+========================================================= */
+
+const PROGRESS_KEY =
+  "ptb_progress_v1";
+
+
+let usedHint=false;
+let usedAnswer=false;
+let locked=false;
+
+let pendingScore=null;
+
+
+/*
+  intro   = 첫 편지
+  correct = 정답 후 편지
+*/
+
+let letterModalMode =
+  "intro";
+
+
+/* =========================================================
+   진행상황
+========================================================= */
+
+function getProgress(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(
+        PROGRESS_KEY
+      )
+    ) || {};
+
+  }
+
+  catch(e){
+
+    return {};
+
+  }
+
+}
+
+
+function setProgress(
+  progress
+){
+
+  localStorage.setItem(
+    PROGRESS_KEY,
+    JSON.stringify(progress)
+  );
+
+}
+
+/* 힌트/정답보기는 누르는 즉시 저장 */
+function saveUsageState(){
+  const progress=getProgress();
+  const n=missionConfig.missionNumber;
+  const old=progress[n]||{};
+
+  if(old.completed) return;
+
+  progress[n]={
+    completed:false,
+    usedHint:usedHint,
+    usedAnswer:usedAnswer
+  };
+  setProgress(progress);
+}
+
+/* 뒤로가기/새로고침/재접속 시 사용 기록 복원 */
+function loadUsageState(){
+  const data=getProgress()[missionConfig.missionNumber];
+  if(!data) return;
+
+  usedHint=data.usedHint===true;
+  usedAnswer=data.usedAnswer===true;
+
+  if(usedHint){
+    document.getElementById("answerBtn").disabled=false;
+  }
+}
+
+
+/* =========================================================
+   정답 정리
+========================================================= */
+
+function normalize(
+  text
+){
+
+  return String(text)
+
+    .replace(
+      /\s+/g,
+      ""
+    )
+
+    .trim()
+
+    .toLowerCase();
+
+}
+
+
+/* =========================================================
+   점수
+
+   기존 편지왔어요 방식 유지
+========================================================= */
+
+function currentScore(){
+
+  if(
+    usedAnswer
+  ){
+    return 0;
+  }
+
+
+  if(
+    usedHint
+  ){
+    return 10;
+  }
+
+
+  return 20;
+
+}
+
+
+/* =========================================================
+   진행 저장
+========================================================= */
+
+function saveResult(score){
+  const progress=getProgress();
+  const n=missionConfig.missionNumber;
+  const old=progress[n]||{};
+
+  if(old.completed) return false;
+
+  progress[n]={
+    completed:true,
+    score:score,
+    usedHint:usedHint,
+    usedAnswer:usedAnswer
+  };
+
+  setProgress(progress);
+  return true;
+}
+
+
+/* =========================================================
+   글자 모달
+========================================================= */
+
+function openModal(
+  title,
+  content
+){
+
+  document
+    .getElementById(
+      "modalTitle"
+    )
+    .textContent =
+      title;
+
+
+  document
+    .getElementById(
+      "modalContent"
+    )
+    .textContent =
+      content;
+
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+}
+
+
+function closeModal(){
+
+  document
+    .getElementById(
+      "infoModal"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   HTML 편지 열기 / 닫기
+========================================================= */
+function openLetterModal(content,mode){
+  letterModalMode=mode;
+  document.getElementById("letterContent").textContent=content;
+  document.getElementById("letterModal").classList.add("show");
+}
+
+function closeLetterModal(){
+  document.getElementById("letterModal").classList.remove("show");
+
+  if(letterModalMode==="intro"){
+    requestAnimationFrame(showMission);
+    return;
+  }
+
+  if(letterModalMode==="correct" && pendingScore!==null){
+    const score=pendingScore;
+    pendingScore=null;
+
+    if(score===0){
+      location.href="ptbm.html";
+      return;
+    }
+    playVideoAndReturn(score);
+  }
+}
+
+
+/* =========================================================
+   미션카드 표시
+========================================================= */
+
+function showMission(){
+
+  document
+    .getElementById(
+      "missionWrap"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+
+  document
+    .getElementById(
+      "uiWrap"
+    )
+    .classList
+    .add(
+      "show"
+    );
+
+
+  /*
+    ★ focus() 없음
+
+    사용자가 입력창을 직접 눌렀을 때만
+    휴대폰 키보드가 나타남.
+  */
+
+}
+
+
+/* =========================================================
+   미션카드 숨김
+========================================================= */
+
+function hideMission(){
+
+  document
+    .getElementById(
+      "missionWrap"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  document
+    .getElementById(
+      "uiWrap"
+    )
+    .classList
+    .remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   힌트
+========================================================= */
+
+function showHint(){
+
+  if(
+    locked
+  ){
+    return;
+  }
+
+
+  usedHint =
+    true;
+
+  saveUsageState();
+
+
+  document
+    .getElementById(
+      "answerBtn"
+    )
+    .disabled =
+      false;
+
+
+  openModal(
+    "힌트",
+    missionConfig.hintText
+  );
+
+}
+
+
+/* =========================================================
+   정답보기
+========================================================= */
+
+function showAnswer(){
+
+  if(
+    locked
+  ){
+    return;
+  }
+
+
+  if(
+    !usedHint
+  ){
+    return;
+  }
+
+
+  usedAnswer =
+    true;
+
+  saveUsageState();
+
+
+  openModal(
+    "정답",
+    missionConfig.answerText
+  );
+
+}
+
+
+/* =========================================================
+   총 기억보상
+========================================================= */
+
+function getTotalScore(){
+
+  const progress =
+    getProgress();
+
+
+  let total =
+    0;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    if(
+      progress[i]
+      &&
+      progress[i].completed
+    ){
+
+      total +=
+        Number(
+          progress[i].score || 0
+        );
+
+    }
+
+  }
+
+
+  return total;
+
+}
+
+
+/* =========================================================
+   기억보상
+========================================================= */
+
+function showScore(){
+
+  openModal(
+
+    "기억보상",
+
+    `현재까지 모은 기억보상은 ${getTotalScore()}입니다.`
+
+  );
+
+}
+
+
+/* =========================================================
+   정답 확인
+========================================================= */
+
+function checkAnswer(){
+
+  if(
+    locked
+  ){
+    return;
+  }
+
+
+  const input =
+    document
+      .getElementById(
+        "answerInput"
+      )
+      .value;
+
+
+  if(
+    !input.trim()
+  ){
+
+    openModal(
+      "안내",
+      "정답을 입력해주세요."
+    );
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     정답
+  ===================================================== */
+
+  if(
+    normalize(input)
+    ===
+    normalize(
+      missionConfig.correctAnswer
+    )
+  ){
+
+    locked =
+      true;
+
+
+    const oldResult=getProgress()[missionConfig.missionNumber];
+    const alreadyCompleted=!!(oldResult && oldResult.completed);
+
+    if(alreadyCompleted){
+      pendingScore=null;
+    }else{
+      pendingScore=currentScore();
+      saveResult(pendingScore);
+    }
+
+
+    closeModal();
+
+
+    /*
+      ★ 카드와 입력 UI 즉시 제거
+    */
+
+    hideMission();
+
+    if(alreadyCompleted){
+      location.href="ptbm.html";
+      return;
+    }
+
+
+
+    /* 정답 후 2초 대기 → 편지가 부드럽게 등장 */
+    setTimeout(
+      function(){
+        openLetterModal(
+          missionConfig.correctLetter,
+          "correct"
+        );
+      },
+      2000
+    );
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     오답
+  ===================================================== */
+
+  const ui =
+    document.getElementById(
+      "uiWrap"
+    );
+
+
+  ui
+    .classList
+    .remove(
+      "shake"
+    );
+
+
+  void ui.offsetWidth;
+
+
+  ui
+    .classList
+    .add(
+      "shake"
+    );
+
+
+  openModal(
+    "오답",
+    "정답이 아닙니다."
+  );
+
+}
+
+
+/* =========================================================
+   점수별 영상
+========================================================= */
+
+function getVideoSrc(score){
+
+  if(score === 20){
+    return "ptbq1.mp4";
+  }
+
+  if(score === 10){
+    return "ptbq2.mp4";
+  }
+
+  return "";
+}
+
+
+/* =========================================================
+   영상 → ptbm
+========================================================= */
+
+function playVideoAndReturn(
+  score
+){
+
+  const videoModal =
+    document.getElementById(
+      "videoModal"
+    );
+
+
+  const video =
+    document.getElementById(
+      "resultVideo"
+    );
+
+
+  const fallback =
+    document.getElementById(
+      "videoFallback"
+    );
+
+
+  videoModal
+    .classList
+    .add(
+      "show"
+    );
+
+
+  fallback
+    .classList
+    .remove(
+      "show"
+    );
+
+
+  fallback.textContent =
+    "";
+
+
+  video.style.display =
+    "block";
+
+
+  video.src =
+    getVideoSrc(
+      score
+    );
+
+
+  video.load();
+
+
+  const goBack =
+    function(){
+
+      location.href =
+        "ptbm.html";
+
+    };
+
+
+  /*
+    영상 종료
+  */
+
+  video.onended =
+    goBack;
+
+
+  /*
+    파일 오류
+  */
+
+  video.onerror =
+    function(){
+
+      video.style.display =
+        "none";
+
+
+      fallback.textContent =
+        `${score}점 획득!
+영상 파일을 확인해주세요.`;
+
+
+      fallback
+        .classList
+        .add(
+          "show"
+        );
+
+
+      setTimeout(
+        goBack,
+        1800
+      );
+
+    };
+
+
+  const playPromise =
+    video.play();
+
+
+  if(
+    playPromise !==
+    undefined
+  ){
+
+    playPromise.catch(
+      function(){
+
+        video.style.display =
+          "none";
+
+
+        fallback.textContent =
+          `${score}점 획득!
+영상을 재생할 수 없습니다.`;
+
+
+        fallback
+          .classList
+          .add(
+            "show"
+          );
+
+
+        setTimeout(
+          goBack,
+          1800
+        );
+
+      }
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ENTER
+========================================================= */
+
+document
+  .getElementById(
+    "answerInput"
+  )
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key ===
+        "Enter"
+      ){
+
+        checkAnswer();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   최초 실행
+
+   화면 로드
+   → 미션카드는 숨김
+   → 1초 후 첫 편지
+========================================================= */
+
+document.body.style.backgroundImage =
+  `url("${missionConfig.bgImage}")`;
+
+
+loadUsageState();
+
+setTimeout(
+  function(){
+    openLetterModal(
+      missionConfig.introLetter,
+      "intro"
+    );
+  },
+  1000
+);
+
+</script>
+
+</body>
+</html>
