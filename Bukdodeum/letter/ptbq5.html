@@ -1551,7 +1551,7 @@ function closeLetterModal(){
   }
   if(letterModalMode==="correct" && pendingScore!==null){
     const score=pendingScore; pendingScore=null;
-    if(score===0){location.href="ptbm.html";return;}
+    if(score===0){parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");return;}
     playVideoAndReturn(score);
   }
 }
@@ -1728,7 +1728,7 @@ function checkAnswer(){
 
     const existingResult=getProgress()[missionConfig.missionNumber];
     if(existingResult && existingResult.completed===true){
-      location.href="ptbm.html";
+      parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
       return;
     }
     pendingScore=currentScore();
@@ -1821,8 +1821,7 @@ function playVideoAndReturn(score){
 
   video.onended=function(){
 
-    location.href=
-      "ptbm.html";
+    parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
 
   };
 
@@ -1834,8 +1833,7 @@ function playVideoAndReturn(score){
 
   video.onerror=function(){
 
-    location.href=
-      "ptbm.html";
+    parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
 
   };
 
@@ -1852,8 +1850,7 @@ function playVideoAndReturn(score){
     playPromise.catch(
       function(){
 
-        location.href=
-          "ptbm.html";
+        parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
 
       }
     );

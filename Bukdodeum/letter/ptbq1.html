@@ -1987,7 +1987,7 @@ function closeLetterModal(){
     pendingScore=null;
 
     if(score===0){
-      location.href="ptbm.html";
+      parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
       return;
     }
     playVideoAndReturn(score);
@@ -2259,7 +2259,7 @@ function checkAnswer(){
     hideMission();
 
     if(alreadyCompleted){
-      location.href="ptbm.html";
+      parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
       return;
     }
 
@@ -2395,8 +2395,7 @@ function playVideoAndReturn(
   const goBack =
     function(){
 
-      location.href =
-        "ptbm.html";
+      parent.postMessage({type:"PTB_NAV",page:"ptbm.html"},"*");
 
     };
 

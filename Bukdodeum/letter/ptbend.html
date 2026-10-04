@@ -201,7 +201,7 @@ function closeInfoModal(){
    arrowArea.classList.add("reveal");
  });
 }
-function goNextPage(){location.href="ptbout.html"}
+function goNextPage(){parent.postMessage({type:"PTB_NAV",page:"ptbout.html"},"*")}
 
 setTimeout(openInfoModal,1000);
 updateSlide();

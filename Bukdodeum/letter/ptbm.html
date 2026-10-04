@@ -2007,8 +2007,7 @@ function goMission(
     num<=5
   ){
 
-    location.href =
-      `ptbq${num}.html`;
+    parent.postMessage({type:"PTB_NAV",page:`ptbq${num}.html`},"*");
 
   }
 
@@ -2019,8 +2018,7 @@ function goMission(
     finalMissionDone()
   ){
 
-    location.href =
-      "ptbend.html";
+    parent.postMessage({type:"PTB_NAV",page:"ptbend.html"},"*");
 
   }
 
