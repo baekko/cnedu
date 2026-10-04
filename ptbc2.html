@@ -858,6 +858,188 @@ body{
 }
 
 </style>
+
+<style id="ptbc-match-latest-ptbq1">
+/* =========================================================
+   1. 미션카드 — 최신 PTBQ1 편지지형 스타일
+========================================================= */
+.mission-card{
+  position:relative !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  background:
+    linear-gradient(rgba(255,250,240,.82),rgba(248,237,217,.82)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.34),
+    inset 0 0 35px rgba(130,85,45,.08) !important;
+  padding:27px 26px 24px !important;
+}
+.mission-card::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:11px !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+  pointer-events:none !important;
+  z-index:0 !important;
+}
+.mission-card>*{position:relative !important;z-index:1 !important;word-break:keep-all !important}
+
+/* PTBQ1 최종 cqw를 PTBC 화면에 동일 비율로 환산 */
+.mission-title{
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:min(3.42vw,calc((100dvh - 24px)*.021375)) !important; /* 3.8cqw */
+  font-weight:700 !important;
+  line-height:1.38 !important;
+  letter-spacing:-.035em !important;
+  white-space:nowrap !important;
+}
+.mission-answer-guide{
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:min(3.195vw,calc((100dvh - 24px)*.01996875)) !important; /* 3.55cqw */
+  font-weight:700 !important;
+  line-height:1.38 !important;
+  letter-spacing:-.025em !important;
+}
+
+/* PTBC 고유 문제 내용은 그대로 — 이미지 박스/새 프레임 생성 안 함 */
+
+/* =========================================================
+   2. 힌트1 / 힌트2 / 정답보기
+   최신 PTBQ1 최종 모달: 88%, 38cqw, 편지지 이중선
+========================================================= */
+.modal:not(.wrong-mode){
+  background:rgba(0,0,0,.55) !important;
+}
+.modal:not(.wrong-mode) .modal-box{
+  position:relative !important;
+  width:min(79.2vw,calc((100dvh - 24px)*.55)) !important; /* frame 88% */
+  height:min(34.2vw,calc((100dvh - 24px)*.2375)) !important; /* 38cqw */
+  min-height:0 !important;
+  padding:
+    min(8.1vw,calc((100dvh - 24px)*.05625))
+    min(4.5vw,calc((100dvh - 24px)*.03125))
+    min(8.1vw,calc((100dvh - 24px)*.05625)) !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  background:
+    linear-gradient(rgba(255,250,240,.78),rgba(248,237,217,.78)),
+    radial-gradient(circle at 25% 20%,rgba(150,105,60,.08),transparent 34%),
+    radial-gradient(circle at 75% 72%,rgba(150,105,60,.07),transparent 38%),
+    #f6ead6 !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  box-shadow:0 14px 30px rgba(0,0,0,.38),inset 0 0 24px rgba(130,85,45,.08) !important;
+}
+.modal:not(.wrong-mode) .modal-box::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:3% !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+  pointer-events:none !important;
+}
+.modal:not(.wrong-mode) .modal-title{
+  position:absolute !important;
+  top:min(2.52vw,calc((100dvh - 24px)*.0175)) !important; /* 2.8cqw */
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+  color:#a77a50 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:min(3.6vw,calc((100dvh - 24px)*.025)) !important; /* 4cqw final */
+  font-weight:700 !important;
+  letter-spacing:.02em !important;
+  white-space:nowrap !important;
+  text-align:center !important;
+}
+.modal:not(.wrong-mode) .modal-content{
+  position:relative !important;
+  z-index:2 !important;
+  width:100% !important;
+  margin-top:min(4.86vw,calc((100dvh - 24px)*.03375)) !important; /* 5.4cqw */
+  color:#2d2925 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:min(4.14vw,calc((100dvh - 24px)*.02875)) !important; /* 4.6cqw final */
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  letter-spacing:0 !important;
+  text-align:center !important;
+  white-space:pre-line !important;
+  word-break:keep-all !important;
+}
+.modal:not(.wrong-mode) .modal-close{
+  position:absolute !important;
+  right:min(4.5vw,calc((100dvh - 24px)*.03125)) !important;
+  bottom:min(2.25vw,calc((100dvh - 24px)*.015625)) !important;
+  z-index:4 !important;
+  margin:0 !important;
+  height:min(5.85vw,calc((100dvh - 24px)*.040625)) !important;
+  min-width:min(11.7vw,calc((100dvh - 24px)*.08125)) !important;
+  padding:0 min(2.25vw,calc((100dvh - 24px)*.015625)) !important;
+  border:none !important;
+  border-radius:9px !important;
+  background:#5a321d !important;
+  color:#fff !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:min(2.7vw,calc((100dvh - 24px)*.01875)) !important; /* 3cqw */
+  font-weight:900 !important;
+}
+
+/* =========================================================
+   3. 오답/정답 반응
+   - 설명창이 아님
+   - '오답입니다.' / '정답입니다.'만 표시
+   - 기존 PTBC 새 angry / happy 비행 / 폭죽 JS 그대로
+========================================================= */
+.modal.wrong-mode .modal-box,
+.success-modal.card-mode .success-box{
+  box-sizing:border-box !important;
+  padding:24px 22px !important;
+  background:
+    linear-gradient(rgba(255,250,240,.82),rgba(248,237,217,.82)),
+    #f6ead6 !important;
+  border:1px solid #c7a37d !important;
+  border-radius:5px !important;
+  box-shadow:0 14px 30px rgba(0,0,0,.38),inset 0 0 24px rgba(130,85,45,.08) !important;
+  text-align:center !important;
+}
+.modal.wrong-mode .modal-box::before,
+.success-modal.card-mode .success-box::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:7px !important;
+  border:1px solid rgba(166,116,68,.55) !important;
+  pointer-events:none !important;
+}
+.modal.wrong-mode .modal-title,
+.modal.wrong-mode .modal-close{display:none !important}
+.modal.wrong-mode .modal-content,
+.success-modal.card-mode .success-title{
+  position:relative !important;
+  z-index:2 !important;
+  margin:0 !important;
+  font-family:"Gowun Dodum",sans-serif !important;
+  font-size:20px !important;
+  font-weight:900 !important;
+  line-height:1.4 !important;
+  color:#2d2925 !important;
+  text-align:center !important;
+}
+
+/* 작은 휴대폰에서도 PTBQ1 카드 내부선 유지 */
+@media(max-width:390px){
+  .mission-card{padding:24px 22px 22px !important}
+  .mission-card::before{inset:10px !important}
+}
+@media(max-height:700px){
+  .mission-card{padding-top:22px !important;padding-bottom:20px !important}
+}
+</style>
+
 </head>
 
 <body>
