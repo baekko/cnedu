@@ -1885,7 +1885,7 @@ function showSuccess(){
 
     clearInterval(fireworkTimer);
 
-    location.href = "index.html";
+    parent.postMessage({type:"PTB_NAV",page:"ptbc.html"},"*");
 
   },10000);
 
