@@ -1917,7 +1917,7 @@ function showSuccess(){
 
     clearInterval(fireworkTimer);
 
-    location.href = "index.html";
+    parent.postMessage({type:"PTB_NAV",page:"bduc.html"},"*");
 
   },10000);
 
