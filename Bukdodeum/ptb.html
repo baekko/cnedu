@@ -431,25 +431,25 @@ body{
 
 <main class="choice-grid" aria-label="북돋움 프로그램 선택">
   <button class="choice-btn elementary-game" type="button"
-    onclick="openCode('초등학생 게임용','1111','rabbit/')">
+    onclick="openCode('초등학생 게임용','1111','bdut.html')">
     <img class="choice-icon" src="ptbg.png" alt="">
     <span class="label">초등학생<span class="type">게임용</span></span>
   </button>
 
   <button class="choice-btn teen-game" type="button"
-    onclick="openCode('중·고등학생 게임용','3333','letter/')">
+    onclick="openCode('중·고등학생 게임용','3333','ptbt.html')">
     <img class="choice-icon" src="ptbg.png" alt="">
     <span class="label">중·고등학생<span class="type">게임용</span></span>
   </button>
 
   <button class="choice-btn elementary-class" type="button"
-    onclick="openCode('초등학생 수업용','2222','e-class/')">
+    onclick="openCode('초등학생 수업용','2222','bduc.html')">
     <img class="choice-icon" src="ptbl.png" alt="">
     <span class="label">초등학생<span class="type">수업용</span></span>
   </button>
 
   <button class="choice-btn teen-class" type="button"
-    onclick="openCode('중·고등학생 수업용','4444','m-class/')">
+    onclick="openCode('중·고등학생 수업용','4444','ptbc.html')">
     <img class="choice-icon" src="ptbl.png" alt="">
     <span class="label">중·고등학생<span class="type">수업용</span></span>
   </button>
@@ -507,7 +507,13 @@ function checkCode(){
 
   if(value === selectedCode){
     codeMessage.textContent = "";
-    location.href = selectedPage;
+    const cleanRoutes = {
+      "bdut.html":"/Bukdodeum/rabbit/",
+      "ptbt.html":"/Bukdodeum/letter/",
+      "bduc.html":"/Bukdodeum/e-class/",
+      "ptbc.html":"/Bukdodeum/m-class/"
+    };
+    window.parent.location.href = cleanRoutes[selectedPage] || selectedPage;
     return;
   }
 
