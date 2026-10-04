@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RABBIT HOLE END</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
+:root{--green:#4f7d32;--dark:#29451b;--paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e}
+body{background:none center/cover no-repeat}
+.screen{width:100%;height:100dvh;display:flex;align-items:center;justify-content:center;padding:12px}
+.stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.media-box{
+ width:min(90vw,calc((100dvh - 24px)*.625));
+ aspect-ratio:25/40;position:relative;overflow:hidden;background:#111;
+ border:5px solid #cdb7e9;box-shadow:0 16px 32px rgba(0,0,0,.38);
+ container-type:inline-size;
+}
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.talk{
+ position:absolute;z-index:6;left:5px;right:5px;
+ top:calc(100% - 2.5% - clamp(96px,25cqw,160px));
+ height:auto;max-height:clamp(96px,25cqw,160px);overflow:hidden;
+ padding:clamp(8px,2.2cqw,14px) clamp(9px,2.5cqw,16px);
+ border:clamp(2px,.55cqw,3px) solid var(--paper-border);background:rgba(244,236,209,.96);
+ color:var(--paper-text);font-size:clamp(11px,3cqw,18px);font-weight:700;line-height:1.38;
+ white-space:pre-line;word-break:keep-all;box-shadow:0 5px 10px rgba(0,0,0,.22);
+}
+.arrows{
+ position:absolute;z-index:8;
+ left:5px;right:5px;
+ top:calc(100% - 2.5% - clamp(96px,25cqw,160px) - clamp(42px,12cqw,68px) - clamp(6px,2cqw,12px));
+ height:clamp(42px,12cqw,68px);
+ display:flex;align-items:center;justify-content:space-between;
+}
+.arrow{
+ width:clamp(52px,14.5cqw,84px);height:clamp(42px,12cqw,68px);border:0;padding:0;background:transparent;cursor:pointer;
+ touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline:none;box-shadow:none;
+}
+.arrow:focus,.arrow:focus-visible,.arrow:active{outline:none;box-shadow:none;background:transparent}
+.arrow svg{display:block;width:100%;height:100%;filter:drop-shadow(0 5px 6px rgba(0,0,0,.4))}
+.shape{fill:var(--green);stroke:var(--dark);stroke-width:3}.hi{fill:rgba(255,255,255,.25)}
+.arrow.hidden{visibility:hidden;pointer-events:none}
+.landscape{display:none}
+@media(orientation:landscape){
+ .landscape{display:flex;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;background:#111;color:#fff;text-align:center;line-height:1.7;font-weight:700}
+}
+
+#endVideo{display:none}
+</style>
+</head>
+<body>
+<div class="landscape">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div>
+
+<div class="screen">
+ <div class="stage">
+  <div class="media-box">
+   <img id="storyImg" class="media" src="bduend1.png" alt="">
+   <video id="endVideo" class="media" src="bduend.mp4" muted playsinline webkit-playsinline preload="auto"></video>
+   <div id="arrows" class="arrows">
+    <button id="prevBtn" class="arrow hidden" type="button" aria-label="이전">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="hi" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
+    </button>
+    <button id="nextBtn" class="arrow" type="button" aria-label="다음">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="hi" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
+    </button>
+   </div>
+   <div id="talk" class="talk"></div>
+  </div>
+ </div>
+</div>
+<script>
+const talks=[`얼마나 지났을까.
+한참 잠을 자고난 후 눈을 떴어.
+분명 조금 전까지 래빗홀 속 책 열매 나무 아래에
+있었는데 어느새 교실로 돌아와 있었어.`,
+
+  `‘설마…… 전부 꿈이었나?’`,
+
+  `“왜 그렇게 멍하니 있어?”
+고개를 들자, 찾고 있던 친구가 서 있었어.
+어디 갔었냐고 묻기도 전에
+친구가 먼저 웃으며 말했지.
+“나, 진짜 이상한 꿈을 꿨어.”`,
+
+  `나는 잠시 친구를 바라보다가 웃었어.
+그 꿈이 뭐였는지는 묻지 않았어.
+어차피 나도 같은 꿈을 꾸었으니까.`];
+let currentTalk=0;
+let ending=false;
+
+const storyImg=document.getElementById("storyImg");
+const endVideo=document.getElementById("endVideo");
+const talk=document.getElementById("talk");
+const arrows=document.getElementById("arrows");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
+
+function imageForTalk(index){
+ if(index<=1) return "bduend1.png";
+ if(index===2) return "bduend2.png";
+ return "bduend3.png";
+}
+
+function render(){
+ storyImg.src=imageForTalk(currentTalk);
+ storyImg.style.display="block";
+ talk.textContent=talks[currentTalk];
+ talk.style.display="block";
+ prevBtn.classList.toggle("hidden",currentTalk===0);
+}
+
+function next(){
+ if(ending) return;
+ if(currentTalk < talks.length-1){
+   currentTalk++;
+   render();
+   return;
+ }
+ playEnding();
+}
+
+function prev(){
+ if(ending || currentTalk===0) return;
+ currentTalk--;
+ render();
+}
+
+function playEnding(){
+ ending=true;
+ arrows.style.visibility="hidden";
+ talk.style.display="none";
+ storyImg.style.display="none";
+ endVideo.style.display="block";
+ endVideo.muted=true;
+ endVideo.volume=0;
+ endVideo.currentTime=0;
+ endVideo.onended=function(){location.href="bduout.html"};
+ const p=endVideo.play();
+ if(p) p.catch(function(){endVideo.controls=true});
+}
+
+nextBtn.addEventListener("click",next);
+prevBtn.addEventListener("click",prev);
+
+function startPage(){
+ currentTalk=0;
+ ending=false;
+ endVideo.pause();
+ endVideo.style.display="none";
+ endVideo.controls=false;
+ arrows.style.visibility="visible";
+ render();
+}
+window.addEventListener("load",startPage);
+window.addEventListener("pageshow",function(e){if(e.persisted)startPage()});
+</script>
+</body>
+</html>

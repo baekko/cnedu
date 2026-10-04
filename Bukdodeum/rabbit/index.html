@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RABBIT HOLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:"Gowun Dodum",sans-serif}
+:root{--green:#4f7d32;--dark:#29451b;--paper:#f4ecd1;--paper-border:#7f4b3a;--paper-text:#8c4a2e}
+body{background:none center/cover no-repeat}
+.screen{width:100%;height:100dvh;display:flex;align-items:center;justify-content:center;padding:12px}
+.stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.media-box{
+ width:min(90vw,calc((100dvh - 24px)*.625));
+ aspect-ratio:25/40;position:relative;overflow:hidden;background:#111;
+ border:5px solid #cdb7e9;box-shadow:0 16px 32px rgba(0,0,0,.38);
+ container-type:inline-size;
+}
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.talk{
+ position:absolute;z-index:6;left:5px;right:5px;
+ top:calc(100% - 2.5% - clamp(96px,25cqw,160px));
+ height:auto;max-height:clamp(96px,25cqw,160px);overflow:hidden;
+ padding:clamp(8px,2.2cqw,14px) clamp(9px,2.5cqw,16px);
+ border:clamp(2px,.55cqw,3px) solid var(--paper-border);background:rgba(244,236,209,.96);
+ color:var(--paper-text);font-size:clamp(11px,3cqw,18px);font-weight:700;line-height:1.38;
+ white-space:pre-line;word-break:keep-all;box-shadow:0 5px 10px rgba(0,0,0,.22);
+}
+.arrows{
+ position:absolute;z-index:8;
+ left:5px;right:5px;
+ top:calc(100% - 2.5% - clamp(96px,25cqw,160px) - clamp(42px,12cqw,68px) - clamp(6px,2cqw,12px));
+ height:clamp(42px,12cqw,68px);
+ display:flex;align-items:center;justify-content:space-between;
+}
+.arrow{
+ width:clamp(52px,14.5cqw,84px);height:clamp(42px,12cqw,68px);border:0;padding:0;background:transparent;cursor:pointer;
+ touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline:none;box-shadow:none;
+}
+.arrow:focus,.arrow:focus-visible,.arrow:active{outline:none;box-shadow:none;background:transparent}
+.arrow svg{display:block;width:100%;height:100%;filter:drop-shadow(0 5px 6px rgba(0,0,0,.4))}
+.shape{fill:var(--green);stroke:var(--dark);stroke-width:3}.hi{fill:rgba(255,255,255,.25)}
+.arrow.hidden{visibility:hidden;pointer-events:none}
+.landscape{display:none}
+@media(orientation:landscape){
+ .landscape{display:flex;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;background:#111;color:#fff;text-align:center;line-height:1.7;font-weight:700}
+}
+
+#storyImg{display:none}
+.talk{display:none}
+.arrows{visibility:hidden}
+.arrows.on{visibility:visible}
+#startBtn{
+ position:absolute;z-index:9;left:50%;bottom:4.5%;transform:translateX(-50%);
+ height:clamp(44px,11cqw,64px);min-width:clamp(180px,52cqw,300px);padding:0 clamp(18px,4cqw,28px);
+ border:clamp(3px,.7cqw,4px) solid var(--dark);border-radius:clamp(13px,3cqw,18px);
+ background:var(--green);color:#fffdf1;font-family:"Gowun Dodum",sans-serif;
+ font-size:clamp(15px,3.7cqw,22px);font-weight:900;box-shadow:0 5px 8px rgba(0,0,0,.3);
+ display:none;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
+}
+#startBtn.on{display:block}
+#startBtn:focus,#startBtn:focus-visible,#startBtn:active{outline:none}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.12;transform:scale(1.08)}}
+#nextBtn.blink{animation:blink .55s linear infinite}
+
+#finalNextBtn{
+ width:clamp(70px,18cqw,104px);height:clamp(42px,12cqw,68px);
+ border:clamp(3px,.7cqw,4px) solid var(--dark);
+ border-radius:clamp(13px,3cqw,18px);
+ background:var(--green);color:#fffdf1;
+ font-family:"Gowun Dodum",sans-serif;
+ font-size:clamp(14px,3.5cqw,20px);font-weight:900;
+ box-shadow:0 5px 8px rgba(0,0,0,.30);
+ cursor:pointer;display:none;
+}
+#finalNextBtn.on{display:block}
+</style>
+</head>
+<body>
+<div class="landscape">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div>
+<div class="screen">
+ <div class="stage">
+  <div class="media-box">
+   <video id="titleVideo" class="media" src="bdut.mp4" muted playsinline preload="auto"></video>
+   <img id="storyImg" class="media" src="bduin1.png" alt="">
+   <button id="startBtn" type="button">래빗홀 게임 시작</button>
+   <div id="arrows" class="arrows">
+    <button id="prevBtn" class="arrow hidden" type="button" aria-label="이전">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M84 10 Q92 15 92 26 L92 70 Q92 81 84 86 Q76 91 67 84 L22 54 Q13 48 22 42 L67 12 Q76 5 84 10 Z"/><path class="hi" d="M78 18 Q84 21 84 28 L84 36 L39 48 L78 22 Z"/></svg>
+    </button>
+    <button id="nextBtn" class="arrow" type="button" aria-label="다음">
+     <svg viewBox="0 0 120 96"><path class="shape" d="M36 10 Q28 15 28 26 L28 70 Q28 81 36 86 Q44 91 53 84 L98 54 Q107 48 98 42 L53 12 Q44 5 36 10 Z"/><path class="hi" d="M42 18 Q36 21 36 28 L36 36 L81 48 L42 22 Z"/></svg>
+    </button>
+    <button id="finalNextBtn" type="button">다음</button>
+   </div>
+   <div id="talk" class="talk"></div>
+  </div>
+ </div>
+</div>
+<script>
+const scenes=[
+ [`교실 뒤 벽에 걸려 있는 커다란 금빛 거울.
+평소엔 그저 평범한 거울이었어.`,
+
+  `그런데 며칠 전부터 내 친구가
+쉬는 시간만 되면 혼자 거울 앞에 서서
+한참 동안 거울 속을 바라보는 거야.`,
+
+  `“너 거기서 뭐 해?”
+물어봐도 친구는 대답하지 않았어.`,
+
+  `그러던 어느 날,
+친구가 거울을 향해 작은 목소리로 무언가를 말했어.`,
+
+  `그리고 잠깐 다른 곳을 바라본 사이
+친구가 사라졌어.`,
+
+  `교실에도, 복도에도 없었어.
+가방과 책은 그대로인데 친구만 흔적도 없이
+사라졌어.`,
+
+  `나는 친구가 마지막으로 서 있던 거울이 
+자꾸만 신경 쓰였어.`,
+
+  `혹시 친구가 사라진 이유가
+저 거울과 관련 있는 건 아닐까?`],
+ [`친구를 찾기 위해 천천히 거울 앞으로 다가갔어.
+그리고 거울을 한참 바라봤어.`,
+
+  `아무 일도 일어나지 않아 자리를 뜨려 한 순간,
+그 녀석이 나타났어.`],
+ [`“놀라지 마. 이 거울은 ‘래빗홀’이야.
+너와 나의 신비한 세계를 이어 주는 문이지.”
+“내 친구 어디 있어? 네가 데려갔지?”
+나는 토끼를 보자마자 다급하게 물었어.`,
+
+  `“데려간 건 맞지만, 납치한 건 아니야!
+네 친구는 매일 이 거울 앞에서
+거울 너머에는 무엇이 있는지 궁금해했어.
+그래서 내가 특별히 래빗홀의 모험에 초대했지.
+지금은 신나게 이곳저곳을 여행하고 있을걸?”`,
+
+  `하지만 나는 믿을 수 없었어.
+“거짓말하지 마. 내 친구 돌려보내!”`,
+
+  `“정 못 믿겠으면 네가 직접 들어와서
+친구를 데려가.”
+토끼가 거울 너머로 손짓했어.
+“대신 한 가지 규칙이 있어.”`,
+
+  `“래빗홀은 복잡해서 나가는 길을 찾기 어려워.
+이곳에는 여러 개의 신비한 장소가 있고,
+그곳에 숨겨진 문제를 하나씩 해결해야
+다음 장소로 이동할 수 있거든.”`,
+
+  `“모든 문제를 풀고 나면 
+친구를 만날 수 있을 거야.”`,
+
+  `잠시 망설였지만 친구를 찾기 위해
+래빗홀로 들어가기로 했어.
+나는 천천히 거울을 향해 손을 뻗었고 그 순간!
+거울 속에서 강한 빛이 터져 나오더니 
+순식간에 내 몸을 안으로 끌어당겼어.`]
+];
+let scene=0, talkIndex=0, ending=false, firstNext=true;
+const titleVideo=document.getElementById("titleVideo");
+const storyImg=document.getElementById("storyImg");
+const talk=document.getElementById("talk");
+const arrows=document.getElementById("arrows");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
+const startBtn=document.getElementById("startBtn");
+const finalNextBtn=document.getElementById("finalNextBtn");
+
+function render(){
+ storyImg.src="bduin"+(scene+1)+".png";
+ storyImg.style.display="block";
+ talk.textContent=scenes[scene][talkIndex];
+ talk.style.display="block";
+ prevBtn.classList.toggle("hidden",scene===0 && talkIndex===0);
+ const isLast=scene===scenes.length-1 && talkIndex===scenes[scene].length-1;
+ nextBtn.style.display=isLast?"none":"block";
+ finalNextBtn.classList.toggle("on",isLast);
+}
+
+function startStory(){
+ startBtn.classList.remove("on");
+ titleVideo.style.display="none";
+ scene=0; talkIndex=0; ending=false; firstNext=true;
+ render();
+ arrows.classList.add("on");
+ nextBtn.classList.add("blink");
+}
+
+function next(){
+ if(ending) return;
+
+ // 같은 클릭에서 깜빡임을 끄고 곧바로 다음 대사까지 진행한다.
+ if(firstNext){
+   firstNext=false;
+   nextBtn.classList.remove("blink");
+ }
+
+ if(talkIndex < scenes[scene].length-1){
+   talkIndex++;
+   render();
+   return;
+ }
+ if(scene < scenes.length-1){
+   scene++;
+   talkIndex=0;
+   render();
+   return;
+ }
+ return;
+}
+
+function prev(){
+ if(ending) return;
+ if(talkIndex>0){talkIndex--;render();return}
+ if(scene>0){scene--;talkIndex=scenes[scene].length-1;render()}
+}
+
+
+startBtn.addEventListener("click",startStory);
+nextBtn.addEventListener("click",next);
+prevBtn.addEventListener("click",prev);
+finalNextBtn.addEventListener("click",()=>location.href="bdum.html");
+
+function reset(){
+ scene=0;talkIndex=0;ending=false;firstNext=true;
+ arrows.classList.remove("on");
+ nextBtn.classList.remove("blink");
+ startBtn.classList.remove("on");
+ talk.style.display="none";storyImg.style.display="none";
+ finalNextBtn.classList.remove("on");nextBtn.style.display="block";
+ titleVideo.style.display="block";titleVideo.currentTime=0;
+ titleVideo.onended=()=>startBtn.classList.add("on");
+ titleVideo.play().catch(()=>startBtn.classList.add("on"));
+}
+window.addEventListener("load",reset);
+window.addEventListener("pageshow",e=>{if(e.persisted)reset()});
+</script>
+</body>
+</html>
