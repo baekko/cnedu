@@ -1723,6 +1723,7 @@ function closeModal(){
    힌트
 ========================= */
 function showHint1(){
+  if(window.PTB_ADMIN_ALLOW_HINT1 && !window.PTB_ADMIN_ALLOW_HINT1()) return;
 
   if(locked) return;
 
@@ -1743,6 +1744,7 @@ function showHint1(){
 
 
 function showHint2(){
+  if(window.PTB_ADMIN_ALLOW_HINT2 && !window.PTB_ADMIN_ALLOW_HINT2()) return;
 
   if(locked) return;
 
@@ -1765,6 +1767,7 @@ function showHint2(){
 
 
 function showAnswer(){
+  if(window.PTB_ADMIN_ALLOW_ANSWER && !window.PTB_ADMIN_ALLOW_ANSWER()) return;
 
   if(locked) return;
 
@@ -2087,6 +2090,22 @@ window.addEventListener("resize",function(){
   }
 });
 
+</script>
+
+
+<script>
+/* ===== PTB 관리자 힌트 제한 ===== */
+(function(){
+  const STORAGE_KEY="ptb_admin_hint_limits_v1", GAME_KEY="mclass";
+  function level(){try{return Number((JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"))[GAME_KEY]||0);}catch(e){return 0;}}
+  function buttons(){return {h1:document.querySelector('[onclick="showHint1()"]'),h2:document.getElementById('hint2Btn')||document.querySelector('[onclick="showHint2()"]'),answer:document.getElementById('answerBtn')||document.querySelector('[onclick="showAnswer()"]')};}
+  function enforce(){const l=level(),b=buttons();if(!b.h1||!b.h2||!b.answer)return;if(l>=3){b.h1.disabled=true;b.h2.disabled=true;b.answer.disabled=true;}else if(l===2){b.h2.disabled=true;b.answer.disabled=true;}else if(l===1){b.answer.disabled=true;}}
+  window.PTB_ADMIN_ALLOW_HINT1=function(){return level()<3;};
+  window.PTB_ADMIN_ALLOW_HINT2=function(){return level()<2;};
+  window.PTB_ADMIN_ALLOW_ANSWER=function(){return level()<1;};
+  addEventListener('DOMContentLoaded',()=>{enforce();new MutationObserver(enforce).observe(document.body,{subtree:true,attributes:true,attributeFilter:['disabled']});});
+  addEventListener('storage',enforce);
+})();
 </script>
 
 </body>
