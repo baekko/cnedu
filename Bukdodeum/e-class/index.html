@@ -1,10 +1,16 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PLAY THE BOOK</title><style>html,body,iframe{margin:0;width:100%;height:100%;border:0}html,body{overflow:hidden;background:#000}iframe{position:fixed;inset:0;display:block}</style></head><body><iframe id="gameFrame" src="bduc.html" title="PLAY THE BOOK" allow="autoplay; fullscreen" allowfullscreen></iframe><script>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PLAY THE BOOK</title><style>html,body,iframe{margin:0;width:100%;height:100%;border:0}html,body{overflow:hidden;background:#000}iframe{position:fixed;inset:0;display:block}</style></head><body><iframe id="gameFrame" title="PLAY THE BOOK" allow="autoplay; fullscreen" allowfullscreen></iframe><script>
 (function(){
   const frame=document.getElementById("gameFrame");
+  const KEY="ptb_last_page_e_class";
+  const DEFAULT="bduc.html";
+  const valid=p=>/^[A-Za-z0-9_-]+\.html$/.test(p||"");
+  const saved=sessionStorage.getItem(KEY);
+  frame.src=valid(saved)?saved:DEFAULT;
   window.addEventListener("message",function(e){
     if(e.source!==frame.contentWindow || !e.data || e.data.type!=="PTB_NAV") return;
     const page=String(e.data.page||"");
-    if(!/^[A-Za-z0-9_-]+\.html$/.test(page)) return;
+    if(!valid(page)) return;
+    sessionStorage.setItem(KEY,page);
     frame.src=page;
   });
 })();
