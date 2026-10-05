@@ -2543,7 +2543,16 @@ setTimeout(
   function enforce(){const l=level(),b=buttons();if(!b.hint||!b.answer)return;if(l>=2){b.hint.disabled=true;b.answer.disabled=true;}else if(l===1){b.answer.disabled=true;}}
   window.PTB_ADMIN_ALLOW_HINT=function(){return level()<2;};
   window.PTB_ADMIN_ALLOW_ANSWER=function(){return level()<1;};
-  addEventListener('DOMContentLoaded',()=>{enforce();new MutationObserver(enforce).observe(document.body,{subtree:true,attributes:true,attributeFilter:['disabled']});});
+  addEventListener('DOMContentLoaded',()=>{
+    enforce();
+    new MutationObserver(()=>{
+      const l=level(),b=buttons();
+      if(b.hint){ if(l>=2 && !b.hint.disabled) b.hint.disabled=true; }
+      if(b.h1){ if(l>=3 && !b.h1.disabled) b.h1.disabled=true; }
+      if(b.h2){ if(l>=2 && !b.h2.disabled) b.h2.disabled=true; }
+      if(b.answer){ if(l>=1 && !b.answer.disabled) b.answer.disabled=true; }
+    }).observe(document.body,{subtree:true,attributes:true,attributeFilter:['disabled']});
+  });
   addEventListener('storage',enforce);
 })();
 </script>
