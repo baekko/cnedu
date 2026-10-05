@@ -452,7 +452,7 @@ body{
 </div></div>
 <div class="ptb-admin-overlay" id="ptbAdminPanel" aria-hidden="true"><div class="ptb-admin-card">
   <div class="ptb-admin-head"><div class="ptb-admin-title">⚙️ 관리자 설정</div><button class="ptb-admin-x" type="button" data-admin-close>×</button></div>
-  <div class="ptb-admin-desc">각 게임에서 참가자가 볼 수 있는 힌트 단계를 제한합니다. 설정은 이 기기에 저장됩니다.</div>
+  <div class="ptb-admin-desc">각 게임에서 참가자가 볼 수 있는 힌트 단계를<br>제한합니다. 설정은 이 기기에 저장됩니다.</div>
   <div id="ptbAdminGames"></div>
   <div class="ptb-admin-footer"><button class="ptb-admin-btn secondary" id="ptbAdminReset" type="button">전체 허용으로 초기화</button><button class="ptb-admin-btn primary" id="ptbAdminSave" type="button">저장</button></div>
 </div></div>
@@ -564,10 +564,10 @@ codeModal.addEventListener("click", function(e){
   const STORAGE_KEY = "ptb_admin_hint_limits_v1";
   const defaults = {rabbit:0, letter:0, eclass:0, mclass:0};
   const defs = [
-    {key:"rabbit", title:"래빗홀", options:[[0,"전체 허용","힌트보기 · 정답보기 모두 사용"],[1,"힌트까지만 허용","정답보기 차단"],[2,"모두 차단","힌트보기 · 정답보기 차단"]]},
-    {key:"letter", title:"편지왔어요", options:[[0,"전체 허용","힌트보기 · 정답보기 모두 사용"],[1,"힌트까지만 허용","정답보기 차단"],[2,"모두 차단","힌트보기 · 정답보기 차단"]]},
-    {key:"eclass", title:"E-class", options:[[0,"전체 허용","힌트1 · 힌트2 · 정답보기 모두 사용"],[1,"힌트2까지만 허용","정답보기 차단"],[2,"힌트1까지만 허용","힌트2 · 정답보기 차단"],[3,"모두 차단","힌트1 · 힌트2 · 정답보기 차단"]]},
-    {key:"mclass", title:"M-class", options:[[0,"전체 허용","힌트1 · 힌트2 · 정답보기 모두 사용"],[1,"힌트2까지만 허용","정답보기 차단"],[2,"힌트1까지만 허용","힌트2 · 정답보기 차단"],[3,"모두 차단","힌트1 · 힌트2 · 정답보기 차단"]]}
+    {key:"rabbit", title:"초등학생 게임용", options:[[0,"전체 허용","힌트보기 · 정답보기 모두 사용"],[1,"힌트까지만 허용","정답보기 차단"],[2,"모두 차단","힌트보기 · 정답보기 차단"]]},
+    {key:"letter", title:"중·고등학생 게임용", options:[[0,"전체 허용","힌트보기 · 정답보기 모두 사용"],[1,"힌트까지만 허용","정답보기 차단"],[2,"모두 차단","힌트보기 · 정답보기 차단"]]},
+    {key:"eclass", title:"초등학생 수업용", options:[[0,"전체 허용","힌트1 · 힌트2 · 정답보기 모두 사용"],[1,"힌트2까지만 허용","정답보기 차단"],[2,"힌트1까지만 허용","힌트2 · 정답보기 차단"],[3,"모두 차단","힌트1 · 힌트2 · 정답보기 차단"]]},
+    {key:"mclass", title:"중·고등학생 수업용", options:[[0,"전체 허용","힌트1 · 힌트2 · 정답보기 모두 사용"],[1,"힌트2까지만 허용","정답보기 차단"],[2,"힌트1까지만 허용","힌트2 · 정답보기 차단"],[3,"모두 차단","힌트1 · 힌트2 · 정답보기 차단"]]}
   ];
   const secret=document.getElementById("ptbAdminSecret"), login=document.getElementById("ptbAdminLogin"), panel=document.getElementById("ptbAdminPanel"), input=document.getElementById("ptbAdminPassword"), msg=document.getElementById("ptbAdminMessage"), games=document.getElementById("ptbAdminGames");
   function read(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"));}catch(e){return {...defaults};}}
