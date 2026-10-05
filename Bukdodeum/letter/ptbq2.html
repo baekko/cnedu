@@ -1839,6 +1839,7 @@ function hideMission(){
 ========================================================= */
 
 function showHint(){
+  if(window.PTB_ADMIN_ALLOW_HINT && !window.PTB_ADMIN_ALLOW_HINT()) return;
 
   if(
     locked
@@ -1874,6 +1875,7 @@ function showHint(){
 ========================================================= */
 
 function showAnswer(){
+  if(window.PTB_ADMIN_ALLOW_ANSWER && !window.PTB_ADMIN_ALLOW_ANSWER()) return;
 
   if(
     locked
@@ -2275,6 +2277,21 @@ setTimeout(function(){
   openLetterModal(missionConfig.introLetter,"intro");
 },1000);
 
+</script>
+
+
+<script>
+/* ===== PTB 관리자 힌트 제한 ===== */
+(function(){
+  const STORAGE_KEY="ptb_admin_hint_limits_v1", GAME_KEY="letter";
+  function level(){try{return Number((JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"))[GAME_KEY]||0);}catch(e){return 0;}}
+  function buttons(){return {hint:document.querySelector('[onclick="showHint()"]'),answer:document.getElementById('answerBtn')||document.querySelector('[onclick="showAnswer()"]')};}
+  function enforce(){const l=level(),b=buttons();if(!b.hint||!b.answer)return;if(l>=2){b.hint.disabled=true;b.answer.disabled=true;}else if(l===1){b.answer.disabled=true;}}
+  window.PTB_ADMIN_ALLOW_HINT=function(){return level()<2;};
+  window.PTB_ADMIN_ALLOW_ANSWER=function(){return level()<1;};
+  addEventListener('DOMContentLoaded',()=>{enforce();new MutationObserver(enforce).observe(document.body,{subtree:true,attributes:true,attributeFilter:['disabled']});});
+  addEventListener('storage',enforce);
+})();
 </script>
 
 </body>
