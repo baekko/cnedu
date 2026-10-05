@@ -421,6 +421,18 @@ body{
   --dark:#34782b !important;
 }
 
+
+/* ===== PTB 관리자 비밀 설정 ===== */
+#ptbAdminSecret{position:fixed;top:0;right:0;width:54px;height:54px;z-index:9998;background:transparent;border:0;opacity:0;cursor:default;-webkit-tap-highlight-color:transparent}
+.ptb-admin-overlay{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
+.ptb-admin-overlay.show{display:flex}
+.ptb-admin-card{width:min(92vw,430px);max-height:88vh;overflow:auto;background:#101a20;color:#f8f2e7;border:1px solid rgba(244,205,142,.45);border-radius:22px;box-shadow:0 22px 70px rgba(0,0,0,.55);padding:22px;font-family:inherit}
+.ptb-admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.ptb-admin-title{font-size:22px;font-weight:800}.ptb-admin-x{border:0;background:transparent;color:#eee;font-size:28px;line-height:1;cursor:pointer}
+.ptb-admin-desc{font-size:13px;line-height:1.55;color:#c9d0d3;margin:-6px 0 16px}.ptb-admin-input{width:100%;height:50px;box-sizing:border-box;border:1px solid #60717a;border-radius:13px;background:#081218;color:#fff;padding:0 14px;font-size:18px;outline:none}.ptb-admin-msg{min-height:22px;margin:8px 2px;color:#ffb8aa;font-size:13px}
+.ptb-admin-actions{display:flex;gap:10px}.ptb-admin-btn{flex:1;height:48px;border:0;border-radius:13px;font-weight:800;font-size:15px;cursor:pointer}.ptb-admin-btn.primary{background:#f1c77e;color:#20170b}.ptb-admin-btn.secondary{background:#33434c;color:#fff}
+.ptb-admin-game{border:1px solid #40535d;border-radius:16px;padding:14px;margin:10px 0;background:#0b151b}.ptb-admin-game-title{font-weight:800;font-size:16px;margin-bottom:10px}.ptb-admin-options{display:grid;gap:7px}.ptb-admin-option{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;border:1px solid #33464f;border-radius:12px;cursor:pointer}.ptb-admin-option:has(input:checked){background:#f1c77e;color:#21180c;border-color:#f1c77e}.ptb-admin-option input{margin-top:3px;accent-color:#111}.ptb-admin-option b{display:block;font-size:14px}.ptb-admin-option small{display:block;margin-top:2px;font-size:11px;opacity:.8;line-height:1.35}
+.ptb-admin-footer{display:flex;gap:10px;margin-top:16px;position:sticky;bottom:-22px;background:#101a20;padding:12px 0 2px}
+
 </style>
 </head>
 
@@ -428,6 +440,22 @@ body{
 <div class="landscape-guide">
   <div class="landscape-guide-text">📱<br>원활한 진행을 위해<br>세로 모드를 유지해 주세요.</div>
 </div>
+
+
+<button id="ptbAdminSecret" type="button" aria-label=""></button>
+<div class="ptb-admin-overlay" id="ptbAdminLogin" aria-hidden="true"><div class="ptb-admin-card">
+  <div class="ptb-admin-head"><div class="ptb-admin-title">🔒 관리자 인증</div><button class="ptb-admin-x" type="button" data-admin-close>×</button></div>
+  <div class="ptb-admin-desc">관리자 암호를 입력하세요.</div>
+  <input id="ptbAdminPassword" class="ptb-admin-input" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="관리자 암호">
+  <div id="ptbAdminMessage" class="ptb-admin-msg"></div>
+  <div class="ptb-admin-actions"><button class="ptb-admin-btn secondary" type="button" data-admin-close>취소</button><button class="ptb-admin-btn primary" id="ptbAdminLoginBtn" type="button">확인</button></div>
+</div></div>
+<div class="ptb-admin-overlay" id="ptbAdminPanel" aria-hidden="true"><div class="ptb-admin-card">
+  <div class="ptb-admin-head"><div class="ptb-admin-title">⚙️ 관리자 설정</div><button class="ptb-admin-x" type="button" data-admin-close>×</button></div>
+  <div class="ptb-admin-desc">각 게임에서 참가자가 볼 수 있는 힌트 단계를 제한합니다. 설정은 이 기기에 저장됩니다.</div>
+  <div id="ptbAdminGames"></div>
+  <div class="ptb-admin-footer"><button class="ptb-admin-btn secondary" id="ptbAdminReset" type="button">전체 허용으로 초기화</button><button class="ptb-admin-btn primary" id="ptbAdminSave" type="button">저장</button></div>
+</div></div>
 
 <main class="choice-grid" aria-label="북돋움 프로그램 선택">
   <button class="choice-btn elementary-game" type="button"
@@ -528,6 +556,35 @@ codeInput.addEventListener("keydown", function(e){
 codeModal.addEventListener("click", function(e){
   if(e.target === codeModal) closeCode();
 });
+
+
+/* ===== PTB 관리자 비밀 설정 ===== */
+(function(){
+  const ADMIN_PASSWORD = "2580";
+  const STORAGE_KEY = "ptb_admin_hint_limits_v1";
+  const defaults = {rabbit:0, letter:0, eclass:0, mclass:0};
+  const defs = [
+    {key:"rabbit", title:"래빗홀", options:[[0,"전체 허용","힌트보기 · 정답보기 모두 사용"],[1,"힌트까지만 허용","정답보기 차단"],[2,"모두 차단","힌트보기 · 정답보기 차단"]]},
+    {key:"letter", title:"편지왔어요", options:[[0,"전체 허용","힌트보기 · 정답보기 모두 사용"],[1,"힌트까지만 허용","정답보기 차단"],[2,"모두 차단","힌트보기 · 정답보기 차단"]]},
+    {key:"eclass", title:"E-class", options:[[0,"전체 허용","힌트1 · 힌트2 · 정답보기 모두 사용"],[1,"힌트2까지만 허용","정답보기 차단"],[2,"힌트1까지만 허용","힌트2 · 정답보기 차단"],[3,"모두 차단","힌트1 · 힌트2 · 정답보기 차단"]]},
+    {key:"mclass", title:"M-class", options:[[0,"전체 허용","힌트1 · 힌트2 · 정답보기 모두 사용"],[1,"힌트2까지만 허용","정답보기 차단"],[2,"힌트1까지만 허용","힌트2 · 정답보기 차단"],[3,"모두 차단","힌트1 · 힌트2 · 정답보기 차단"]]}
+  ];
+  const secret=document.getElementById("ptbAdminSecret"), login=document.getElementById("ptbAdminLogin"), panel=document.getElementById("ptbAdminPanel"), input=document.getElementById("ptbAdminPassword"), msg=document.getElementById("ptbAdminMessage"), games=document.getElementById("ptbAdminGames");
+  function read(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"));}catch(e){return {...defaults};}}
+  function closeAll(){[login,panel].forEach(x=>{x.classList.remove("show");x.setAttribute("aria-hidden","true")});input.value="";msg.textContent="";}
+  function openLogin(){closeAll();login.classList.add("show");login.setAttribute("aria-hidden","false");setTimeout(()=>input.focus(),50);}
+  function render(){const s=read();games.innerHTML=defs.map(d=>`<section class="ptb-admin-game"><div class="ptb-admin-game-title">${d.title}</div><div class="ptb-admin-options">${d.options.map(o=>`<label class="ptb-admin-option"><input type="radio" name="admin_${d.key}" value="${o[0]}" ${Number(s[d.key])===o[0]?'checked':''}><span><b>${o[1]}</b><small>${o[2]}</small></span></label>`).join('')}</div></section>`).join('');}
+  function openPanel(){closeAll();render();panel.classList.add("show");panel.setAttribute("aria-hidden","false");}
+  function loginNow(){if(input.value===ADMIN_PASSWORD){openPanel();}else{msg.textContent="암호가 맞지 않습니다.";input.select();}}
+  secret.addEventListener("click",openLogin);
+  document.querySelectorAll("[data-admin-close]").forEach(b=>b.addEventListener("click",closeAll));
+  document.getElementById("ptbAdminLoginBtn").addEventListener("click",loginNow);
+  input.addEventListener("keydown",e=>{if(e.key==="Enter") loginNow();});
+  document.getElementById("ptbAdminSave").addEventListener("click",()=>{const s={};defs.forEach(d=>{const x=document.querySelector(`input[name="admin_${d.key}"]:checked`);s[d.key]=x?Number(x.value):0;});localStorage.setItem(STORAGE_KEY,JSON.stringify(s));closeAll();});
+  document.getElementById("ptbAdminReset").addEventListener("click",()=>{localStorage.setItem(STORAGE_KEY,JSON.stringify(defaults));render();});
+  [login,panel].forEach(x=>x.addEventListener("click",e=>{if(e.target===x)closeAll();}));
+})();
+
 </script>
 </body>
 </html>
