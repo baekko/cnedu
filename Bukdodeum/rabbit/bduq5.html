@@ -1733,6 +1733,15 @@ body > .landscape-guide{
   font-weight:900 !important;
 }
 
+
+@keyframes firstArrowBlink{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.12;transform:scale(1.08)}
+}
+#nextTalkBtn.first-blink{
+  animation:firstArrowBlink .55s linear infinite !important;
+}
+
 </style>
 </head>
 
@@ -2113,6 +2122,7 @@ let locked=false;
 
 let talkMode="intro";
 let currentTalk=0;
+let firstArrowPending=true;
 
 let pendingScore=null;
 
@@ -2542,6 +2552,12 @@ function updateTalkControls(){
 
     nextTalkBtn.style.display="block";
 
+    if(talkMode==="intro" && currentTalk===0 && firstArrowPending){
+      nextTalkBtn.classList.add("first-blink");
+    }else{
+      nextTalkBtn.classList.remove("first-blink");
+    }
+
     return;
 
   }
@@ -2576,6 +2592,11 @@ function updateTalkControls(){
 ========================================================= */
 
 function nextTalk(){
+
+  if(talkMode==="intro" && currentTalk===0){
+    firstArrowPending=false;
+    nextTalkBtn.classList.remove("first-blink");
+  }
 
   const list =
     getCurrentTalkList();
@@ -3033,6 +3054,7 @@ setTimeout(
     talkMode="intro";
 
     currentTalk=0;
+    firstArrowPending=true;
 
     showTalk();
 

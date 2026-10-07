@@ -326,6 +326,15 @@ body{
   right:0;
 }
 
+@keyframes firstArrowBlink{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.12;transform:scale(1.08)}
+}
+#nextTalkBtn.first-blink{
+  animation:firstArrowBlink .55s linear infinite;
+}
+
+
 
 .arrow-btn:hover{
   transform:
@@ -1501,6 +1510,8 @@ function showIntro(){
 
   updateTalk();
 
+  nextTalkBtn.classList.add("first-blink");
+
 }
 
 
@@ -1516,6 +1527,9 @@ function showEndingStory(){
 
   currentTalk =
     0;
+
+
+  nextTalkBtn.classList.remove("first-blink");
 
 
   hideBooks();
@@ -1693,6 +1707,8 @@ function updateTalk(){
 ========================================================= */
 
 function nextTalk(){
+
+  nextTalkBtn.classList.remove("first-blink");
 
   const talks =
     getCurrentTalks();
