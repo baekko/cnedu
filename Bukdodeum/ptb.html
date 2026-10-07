@@ -541,6 +541,14 @@ function checkCode(){
       "bduc.html":"/Bukdodeum/e-class/",
       "ptbc.html":"/Bukdodeum/m-class/"
     };
+    const resumeKeys = {
+      "bdut.html":"ptb_resume_rabbit",
+      "ptbt.html":"ptb_last_page_letter",
+      "bduc.html":"ptb_last_page_e_class",
+      "ptbc.html":"ptb_last_page_m_class"
+    };
+    const resumeKey = resumeKeys[selectedPage];
+    if(resumeKey) sessionStorage.removeItem(resumeKey);
     window.parent.location.href = cleanRoutes[selectedPage] || selectedPage;
     return;
   }
