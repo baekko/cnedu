@@ -52,13 +52,13 @@ body{background:none center/cover no-repeat}
 }
 
 #endVideo{display:none}
+</style>
 
-@keyframes firstArrowBlink{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.12;transform:scale(1.08)}
-}
-#nextBtn.first-blink{animation:firstArrowBlink .55s linear infinite}
-
+<style id="orange-button-theme">
+/* 모든 조작 버튼: 주황색 / 깜빡임 없음 */
+.shape{fill:#F28C28 !important;}
+#startBtn,#finalNextBtn{background:#F28C28 !important;color:#fff !important;}
+.arrow{animation:none !important;}
 </style>
 </head>
 <body>
@@ -100,7 +100,6 @@ const talks=[`얼마나 지났을까.
 어차피 나도 같은 꿈을 꾸었으니까.`];
 let currentTalk=0;
 let ending=false;
-let firstNext=true;
 
 const storyImg=document.getElementById("storyImg");
 const endVideo=document.getElementById("endVideo");
@@ -125,10 +124,6 @@ function render(){
 
 function next(){
  if(ending) return;
- if(firstNext){
-   firstNext=false;
-   nextBtn.classList.remove("first-blink");
- }
  if(currentTalk < talks.length-1){
    currentTalk++;
    render();
@@ -163,8 +158,6 @@ prevBtn.addEventListener("click",prev);
 function startPage(){
  currentTalk=0;
  ending=false;
- firstNext=true;
- nextBtn.classList.add("first-blink");
  endVideo.pause();
  endVideo.style.display="none";
  endVideo.controls=false;

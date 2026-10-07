@@ -65,9 +65,6 @@ body{background:none center/cover no-repeat}
 }
 #startBtn.on{display:block}
 #startBtn:focus,#startBtn:focus-visible,#startBtn:active{outline:none}
-@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.12;transform:scale(1.08)}}
-#nextBtn.blink{animation:blink .55s linear infinite}
-
 #finalNextBtn{
  width:clamp(70px,18cqw,104px);height:clamp(42px,12cqw,68px);
  border:clamp(3px,.7cqw,4px) solid var(--dark);
@@ -79,6 +76,13 @@ body{background:none center/cover no-repeat}
  cursor:pointer;display:none;
 }
 #finalNextBtn.on{display:block}
+</style>
+
+<style id="orange-button-theme">
+/* 모든 조작 버튼: 주황색 / 깜빡임 없음 */
+.shape{fill:#F28C28 !important;}
+#startBtn,#finalNextBtn{background:#F28C28 !important;color:#fff !important;}
+.arrow{animation:none !important;}
 </style>
 </head>
 <body>
@@ -195,7 +199,6 @@ function startStory(){
  scene=0; talkIndex=0; ending=false; firstNext=true;
  render();
  arrows.classList.add("on");
- nextBtn.classList.add("blink");
 }
 
 function next(){
@@ -204,7 +207,6 @@ function next(){
  // 같은 클릭에서 깜빡임을 끄고 곧바로 다음 대사까지 진행한다.
  if(firstNext){
    firstNext=false;
-   nextBtn.classList.remove("blink");
  }
 
  if(talkIndex < scenes[scene].length-1){
@@ -236,7 +238,6 @@ finalNextBtn.addEventListener("click",()=>location.href="bdum.html");
 function reset(){
  scene=0;talkIndex=0;ending=false;firstNext=true;
  arrows.classList.remove("on");
- nextBtn.classList.remove("blink");
  startBtn.classList.remove("on");
  talk.style.display="none";storyImg.style.display="none";
  finalNextBtn.classList.remove("on");nextBtn.style.display="block";

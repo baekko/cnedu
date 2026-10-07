@@ -1743,15 +1743,13 @@ body > .landscape-guide{
   font-weight:900 !important;
 }
 
+</style>
 
-@keyframes firstArrowBlink{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.12;transform:scale(1.08)}
-}
-#nextTalkBtn.first-blink{
-  animation:firstArrowBlink .55s linear infinite !important;
-}
-
+<style id="orange-button-theme">
+/* 화살표/미션시작/입력/힌트/정답보기/당근개수/닫기 버튼: 주황색 */
+.arrow-shape{fill:#F28C28 !important;}
+.round-btn,.submit-btn,.action-btn,.modal-close{background:#F28C28 !important;color:#fff !important;}
+.arrow-btn{animation:none !important;}
 </style>
 </head>
 
@@ -2127,7 +2125,6 @@ let locked=false;
 
 let talkMode="intro";
 let currentTalk=0;
-let firstArrowPending=true;
 
 let pendingScore=null;
 
@@ -2540,12 +2537,6 @@ function updateTalkControls(){
 
     nextTalkBtn.style.display="block";
 
-    if(talkMode==="intro" && currentTalk===0 && firstArrowPending){
-      nextTalkBtn.classList.add("first-blink");
-    }else{
-      nextTalkBtn.classList.remove("first-blink");
-    }
-
     return;
 
   }
@@ -2580,11 +2571,6 @@ function updateTalkControls(){
 ========================================================= */
 
 function nextTalk(){
-
-  if(talkMode==="intro" && currentTalk===0){
-    firstArrowPending=false;
-    nextTalkBtn.classList.remove("first-blink");
-  }
 
   const list =
     getCurrentTalkList();
@@ -3037,7 +3023,6 @@ setTimeout(
     talkMode="intro";
 
     currentTalk=0;
-    firstArrowPending=true;
 
     showTalk();
 

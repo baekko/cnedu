@@ -326,15 +326,6 @@ body{
   right:0;
 }
 
-@keyframes firstArrowBlink{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.12;transform:scale(1.08)}
-}
-#nextTalkBtn.first-blink{
-  animation:firstArrowBlink .55s linear infinite;
-}
-
-
 
 .arrow-btn:hover{
   transform:
@@ -870,6 +861,13 @@ body{display:block!important;padding:0!important;background:#1788EB!important}
   font-size:clamp(11px,3cqw,18px) !important;
   line-height:1.38 !important;
 }
+</style>
+
+<style id="orange-button-theme">
+/* 조작 버튼: 주황색. 책 이미지 버튼은 원래 디자인 유지 */
+.arrow-shape{fill:#F28C28 !important;}
+.adventure-btn,.dev-reset{background:#F28C28 !important;color:#fff !important;}
+.arrow-btn{animation:none !important;}
 </style>
 </head>
 
@@ -1510,8 +1508,6 @@ function showIntro(){
 
   updateTalk();
 
-  nextTalkBtn.classList.add("first-blink");
-
 }
 
 
@@ -1527,9 +1523,6 @@ function showEndingStory(){
 
   currentTalk =
     0;
-
-
-  nextTalkBtn.classList.remove("first-blink");
 
 
   hideBooks();
@@ -1707,8 +1700,6 @@ function updateTalk(){
 ========================================================= */
 
 function nextTalk(){
-
-  nextTalkBtn.classList.remove("first-blink");
 
   const talks =
     getCurrentTalks();
