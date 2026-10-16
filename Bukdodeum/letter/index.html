@@ -1,6 +1,10 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PLAY THE BOOK</title><style>html,body,iframe{margin:0;width:100%;height:100%;border:0}html,body{overflow:hidden;background:#000}iframe{position:fixed;inset:0;display:block}</style></head><body><iframe id="gameFrame" title="PLAY THE BOOK" allow="autoplay; fullscreen" allowfullscreen></iframe><script>
 (function(){
   const frame=document.getElementById("gameFrame");
+  // 키보드가 열려도 iframe의 최초 높이는 유지한다.
+  const stableHeight=Math.max(window.innerHeight, document.documentElement.clientHeight);
+  frame.style.height=stableHeight+"px";
+
   const KEY="ptb_last_page_letter";
   const DEFAULT="ptbt.html";
   const valid=p=>/^[A-Za-z0-9_-]+\.html$/.test(p||"");
