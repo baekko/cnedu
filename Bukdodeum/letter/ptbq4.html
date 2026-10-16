@@ -28,7 +28,7 @@ html,
 body{
   width:100%;
   height:100%;
-  min-height:100dvh;
+  min-height:var(--ptb-screen-height, 100dvh);
   overflow:hidden;
 
   font-family:
@@ -955,10 +955,10 @@ body{
 
 
 /* ===== 최신 원본 기준 25:40 박스형 ===== */
-html,body{width:100%!important;height:100%!important;min-height:100dvh!important;overflow:hidden!important;}
+html,body{width:100%!important;height:100%!important;min-height:var(--ptb-screen-height, 100dvh)!important;overflow:hidden!important;}
 body{display:flex!important;align-items:center!important;justify-content:center!important;background:#17110d!important;}
 .ptb-frame{
- width:min(90vw,calc((100dvh - 24px)*.625));
+ width:min(90vw,calc((var(--ptb-screen-height, 100dvh) - 24px)*.625));
  aspect-ratio:25/40;
  position:relative;
  overflow:hidden;
@@ -2183,5 +2183,37 @@ setTimeout(function(){
 })();
 </script>
 
+<script id="ptb-keyboard-layout">
+(function(){
+  // 첫 화면 높이를 보존해 키보드 표시 중에도 게임 박스 비율/크기를 고정한다.
+  const initialHeight=Math.max(window.innerHeight,document.documentElement.clientHeight);
+  document.documentElement.style.setProperty('--ptb-screen-height',initialHeight+'px');
+  const frame=document.querySelector('.ptb-frame');
+  const vv=window.visualViewport;
+  if(!frame || !vv) return;
+  let focused=false;
+  function reposition(){
+    const input=document.activeElement;
+    if(!focused || !input || input.tagName!=='INPUT'){
+      frame.style.transform='translate3d(0,0,0)';
+      return;
+    }
+    // 입력창과 키보드 사이에 최소 16px 확보. 프레임 크기는 그대로 둔다.
+    frame.style.transform='translate3d(0,0,0)';
+    const bottom=input.getBoundingClientRect().bottom;
+    const visibleBottom=vv.offsetTop+vv.height;
+    const shift=Math.max(0,bottom+16-visibleBottom);
+    frame.style.transform='translate3d(0,'+(-shift)+'px,0)';
+  }
+  document.addEventListener('focusin',e=>{
+    if(e.target.matches('input,textarea')){focused=true;requestAnimationFrame(reposition);}
+  });
+  document.addEventListener('focusout',e=>{
+    if(e.target.matches('input,textarea')){focused=false;setTimeout(reposition,100);}
+  });
+  vv.addEventListener('resize',reposition);
+  vv.addEventListener('scroll',reposition);
+})();
+</script>
 </body>
 </html>
