@@ -1,32 +1,159 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PLAY THE BOOK</title><style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
-#gameFrame{position:fixed;inset:0;width:100%;height:100%;border:0;display:block}
-</style></head><body><iframe id="gameFrame" title="PLAY THE BOOK" allow="autoplay; fullscreen" allowfullscreen></iframe><script>
-(function(){
- const frame=document.getElementById('gameFrame');
- const KEY='ptb_last_page_letter', DEFAULT='ptbt.html';
- const valid=p=>/^[A-Za-z0-9_-]+\.html$/.test(p||'');
- const current=()=>{try{return frame.contentWindow.location.pathname.split('/').pop()}catch(e){return ''}};
- // 실제 iframe에 표시된 페이지를 기록한다. 뒤로가기로 이동한 경우도 반영한다.
- frame.addEventListener('load',()=>{const p=current();if(valid(p))sessionStorage.setItem(KEY,p)});
- const saved=sessionStorage.getItem(KEY);
- frame.src=valid(saved)?saved:DEFAULT;
- window.addEventListener('message',e=>{
-  if(e.source!==frame.contentWindow||!e.data||e.data.type!=='PTB_NAV')return;
-  const p=String(e.data.page||'');if(!valid(p))return;
-  sessionStorage.setItem(KEY,p);frame.src=p;
- });
- // 처음 표시 영역을 고정하지 않는다. 브라우저 상하단 바가 자리 잡으면 iframe도 맞춰진다.
- // 키보드가 열린 동안만 마지막 정상 높이를 보존하고, 닫히면 현재 높이를 다시 따른다.
- let normalHeight=window.innerHeight, keyboard=false;
- const focused=()=>{try{return /^(INPUT|TEXTAREA)$/.test(frame.contentDocument.activeElement.tagName)}catch(e){return false}};
- function resize(){
-  const h=window.innerHeight;
-  if(focused()&&h<normalHeight-120){keyboard=true;frame.style.height=normalHeight+'px';}
-  else if(!focused()||h>=normalHeight-60){keyboard=false;frame.style.height='100%';normalHeight=h;}
- }
- window.addEventListener('resize',resize);
- if(window.visualViewport)window.visualViewport.addEventListener('resize',resize);
- frame.addEventListener('load',()=>{keyboard=false;frame.style.height='100%';normalHeight=window.innerHeight});
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PLAY THE BOOK</title>
+<style>
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+  }
+  #gameFrame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border: 0;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<iframe id="gameFrame" title="PLAY THE BOOK" allow="autoplay; fullscreen" allowfullscreen></iframe>
+<script>
+(function () {
+  const frame = document.getElementById('gameFrame');
+  const KEY = 'ptb_last_page_letter';
+  const DEFAULT = 'ptbt.html';
+  const valid = page => /^[A-Za-z0-9_-]+\.html$/.test(page || '');
+
+  // 페이지 기록 및 복구: 기존 게임의 동작 유지
+  const current = () => {
+    try { return frame.contentWindow.location.pathname.split('/').pop(); }
+    catch (e) { return ''; }
+  };
+
+  // 화면을 정상적으로 사용할 때의 높이를 px 단위로 iframe에 명시한다.
+  // height:100% 방식은 삼성 인터넷에서 키보드 표시 시 재계산될 수 있다.
+  const viewportHeight = () => window.innerHeight || document.documentElement.clientHeight;
+  const visualHeight = () => window.visualViewport ? window.visualViewport.height : viewportHeight();
+  let normalHeight = viewportHeight();
+  let normalVisualHeight = visualHeight();
+  let inputFocused = false;
+  let keyboardWasOpen = false;
+  let watchedDocument = null;
+
+  function setFrameHeight(height) {
+    frame.style.height = Math.max(1, Math.round(height)) + 'px';
+  }
+  setFrameHeight(normalHeight);
+
+  function focusedInFrame() {
+    try {
+      const el = frame.contentDocument && frame.contentDocument.activeElement;
+      return !!(el && (
+        /^(INPUT|TEXTAREA)$/.test(el.tagName) ||
+        el.isContentEditable
+      ));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function visiblyReduced() {
+    return viewportHeight() < normalHeight - 120 ||
+           visualHeight() < normalVisualHeight - 120;
+  }
+
+  function syncHeight() {
+    const active = inputFocused || focusedInFrame();
+    const reduced = visiblyReduced();
+
+    // 키보드가 표시되기 시작하거나 표시 중이면 원래 게임 높이를 보존한다.
+    // 초점을 잃은 직후라도 키보드가 아직 닫히지 않았다면 보존한다.
+    if (active && reduced) keyboardWasOpen = true;
+    if (active || (keyboardWasOpen && reduced)) {
+      setFrameHeight(normalHeight);
+      return;
+    }
+
+    // 키보드가 닫힌 뒤에만 일반 브라우저 바 변화에 다시 맞춘다.
+    keyboardWasOpen = false;
+    normalHeight = viewportHeight();
+    normalVisualHeight = visualHeight();
+    setFrameHeight(normalHeight);
+  }
+
+  function watchFocus() {
+    try {
+      const doc = frame.contentDocument;
+      if (!doc || doc === watchedDocument) return;
+      watchedDocument = doc;
+
+      doc.addEventListener('focusin', event => {
+        const el = event.target;
+        if (el && (/^(INPUT|TEXTAREA)$/.test(el.tagName) || el.isContentEditable)) {
+          inputFocused = true;
+          syncHeight();
+        }
+      }, true);
+
+      doc.addEventListener('focusout', () => {
+        // 입력창 사이로 이동할 때의 순간적인 포커스 공백은 기다렸다 확인한다.
+        setTimeout(() => {
+          inputFocused = focusedInFrame();
+          syncHeight();
+        }, 80);
+      }, true);
+
+      inputFocused = focusedInFrame();
+    } catch (e) {
+      // 외부 출처 iframe에서는 내부 포커스를 읽을 수 없다.
+    }
+  }
+
+  frame.addEventListener('load', () => {
+    const page = current();
+    if (valid(page)) sessionStorage.setItem(KEY, page);
+    inputFocused = false;
+    watchedDocument = null;
+    watchFocus();
+    syncHeight();
+  });
+
+  window.addEventListener('resize', syncHeight);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncHeight);
+  }
+
+  // 화면 방향이 바뀌었을 때는 새 방향의 정상 높이로 갱신한다.
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      inputFocused = focusedInFrame();
+      if (!inputFocused) {
+        keyboardWasOpen = false;
+        normalHeight = viewportHeight();
+        normalVisualHeight = visualHeight();
+      }
+      setFrameHeight(normalHeight);
+    }, 500);
+  });
+
+  window.addEventListener('message', event => {
+    if (event.source !== frame.contentWindow || !event.data || event.data.type !== 'PTB_NAV') return;
+    const page = String(event.data.page || '');
+    if (!valid(page)) return;
+    sessionStorage.setItem(KEY, page);
+    frame.src = page;
+  });
+
+  const saved = sessionStorage.getItem(KEY);
+  frame.src = valid(saved) ? saved : DEFAULT;
 })();
-</script></body></html>
+</script>
+</body>
+</html>
