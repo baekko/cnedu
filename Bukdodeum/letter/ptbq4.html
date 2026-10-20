@@ -2206,6 +2206,11 @@ setTimeout(function(){
   let sawRealKeyboard=false;
   let dismissedWhileFocused=false;
   let recoveredSince=0;
+  // 부모 창에서 한 번이라도 '키보드 때문에 가시영역 축소'를 관측했는지 기억한다.
+  // 같은 입력창에 focus가 남아도 닫힐 때 원위치로 복귀시키기 위한 독립 신호.
+  let parentWasReduced=false;
+  let nativeKeyboardWasOpen=false;
+  const nativeKeyboard=window.navigator&&window.navigator.virtualKeyboard;
 
   function getInput(){
     const e=document.activeElement;
@@ -2256,30 +2261,50 @@ setTimeout(function(){
     }
     return Infinity;
   }
+  function parentReturnedToFullHeight(){
+    const p=parentViewport;
+    // 부모 iframe 창이 키보드 오픈 중 실제 축소를 한번 관측했고,
+    // 그 뒤 눈에 보이는 화면이 원래 높이로 돌아왔을 때만 닫힘으로 판정.
+    // iframe 내부 visualViewport가 예전 축소값으로 남아 있어도 복구한다.
+    return !!(parentWasReduced&&p&&
+      p.visibleBottom>=p.normalHeight-85);
+  }
+  function nativeKeyboardClosed(){
+    try{
+      return nativeKeyboardWasOpen && nativeKeyboard &&
+        nativeKeyboard.boundingRect && nativeKeyboard.boundingRect.height<40;
+    }catch(e){return false;}
+  }
+  function closeKeyboardLayout(){
+    dismissedWhileFocused=true;
+    sawRealKeyboard=false;
+    nativeKeyboardWasOpen=false;
+    parentWasReduced=false;
+    recoveredSince=0;
+    upperBound=Infinity;
+    setShift(0);
+  }
   function reposition(){
     const input=getInput();
     if(!focused||!input)return;
+    if(dismissedWhileFocused)return;
     const real=realVisibleBottom();
-    if(Number.isFinite(real)){
-      sawRealKeyboard=true;
-      recoveredSince=0;
-    }else if(sawRealKeyboard){
-      // 키보드가 닫힐 때 input은 계속 focus 상태일 수 있다.
-      // 일시적인 viewport 이벤트 누락을 닫힘으로 오인하지 않도록 120ms 확인한다.
+    // 삼성 인터넷에서는 아래쪽 화살표로 키보드를 내려도 focus가 남는다.
+    // 부모 뷰포트가 정상으로 복구했다면 자식 뷰포트의 낡은 축소값보다 우선한다.
+    const keyboardClosed=parentReturnedToFullHeight()||
+      nativeKeyboardClosed()||(sawRealKeyboard&&!Number.isFinite(real));
+    if(keyboardClosed){
       if(!recoveredSince){
         recoveredSince=Date.now()||1;
-        setTimeout(schedule,130);
+        setTimeout(schedule,150);
         return;
       }
-      if(Date.now()-recoveredSince<120)return;
-      sawRealKeyboard=false;
-      dismissedWhileFocused=true;
-      recoveredSince=0;
-      upperBound=Infinity;
-      setShift(0);
+      if(Date.now()-recoveredSince<135)return;
+      closeKeyboardLayout();
       return;
     }
-    if(dismissedWhileFocused)return;
+    recoveredSince=0;
+    if(Number.isFinite(real))sawRealKeyboard=true;
     const b=measuredVisibleBottom();
     if(!Number.isFinite(b))return;
     upperBound=Math.min(upperBound,b);
@@ -2301,6 +2326,8 @@ setTimeout(function(){
       sawRealKeyboard=false;
       dismissedWhileFocused=false;
       recoveredSince=0;
+      parentWasReduced=false;
+      nativeKeyboardWasOpen=false;
     }
     focused=true;
     notifyParent();
@@ -2328,6 +2355,8 @@ setTimeout(function(){
       sawRealKeyboard=false;
       dismissedWhileFocused=false;
       recoveredSince=0;
+      parentWasReduced=false;
+      nativeKeyboardWasOpen=false;
       upperBound=Infinity;
       notifyParent();
       setShift(0);
@@ -2338,11 +2367,29 @@ setTimeout(function(){
     const h=Number(e.data.normalHeight),b=Number(e.data.visibleBottom);
     if(!Number.isFinite(h)||h<=0||!Number.isFinite(b))return;
     parentViewport={normalHeight:h,visibleBottom:b,keyboardOpen:!!e.data.keyboardOpen};
+    if((focused||getInput())&&(e.data.keyboardOpen||b<h-110)){
+      parentWasReduced=true;
+    }
     if(!getInput()&&!focused&&!e.data.keyboardOpen){
       root.style.setProperty('--ptb-screen-height',Math.round(h)+'px');
     }
     schedule();
   });
+  // 지원 브라우저에서는 가상 키보드 geometry 변화도 독립적으로 확인.
+  if(nativeKeyboard && typeof nativeKeyboard.addEventListener==='function'){
+    nativeKeyboard.addEventListener('geometrychange',()=>{
+      try{
+        if(nativeKeyboard.boundingRect.height>100)nativeKeyboardWasOpen=true;
+      }catch(e){}
+      schedule();
+    });
+  }
+  // 키보드 내려가기 단축키가 전달되는 기종도 처리한다.
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&focused&&getInput()){
+      closeKeyboardLayout();
+    }
+  },true);
   window.addEventListener('resize',schedule);
   window.addEventListener('scroll',schedule,{passive:true});
   if(vv){vv.addEventListener('resize',schedule);vv.addEventListener('scroll',schedule);}
