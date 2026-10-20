@@ -2185,17 +2185,18 @@ setTimeout(function(){
 
 <script id="ptb-keyboard-layout">
 (function(){
-  // PTB 키보드 안정화 v2. 부모 index가 측정한 실제 화면/키보드 영역을 사용.
-  // 25:40 이미지 컨테이너 크기와 게임 로직은 유지하고 위치만 이동한다.
+  // PTB keyboard v4: 불필요한 원위치 복귀(깜빡임) 없이 현재 위치에서 계산.
+  // 화면 비율/컨테이너 크기 및 게임 기능은 원본 그대로 유지한다.
   const frame=document.querySelector('.rabbit-frame, .ptb-frame');
   if(!frame) return;
   const root=document.documentElement;
   const initialHeight=Math.max(window.innerHeight, root.clientHeight);
-  root.style.setProperty('--ptb-screen-height', initialHeight+'px');
+  root.style.setProperty('--ptb-screen-height',initialHeight+'px');
   const vv=window.visualViewport;
   const embedded=window.parent!==window;
   let parentViewport=null;
   let focused=false;
+  let appliedShift=0;
   let raf=0;
 
   function getInput(){
@@ -2204,41 +2205,42 @@ setTimeout(function(){
   }
   function localViewport(){
     const h=window.innerHeight;
-    const bottom=vv?Math.min(h, vv.offsetTop+vv.height):h;
-    return {
-      visibleBottom:bottom,
-      keyboardOpen:bottom<initialHeight-100
-    };
+    const bottom=vv?Math.min(h,vv.offsetTop+vv.height):h;
+    return {visibleBottom:bottom,keyboardOpen:bottom<initialHeight-100};
+  }
+  function applyShift(shift){
+    const next=Math.max(0,Math.round(shift));
+    if(Math.abs(next-appliedShift)<2) return;
+    appliedShift=next;
+    // 계산 전에 transform:0을 적용하지 않는다. 위치 변경은 이 한 번만 한다.
+    frame.style.transform=next?`translate3d(0,${-next}px,0)`:'';
   }
   function reposition(){
     const input=getInput();
     if(!focused || !input){
-      frame.style.transform='translate3d(0,0,0)';
+      applyShift(0);
       return;
     }
     const v=parentViewport || localViewport();
     if(!v.keyboardOpen){
-      frame.style.transform='translate3d(0,0,0)';
+      applyShift(0);
       return;
     }
-    // 변화 전의 입력창 위치를 잰 뒤, 키보드 위로 필요한 만큼만 이동.
-    frame.style.transform='translate3d(0,0,0)';
-    // 정답 입력창만 올라오면 힌트/정답/보상 버튼이 키보드 아래에 남는다.
-    // 컨테이너의 하단 전체가 키보드 위에 오도록 한 번에 이동한다.
+    // 현재 변환을 해제하지 않고, 기존 이동량만 더해 원래 하단의 좌표를 복원한다.
+    // 이 방식은 iframe 내부 자동 스크롤/화면 이동 변화도 함께 반영한다.
     const frameBottom=frame.getBoundingClientRect().bottom;
     const controls=document.querySelector('.ui-wrap.show');
-    const controlsBottom=controls ? controls.getBoundingClientRect().bottom : frameBottom;
-    const contentBottom=Math.max(frameBottom, controlsBottom);
-    const shift=Math.max(0, contentBottom+16-v.visibleBottom);
-    frame.style.transform='translate3d(0,'+(-Math.round(shift))+'px,0)';
+    const controlsBottom=controls?controls.getBoundingClientRect().bottom:frameBottom;
+    const baseBottom=Math.max(frameBottom,controlsBottom)+appliedShift;
+    const target=Math.max(0,baseBottom+16-v.visibleBottom);
+    applyShift(target);
   }
   function schedule(){
     if(raf) cancelAnimationFrame(raf);
     raf=requestAnimationFrame(()=>{raf=0;reposition();});
   }
   function tellParent(){
-    if(!embedded) return;
-    window.parent.postMessage({type:'PTB_INPUT_STATE_V2',focused:!!getInput()},'*');
+    if(embedded) window.parent.postMessage({type:'PTB_INPUT_STATE_V2',focused:!!getInput()},'*');
   }
   document.addEventListener('focusin',e=>{
     if(!e.target.matches('input,textarea')) return;
@@ -2260,7 +2262,6 @@ setTimeout(function(){
     const h=Number(e.data.normalHeight);
     const b=Number(e.data.visibleBottom);
     if(!Number.isFinite(h) || h<=0 || !Number.isFinite(b)) return;
-    // 키보드가 닫힌 상태에만 정상 화면 높이를 갱신한다.
     if(!e.data.keyboardOpen && !getInput()){
       root.style.setProperty('--ptb-screen-height',Math.round(h)+'px');
     }
@@ -2268,13 +2269,13 @@ setTimeout(function(){
     schedule();
   });
   window.addEventListener('resize',schedule);
+  window.addEventListener('scroll',schedule,{passive:true});
   if(vv){vv.addEventListener('resize',schedule);vv.addEventListener('scroll',schedule);}
   window.addEventListener('focus',()=>{focused=!!getInput();tellParent();schedule();});
   window.addEventListener('pageshow',()=>{focused=!!getInput();tellParent();schedule();});
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden){focused=!!getInput();tellParent();schedule();}
   });
-  // iframe의 내부 viewport 이벤트가 누락되더라도 부모 재측정이 작동한다.
   focused=!!getInput();
   tellParent();
   schedule();
