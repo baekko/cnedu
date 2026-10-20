@@ -3114,8 +3114,13 @@ setTimeout(
     }
     // 변화 전의 입력창 위치를 잰 뒤, 키보드 위로 필요한 만큼만 이동.
     frame.style.transform='translate3d(0,0,0)';
-    const inputBottom=input.getBoundingClientRect().bottom;
-    const shift=Math.max(0, inputBottom+18-v.visibleBottom);
+    // 정답 입력창만 올라오면 힌트/정답/보상 버튼이 키보드 아래에 남는다.
+    // 컨테이너의 하단 전체가 키보드 위에 오도록 한 번에 이동한다.
+    const frameBottom=frame.getBoundingClientRect().bottom;
+    const controls=document.querySelector('.ui-wrap.show');
+    const controlsBottom=controls ? controls.getBoundingClientRect().bottom : frameBottom;
+    const contentBottom=Math.max(frameBottom, controlsBottom);
+    const shift=Math.max(0, contentBottom+16-v.visibleBottom);
     frame.style.transform='translate3d(0,'+(-Math.round(shift))+'px,0)';
   }
   function schedule(){
