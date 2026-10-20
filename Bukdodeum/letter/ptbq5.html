@@ -1921,100 +1921,127 @@ setTimeout(function(){
 
 <script id="ptb-keyboard-layout">
 (function(){
-  // PTB keyboard v4: 불필요한 원위치 복귀(깜빡임) 없이 현재 위치에서 계산.
-  // 화면 비율/컨테이너 크기 및 게임 기능은 원본 그대로 유지한다.
+  // 키보드 보정 v5: 키보드 축소 신호가 누락되어도 입력창을 하단 버튼까지 노출한다.
+  // 화면이 열릴 때마다 프레임을 0px로 되돌리지 않고, 같은 위치는 다시 쓰지 않는다.
   const frame=document.querySelector('.rabbit-frame, .ptb-frame');
-  if(!frame) return;
+  if(!frame)return;
   const root=document.documentElement;
-  const initialHeight=Math.max(window.innerHeight, root.clientHeight);
-  root.style.setProperty('--ptb-screen-height',initialHeight+'px');
   const vv=window.visualViewport;
   const embedded=window.parent!==window;
+  const touchDevice=('ontouchstart' in window)||
+    !!(window.navigator&&window.navigator.maxTouchPoints>0)||
+    !!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
+  const firstHeight=Math.max(window.innerHeight,root.clientHeight);
+  root.style.setProperty('--ptb-screen-height',firstHeight+'px');
   let parentViewport=null;
   let focused=false;
+  let focusTime=0;
+  let upperBound=Infinity;
   let appliedShift=0;
   let raf=0;
+  let blurTimer=0;
 
+  // 프레임 transition은 설정하지 않는다. 계산 중간값과 실제 DOM 위치가 어긋나는 것을 방지한다.
   function getInput(){
     const e=document.activeElement;
-    return e && /^(INPUT|TEXTAREA)$/.test(e.tagName) ? e : null;
+    return e&&/^(INPUT|TEXTAREA)$/.test(e.tagName)?e:null;
   }
-  function localViewport(){
-    const h=window.innerHeight;
-    const bottom=vv?Math.min(h,vv.offsetTop+vv.height):h;
-    return {visibleBottom:bottom,keyboardOpen:bottom<initialHeight-100};
+  function notifyParent(){
+    if(embedded)window.parent.postMessage({type:'PTB_INPUT_STATE_V2',focused:!!getInput()},'*');
   }
-  function applyShift(shift){
-    const next=Math.max(0,Math.round(shift));
-    if(Math.abs(next-appliedShift)<2) return;
+  function setShift(n){
+    const next=Math.max(0,Math.round(n));
+    if(Math.abs(next-appliedShift)<2)return;
     appliedShift=next;
-    // 계산 전에 transform:0을 적용하지 않는다. 위치 변경은 이 한 번만 한다.
-    frame.style.transform=next?`translate3d(0,${-next}px,0)`:'';
+    frame.style.transform=next?'translate3d(0,'+(-next)+'px,0)':'';
+  }
+  function screenHeight(){
+    const h=parentViewport&&parentViewport.normalHeight;
+    return Math.max(firstHeight,Number.isFinite(h)?h:0);
+  }
+  function measureVisibleBottom(){
+    const h=screenHeight();
+    let top=Infinity;
+    // 신뢰할 수 있는 실측 수치가 있을 때 우선 사용한다.
+    if(parentViewport&&parentViewport.keyboardOpen){
+      top=Math.min(top,parentViewport.visibleBottom);
+    }
+    const local=vv?Math.min(window.innerHeight,vv.offsetTop+vv.height):window.innerHeight;
+    if(local<h-100)top=Math.min(top,local);
+    // 동일 출처 iframe이면 최상위 브라우저의 visualViewport도 직접 점검한다.
+    if(embedded){
+      try{
+        const p=window.parent;
+        const pv=p.visualViewport;
+        const ph=p.innerHeight;
+        const frameTop=p.document.getElementById('gameFrame').getBoundingClientRect().top;
+        const bottom=Math.min(ph,pv?pv.offsetTop+pv.height:ph)-frameTop;
+        if(bottom<h-100)top=Math.min(top,bottom);
+      }catch(e){}
+    }
+    // 삼성 인터넷 일부 상태에서는 부모/자식 viewport가 모두 줄지 않는다.
+    // 입력 중 170ms가 지나도 축소를 관측하지 못하면 모바일 키보드 크기를
+    // 보수적으로 가정해 '입력 자체가 불가능한 화면'에 머무르지 않도록 한다.
+    if(!Number.isFinite(top)&&touchDevice&&Date.now()-focusTime>=170){
+      const estimatedKeyboard=Math.max(250,Math.min(330,h*.38));
+      top=Math.max(120,h-estimatedKeyboard);
+    }
+    return top;
   }
   function reposition(){
     const input=getInput();
-    if(!focused || !input){
-      applyShift(0);
-      return;
-    }
-    const v=parentViewport || localViewport();
-    if(!v.keyboardOpen){
-      applyShift(0);
-      return;
-    }
-    // 현재 변환을 해제하지 않고, 기존 이동량만 더해 원래 하단의 좌표를 복원한다.
-    // 이 방식은 iframe 내부 자동 스크롤/화면 이동 변화도 함께 반영한다.
-    const frameBottom=frame.getBoundingClientRect().bottom;
+    if(!focused||!input)return;
+    const b=measureVisibleBottom();
+    if(!Number.isFinite(b))return; // 키보드가 열리는 첫 170ms 동안 초기값 유지
+    // 같은 키보드 열림 동안 작은 가시영역을 유지하여 반복 탭 시 아래로 출렁이지 않는다.
+    upperBound=Math.min(upperBound,b);
     const controls=document.querySelector('.ui-wrap.show');
-    const controlsBottom=controls?controls.getBoundingClientRect().bottom:frameBottom;
-    const baseBottom=Math.max(frameBottom,controlsBottom)+appliedShift;
-    const target=Math.max(0,baseBottom+16-v.visibleBottom);
-    applyShift(target);
+    // 기존 이동량을 더해서 실제 원래 위치를 계산하므로 0px 초기화가 불필요하다.
+    const frameBottom=frame.getBoundingClientRect().bottom+appliedShift;
+    const controlsBottom=controls?controls.getBoundingClientRect().bottom+appliedShift:frameBottom;
+    const bottom=Math.max(frameBottom,controlsBottom);
+    setShift(Math.max(0,bottom+16-upperBound));
   }
   function schedule(){
-    if(raf) cancelAnimationFrame(raf);
+    if(raf)cancelAnimationFrame(raf);
     raf=requestAnimationFrame(()=>{raf=0;reposition();});
   }
-  function tellParent(){
-    if(embedded) window.parent.postMessage({type:'PTB_INPUT_STATE_V2',focused:!!getInput()},'*');
+  function beginInput(){
+    clearTimeout(blurTimer);
+    if(!focused){focusTime=Date.now();upperBound=Infinity;}
+    focused=true;
+    notifyParent();
+    schedule();
+    [180,300,500,850].forEach(ms=>setTimeout(schedule,ms));
   }
   document.addEventListener('focusin',e=>{
-    if(!e.target.matches('input,textarea')) return;
-    focused=true;
-    tellParent();
-    schedule();
-    [80,200,450,800].forEach(ms=>setTimeout(schedule,ms));
+    if(e.target.matches('input,textarea'))beginInput();
   });
   document.addEventListener('focusout',e=>{
-    if(!e.target.matches('input,textarea')) return;
-    setTimeout(()=>{
-      focused=!!getInput();
-      tellParent();
-      schedule();
-    },90);
+    if(!e.target.matches('input,textarea'))return;
+    clearTimeout(blurTimer);
+    blurTimer=setTimeout(()=>{
+      if(getInput()){focused=true;notifyParent();schedule();return;}
+      focused=false;upperBound=Infinity;notifyParent();setShift(0);
+    },240);
   });
   window.addEventListener('message',e=>{
-    if(!embedded || e.source!==window.parent || !e.data || e.data.type!=='PTB_VIEWPORT_V2') return;
-    const h=Number(e.data.normalHeight);
-    const b=Number(e.data.visibleBottom);
-    if(!Number.isFinite(h) || h<=0 || !Number.isFinite(b)) return;
-    if(!e.data.keyboardOpen && !getInput()){
+    if(!embedded||e.source!==window.parent||!e.data||e.data.type!=='PTB_VIEWPORT_V2')return;
+    const h=Number(e.data.normalHeight),b=Number(e.data.visibleBottom);
+    if(!Number.isFinite(h)||h<=0||!Number.isFinite(b))return;
+    parentViewport={normalHeight:h,visibleBottom:b,keyboardOpen:!!e.data.keyboardOpen};
+    if(!getInput()&&!focused&&!e.data.keyboardOpen){
       root.style.setProperty('--ptb-screen-height',Math.round(h)+'px');
     }
-    parentViewport={visibleBottom:b,keyboardOpen:!!e.data.keyboardOpen};
     schedule();
   });
   window.addEventListener('resize',schedule);
   window.addEventListener('scroll',schedule,{passive:true});
   if(vv){vv.addEventListener('resize',schedule);vv.addEventListener('scroll',schedule);}
-  window.addEventListener('focus',()=>{focused=!!getInput();tellParent();schedule();});
-  window.addEventListener('pageshow',()=>{focused=!!getInput();tellParent();schedule();});
-  document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden){focused=!!getInput();tellParent();schedule();}
-  });
-  focused=!!getInput();
-  tellParent();
-  schedule();
+  window.addEventListener('pageshow',()=>{if(getInput())beginInput();else notifyParent();});
+  window.addEventListener('focus',()=>{if(getInput())beginInput();else notifyParent();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&getInput())beginInput();});
+  if(getInput())beginInput();else notifyParent();
 })();
 </script>
 </body>
