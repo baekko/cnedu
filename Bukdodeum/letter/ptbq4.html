@@ -2185,227 +2185,169 @@ setTimeout(function(){
 
 <script id="ptb-keyboard-layout">
 (function(){
-  // PTB keyboard v6: 열림 동작을 유지하고, 삼성 인터넷 키보드 내림(포커스 유지) 복귀를 추가.
-  const frame=document.querySelector('.rabbit-frame, .ptb-frame');
+  // 2026-10-20 통합 키보드 처리: 원래 컨테이너 비율/게임 코드는 변경하지 않는다.
+  const frame=document.querySelector('.ptb-frame, .rabbit-frame');
   if(!frame)return;
   const root=document.documentElement;
-  const vv=window.visualViewport;
   const embedded=window.parent!==window;
-  const touchDevice=('ontouchstart' in window)||
-    !!(window.navigator&&window.navigator.maxTouchPoints>0)||
-    !!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
+  const ownVV=window.visualViewport;
   const firstHeight=Math.max(window.innerHeight,root.clientHeight);
   root.style.setProperty('--ptb-screen-height',firstHeight+'px');
+  const HIDE_THRESHOLD=110, OPEN_STABLE_MS=130, CLOSE_STABLE_MS=130;
   let parentViewport=null;
-  let focused=false;
-  let focusTime=0;
-  let upperBound=Infinity;
-  let appliedShift=0;
-  let raf=0;
-  let blurTimer=0;
-  let sawRealKeyboard=false;
-  let dismissedWhileFocused=false;
-  let recoveredSince=0;
-  // 부모 창에서 한 번이라도 '키보드 때문에 가시영역 축소'를 관측했는지 기억한다.
-  // 같은 입력창에 focus가 남아도 닫힐 때 원위치로 복귀시키기 위한 독립 신호.
-  let parentWasReduced=false;
-  let nativeKeyboardWasOpen=false;
-  const nativeKeyboard=window.navigator&&window.navigator.virtualKeyboard;
+  let focusActive=false, appliedShift=0;
+  let lastOpenBottom=NaN, openSince=0, closeSince=0;
+  let raf=0, blurTimer=0, heartbeat=null;
+  let waitingForKeyboard=false;
 
-  function getInput(){
-    const e=document.activeElement;
-    return e&&/^(INPUT|TEXTAREA)$/.test(e.tagName)?e:null;
+  function activeInput(){
+    const el=document.activeElement;
+    return el&&(/^(INPUT|TEXTAREA)$/.test(el.tagName)||el.isContentEditable)?el:null;
   }
   function notifyParent(){
-    if(embedded)window.parent.postMessage({type:'PTB_INPUT_STATE_V2',focused:!!getInput()},'*');
+    if(embedded){try{window.parent.postMessage({type:'PTB_INPUT_STATE_V2',focused:!!activeInput()},'*');}catch(e){}}
   }
-  function setShift(n){
-    const next=Math.max(0,Math.round(n));
-    if(Math.abs(next-appliedShift)<2)return;
-    appliedShift=next;
-    frame.style.transform=next?'translate3d(0,'+(-next)+'px,0)':'';
+  function setShift(value){
+    const shift=Math.max(0,Math.round(value));
+    if(Math.abs(shift-appliedShift)<2)return;
+    appliedShift=shift;
+    // 프레임을 0으로 되돌려 측정하는 동작 금지: 그것이 화면 깜빡임의 원인이었다.
+    frame.style.transform=shift?'translate3d(0,'+(-shift)+'px,0)':'';
   }
-  function screenHeight(){
-    const h=parentViewport&&parentViewport.normalHeight;
-    return Math.max(firstHeight,Number.isFinite(h)?h:0);
-  }
-  function realVisibleBottom(){
-    const h=screenHeight();
-    let top=Infinity;
-    if(parentViewport&&parentViewport.keyboardOpen){
-      top=Math.min(top,parentViewport.visibleBottom);
-    }
-    const local=vv?Math.min(window.innerHeight,vv.offsetTop+vv.height):window.innerHeight;
-    if(local<h-100)top=Math.min(top,local);
+  function metrics(){
+    let full=Math.max(firstHeight,Number(parentViewport&&parentViewport.normalHeight)||0);
+    let bottom=NaN;
+    // iframe 내부 viewport는 키보드가 열려도 그대로인 경우가 많다.
+    // 같은 출처의 가장 바깥 브라우저 창 실측을 최우선 사용한다.
     if(embedded){
       try{
-        const p=window.parent;
-        const pv=p.visualViewport;
+        const p=window.parent, pv=p.visualViewport;
+        const pf=p.document.getElementById('gameFrame');
+        const top=pf?pf.getBoundingClientRect().top:0;
         const ph=p.innerHeight;
-        const frameTop=p.document.getElementById('gameFrame').getBoundingClientRect().top;
-        const bottom=Math.min(ph,pv?pv.offsetTop+pv.height:ph)-frameTop;
-        if(bottom<h-100)top=Math.min(top,bottom);
+        const viewportBottom=pv?pv.offsetTop+pv.height:ph;
+        bottom=Math.min(ph,viewportBottom)-top;
+        full=Math.max(full,pf?pf.offsetHeight:0);
       }catch(e){}
     }
-    return top;
-  }
-  function measuredVisibleBottom(){
-    const real=realVisibleBottom();
-    if(Number.isFinite(real))return real;
-    // 화면 크기를 축소하지 않는 브라우저의 키보드 첫 열림을 위한 보조 추정.
-    // 이미 닫힌 키보드에는 다시 적용하지 않는다(사용자가 입력창을 재터치하면 재활성화).
-    if(touchDevice&&!dismissedWhileFocused&&Date.now()-focusTime>=170){
-      const h=screenHeight();
-      const estimatedKeyboard=Math.max(250,Math.min(330,h*.38));
-      return Math.max(120,h-estimatedKeyboard);
+    // 외부 iframe 등 부모를 직접 읽을 수 없을 때만 부모의 메시지 사용.
+    if(!Number.isFinite(bottom)&&parentViewport)
+      bottom=Number(parentViewport.visibleBottom);
+    // 독립 실행 시에만 자기 viewport를 측정한다.
+    if(!Number.isFinite(bottom)){
+      const local=ownVV?ownVV.offsetTop+ownVV.height:window.innerHeight;
+      bottom=Math.min(window.innerHeight,local);
     }
-    return Infinity;
-  }
-  function parentReturnedToFullHeight(){
-    const p=parentViewport;
-    // 부모 iframe 창이 키보드 오픈 중 실제 축소를 한번 관측했고,
-    // 그 뒤 눈에 보이는 화면이 원래 높이로 돌아왔을 때만 닫힘으로 판정.
-    // iframe 내부 visualViewport가 예전 축소값으로 남아 있어도 복구한다.
-    return !!(parentWasReduced&&p&&
-      p.visibleBottom>=p.normalHeight-85);
-  }
-  function nativeKeyboardClosed(){
+    // 지원하는 브라우저의 VirtualKeyboard API도 참조한다.
     try{
-      return nativeKeyboardWasOpen && nativeKeyboard &&
-        nativeKeyboard.boundingRect && nativeKeyboard.boundingRect.height<40;
-    }catch(e){return false;}
+      const vk=navigator.virtualKeyboard;
+      const kh=vk&&vk.boundingRect?Number(vk.boundingRect.height):0;
+      if(kh>110)bottom=Math.min(bottom,full-kh);
+    }catch(e){}
+    return {full, bottom, keyboard:bottom<full-HIDE_THRESHOLD};
   }
-  function closeKeyboardLayout(){
-    dismissedWhileFocused=true;
-    sawRealKeyboard=false;
-    nativeKeyboardWasOpen=false;
-    parentWasReduced=false;
-    recoveredSince=0;
-    upperBound=Infinity;
+  function resetSession(){
+    lastOpenBottom=NaN;
+    openSince=0;
+    closeSince=0;
+    waitingForKeyboard=false;
+  }
+  function restore(){
+    resetSession();
     setShift(0);
   }
-  function reposition(){
-    const input=getInput();
-    if(!focused||!input)return;
-    if(dismissedWhileFocused)return;
-    const real=realVisibleBottom();
-    // 삼성 인터넷에서는 아래쪽 화살표로 키보드를 내려도 focus가 남는다.
-    // 부모 뷰포트가 정상으로 복구했다면 자식 뷰포트의 낡은 축소값보다 우선한다.
-    const keyboardClosed=parentReturnedToFullHeight()||
-      nativeKeyboardClosed()||(sawRealKeyboard&&!Number.isFinite(real));
-    if(keyboardClosed){
-      if(!recoveredSince){
-        recoveredSince=Date.now()||1;
-        setTimeout(schedule,150);
-        return;
-      }
-      if(Date.now()-recoveredSince<135)return;
-      closeKeyboardLayout();
+  function update(){
+    if(!focusActive||!activeInput()){
+      if(appliedShift)restore();
       return;
     }
-    recoveredSince=0;
-    if(Number.isFinite(real))sawRealKeyboard=true;
-    const b=measuredVisibleBottom();
-    if(!Number.isFinite(b))return;
-    // 매 측정 시점의 키보드 윗선만 사용한다. 이전에 관측된 최소값을
-    // 누적하면 삼성 인터넷 주소창/키보드 애니메이션의 일시적인 낮은 값에
-    // 프레임이 영구적으로 붙잡혀, 두 번째 이후 컨테이너가 과하게 올라간다.
-    // offsetTop/offsetHeight는 transform의 영향을 받지 않는 원래 레이아웃 좌표다.
-    const frameBottom=frame.offsetTop+frame.offsetHeight;
-    const controls=document.querySelector('.ui-wrap.show');
-    // UI가 프레임 바깥에 놓이는 특수 페이지일 때만 실제 UI 하단을 고려한다.
-    const controlsBottom=controls ?
-      Math.max(frameBottom,controls.offsetTop+controls.offsetHeight+frame.offsetTop) : frameBottom;
-    const required=Math.max(0,Math.max(frameBottom,controlsBottom)+16-b);
-    setShift(required);
+    const m=metrics();
+    const now=Date.now();
+    if(m.keyboard){
+      closeSince=0;
+      if(!Number.isFinite(lastOpenBottom)||Math.abs(m.bottom-lastOpenBottom)>4){
+        lastOpenBottom=m.bottom;
+        openSince=now;
+      }
+      if(now-openSince<OPEN_STABLE_MS)return;
+      // 원래 위치의 프레임 하단을 기준으로 매번 동일한 값 계산.
+      // offsetTop/offsetHeight는 transform의 영향을 받지 않는다.
+      const frameEnd=frame.offsetTop+frame.offsetHeight;
+      const controls=document.querySelector('.ui-wrap.show');
+      const controlsEnd=controls?frame.offsetTop+controls.offsetTop+controls.offsetHeight:frameEnd;
+      const desired=Math.max(0,Math.max(frameEnd,controlsEnd)+8-m.bottom);
+      setShift(desired);
+      waitingForKeyboard=false;
+    }else{
+      lastOpenBottom=NaN;
+      openSince=0;
+      if(appliedShift>0){
+        if(!closeSince)closeSince=now;
+        if(now-closeSince>=CLOSE_STABLE_MS)restore();
+      }else{
+        closeSince=0;
+      }
+    }
   }
   function schedule(){
-    if(raf)cancelAnimationFrame(raf);
-    raf=requestAnimationFrame(()=>{raf=0;reposition();});
+    if(raf)return;
+    raf=requestAnimationFrame(()=>{raf=0;update();});
   }
-  function beginInput(){
+  function onInput(){
     clearTimeout(blurTimer);
-    if(!focused||dismissedWhileFocused){
-      focusTime=Date.now();
-      upperBound=Infinity;
-      sawRealKeyboard=false;
-      dismissedWhileFocused=false;
-      recoveredSince=0;
-      parentWasReduced=false;
-      nativeKeyboardWasOpen=false;
-    }
-    focused=true;
+    focusActive=true;
+    waitingForKeyboard=true;
     notifyParent();
     schedule();
-    [180,300,500,850].forEach(ms=>setTimeout(schedule,ms));
+    // 키보드 애니메이션 중간값 대신 안정된 값만 사용하며, 늦은 이벤트까지 확인한다.
+    [150,280,420,650].forEach(ms=>setTimeout(schedule,ms));
   }
   document.addEventListener('focusin',e=>{
-    if(e.target.matches('input,textarea'))beginInput();
-  });
-  // 키보드 내린 뒤에도 input이 focus된 상태일 수 있다. 그 상태로 다시 누를 때 재개.
+    if(e.target.matches('input,textarea,[contenteditable]'))onInput();
+  },true);
   document.addEventListener('pointerdown',e=>{
-    if(dismissedWhileFocused&&e.target.matches('input,textarea'))beginInput();
+    if(e.target.matches('input,textarea,[contenteditable]')&&activeInput())onInput();
   },true);
   document.addEventListener('focusout',e=>{
-    if(!e.target.matches('input,textarea'))return;
+    if(!e.target.matches('input,textarea,[contenteditable]'))return;
     clearTimeout(blurTimer);
     blurTimer=setTimeout(()=>{
-      if(getInput()){
-        focused=true;
-        notifyParent();
-        schedule();
-        return;
-      }
-      focused=false;
-      sawRealKeyboard=false;
-      dismissedWhileFocused=false;
-      recoveredSince=0;
-      parentWasReduced=false;
-      nativeKeyboardWasOpen=false;
-      upperBound=Infinity;
-      notifyParent();
-      setShift(0);
-    },240);
-  });
+      if(activeInput()){focusActive=true;notifyParent();schedule();return;}
+      focusActive=false;notifyParent();restore();
+    },100);
+  },true);
   window.addEventListener('message',e=>{
     if(!embedded||e.source!==window.parent||!e.data||e.data.type!=='PTB_VIEWPORT_V2')return;
-    const h=Number(e.data.normalHeight),b=Number(e.data.visibleBottom);
+    const h=Number(e.data.normalHeight), b=Number(e.data.visibleBottom);
     if(!Number.isFinite(h)||h<=0||!Number.isFinite(b))return;
-    parentViewport={normalHeight:h,visibleBottom:b,keyboardOpen:!!e.data.keyboardOpen};
-    if((focused||getInput())&&(e.data.keyboardOpen||b<h-110)){
-      parentWasReduced=true;
-    }
-    if(!getInput()&&!focused&&!e.data.keyboardOpen){
+    parentViewport={normalHeight:h,visibleBottom:b};
+    if(!activeInput()&&!focusActive)
       root.style.setProperty('--ptb-screen-height',Math.round(h)+'px');
-    }
     schedule();
   });
-  // 지원 브라우저에서는 가상 키보드 geometry 변화도 독립적으로 확인.
-  if(nativeKeyboard && typeof nativeKeyboard.addEventListener==='function'){
-    nativeKeyboard.addEventListener('geometrychange',()=>{
-      try{
-        if(nativeKeyboard.boundingRect.height>100)nativeKeyboardWasOpen=true;
-      }catch(e){}
-      schedule();
-    });
-  }
-  // 키보드 내려가기 단축키가 전달되는 기종도 처리한다.
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'&&focused&&getInput()){
-      closeKeyboardLayout();
-    }
-  },true);
   window.addEventListener('resize',schedule);
   window.addEventListener('scroll',schedule,{passive:true});
-  if(vv){vv.addEventListener('resize',schedule);vv.addEventListener('scroll',schedule);}
-  function resume(){
-    if(getInput()&&!dismissedWhileFocused)beginInput();
-    else notifyParent();
+  if(ownVV){ownVV.addEventListener('resize',schedule);ownVV.addEventListener('scroll',schedule);}
+  if(embedded){
+    try{
+      const pv=window.parent.visualViewport;
+      if(pv){pv.addEventListener('resize',schedule);pv.addEventListener('scroll',schedule);}
+    }catch(e){}
   }
-  window.addEventListener('pageshow',resume);
-  window.addEventListener('focus',resume);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)resume();});
-  if(getInput())beginInput();else notifyParent();
+  try{
+    const vk=navigator.virtualKeyboard;
+    if(vk&&vk.addEventListener)vk.addEventListener('geometrychange',schedule);
+  }catch(e){}
+  document.addEventListener('keydown',e=>{
+    if((e.key==='Escape'||e.key==='BrowserBack')&&appliedShift)restore();
+  },true);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
+  window.addEventListener('pageshow',schedule);
+  // 화면 높이 변화 이벤트를 누락하는 삼성 인터넷 탭의 복구용.
+  heartbeat=setInterval(()=>{
+    if(!document.hidden&&focusActive&&activeInput())schedule();
+  },110);
+  if(activeInput())onInput();else notifyParent();
 })();
 </script>
 </body>
