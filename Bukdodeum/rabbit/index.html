@@ -79,7 +79,9 @@
     const reduced = h < normalHeight - 100 || bottom < normalVisibleBottom - 100;
     if (active && reduced) keyboardWasOpen = true;
 
-    if (!active && (!keyboardWasOpen || !reduced)) {
+    // 키보드 등장 초기의 순간적인 focus 누락으로 줄어든 높이를
+    // 정상 높이로 덮어쓰지 않도록 한다 (문제 재발 방지).
+    if (!active && !reduced && h >= normalHeight - 65 && bottom >= normalVisibleBottom - 65) {
       keyboardWasOpen = false;
       normalHeight = h;
       normalVisibleBottom = bottom;
