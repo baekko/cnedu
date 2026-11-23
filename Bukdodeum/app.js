@@ -92,28 +92,29 @@ function write(key, value, storage = localStorage) {
   try { storage.setItem(key, JSON.stringify(value)); return true; } catch { if (!localStorageWarning) { localStorageWarning = true; toast('이 브라우저에서는 진행 기록을 저장할 수 없어요.'); } return false; }
 }
 const CLASS_GUIDE = [
-  ['첫 수업 준비', '관리자 암호를 입력한 뒤 ‘반별 진행 기록’을 엽니다. 반 이름을 입력하고 ‘반 등록’을 누릅니다. 담당하는 반만 등록하면 됩니다.'],
+  ['첫 수업 준비', '관리자 암호를 입력한 뒤 ‘반별 진행 기록’을 엽니다. 반 이름을 입력하고 ‘반 등록’을 누릅니다.'],
   ['반과 활동 선택', '활동을 고른 뒤 해당 반의 ‘시작하기’를 누릅니다. 관리자 창이 닫히고 선택한 활동이 열립니다. 관리자 메뉴에서 현재 진행 중인 반을 확인할 수 있습니다.'],
   ['수업 중 저장', '문제를 풀거나 힌트를 열면 그 반의 기록에 자동으로 저장됩니다. 게임용의 당근·기억 점수와 수업용의 독서 도장도 함께 보관됩니다.'],
-  ['다음 시간에 이어하기', '같은 기기와 브라우저에서 ‘반별 진행 기록’을 다시 엽니다. 같은 활동을 고르고 반 이름과 완료 수를 확인한 뒤 ‘이어하기’를 누릅니다. 다섯 문제 중 세 문제를 풀었다면 책장에서 완료 표시가 없는 두 문제를 고르면 됩니다.'],
-  ['다른 반 또는 개인 활동', '다른 반의 시작하기 또는 이어하기를 누르면 그 반으로 전환됩니다. ‘개인 활동으로 돌아가기’를 누르면 기존 개인 기록을 사용할 수 있습니다. 게임용과 수업용 기록은 반마다 따로 저장됩니다.'],
-  ['초기화와 보관', '반을 선택한 상태에서 관리자 메뉴의 ‘게임 초기화’를 열고 활동을 고르면 그 반의 해당 활동 기록만 지워집니다. 기록은 이 브라우저에 저장되므로 다른 기기와 공유되지 않습니다. 브라우저의 사이트 데이터를 지우면 기록도 삭제됩니다.']
+  ['다음 시간에 이어하기', '같은 기기와 브라우저에서 ‘반별 진행 기록’을 다시 엽니다. 같은 활동을 고르고 반 이름과 완료 수를 확인한 뒤 ‘이어하기’를 누릅니다.'],
+  ['초기화와 보관', '반을 선택한 상태에서 관리자 메뉴의 ‘게임 초기화’를 열고 활동을 고르면 그 반의 해당 활동 기록만 지워집니다. 기록은 이 브라우저에 저장되므로 다른 기기와 공유되지 않습니다.']
 ];
 const CLASS_PREFIX = 'bdd_group_v1:';
 const classSlot = name => CLASS_PREFIX + encodeURIComponent(name) + ':';
 const scopedKey = (key, name = activeClass) => name ? classSlot(name) + key : key;
+const classLabel = id => read(scopedKey('name',id),'');
 function registeredClasses() {
   const names = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key?.startsWith(CLASS_PREFIX) && key.endsWith(':name')) {
       const name = read(key, '');
-      if (typeof name === 'string' && name) names.push(name);
+      if (typeof name === 'string' && name) names.push({id:decodeURIComponent(key.slice(CLASS_PREFIX.length,-5)),name});
     }
   }
-  return names.sort((a,b) => a.localeCompare(b,'ko',{numeric:true}));
+  return names.sort((a,b) => a.name.localeCompare(b.name,'ko',{numeric:true}));
 }
 function switchClass(name, mode) {
+  if (name && !classLabel(name)) return adminClasses(mode.id,'이미 삭제된 반입니다.');
   if (!write('bdd_active_group', name, sessionStorage)) return;
   activeClass = name;
   transientReveal.clear();
@@ -132,17 +133,18 @@ function adminClasses(selected = currentMode?.id || 'rabbit', message = '') {
   try { names = registeredClasses(); } catch { return adminView('반별 진행 기록','<p>브라우저에서 사이트 저장소 사용을 허용한 뒤 다시 열어 주세요.</p>'); }
   const mode = data.modes[selected];
   adminView('반별 진행 기록', `
-    <p class="admin-intro">현재 진행 · <strong>${esc(activeClass || '개인 활동')}</strong></p>
+    <p class="admin-intro">현재 진행 · <strong>${esc(activeClass ? classLabel(activeClass) : '개인 활동')}</strong></p>
     <form class="admin-form" id="class-add"><label for="class-name">반 이름</label>
       <input id="class-name" maxlength="40" required placeholder="예: 1학년 2반">
       <button class="button secondary">반 등록</button></form>
     <p class="form-status" role="status" id="class-status">${esc(message)}</p>
     ${adminModePicker(selected)}
-    <div class="admin-menu">${names.map((name,i) => {
-      const count = completedCount(read(progressKey(mode,name), {}));
-      const visited = read(scopedKey('visit:' + selected,name),null);
+    <div class="admin-menu">${names.map(({id,name},i) => {
+      const count = completedCount(read(progressKey(mode,id), {}));
+      const visited = read(scopedKey('visit:' + selected,id),null);
       return `<button class="admin-card" data-class-index="${i}"><span class="admin-card-icon">${icon('book')}</span><span class="admin-card-text"><strong>${esc(name)}</strong><small>${count} / 5 완료 · ${visited?'이어하기':'시작하기'}</small></span>${icon('arrow')}</button>`;
     }).join('')}</div>
+    ${names.length?'<button class="admin-back" id="class-manage">반 이름 수정·삭제</button>':''}
     ${activeClass?'<button class="admin-back" id="class-personal">개인 활동으로 돌아가기</button>':''}
     <details class="admin-group"><summary>사용 안내</summary><ol>${CLASS_GUIDE.map(([title,body]) => `<li><strong>${esc(title)}</strong><p>${esc(body)}</p></li>`).join('')}</ol>
       <a class="text-button" href="${asset('class-progress-guide.pdf')}" download>사용 안내 PDF 다운로드</a></details>`);
@@ -150,15 +152,52 @@ function adminClasses(selected = currentMode?.id || 'rabbit', message = '') {
   $('#class-add').onsubmit = event => {
     event.preventDefault();
     const name = $('#class-name').value.trim().normalize('NFC');
-    if (!name || names.includes(name)) { $('#class-status').textContent = name ? '이미 등록된 반입니다.' : '반 이름을 입력해 주세요.'; return; }
-    if (write(scopedKey('name',name),name)) adminClasses(selected, '등록한 반 · ' + name);
+    if (!name || registeredClasses().some(row => row.name === name)) { $('#class-status').textContent = name ? '이미 등록된 반입니다.' : '반 이름을 입력해 주세요.'; return; }
+    if (write(scopedKey('name',crypto.randomUUID()),name)) adminClasses(selected, '등록한 반 · ' + name);
   };
-  $$('[data-class-index]',DIALOG).forEach(el => el.onclick = () => switchClass(names[Number(el.dataset.classIndex)],mode));
+  $$('[data-class-index]',DIALOG).forEach(el => el.onclick = () => switchClass(names[Number(el.dataset.classIndex)].id,mode));
+  if ($('#class-manage')) $('#class-manage').onclick = () => manageClass(selected,names[0].id);
   if ($('#class-personal')) $('#class-personal').onclick = () => switchClass('',mode);
 }
 
+function manageClass(modeId,id) {
+  const rows = registeredClasses();
+  const name = classLabel(id);
+  if (!name) return adminClasses(modeId);
+  adminView('등록된 반 관리', `
+    ${adminPicker('manage-class','수정하거나 삭제할 반',rows.map(row=>[row.id,row.name]),id)}
+    <form id="class-rename" class="admin-form"><label for="new-class-name">새 반 이름</label>
+      <input id="new-class-name" required maxlength="40" value="${esc(name)}">
+      <button class="button">이름 저장</button>
+      <p id="rename-status" class="form-status" role="status"></p></form>
+    <div class="admin-actions"><button id="delete-class" class="button secondary">반 삭제</button>
+      <button id="class-list" class="button secondary">반 목록으로</button></div>`);
+  bindAdminPicker('manage-class',value=>manageClass(modeId,value));
+  $('#class-list').onclick = () => adminClasses(modeId);
+  $('#class-rename').onsubmit = event => {
+    event.preventDefault();
+    const value = $('#new-class-name').value.trim().normalize('NFC');
+    if (!value || registeredClasses().some(row=>row.id!==id && row.name===value)) {
+      $('#rename-status').textContent = value?'이미 등록된 반 이름입니다.':'새 반 이름을 입력해 주세요.'; return;
+    }
+    if (!classLabel(id)) return adminClasses(modeId,'이미 삭제된 반입니다.');
+    if (write(scopedKey('name',id),value)) adminClasses(modeId,'변경한 반 이름 · '+value);
+  };
+  $('#delete-class').onclick = () => {
+    adminView('반 삭제',`<p class="admin-intro"><strong>${esc(name)}</strong>의 게임용·수업용 진행 기록을 모두 삭제합니다. 삭제한 기록은 복구할 수 없습니다.</p>
+      <div class="admin-actions"><button class="button secondary" id="cancel-delete">취소</button>
+      <button class="button" id="confirm-delete">이 반과 기록 삭제</button></div>`);
+    $('#cancel-delete').onclick = () => manageClass(modeId,id);
+    $('#confirm-delete').onclick = () => {
+      const prefix = classSlot(id);
+      for (const key of Object.keys(localStorage)) if (key.startsWith(prefix)) localStorage.removeItem(key);
+      if (activeClass === id) switchClass('',data.modes[modeId]);
+      adminClasses(modeId,'삭제한 반 · '+name);
+    };
+  };
+}
 let activeClass = '';
-try { activeClass = read('bdd_active_group','',sessionStorage); } catch {}
+try { activeClass = read('bdd_active_group','',sessionStorage); if (activeClass && !classLabel(activeClass)) activeClass = ''; } catch {}
 const progressKey = (mode,name = activeClass) => scopedKey(mode.progressKey || `bdd_class_stamps_${mode.id}`,name);
 const progress = mode => read(progressKey(mode), {});
 const metaKey = mode => scopedKey(`bdd_story_${mode.id}`);
@@ -204,6 +243,9 @@ function historyBack(fallback='ptb.html') {
   navigate(fallback,{},true);
 }
 function goBack(fallback='ptb.html') { if(storyBack)storyBack();else historyBack(fallback); }
+window.addEventListener('storage', e => {
+  if (activeClass && (!e.key || e.key === scopedKey('name')) && !classLabel(activeClass)) switchClass('',currentMode);
+});
 window.addEventListener('popstate', () => { closeDialog(); if ((history.state?.group || '') !== activeClass) return navigate('ptb.html',{},true); render();window.scrollTo({top:0,behavior:'instant'}); });
 window.addEventListener('storage', e => { if ([data.admin.storageKey, HINT_TEXT_KEY].includes(e.key) && DIALOG.open && DIALOG.dataset.kind === 'hint') closeDialog(); });
 
@@ -435,7 +477,7 @@ function adminLogin() {
 }
 function adminPanel() {
   const sections = [
-    ['book', '반별 진행 기록', activeClass ? '현재 진행 · ' + activeClass : '반 등록·이어하기·사용 안내', adminClasses],
+    ['book', '반별 진행 기록', activeClass ? '현재 진행 · ' + classLabel(activeClass) : '반 등록·이어하기·사용 안내', adminClasses],
     ['sliders', '힌트 공개 범위', '활동별로 어디까지 공개할지 설정', adminRange],
     ['reset', '게임 초기화', '게임 기록·수업용 독서 도장 지우기', adminReset],
     ['file', '문제별 관리자 가이드', '문제별 PDF 보기와 다운로드', () => adminMaterials('guide')],
@@ -519,7 +561,7 @@ function adminModePicker(selected, label = '활동 선택') {
 function adminReset() {
   let selected = currentMode?.id || 'rabbit';
   adminView('게임 초기화', `
-    <p class="admin-intro"><strong>${esc(activeClass || '개인 활동')}</strong>의 선택한 활동 기록을 지우고 북돋움 첫 화면으로 돌아가요.</p>
+    <p class="admin-intro"><strong>${esc(activeClass ? classLabel(activeClass) : '개인 활동')}</strong>의 선택한 활동 기록을 지우고 북돋움 첫 화면으로 돌아가요.</p>
     <form id="admin-reset" class="admin-form">
       ${adminModePicker(selected)}
       <div class="admin-actions"><button class="button">진행 기록 초기화 ${icon('reset')}</button></div>
