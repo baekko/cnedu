@@ -1,5 +1,5 @@
 import {drawRabbitOpeningActor, RABBIT_OPENING_TIMING as timing} from './rabbit-depth-motion.js';
-export const PORTAL_CUT = .35 + timing.departureEnd - timing.turnEnd;
+export const PORTAL_CUT = timing.departureEnd - timing.turnEnd;
 /** The first bridge illustration and the following film share the exact same frame. */
 export const PORTAL_ASSETS=['assets/story/v6/rabbit/p21-bridge.webp','assets/cinema/v7/rabbit-depth-atlas.png'];
 const images=[];let pending;
@@ -12,11 +12,11 @@ export function drawPortalFrame(ctx,t=0){
  if(images.length<2)return;
  ctx.save();ctx.clearRect(0,0,768,512);ctx.imageSmoothingEnabled=true;ctx.drawImage(images[0],0,0,768,512);
  if(t<=PORTAL_CUT){
-  // Keep the bridge centre and its horizon fixed while matching the opening stride.
-  const scale=190/320;
-  ctx.translate(384*(1-scale),395-445*scale);
-  ctx.scale(scale,scale);
-  drawRabbitOpeningActor(ctx,timing.turnEnd+Math.max(0,t-.35),{depth:images[1]});
+  // Project the actor at the same display size as the fully zoomed opening mirror.
+  const zoom=3.95, scaleX=zoom*164/768, scaleY=zoom*109/512;
+  ctx.translate(384-384*scaleX,395-445*scaleY);
+  ctx.scale(scaleX,scaleY);
+  drawRabbitOpeningActor(ctx,timing.turnEnd+t,{depth:images[1]});
  }
  ctx.restore();
 }
