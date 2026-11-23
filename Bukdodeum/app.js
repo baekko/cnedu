@@ -91,9 +91,77 @@ function read(key, fallback, storage = localStorage) {
 function write(key, value, storage = localStorage) {
   try { storage.setItem(key, JSON.stringify(value)); return true; } catch { if (!localStorageWarning) { localStorageWarning = true; toast('이 브라우저에서는 진행 기록을 저장할 수 없어요.'); } return false; }
 }
-const progressKey = mode => mode.progressKey || `bdd_class_stamps_${mode.id}`;
+const CLASS_GUIDE = [
+  ['첫 수업 준비', '관리자 암호를 입력한 뒤 ‘반별 진행 기록’을 엽니다. 반 이름을 입력하고 ‘반 등록’을 누릅니다. 담당하는 반만 등록하면 됩니다.'],
+  ['반과 활동 선택', '활동을 고른 뒤 해당 반의 ‘시작하기’를 누릅니다. 관리자 창이 닫히고 선택한 활동이 열립니다. 관리자 메뉴에서 현재 진행 중인 반을 확인할 수 있습니다.'],
+  ['수업 중 저장', '문제를 풀거나 힌트를 열면 그 반의 기록에 자동으로 저장됩니다. 게임용의 당근·기억 점수와 수업용의 독서 도장도 함께 보관됩니다.'],
+  ['다음 시간에 이어하기', '같은 기기와 브라우저에서 ‘반별 진행 기록’을 다시 엽니다. 같은 활동을 고르고 반 이름과 완료 수를 확인한 뒤 ‘이어하기’를 누릅니다. 다섯 문제 중 세 문제를 풀었다면 책장에서 완료 표시가 없는 두 문제를 고르면 됩니다.'],
+  ['다른 반 또는 개인 활동', '다른 반의 시작하기 또는 이어하기를 누르면 그 반으로 전환됩니다. ‘개인 활동으로 돌아가기’를 누르면 기존 개인 기록을 사용할 수 있습니다. 게임용과 수업용 기록은 반마다 따로 저장됩니다.'],
+  ['초기화와 보관', '반을 선택한 상태에서 관리자 메뉴의 ‘게임 초기화’를 열고 활동을 고르면 그 반의 해당 활동 기록만 지워집니다. 기록은 이 브라우저에 저장되므로 다른 기기와 공유되지 않습니다. 브라우저의 사이트 데이터를 지우면 기록도 삭제됩니다.']
+];
+const CLASS_PREFIX = 'bdd_group_v1:';
+const classSlot = name => CLASS_PREFIX + encodeURIComponent(name) + ':';
+const scopedKey = (key, name = activeClass) => name ? classSlot(name) + key : key;
+function registeredClasses() {
+  const names = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(CLASS_PREFIX) && key.endsWith(':name')) {
+      const name = read(key, '');
+      if (typeof name === 'string' && name) names.push(name);
+    }
+  }
+  return names.sort((a,b) => a.localeCompare(b,'ko',{numeric:true}));
+}
+function switchClass(name, mode) {
+  if (!write('bdd_active_group', name, sessionStorage)) return;
+  activeClass = name;
+  transientReveal.clear();
+  if (!name) return navigate('ptb.html', {}, true);
+  allow(mode);
+  const visit = read(scopedKey('visit:' + mode.id), null);
+  const route = visit && data.routes[visit.path];
+  if (route?.mode === mode.id) {
+    if (route.type === 'question' && progress(mode)[route.number]?.completed) return navigate(mode.hub, {}, true);
+    return navigate(visit.path,Object.fromEntries(new URLSearchParams(visit.search)),true);
+  }
+  navigate(mode.opening || mode.hub, {}, true);
+}
+function adminClasses(selected = currentMode?.id || 'rabbit', message = '') {
+  let names;
+  try { names = registeredClasses(); } catch { return adminView('반별 진행 기록','<p>브라우저에서 사이트 저장소 사용을 허용한 뒤 다시 열어 주세요.</p>'); }
+  const mode = data.modes[selected];
+  adminView('반별 진행 기록', `
+    <p class="admin-intro">현재 진행 · <strong>${esc(activeClass || '개인 활동')}</strong></p>
+    <form class="admin-form" id="class-add"><label for="class-name">반 이름</label>
+      <input id="class-name" maxlength="40" required placeholder="예: 1학년 2반">
+      <button class="button secondary">반 등록</button></form>
+    <p class="form-status" role="status" id="class-status">${esc(message)}</p>
+    ${adminModePicker(selected)}
+    <div class="admin-menu">${names.map((name,i) => {
+      const count = completedCount(read(progressKey(mode,name), {}));
+      const visited = read(scopedKey('visit:' + selected,name),null);
+      return `<button class="admin-card" data-class-index="${i}"><span class="admin-card-icon">${icon('book')}</span><span class="admin-card-text"><strong>${esc(name)}</strong><small>${count} / 5 완료 · ${visited?'이어하기':'시작하기'}</small></span>${icon('arrow')}</button>`;
+    }).join('')}</div>
+    ${activeClass?'<button class="admin-back" id="class-personal">개인 활동으로 돌아가기</button>':''}
+    <details class="admin-group"><summary>사용 안내</summary><ol>${CLASS_GUIDE.map(([title,body]) => `<li><strong>${esc(title)}</strong><p>${esc(body)}</p></li>`).join('')}</ol>
+      <a class="text-button" href="${asset('class-progress-guide.pdf')}" download>사용 안내 PDF 다운로드</a></details>`);
+  bindAdminPicker('admin-mode', value => adminClasses(value));
+  $('#class-add').onsubmit = event => {
+    event.preventDefault();
+    const name = $('#class-name').value.trim().normalize('NFC');
+    if (!name || names.includes(name)) { $('#class-status').textContent = name ? '이미 등록된 반입니다.' : '반 이름을 입력해 주세요.'; return; }
+    if (write(scopedKey('name',name),name)) adminClasses(selected, '등록한 반 · ' + name);
+  };
+  $$('[data-class-index]',DIALOG).forEach(el => el.onclick = () => switchClass(names[Number(el.dataset.classIndex)],mode));
+  if ($('#class-personal')) $('#class-personal').onclick = () => switchClass('',mode);
+}
+
+let activeClass = '';
+try { activeClass = read('bdd_active_group','',sessionStorage); } catch {}
+const progressKey = (mode,name = activeClass) => scopedKey(mode.progressKey || `bdd_class_stamps_${mode.id}`,name);
 const progress = mode => read(progressKey(mode), {});
-const metaKey = mode => `bdd_story_${mode.id}`;
+const metaKey = mode => scopedKey(`bdd_story_${mode.id}`);
 const meta = mode => read(metaKey(mode), {});
 const setMeta = (mode, patch) => write(metaKey(mode), {...meta(mode), ...patch});
 const allowed = mode => { try { return sessionStorage.getItem(`bdd_access_${mode.id}`) === 'yes'; } catch { return true; } };
@@ -125,9 +193,9 @@ function getRoute() {
 }
 function navigate(path, query = {}, replace = false) {
   closeDialog(); const url = new URL(path, BASE); Object.entries(query).forEach(([k,v])=>url.searchParams.set(k,v));
-  if(url.href===location.href){render();return;}
+  if(url.href===location.href && (history.state?.group || '')===activeClass){render();return;}
   const previous=history.state?.bddScene?history.state:{depth:0,previous:null};
-  history[replace ? 'replaceState' : 'pushState']({bddScene:true,depth:previous.depth+(replace?0:1),previous:replace?previous.previous:location.href}, '', url);
+  history[replace ? 'replaceState' : 'pushState']({bddScene:true,group:activeClass,depth:previous.depth+(replace?0:1),previous:replace?previous.previous:location.href}, '', url);
   render(); window.scrollTo({top:0,behavior:'instant'});
 }
 function setView(query, replace = false) { navigate(currentRoute.path, query, replace); }
@@ -136,7 +204,7 @@ function historyBack(fallback='ptb.html') {
   navigate(fallback,{},true);
 }
 function goBack(fallback='ptb.html') { if(storyBack)storyBack();else historyBack(fallback); }
-window.addEventListener('popstate', () => { closeDialog(); render();window.scrollTo({top:0,behavior:'instant'}); });
+window.addEventListener('popstate', () => { closeDialog(); if ((history.state?.group || '') !== activeClass) return navigate('ptb.html',{},true); render();window.scrollTo({top:0,behavior:'instant'}); });
 window.addEventListener('storage', e => { if ([data.admin.storageKey, HINT_TEXT_KEY].includes(e.key) && DIALOG.open && DIALOG.dataset.kind === 'hint') closeDialog(); });
 
 function adminTrigger() { return `<button class="icon-button admin-trigger" data-action="admin" aria-label="관리자 설정">${icon('key')}</button>`; }
@@ -175,7 +243,8 @@ function render() {
   currentRoute = getRoute(); currentMode = data.modes[currentRoute.mode] || null;
   document.title = currentMode?`${currentMode.title} · 북돋움`:'북돋움';
   if(currentMode && !allowed(currentMode)) { renderGate(currentMode); return; }
-  if(currentMode) write('bdd_last_visit',{mode:currentMode.id,path:currentRoute.path,search:location.search});
+  if(currentMode) write(scopedKey('bdd_last_visit'),{mode:currentMode.id,path:currentRoute.path,search:location.search});
+  if (currentMode && activeClass) write(scopedKey('visit:' + currentMode.id),{path:currentRoute.path,search:location.search});
   const type = currentRoute.type;
   if(type==='entry') { navigate(currentMode.opening || currentMode.hub,{},true); return; }
   if(type==='landing') return renderLanding();
@@ -187,7 +256,7 @@ function render() {
   if(type==='outro') return renderOutro(currentMode);
 }
 function renderLanding() {
-  const last=read('bdd_last_visit',null);
+  const last=read(scopedKey('bdd_last_visit'),null);
   frame(`<header class="landing-bar"><span class="landing-wordmark">PLAY THE BOOK</span>${adminTrigger()}</header><main id="main" class="landing"><div class="landing-heading">${subtitle('학생 맞춤형 독서교육 프로그램')}<h1 class="original-brand"><img src="${asset('assets/brand/bukdodeum-transparent.png')}" alt="북돋움" width="1370" height="702"></h1><p>작은 책 한 권에 숨어 있는<br>커다란 이야기를 만나러 갈까요?</p></div>${artFigure(art('hero-v14'),'책과 거울 앞에서 만난 보라토끼와 편지왔어요의 소녀','landing-art')}<div class="landing-actions"><span class="paper-label">오늘의 모험, 준비됐나요?</span>${button('책장 열기','start')}${last?button('이어서 만나기','resume',true):''}<div class="landing-facts"><span>${icon('rabbit')} 두 가지 이야기</span><span>${icon('book')} 함께 읽는 수업</span></div></div></main>`,'landing-page');
   $('#start').onclick=()=>navigate('ptb.html');
   if(last) $('#resume').onclick=()=>{const mode=data.modes[last.mode]; if(!mode)return navigate('ptb.html'); accessModal(mode,()=>navigate(last.path,Object.fromEntries(new URLSearchParams(last.search||''))));};
@@ -309,11 +378,11 @@ function renderClassSuccess(mode,q) {
 function renderFinalMission(mode) {
   const f=data.story.letter.finalMission;
   frame(`${header(mode,{back:mode.hub})}<main id="main" class="final-mission"><span class="large-seal">${icon('mail')}</span>${subtitle('에필로그')}<h1>기억의 시작이 된 편지</h1><img class="final-cover" src="${asset(f.cover)}" alt="마지막 편지 원본 표지"><div class="puzzle-paper"><span class="kit-tag">${esc(f.kit)}</span><h2>${esc(f.question)}</h2><form id="final-form"><label class="sr-only" for="final-code">${esc(f.question)}</label><input id="final-code" autocomplete="off" autocapitalize="none" placeholder="편지 코드를 적어 주세요"><p id="final-status" class="form-status" role="status"></p><button class="button">편지 열기 ${icon('mail')}</button></form></div></main>`);
-  $('#final-form').onsubmit=e=>{e.preventDefault();if(normalizeAnswer($('#final-code').value)===normalizeAnswer(f.answer)){write(f.doneKey,true);setMeta(mode,{finalDone:true});chime('success');navigate(mode.finalRoutes[0]);}else{$('#final-status').textContent='편지 코드를 다시 살펴봐 주세요.';chime('wrong');}};
+  $('#final-form').onsubmit=e=>{e.preventDefault();if(normalizeAnswer($('#final-code').value)===normalizeAnswer(f.answer)){write(scopedKey(f.doneKey),true);setMeta(mode,{finalDone:true});chime('success');navigate(mode.finalRoutes[0]);}else{$('#final-status').textContent='편지 코드를 다시 살펴봐 주세요.';chime('wrong');}};
 }
 function renderEnding(mode) {
   if(completedCount(progress(mode))<5){navigate(mode.hub,{},true);return;}
-  if(mode.id==='letter'&&!meta(mode).finalDone&&!read(data.story.letter.finalMission.doneKey,false)){navigate(mode.hub,{v:'final'},true);return;}
+  if(mode.id==='letter'&&!meta(mode).finalDone&&!read(scopedKey(data.story.letter.finalMission.doneKey),false)){navigate(mode.hub,{v:'final'},true);return;}
   let steps;
   if(mode.id==='rabbit')steps=[...data.story.rabbit.ending.talks.map((text,i)=>({text,image:art(RABBIT_ENDING[i])})),{cinema:'rabbit-ending'}];
   else steps=[{text:data.story.letter.finalLetter.text,letter:true,image:asset(data.story.letter.finalLetter.originalImage),original:true,speaker:'내일의 나에게'},...data.story.letter.ending.slides.map((s,i)=>({text:plain(s.text),image:slideArt(s,true,i),speaker:s.img==='ptbin222.png'?'사서 선생님':'편지왔어요'}))];
@@ -366,6 +435,7 @@ function adminLogin() {
 }
 function adminPanel() {
   const sections = [
+    ['book', '반별 진행 기록', activeClass ? '현재 진행 · ' + activeClass : '반 등록·이어하기·사용 안내', adminClasses],
     ['sliders', '힌트 공개 범위', '활동별로 어디까지 공개할지 설정', adminRange],
     ['reset', '게임 초기화', '게임 기록·수업용 독서 도장 지우기', adminReset],
     ['file', '문제별 관리자 가이드', '문제별 PDF 보기와 다운로드', () => adminMaterials('guide')],
@@ -375,7 +445,7 @@ function adminPanel() {
   adminView('선생님 책상', `<div class="admin-menu">${sections.map(([symbol, label, note], index) => `
     <button type="button" class="admin-card" data-admin-section="${index}">
       <span class="admin-card-icon">${icon(symbol)}</span>
-      <span class="admin-card-text"><strong>${label}</strong><small>${note}</small></span>
+      <span class="admin-card-text"><strong>${label}</strong><small>${esc(note)}</small></span>
       ${icon('arrow', 'admin-card-arrow')}
     </button>`).join('')}</div>`, {back:false});
   $$('[data-admin-section]', DIALOG).forEach(control => {
@@ -449,7 +519,7 @@ function adminModePicker(selected, label = '활동 선택') {
 function adminReset() {
   let selected = currentMode?.id || 'rabbit';
   adminView('게임 초기화', `
-    <p class="admin-intro">선택한 활동의 진행 기록을 지우고 북돋움 첫 화면으로 돌아가요.</p>
+    <p class="admin-intro"><strong>${esc(activeClass || '개인 활동')}</strong>의 선택한 활동 기록을 지우고 북돋움 첫 화면으로 돌아가요.</p>
     <form id="admin-reset" class="admin-form">
       ${adminModePicker(selected)}
       <div class="admin-actions"><button class="button">진행 기록 초기화 ${icon('reset')}</button></div>
@@ -461,13 +531,14 @@ function adminReset() {
     const id = selected;
     const mode = data.modes[id];
     const keys = data.admin.resetKeys[id];
-    const wasLast = read('bdd_last_visit', null)?.mode === id;
+    const wasLast = read(scopedKey('bdd_last_visit'), null)?.mode === id;
     try {
-      keys?.local.forEach(key => localStorage.removeItem(key));
-      keys?.session.forEach(key => sessionStorage.removeItem(key));
+      keys?.local.forEach(key => localStorage.removeItem(scopedKey(key)));
+      if (activeClass) localStorage.removeItem(scopedKey('visit:' + id));
+      if (!activeClass) keys?.session.forEach(key => sessionStorage.removeItem(key));
       localStorage.removeItem(progressKey(mode));
       localStorage.removeItem(metaKey(mode));
-      if (wasLast) localStorage.removeItem('bdd_last_visit');
+      if (wasLast) localStorage.removeItem(scopedKey('bdd_last_visit'));
     } catch {
       $('#reset-status').textContent = '진행 기록을 초기화하지 못했어요.';
       return;
