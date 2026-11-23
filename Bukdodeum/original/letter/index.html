@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PLAY THE BOOK</title>
+<style>
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+  }
+  #gameFrame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border: 0;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<iframe id="gameFrame" title="PLAY THE BOOK" allow="autoplay; fullscreen" allowfullscreen></iframe>
+<script>
+(function () {
+  const frame = document.getElementById('gameFrame');
+  const KEY = 'ptb_last_page_letter';
+  const DEFAULT = 'ptbt.html';
+  const valid = page => /^[A-Za-z0-9_-]+\.html$/.test(page || '');
+
+  // 페이지 기록 및 복구: 기존 게임의 동작 유지
+  const current = () => {
+    try { return frame.contentWindow.location.pathname.split('/').pop(); }
+    catch (e) { return ''; }
+  };
+
+  // PTB 키보드 안정화 v2: 실제 키보드 가시영역은 최상위 페이지에서 측정.
+  // iframe의 고정 높이와 내부 콘텐츠 이동은 독립적으로 처리한다.
+  const layoutHeight = () => window.innerHeight || document.documentElement.clientHeight;
+  const visibleBottom = () => {
+    const v = window.visualViewport;
+    return v ? Math.min(layoutHeight(), v.offsetTop + v.height) : layoutHeight();
+  };
+  let normalHeight = layoutHeight();
+  let normalVisibleBottom = visibleBottom();
+  let focusFromChild = false;
+  let keyboardWasOpen = false;
+  let watchedDocument = null;
+  let tick = 0;
+
+  function focusedInFrame() {
+    try {
+      const d = frame.contentDocument;
+      const el = d && d.activeElement;
+      return !!(el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable));
+    } catch (e) { return false; }
+  }
+  function isInput(el) {
+    return !!(el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable));
+  }
+  function sendViewport(visible, active, reduced) {
+    try {
+      frame.contentWindow.postMessage({
+        type: 'PTB_VIEWPORT_V2',
+        normalHeight: normalHeight,
+        visibleBottom: visible - frame.getBoundingClientRect().top,
+        keyboardOpen: !!(active && reduced)
+      }, '*');
+    } catch (e) {}
+  }
+  function syncViewport() {
+    const h = layoutHeight();
+    const bottom = visibleBottom();
+    const active = focusFromChild || focusedInFrame();
+    // 최상위 화면의 실측 변화만 키보드로 취급. 주소창 미세 변화는 무시.
+    const reduced = h < normalHeight - 100 || bottom < normalVisibleBottom - 100;
+    if (active && reduced) keyboardWasOpen = true;
+
+    // 키보드 등장 초기의 순간적인 focus 누락으로 줄어든 높이를
+    // 정상 높이로 덮어쓰지 않도록 한다 (문제 재발 방지).
+    if (!active && !reduced && h >= normalHeight - 65 && bottom >= normalVisibleBottom - 65) {
+      keyboardWasOpen = false;
+      normalHeight = h;
+      normalVisibleBottom = bottom;
+    }
+    // 포커스 중에는 브라우저가 레이아웃 높이를 줄여도 iframe의 원래 크기 유지.
+    frame.style.height = Math.max(1, Math.round(normalHeight)) + 'px';
+    sendViewport(bottom, active, reduced);
+  }
+  function resyncSeveralTimes() {
+    syncViewport();
+    requestAnimationFrame(syncViewport);
+    [80, 200, 450, 800].forEach(ms => setTimeout(syncViewport, ms));
+  }
+  function watchFrameFocus() {
+    try {
+      const doc = frame.contentDocument;
+      if (!doc || doc === watchedDocument) return;
+      watchedDocument = doc;
+      doc.addEventListener('focusin', event => {
+        if (!isInput(event.target)) return;
+        focusFromChild = true;
+        resyncSeveralTimes();
+      }, true);
+      doc.addEventListener('focusout', () => {
+        setTimeout(() => {
+          focusFromChild = focusedInFrame();
+          resyncSeveralTimes();
+        }, 90);
+      }, true);
+    } catch (e) {}
+  }
+  frame.addEventListener('load', () => {
+    const p = current();
+    if (valid(p)) sessionStorage.setItem(KEY, p);
+    focusFromChild = false;
+    watchedDocument = null;
+    watchFrameFocus();
+    resyncSeveralTimes();
+  });
+  window.addEventListener('resize', resyncSeveralTimes);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', resyncSeveralTimes);
+    window.visualViewport.addEventListener('scroll', syncViewport);
+  }
+  window.addEventListener('focus', resyncSeveralTimes);
+  window.addEventListener('pageshow', resyncSeveralTimes);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) resyncSeveralTimes();
+  });
+  window.addEventListener('orientationchange', () => {
+    // 화면 방향 변경은 키보드가 닫힌 후 새로운 정상 높이를 채택.
+    setTimeout(() => {
+      if (!focusedInFrame() && !focusFromChild) {
+        keyboardWasOpen = false;
+        normalHeight = layoutHeight();
+        normalVisibleBottom = visibleBottom();
+      }
+      resyncSeveralTimes();
+    }, 500);
+  });
+  // 모바일에서 백그라운드 복귀 시 resize 이벤트가 누락되더라도 복원.
+  window.addEventListener('message', event => {
+    if (event.source !== frame.contentWindow || !event.data) return;
+    if (event.data.type === 'PTB_INPUT_STATE_V2') {
+      focusFromChild = !!event.data.focused;
+      resyncSeveralTimes();
+    }
+  });
+  // 포커스 중에만 주기적으로 재확인하므로 오래 열린 탭에도 부담이 적다.
+  setInterval(() => {
+    if (!document.hidden && (focusFromChild || focusedInFrame())) syncViewport();
+  }, 350);
+  frame.style.height = Math.max(1, Math.round(normalHeight)) + 'px';
+
+  window.addEventListener('message', event => {
+    if (event.source !== frame.contentWindow || !event.data || event.data.type !== 'PTB_NAV') return;
+    const page = String(event.data.page || '');
+    if (!valid(page)) return;
+    sessionStorage.setItem(KEY, page);
+    frame.src = page;
+  });
+
+  const saved = sessionStorage.getItem(KEY);
+  frame.src = valid(saved) ? saved : DEFAULT;
+})();
+</script>
+</body>
+</html>
