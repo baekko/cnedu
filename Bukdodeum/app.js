@@ -190,9 +190,19 @@ function editClassRow(row,{id,name},modeId,deleting) {
     $('[data-confirm]',editor).onclick = () => {
       const prefix = classSlot(id);
       for (const key of Object.keys(localStorage)) if (key.startsWith(prefix)) localStorage.removeItem(key);
-      if (activeClass === id) switchClass('',data.modes[modeId]);
-      adminClasses(modeId);
-      announce('반과 진행 기록을 삭제했습니다.');
+      if (activeClass === id) {
+        activeClass = '';
+        sessionStorage.removeItem('bdd_active_group');
+        transientReveal.clear();
+        history.replaceState({bddScene:true,group:'',depth:0,previous:null}, '', new URL('ptb.html',BASE));
+        render();
+        $('.admin-intro strong',DIALOG).textContent = '개인 활동';
+        $('#class-personal',DIALOG)?.remove();
+      }
+      const neighbor = row.nextElementSibling || row.previousElementSibling;
+      row.remove();
+      $('#class-status',DIALOG).textContent = neighbor ? '반과 진행 기록을 삭제했습니다.' : '등록된 반이 없습니다.';
+      (neighbor ? $('[data-delete]',neighbor) : $('#class-name',DIALOG)).focus({preventScroll:true});
     };
     return;
   }
@@ -320,7 +330,7 @@ function renderLanding() {
 }
 function renderSelection() {
   frame(`${header(null,{back:'index.html'})}<main id="main" class="selection-main"><div class="section-heading"><h1>활동에 맞는 책장을 골라주세요</h1></div><div class="section-label"><span>이야기를 따라가는 게임</span><i></i></div><div class="mode-list">${['rabbit','letter'].map(id=>{const m=data.modes[id];return `<button class="mode-card ${id}" data-mode="${id}"><div class="mode-art"><img src="${id==='rabbit'?art('rabbit-hub'):storyArtSource('library-emotion')}" alt="" loading="lazy"></div><div class="mode-copy"><small>${esc(m.audience)} · 게임</small><h2>${m.title}</h2><p>${id==='rabbit'?'보라토끼를 따라 거울 너머로':'책 속에 남겨진 기억과 편지'}</p><span class="mode-link">이야기 펼치기 ${icon('arrow')}</span></div></button>`}).join('')}</div><div class="section-label"><span>책과 함께하는 수업</span><i></i></div><div class="class-modes">${['eclass','mclass'].map(id=>`<button class="class-mode ${id}" data-mode="${id}"><span class="sticker-icon">${icon('book')}</span><small>독서 수업</small><h2>${id==='eclass'?'초등학생':'중·고등학생'}</h2><span>문제 책장 열기 ${icon('arrow')}</span></button>`).join('')}</div><p class="small-note">${icon('lock')} 선생님께 받은 접속 코드로 입장해요.</p></main>`,'selection-page');
-  $$('[data-mode]').forEach(el=>el.onclick=()=>accessModal(data.modes[el.dataset.mode]));
+  $$('[data-mode]',APP).forEach(el=>el.onclick=()=>accessModal(data.modes[el.dataset.mode]));
 }
 function renderGate(mode) {
   frame(`${header(mode,{showScore:false})}<main id="main" class="gate"><span class="large-seal">${icon(mode.track==='rabbit'?'rabbit':'mail')}</span>${subtitle(mode.audience)}<h1>${mode.title}</h1><p>선생님께 받은 접속 코드를 입력하고<br>책 속으로 들어오세요.</p><form id="gate-form"><label for="gate-code">접속 코드</label><input id="gate-code" type="password" inputmode="numeric" autocomplete="off" required maxlength="30"><p class="form-status" id="gate-status" role="status"></p><button class="button">책장 열기 ${icon('arrow')}</button></form></main>`);
