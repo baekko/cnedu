@@ -1,0 +1,188 @@
+{
+  "asset": "assets/cinema/v4/classroom-ending-atlas.webp",
+  "version": 4,
+  "format": "lossless-webp",
+  "atlasSize": [
+    3072,
+    1024
+  ],
+  "grid": {
+    "columns": 4,
+    "rows": 2
+  },
+  "frameSize": [
+    768,
+    512
+  ],
+  "frameCount": 8,
+  "ordering": "row-major",
+  "frameKind": "complete scene including characters and background; do not composite additional children or desk over it",
+  "frames": [
+    {
+      "index": 0,
+      "name": "asleep",
+      "rect": [
+        0,
+        0,
+        768,
+        512
+      ],
+      "shot": "wake"
+    },
+    {
+      "index": 1,
+      "name": "waking",
+      "rect": [
+        768,
+        0,
+        768,
+        512
+      ],
+      "shot": "wake"
+    },
+    {
+      "index": 2,
+      "name": "awake",
+      "rect": [
+        1536,
+        0,
+        768,
+        512
+      ],
+      "shot": "wake"
+    },
+    {
+      "index": 3,
+      "name": "friend-speaking",
+      "rect": [
+        2304,
+        0,
+        768,
+        512
+      ],
+      "shot": "reunion"
+    },
+    {
+      "index": 4,
+      "name": "friend-smiling",
+      "rect": [
+        0,
+        512,
+        768,
+        512
+      ],
+      "shot": "reunion"
+    },
+    {
+      "index": 5,
+      "name": "laughing-together",
+      "rect": [
+        768,
+        512,
+        768,
+        512
+      ],
+      "shot": "reunion"
+    },
+    {
+      "index": 6,
+      "name": "wave-a",
+      "rect": [
+        1536,
+        512,
+        768,
+        512
+      ],
+      "shot": "wave"
+    },
+    {
+      "index": 7,
+      "name": "wave-b",
+      "rect": [
+        2304,
+        512,
+        768,
+        512
+      ],
+      "shot": "wave"
+    }
+  ],
+  "shots": [
+    {
+      "id": "wake",
+      "frames": [
+        0,
+        1,
+        2
+      ],
+      "reference": "assets/story/v4/rabbit/classroom-wake.webp",
+      "camera": "fixed 3/4 view of window-side front desk"
+    },
+    {
+      "id": "reunion",
+      "frames": [
+        3,
+        4,
+        5
+      ],
+      "reference": "assets/story/v4/rabbit/classroom-reunion.webp",
+      "camera": "fixed view of seated narrator and standing friend; mirror, bulletin and door on rear wall"
+    },
+    {
+      "id": "wave",
+      "frames": [
+        6,
+        7
+      ],
+      "reference": "assets/story/v4/rabbit/classroom-together.webp",
+      "camera": "closer fixed view; each child waves one hand"
+    }
+  ],
+  "cast": {
+    "narrator": "brown hair; sage green sweatshirt; navy long trousers; cream sneakers; seated on one chair; navy bag on chair right",
+    "friend": "brown hair; light blue sweatshirt; navy shorts; white socks; blue sneakers; standing to narrator's right"
+  },
+  "production": {
+    "visualCreation": "image_gen",
+    "sources": [
+      "reference/v4-source/classroom-ending-poses-source.png",
+      "reference/v4-source/classroom-ending-pixel-source.png"
+    ],
+    "sourceAtlasSize": [
+      2172,
+      724
+    ],
+    "sourceCellSize": [
+      543,
+      362
+    ],
+    "normalization": "Crop each equal cell with 1px seam inset, resize to 768x512 using nearest-neighbor, pack row-major. No character/background compositing.",
+    "encoding": "WebP lossless; decoded pixels checked against packed atlas",
+    "prompts": [
+      "Use case: illustration-story / style-transfer. Asset: COMPLETE BACKGROUND-INCLUDED CINEMA FRAME ATLAS, one image, precisely FOUR COLUMNS and TWO ROWS, 8 borderless cells, each cell 3:2. Overall image aspect ratio THREE TO ONE, target3072x1024 so cells768x512. No gutters, labels, text, panel outlines. Render refined fine-pixel game art, small detailed pixels, warm thin brown contours, not coarse 8-bit blocks. THREE input images are approved camera/staging references, in order: (1) green-sweatshirt boy waking at his desk by left windows, (2) same seated boy facing his standing blue-sweatshirt friend beside the desk with rear mirror/bulletin/door, (3) closer view of both smiling. LOCK EACH CAMERA and furniture positions within its specified sequence. Keep child head ratios and ages identical; only two natural hands per person, seated boy knees fully behind tabletop/apron, seat supports his body, blue book on tabletop left, navy backpack on chair right, NO chair duplication, no bodies through furniture. Same warm wooden floor, desks face front, left windows and rear golden oval mirror/bulletin/rightdoor retain reference geography.\nRead cells in row-major order, 0..7:\n0: match input1 exactly but green boy eyesclosed, head resting on folded arms atopdesk, sleeps.\n1: same input1 camera and exactdesk/chair/book/bag/background, boy lifts head slightly above foldedarms, eyeshalfopen, no newhands.\n2: same input1 camera fixed, boy awake headraised looking toward right, twohands resting naturallyon desk, expressionwonder.\n3: match input2 camera and samefurniture, bluefriend standing immediatelyto seatedboy's right, friendlyopenmouth talking, one hand on desk edge, other by side; greenboy listening.\n4: same input2 camera perfectlylocked, bluefriend speaking with a smallsmile, greenboy begins smiling, bodypositionsunchanged, samehands.\n5: same input2 camera perfectlylocked, bothchildren smile, no bodypositionchanges, no extra limbs.\n6: match input3 closer camera, greenboy seatedleft and bluefriend standingright bending slightlytowardhim, bothturn theirfaces gentlytowardviewer smiling, eachraises ONLY one hand to a smallwave, otherhand stays on desk(green) or thigh(blue); wrists attachedcorrectly.\n7: same input3 camera and identicalfurniture andbodies, smallwavewristanglechanged, bothsmile, eachstill onlytwohands.\nEvery cell is a fully finished scene including its background and both relevant people, not isolated sprites. No blankareas, no transparency, no speedlines, no speechbubbles, no letterings, no new objects, no vines. Strong invariants: exact4x2 equal-cellgrid, child outfit/headsize maintained, only subtleposechange between frames sharing a shot; do not pan,zoom,crop differently or move roomgeometry.",
+      "Convert the attached completed 4-column 2-row animation atlas into authentic high-quality FINE PIXEL ART, retaining every pose, scene camera, object position, anatomy, costume and framing. Target the polished 32-bit pixel game look, with clearly intentional tiny square pixel clusters, 1-pixel stepped warm-brown contour edges, deliberate compact palettes, ordered subtle dithering on the floor and walls, separated pixel highlights in hair, fabric and books. This must visibly look like authored pixel art rather than a smooth painted anime illustration or watercolor. Use fine pixels that maintain expressive faces and small normal hands; NOT big 8-bit blocks. Keep the output exactly the same full atlas FOUR columns TWO rows, overall3:1, each of8 cells3:2. No grids drawn, no borders, no gutters, no text. Do not regenerate content, simplify away background objects or alter composition: top row frames0sleeping,1waking,2awake,3friendtalk; bottom row4friend smiles,5both laugh,6wave,7wave. Each of these is a completed classroom scene, furniture and pupils integrated with correct support/occlusion, exactly two arms and hands per person. Frames0-2 locked identical camera; frames3-5 locked identical camera; frames6-7 locked identical camera. The green-sweatshirt narrator is seated, blue-sweatshirt friend stands to the right. One chair for the seatedboy, two visible small hands each, no extra limbs, bodies don't penetrate desk. Preserve bluebook, navybag, windows, desks, ovalmirror, bulletin,door. Refine pixel rendering, don't change staging. NO captions, vines, newobjects."
+    ]
+  },
+  "visualReview": {
+    "reviewedFrames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "findings": [
+      "Each frame visually inspected at 768x512 after normalization.",
+      "Two arms/hands per visible child; no extra arm/hand found.",
+      "Narrator remains seated with knees behind the front desk apron; desk and chair support are coherent.",
+      "One visible narrator chair, no duplicated chair back found.",
+      "Blue book stays on desk left and navy bag on chair right.",
+      "Same camera and room geography within each shot; partial framing does not expose all nine classroom desks.",
+      "Pixel restyle inspected separately; no text or vines added."
+    ],
+    "pending": "Browser playback, temporal pacing, transitions and runtime framing must be verified by integration owner."
+  }
+}

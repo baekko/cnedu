@@ -1,0 +1,128 @@
+{
+  "asset": "assets/cinema/v6/classroom-ending-atlas.webp",
+  "version": 6,
+  "atlasSize": [
+    3072,
+    1024
+  ],
+  "grid": {
+    "columns": 4,
+    "rows": 2
+  },
+  "frameSize": [
+    768,
+    512
+  ],
+  "frameCount": 8,
+  "ordering": "row-major",
+  "frameKind": "complete scene including characters and background; no independent actor layer",
+  "sourceAtlasSize": [
+    2172,
+    724
+  ],
+  "sourceCellSize": [
+    543,
+    362
+  ],
+  "source": "reference/generated/v6/rabbit/classroom-ending-pixel.png",
+  "normalization": "Equal 4x2 cells; remove 1-pixel seam on all sides, nearest-neighbor resize each to768x512; pack row-major, losslessWebP.",
+  "frames": [
+    {
+      "index": 0,
+      "name": "asleep",
+      "rect": [
+        0,
+        0,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 1,
+      "name": "waking",
+      "rect": [
+        768,
+        0,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 2,
+      "name": "awake",
+      "rect": [
+        1536,
+        0,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 3,
+      "name": "friend-speaking",
+      "rect": [
+        2304,
+        0,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 4,
+      "name": "friend-smiling",
+      "rect": [
+        0,
+        512,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 5,
+      "name": "quiet-shared-smile",
+      "rect": [
+        768,
+        512,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 6,
+      "name": "wave-a",
+      "rect": [
+        1536,
+        512,
+        768,
+        512
+      ]
+    },
+    {
+      "index": 7,
+      "name": "wave-b",
+      "rect": [
+        2304,
+        512,
+        768,
+        512
+      ]
+    }
+  ],
+  "geography": {
+    "protagonistSeat": "front row MIDDLE column, bare desk",
+    "friendSeat": "front row LEFT window-side column, vacant",
+    "friendProps": "closedbluebook on ownleftdesk; darknavybackpack suspended by shorttopcarryhandle on ONE silverJhook screwed into RIGHTSIDEgraypanel of frienddesk belowwoodtop. No bag onchair or protagonistdesk.",
+    "rows": "3columns by3rows, allstraightworldgrid, all desksfacefront/camera; roomleftwindows/backmirror/backbulletin/rightdoor retained",
+    "friendStanding": "rightaisle beside narrator middle desk, shoes onfloor"
+  },
+  "cast": {
+    "narrator": "brown tousledhair, sagegreencrewneck, navylongtrousers, creamsneakers, seated",
+    "friend": "brownsidepart, lightbluecrewneck, navyshorts, whitesocks, bluesneakers, standing"
+  },
+  "visualReview": {
+    "inspected": "All8frames and3stills reviewed visually; friendseatremainsvacant, mainseatdifferent, no duplicatedhands, no footonfurniture, no bentdeskrows visible. Baghandle/hook copied from geometryagent canonicalcorrectedp8.",
+    "limits": "Generated background is not bit-identical across frames; root browser playback and acceptance pending."
+  },
+  "sha256": "5487a45a5f4030a3d8bef5f8302b665c56fe06179f57bd54c9cc0d98d2ebd894",
+  "tool": "built-in image_gen"
+}
