@@ -95,8 +95,7 @@ function hop(local, duration, departing) {
   });
   // A ballistic arc in world height, projected by the same depth as the body.
   // Ground motion is exactly zero during compression, thrust and recovery.
-  const hopHeight = departing ? 38 : 50;
-  pose.air = hopHeight * 4 * flight * (1 - flight) / depth;
+  pose.air = 38 * 4 * flight * (1 - flight) / depth;
   return pose;
 }
 
