@@ -71,6 +71,18 @@ function hopFrame(phase) {
   return 7; // recover before the next crouch
 }
 
+// During approach the forepaws catch the landing before the hind feet gather.
+function frontHopFrame(phase) {
+  if (phase < .12) return 1;
+  if (phase < .30) return 0;
+  if (phase < .43) return 2;
+  if (phase < .58) return 3;
+  if (phase < .70) return 4;
+  if (phase < .86) return 5;
+  if (phase < .94) return 6;
+  return 7;
+}
+
 function hop(local, duration, departing) {
   const progress = clamp(local / duration);
   if (progress === 1) {
@@ -87,7 +99,7 @@ function hop(local, duration, departing) {
   const to = departing ? DEPTH_STOPS[HOPS - index - 1] : DEPTH_STOPS[index + 1];
   const flight = clamp((phase - TAKEOFF) / (TOUCHDOWN - TAKEOFF));
   const depth = lerp(from, to, flight);
-  const pose = actor('depth', hopFrame(phase) + (departing ? 8 : 0), depth, {
+  const pose = actor('depth', departing ? 8 + hopFrame(phase) : frontHopFrame(phase), depth, {
     phase: departing ? 'departing' : 'approaching',
     hop: index,
     hopPhase: phase,
