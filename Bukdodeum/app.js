@@ -1,5 +1,5 @@
 import {RABBIT_OPENING, LETTER_OPENING, LETTER_ENDING, RABBIT_HUB_INTRO, RABBIT_HUB_ENDING, RABBIT_ENDING, paginateStory} from './storyboard.js';
-import { mountCinema, CINEMA_DURATIONS } from './cinema.js?rabbit=forepaws1';
+import { mountCinema, CINEMA_DURATIONS } from './cinema.js?rabbit=aligned1';
 import { storyArtSource } from './story-scenes.js';
 import { revealScene, retainScenes, preloadScene } from './scene-display.js';
 import {retainMirror,revealMirror} from './mirror-dialogue.js';
