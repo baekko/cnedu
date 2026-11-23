@@ -415,3 +415,5 @@ html{scrollbar-gutter:stable}
 .pdf-clue-mode .pdf-toolbar{flex:none}
 .pdf-clue-mode .pdf-page{flex:0 1 auto;padding:0;overscroll-behavior:none;background:#fff}
 .pdf-clue-mode .pdf-page canvas{box-shadow:none}
+
+.single-line-title{white-space:nowrap;font-size:min(1em,7vw)}

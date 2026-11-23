@@ -1,5 +1,7 @@
+import {drawRabbitOpeningActor, RABBIT_OPENING_TIMING as timing} from './rabbit-depth-motion.js';
+export const PORTAL_CUT = .35 + timing.departureEnd - timing.turnEnd;
 /** The first bridge illustration and the following film share the exact same frame. */
-export const PORTAL_ASSETS=['assets/story/v6/rabbit/p21-bridge.webp','assets/cinema/v6/rabbit-rear-hops.png'];
+export const PORTAL_ASSETS=['assets/story/v6/rabbit/p21-bridge.webp','assets/cinema/v7/rabbit-depth-atlas.png'];
 const images=[];let pending;
 export function loadPortalAssets(){
  return pending||=Promise.all(PORTAL_ASSETS.map((src,i)=>new Promise((resolve,reject)=>{
@@ -9,14 +11,12 @@ export function loadPortalAssets(){
 export function drawPortalFrame(ctx,t=0){
  if(images.length<2)return;
  ctx.save();ctx.clearRect(0,0,768,512);ctx.imageSmoothingEnabled=true;ctx.drawImage(images[0],0,0,768,512);
- if(t<7.8){
-  const p=Math.max(0,Math.min(1,(t-.45)/7.1)),q=1-Math.pow(1-p,1.35);
-  const size=190+(32-190)*q,feet=151+(395-151)*size/190;
-  const frame=t<=.45?0:Math.floor((t-.45)*8)%8;
-  ctx.fillStyle='#57457725';ctx.beginPath();ctx.ellipse(384,feet+1,size*.14,size*.025,0,0,Math.PI*2);ctx.fill();
-  // The projected height and ground contact share one horizon. No sideways
-  // travel or fade-out: the rabbit remains on the bridge until the scene cut.
-  ctx.drawImage(images[1],frame%4*256,Math.floor(frame/4)*256,256,256,384-128*size/256,feet-236*size/256,size,size);
+ if(t<=PORTAL_CUT){
+  // Keep the bridge centre and its horizon fixed while matching the opening stride.
+  const scale=190/320;
+  ctx.translate(384*(1-scale),395-445*scale);
+  ctx.scale(scale,scale);
+  drawRabbitOpeningActor(ctx,timing.turnEnd+Math.max(0,t-.35),{depth:images[1]});
  }
  ctx.restore();
 }

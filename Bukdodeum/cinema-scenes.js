@@ -3,9 +3,9 @@ import { LETTER_FILM_DURATION, drawLetterFilmFrame } from './letter-credits-film
 import {happyPose} from './character-motion.js';
 import {drawRabbitOpeningActor} from './rabbit-depth-motion.js';
 import {LETTER_CREDITS_ASSETS,loadLetterCredits,drawLetterCredits} from './letter-credits.js';
-import {PORTAL_ASSETS,loadPortalAssets,drawPortalFrame} from './portal-scene.js';
+import {PORTAL_CUT,PORTAL_ASSETS,loadPortalAssets,drawPortalFrame} from './portal-scene.js';
 const W=768,H=512;
-export const CINEMA_DURATIONS={'rabbit-opening':14.5,'rabbit-portal':10.5,'rabbit-success':4.6,'rabbit-ending':10,'letter-opening':14,'letter-success':5.5,'letter-ending':15,'credits-rabbit':35,'credits-letter':LETTER_FILM_DURATION};
+export const CINEMA_DURATIONS={'rabbit-opening':14.5,'rabbit-portal':PORTAL_CUT+2.7,'rabbit-success':4.6,'rabbit-ending':10,'letter-opening':14,'letter-success':5.5,'letter-ending':15,'credits-rabbit':35,'credits-letter':LETTER_FILM_DURATION};
 export const LABELS={'rabbit-opening':'교실 거울 안에서 다가와 인사하고 돌아 뛰어가는 보라토끼','rabbit-portal':'거울 안으로 돌아간 토끼와 책 열매 나무','rabbit-success':'당근을 차례로 내려놓고 떠나는 보라토끼','rabbit-ending':'잠에서 깨어 친구와 다시 만나는 두 아이','letter-opening':'도서관에 걸어와 선생님에게 편지를 건네받는 소녀','letter-success':'기뻐하는 소녀','letter-ending':'창가에서 쓴 편지를 사서 선생님께 맡기고 돌아가는 소녀','credits-rabbit':'책 열매 나무에서 다섯 장소를 돌아 다시 나무로 오는 토끼','credits-letter':'다섯 권의 책 속을 걸어 도서관에서 사서 선생님과 인사하는 소녀'};
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const lerp=(a,b,t)=>a+(b-a)*clamp(t);
@@ -102,7 +102,7 @@ export function drawCinemaFrame(ctx,kind,time,score=2,{location=0}={}){
  if(kind==='credits-letter')return drawLetterFilmFrame(ctx,time);
  const t=clamp(time,0,CINEMA_DURATIONS[kind]||14);ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,W,H);ctx.fillStyle='#f7efdf';ctx.fillRect(0,0,W,H);
  if(kind==='rabbit-opening')classroomMirror(ctx,t);
- else if(kind==='rabbit-portal'){if(t<7.8)drawPortalFrame(ctx,t);else{background(ctx,'tree');sideHops(ctx,t,7.8,10.3,130,490,445,177);motes(ctx,t);}cutFade(ctx,t,[7.8],.3);}
+ else if(kind==='rabbit-portal'){if(t<PORTAL_CUT)drawPortalFrame(ctx,t);else{background(ctx,'tree');sideHops(ctx,t,PORTAL_CUT,PORTAL_CUT+2.5,130,490,445,177);motes(ctx,t);}cutFade(ctx,t,[PORTAL_CUT],.3);}
  else if(kind==='rabbit-success')reward(ctx,t,score,location);
  else if(kind==='rabbit-ending')childrenEnding(ctx,t);
  else if(kind==='letter-opening'){drawLetterCredits(ctx,t*8/14);title(ctx,'편지왔어요',t,11.5);}
