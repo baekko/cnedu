@@ -1,5 +1,5 @@
 import { mountLetterFilm } from './letter-credits-film.js';
-import { CINEMA_DURATIONS, LABELS, loadCinemaAssets, drawCinemaFrame } from "./cinema-scenes.js?rabbit=aligned1";
+import { CINEMA_DURATIONS, LABELS, loadCinemaAssets, drawCinemaFrame } from "./cinema-scenes.js?rabbit=stride1";
 export { CINEMA_DURATIONS, loadCinemaAssets, drawCinemaFrame };
 const W=768,H=512;
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));

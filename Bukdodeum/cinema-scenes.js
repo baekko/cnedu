@@ -16,7 +16,7 @@ const letterLocation=index=>'letterLocation'+clamp(index,0,LETTER_LOCATIONS.leng
 const PATHS={
  happy:'v14/happy.png',classEnding:'v7/classroom-ending-atlas.webp',
  tree:'v2/meadow-pixel-bg.webp',classroom:'v6/classroom-pixel-bg.webp',bridge:'v3/bridge-pixel-bg.webp',
- rabbit:'v2/rabbit-atlas.png',depth:'v7/rabbit-depth-inline.png',turn:'v7/rabbit-turn-atlas.png',deposit:'v3/rabbit-deposit-atlas.png',carrot:'v3/carrot.png',
+ rabbit:'v2/rabbit-atlas.png',depth:'v7/rabbit-depth-stride.png',turn:'v7/rabbit-turn-atlas.png',deposit:'v3/rabbit-deposit-atlas.png',carrot:'v3/carrot.png',
  ...Object.fromEntries(Array.from({length:5},(_,i)=>['location'+i,`v2/rabbit-location-${i}.webp`])),
  ...Object.fromEntries(LETTER_LOCATIONS.map((name,index)=>[letterLocation(index),`letter-locations/${name}.webp`]))
 };
