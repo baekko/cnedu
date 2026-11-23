@@ -139,12 +139,14 @@ function adminClasses(selected = currentMode?.id || 'rabbit', message = '') {
       <button class="button secondary">반 등록</button></form>
     <p class="form-status" role="status" id="class-status">${esc(message)}</p>
     ${adminModePicker(selected)}
-    <div class="admin-menu">${names.map(({id,name},i) => {
+    <div class="admin-menu" id="class-rows" data-mode="${esc(selected)}">${names.map(({id,name},i) => {
       const count = completedCount(read(progressKey(mode,id), {}));
       const visited = read(scopedKey('visit:' + selected,id),null);
-      return `<button class="admin-card" data-class-index="${i}"><span class="admin-card-icon">${icon('book')}</span><span class="admin-card-text"><strong>${esc(name)}</strong><small>${count} / 5 완료 · ${visited?'이어하기':'시작하기'}</small></span>${icon('arrow')}</button>`;
+      return `<section class="class-row"><div class="class-row-main"><button class="admin-card" data-class-index="${i}"><span class="admin-card-icon">${icon('book')}</span><span class="admin-card-text"><strong>${esc(name)}</strong><small>${count} / 5 완료 · ${visited?'이어하기':'시작하기'}</small></span>${icon('arrow')}</button>
+        <button class="class-tool" data-edit="${i}" aria-label="${esc(name)} 이름 수정">수정</button>
+        <button class="class-tool" data-delete="${i}" aria-label="${esc(name)} 삭제">삭제</button></div>
+        <div class="class-editor" hidden></div></section>`;
     }).join('')}</div>
-    ${names.length?'<button class="admin-back" id="class-manage">반 이름 수정·삭제</button>':''}
     ${activeClass?'<button class="admin-back" id="class-personal">개인 활동으로 돌아가기</button>':''}
     <details class="admin-group"><summary>사용 안내</summary><ol>${CLASS_GUIDE.map(([title,body]) => `<li><strong>${esc(title)}</strong><p>${esc(body)}</p></li>`).join('')}</ol>
       <a class="text-button" href="${asset('class-progress-guide.pdf')}" download>사용 안내 PDF 다운로드</a></details>`);
@@ -156,44 +158,55 @@ function adminClasses(selected = currentMode?.id || 'rabbit', message = '') {
     if (write(scopedKey('name',crypto.randomUUID()),name)) adminClasses(selected, '등록한 반 · ' + name);
   };
   $$('[data-class-index]',DIALOG).forEach(el => el.onclick = () => switchClass(names[Number(el.dataset.classIndex)].id,mode));
-  if ($('#class-manage')) $('#class-manage').onclick = () => manageClass(selected,names[0].id);
+  const rows = $$('#class-rows .class-row',DIALOG);
+  rows.forEach((row,index) => {
+    const item = names[index];
+    $('[data-edit]',row).onclick = () => editClassRow(row,item,selected,false);
+    $('[data-delete]',row).onclick = () => editClassRow(row,item,selected,true);
+  });
   if ($('#class-personal')) $('#class-personal').onclick = () => switchClass('',mode);
 }
 
-function manageClass(modeId,id) {
-  const rows = registeredClasses();
-  const name = classLabel(id);
-  if (!name) return adminClasses(modeId);
-  adminView('등록된 반 관리', `
-    ${adminPicker('manage-class','수정하거나 삭제할 반',rows.map(row=>[row.id,row.name]),id)}
-    <form id="class-rename" class="admin-form"><label for="new-class-name">새 반 이름</label>
-      <input id="new-class-name" required maxlength="40" value="${esc(name)}">
-      <button class="button">이름 저장</button>
-      <p id="rename-status" class="form-status" role="status"></p></form>
-    <div class="admin-actions"><button id="delete-class" class="button secondary">반 삭제</button>
-      <button id="class-list" class="button secondary">반 목록으로</button></div>`);
-  bindAdminPicker('manage-class',value=>manageClass(modeId,value));
-  $('#class-list').onclick = () => adminClasses(modeId);
-  $('#class-rename').onsubmit = event => {
-    event.preventDefault();
-    const value = $('#new-class-name').value.trim().normalize('NFC');
-    if (!value || registeredClasses().some(row=>row.id!==id && row.name===value)) {
-      $('#rename-status').textContent = value?'이미 등록된 반 이름입니다.':'새 반 이름을 입력해 주세요.'; return;
-    }
-    if (!classLabel(id)) return adminClasses(modeId,'이미 삭제된 반입니다.');
-    if (write(scopedKey('name',id),value)) adminClasses(modeId,'변경한 반 이름 · '+value);
+function editClassRow(row,{id,name},modeId,deleting) {
+  for (const section of $$('.class-row',DIALOG)) {
+    $('.class-row-main',section).hidden = section === row;
+    $('.class-editor',section).hidden = section !== row;
+    $('.class-editor',section).replaceChildren();
+  }
+  const editor = $('.class-editor',row);
+  editor.innerHTML = deleting
+    ? `<strong>삭제할 반 · ${esc(name)}</strong><p>이 반의 모든 활동 기록이 함께 삭제됩니다.</p>
+       <div class="class-controls"><button class="class-tool" data-cancel>취소</button><button class="class-tool danger" data-confirm>삭제하기</button></div>`
+    : `<form class="admin-form"><label for="rename-value">반 이름 수정</label><input id="rename-value" required maxlength="40" value="${esc(name)}">
+       <p class="form-status" role="status"></p><div class="class-controls"><button type="button" class="class-tool" data-cancel>취소</button><button class="class-tool">저장</button></div></form>`;
+  $('[data-cancel]',editor).onclick = () => {
+    editor.hidden = true;
+    editor.replaceChildren();
+    $('.class-row-main',row).hidden = false;
+    $(deleting?'[data-delete]':'[data-edit]',row).focus();
   };
-  $('#delete-class').onclick = () => {
-    adminView('반 삭제',`<p class="admin-intro"><strong>${esc(name)}</strong>의 게임용·수업용 진행 기록을 모두 삭제합니다. 삭제한 기록은 복구할 수 없습니다.</p>
-      <div class="admin-actions"><button class="button secondary" id="cancel-delete">취소</button>
-      <button class="button" id="confirm-delete">이 반과 기록 삭제</button></div>`);
-    $('#cancel-delete').onclick = () => manageClass(modeId,id);
-    $('#confirm-delete').onclick = () => {
+  if (deleting) {
+    $('[data-cancel]',editor).focus();
+    $('[data-confirm]',editor).onclick = () => {
       const prefix = classSlot(id);
       for (const key of Object.keys(localStorage)) if (key.startsWith(prefix)) localStorage.removeItem(key);
       if (activeClass === id) switchClass('',data.modes[modeId]);
-      adminClasses(modeId,'삭제한 반 · '+name);
+      adminClasses(modeId);
+      announce('반과 진행 기록을 삭제했습니다.');
     };
+    return;
+  }
+  const input = $('input',editor);
+  input.focus(); input.select();
+  $('form',editor).onsubmit = event => {
+    event.preventDefault();
+    const value = input.value.trim().normalize('NFC');
+    if (!value || registeredClasses().some(other=>other.id!==id && other.name===value)) {
+      $('.form-status',editor).textContent = value?'이미 등록된 반 이름입니다.':'반 이름을 입력해 주세요.';
+      return;
+    }
+    if (!classLabel(id)) return adminClasses(modeId);
+    if (write(scopedKey('name',id),value)) adminClasses(modeId,'반 이름을 저장했어요.');
   };
 }
 let activeClass = '';
@@ -244,7 +257,9 @@ function historyBack(fallback='ptb.html') {
 }
 function goBack(fallback='ptb.html') { if(storyBack)storyBack();else historyBack(fallback); }
 window.addEventListener('storage', e => {
+  const list = DIALOG.open && $('#class-rows',DIALOG);
   if (activeClass && (!e.key || e.key === scopedKey('name')) && !classLabel(activeClass)) switchClass('',currentMode);
+  if (list && (!e.key || (e.key.startsWith(CLASS_PREFIX) && e.key.endsWith(':name')))) adminClasses(list.dataset.mode);
 });
 window.addEventListener('popstate', () => { closeDialog(); if ((history.state?.group || '') !== activeClass) return navigate('ptb.html',{},true); render();window.scrollTo({top:0,behavior:'instant'}); });
 window.addEventListener('storage', e => { if ([data.admin.storageKey, HINT_TEXT_KEY].includes(e.key) && DIALOG.open && DIALOG.dataset.kind === 'hint') closeDialog(); });

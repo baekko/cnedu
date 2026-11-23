@@ -417,3 +417,17 @@ html{scrollbar-gutter:stable}
 .pdf-clue-mode .pdf-page canvas{box-shadow:none}
 
 .single-line-title{white-space:nowrap;font-size:min(1em,7vw)}
+
+.class-row{min-width:0;border:1px solid var(--admin-line);border-radius:14px;background:#fffdf9}
+.class-row-main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:2px;padding-right:5px}
+.class-row-main[hidden],.class-editor[hidden]{display:none}
+.class-row-main .admin-card{display:flex;min-width:0;align-items:center;gap:7px;border:0;background:transparent}
+.class-row-main .admin-card-icon{display:none}
+.class-row-main .admin-card-text{min-width:0;overflow-wrap:anywhere}
+.class-row-main .admin-card>.icon{width:14px;flex:none}
+.class-tool{min-width:44px;min-height:44px;padding:5px 7px;border:0;border-radius:8px;background:transparent;color:var(--admin-accent);font:inherit;font-size:13px;font-weight:700}
+.class-tool:hover,.class-tool:focus-visible{background:#f2e9ef}
+.class-tool[data-delete],.class-tool.danger{color:#893e40}
+.class-editor{padding:12px}
+.class-editor p{font-size:13px;margin:5px 0}
+.class-controls{display:flex;justify-content:flex-end;gap:4px}
