@@ -1,5 +1,6 @@
 import {drawRabbitOpeningActor, RABBIT_OPENING_TIMING as timing} from './rabbit-depth-motion.js';
-export const PORTAL_CUT = timing.departureEnd - timing.turnEnd;
+const BRIDGE_PAUSE = 2;
+export const PORTAL_CUT = BRIDGE_PAUSE + (timing.departureEnd - timing.turnEnd);
 /** The first bridge illustration and the following film share the exact same frame. */
 export const PORTAL_ASSETS=['assets/story/v6/rabbit/p21-bridge.webp','assets/cinema/v7/rabbit-depth-atlas.png'];
 const images=[];let pending;
@@ -16,7 +17,7 @@ export function drawPortalFrame(ctx,t=0){
   const zoom=3.95, scaleX=zoom*164/768, scaleY=zoom*109/512;
   ctx.translate(384-384*scaleX,395-445*scaleY);
   ctx.scale(scaleX,scaleY);
-  drawRabbitOpeningActor(ctx,timing.turnEnd+t,{depth:images[1]});
+  drawRabbitOpeningActor(ctx,timing.turnEnd+Math.max(0,t-BRIDGE_PAUSE),{depth:images[1]});
  }
  ctx.restore();
 }
