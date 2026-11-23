@@ -1,9 +1,9 @@
 import { LETTER_FILM_DURATION, drawLetterFilmFrame } from './letter-credits-film.js';
 /** Timeline rendering at 768 × 512. Every sprite pose is a single authored frame. */
 import {happyPose} from './character-motion.js';
-import {drawRabbitOpeningActor} from './rabbit-depth-motion.js';
+import {drawRabbitOpeningActor} from './rabbit-depth-motion.js?hop=50';
 import {LETTER_CREDITS_ASSETS,loadLetterCredits,drawLetterCredits} from './letter-credits.js';
-import {PORTAL_CUT,PORTAL_ASSETS,loadPortalAssets,drawPortalFrame} from './portal-scene.js';
+import {PORTAL_CUT,PORTAL_ASSETS,loadPortalAssets,drawPortalFrame} from './portal-scene.js?bridge=2s-v2';
 const W=768,H=512;
 export const CINEMA_DURATIONS={'rabbit-opening':14.5,'rabbit-portal':PORTAL_CUT+2.7,'rabbit-success':4.6,'rabbit-ending':10,'letter-opening':14,'letter-success':5.5,'letter-ending':15,'credits-rabbit':35,'credits-letter':LETTER_FILM_DURATION};
 export const LABELS={'rabbit-opening':'교실 거울 안에서 다가와 인사하고 돌아 뛰어가는 보라토끼','rabbit-portal':'거울 안으로 돌아간 토끼와 책 열매 나무','rabbit-success':'당근을 차례로 내려놓고 떠나는 보라토끼','rabbit-ending':'잠에서 깨어 친구와 다시 만나는 두 아이','letter-opening':'도서관에 걸어와 선생님에게 편지를 건네받는 소녀','letter-success':'기뻐하는 소녀','letter-ending':'창가에서 쓴 편지를 사서 선생님께 맡기고 돌아가는 소녀','credits-rabbit':'책 열매 나무에서 다섯 장소를 돌아 다시 나무로 오는 토끼','credits-letter':'다섯 권의 책 속을 걸어 도서관에서 사서 선생님과 인사하는 소녀'};

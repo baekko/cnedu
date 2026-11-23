@@ -1,5 +1,5 @@
 import { mountLetterFilm } from './letter-credits-film.js';
-import { CINEMA_DURATIONS, LABELS, loadCinemaAssets, drawCinemaFrame } from "./cinema-scenes.js";
+import { CINEMA_DURATIONS, LABELS, loadCinemaAssets, drawCinemaFrame } from "./cinema-scenes.js?bridge=2s-v2";
 export { CINEMA_DURATIONS, loadCinemaAssets, drawCinemaFrame };
 const W=768,H=512;
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -16,17 +16,28 @@ export function mountCinema(container,{kind='rabbit-opening',score=2,location=0,
  const ctx=root.querySelector('canvas').getContext('2d',{alpha:false}),toggle=root.querySelector('[data-control=toggle]'),restart=root.querySelector('[data-control=replay]'),status=root.querySelector('.pixel-cinema__status');
  const duration=CINEMA_DURATIONS[kind]||14,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let current=0,running=false,destroyed=false,completed=false,loaded=false,last=0,raf=0,autoPaused=false;
+ const bridge=kind==='rabbit-portal';
+ let inView=!bridge, firstVisibleFrame=true;
+ const observer=bridge ? new IntersectionObserver(([entry])=>{
+  inView=entry.isIntersecting && entry.intersectionRatio>=.5;
+  firstVisibleFrame=true;
+ },{threshold:[0,.5]}) : null;
+ observer?.observe(root.querySelector('canvas'));
  function controls(){toggle.textContent=running?'멈추기':'재생';toggle.setAttribute('aria-label',running?'멈추기':'재생');toggle.hidden=completed;restart.setAttribute('aria-label','다시보기');root.dataset.playing=String(running);onPlaybackChange?.({running,completed,current,duration})}
  function draw(){if(!destroyed&&loaded){drawCinemaFrame(ctx,kind,current,score,{location});onProgress?.(current/duration);controls()}}
  function finish(){if(destroyed||completed)return;current=duration;running=false;completed=true;cancelAnimationFrame(raf);draw();onComplete?.()}
  // Animation time follows elapsed playback time even when a browser drops frames.
  // Visibility changes and explicit pauses reset the origin, so hidden time is excluded.
- function tick(ts){if(destroyed||!running)return;current+=Math.max(0,(ts-last)/1000);last=ts;if(current>=duration){finish();return}draw();raf=requestAnimationFrame(tick)}
- function play(){if(destroyed||!loaded||running)return;if(completed){current=0;completed=false}running=true;last=performance.now();autoPaused=false;controls();raf=requestAnimationFrame(tick)}
+ function tick(ts){if(destroyed||!running)return;if(bridge && (!inView || firstVisibleFrame)){
+   last=ts;
+   firstVisibleFrame=!inView;
+  }
+  current+=Math.max(0,(ts-last)/1000);last=ts;if(current>=duration){finish();return}draw();raf=requestAnimationFrame(tick)}
+ function play(){if(destroyed||!loaded||running)return;if(completed){current=0;completed=false}running=true;firstVisibleFrame=true;last=performance.now();autoPaused=false;controls();raf=requestAnimationFrame(tick)}
  function pause(){running=false;last=0;cancelAnimationFrame(raf);controls()}
  function replay(){if(destroyed)return;pause();current=0;completed=false;draw();play()}
  function visibility(){if(document.hidden&&running){pause();autoPaused=true}else if(!document.hidden&&autoPaused){autoPaused=false;play()}}
- async function prepare(){try{await loadCinemaAssets({kind,location});if(destroyed)return;loaded=true;status.hidden=true;if(completed){draw();return}if(reduced&&autoplay){current=duration;draw();finish()}else{draw();if(autoplay)play()}}catch{if(destroyed)return;status.innerHTML='장면 그림을 불러오지 못했어요.<button type="button">다시 불러오기</button>';status.querySelector('button').onclick=prepare}}
+ async function prepare(){try{await loadCinemaAssets({kind,location});if(destroyed)return;loaded=true;status.hidden=true;if(completed){draw();return}if(reduced&&autoplay&&bridge){draw()}else if(reduced&&autoplay){current=duration;draw();finish()}else{draw();if(autoplay)play()}}catch{if(destroyed)return;status.innerHTML='장면 그림을 불러오지 못했어요.<button type="button">다시 불러오기</button>';status.querySelector('button').onclick=prepare}}
  toggle.onclick=()=>running?pause():play();restart.onclick=replay;document.addEventListener('visibilitychange',visibility);prepare();
- return{play,pause,replay,destroy(){if(destroyed)return;destroyed=true;running=false;cancelAnimationFrame(raf);document.removeEventListener('visibilitychange',visibility);root.remove()}};
+ return{play,pause,replay,destroy(){if(destroyed)return;destroyed=true;observer?.disconnect();running=false;cancelAnimationFrame(raf);document.removeEventListener('visibilitychange',visibility);root.remove()}};
 }
