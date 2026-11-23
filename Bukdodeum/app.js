@@ -240,7 +240,7 @@ function renderOpening(mode) {
   if(mode.id==='rabbit') data.story.rabbit.opening.scenes.flat().forEach((text,i)=>{if(i===5){const cut=text.indexOf('\n')+1;steps.push({text:text.slice(0,cut),image:art('scene:classroom-search')},{text:text.slice(cut),image:art('scene:classroom-bag')});}else steps.push({text,image:art(RABBIT_OPENING[i]),continuationImages:i===11?[art('scene:classroom-explain')]:undefined});});
   else data.story.letter.opening.slides.forEach((s,i)=>steps.push({text:plain(s.text),image:slideArt(s,false,i),speaker:s.img==='ptbin222.png'?'사서 선생님':'편지왔어요'}));
   if(mode.id==='rabbit'){const pages=paginateStory(steps);pages.forEach((s,i)=>{if(i>=11&&i<=18){s.mirrorPose=i-11;s.keepTogether=true;delete s.image;}else if(i===19){s.image=art('scene:classroom-light');s.keepTogether=true;}else if(i===20){s.portalStart=true;s.keepTogether=true;delete s.image;}});steps.splice(0,steps.length,...pages,{cinema:'rabbit-portal'});}
-  storyFlow(mode,{title:mode.title,steps,prefix:'프롤로그',back:'ptb.html',nextLabel:'모험 시작하기',onFinish:()=>{setMeta(mode,{openingDone:true});navigate(mode.hub);}});
+  storyFlow(mode,{title:mode.title,steps,prefix:'프롤로그',back:'ptb.html',nextLabel:'모험 시작하기',onFinish:()=>{setMeta(mode,{openingDone:true});navigate(mode.hub,mode.id==='rabbit'?{v:'intro'}:{});}});
 }
 function renderHub(mode) {
   setMeta(mode,{lastHub:true});const p=progress(mode), count=completedCount(p), isClass=mode.kind==='classroom', params=new URLSearchParams(location.search), v=params.get('v');
