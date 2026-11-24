@@ -24,11 +24,8 @@
         <div class="opening-content"><p id="test-edition-label" hidden>테스트판</p><h1 id="opening-title"><span>어서오세요,</span><span>이곳은</span><em>수족관입니다.</em></h1>
         <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><canvas id="title-art" width="520" height="460"></canvas><img class="opening-shark" src="./assets/aquarium-v8/shark-2.webp" alt=""></div>
         <div class="title-actions">
-          <button id="title-continue" type="button" class="title-continue" hidden>
-            <img id="title-continue-character" alt="" draggable="false">
-            <span><strong>이어서 도전하기</strong><small id="title-continue-progress"></small></span>
-          </button>
-          <button id="title-start" type="button" class="primary-button">시작하기 <span aria-hidden="true">→</span></button>
+          <button id="title-escape" type="button" class="primary-button">방탈출+미니게임 시작하기</button>
+          <button id="title-arcade" type="button" class="primary-button">미니게임 챌린지 시작하기</button>
         </div></div>
       </section>
       <section id="arcade-screen" class="screen arcade-screen" hidden aria-labelledby="arcade-title"></section>
@@ -44,7 +41,7 @@
       </div>
       <div id="arcade-coin-effects" class="arcade-coin-effects" aria-hidden="true"></div>
       <section id="select-screen" class="screen opening-screen" hidden aria-labelledby="select-title">
-        <header class="opening-header"><div class="selection-brand"><button id="select-back" class="icon-button" type="button" aria-label="모드 선택으로 돌아가기" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button><span class="wordmark">PLAY THE BOOK</span></div><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
+        <header class="opening-header"><div class="selection-brand"><button id="select-back" class="icon-button" type="button" aria-label="처음으로 돌아가기" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button><span class="wordmark">PLAY THE BOOK</span></div><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
         <div class="selection-content"><p id="select-mode-label" class="wordmark" hidden></p><h1 id="select-title" tabindex="-1">어떤 캐릭터로<br><em>시작할까요?</em></h1><div id="character-grid" class="character-grid" role="group" aria-label="캐릭터 모습 선택"></div></div>
         <button id="board-button" hidden></button><button id="collection-button" hidden></button><p id="character-reaction" hidden></p>
       </section>
@@ -127,14 +124,9 @@
       </div>
       <div id="brief-overlay" class="overlay" hidden>
         <section class="modal briefing" role="dialog" aria-modal="true" aria-labelledby="brief-title">
-          <div class="modal-kicker">탑승 완료</div><canvas id="brief-sub" width="360" height="230" aria-label="선택한 친구가 탄 잠수함"></canvas>
-          <h2 id="brief-title" tabindex="-1">하루, 준비됐나요?</h2><p class="modal-lead">50초 동안 상어를 피해<br><strong>단서 카드 9장</strong>을 모아 주세요!</p>
-          <div class="instruction-list">
-            <div><span class="instruction-icon move-icon" data-game-icon="move"></span><p><b>방향키로 자유롭게 이동</b><small>상어만 조심! 다른 물고기는 안전해요.</small></p></div>
-            <div><span class="instruction-icon light-icon" data-game-icon="light"></span><p><b>위험하면 빛 발사 · 3회</b><small>가까이 있는 상어가 도망가요.</small></p></div>
-            <div><span class="instruction-icon hull-icon">◇</span><p><b>내구도 3칸 · 금이 가면 조심!</b><small>한 번 닿을 때마다 한 칸씩 줄어요.</small></p></div>
-            <div><img src="./assets/jelly.png" class="instruction-jelly" alt="수리해파리"><p><b>수리해파리를 먹으면 +1칸</b><small>닿는 즉시 잠수함이 수리돼요.</small></p></div>
-          </div>
+          <div id="brief-kicker" class="modal-kicker"></div><canvas id="brief-sub" width="360" height="230" aria-label="선택한 친구가 탄 잠수함"></canvas>
+          <h2 id="brief-title" tabindex="-1"></h2><p id="brief-lead" class="modal-lead"></p>
+          <div class="instruction-list"></div>
           <div class="brief-actions">
             <button id="start-button" type="button" class="primary-button">HOW TO PLAY <span aria-hidden="true">→</span></button>
             <button id="brief-play-button" type="button" class="primary-button">START</button>
@@ -192,11 +184,11 @@
   <link rel="stylesheet" href="./clue-puzzles.css?v=160">
   <link rel="stylesheet" href="./gym.css?v=162">
   <link rel="stylesheet" href="./cinema.css?v=164">
-  <link rel="stylesheet" href="./common-ui.css?v215"><link rel="stylesheet" href="./css/pursuit.css?v241"><link rel="stylesheet" href="./arcade.css?v246">
-  <link rel="stylesheet" href="./arcade-choice-v246.css?v246">
-  <link rel="stylesheet" href="./arcade-map-v246.css?v247">
+  <link rel="stylesheet" href="./common-ui.css?v249"><link rel="stylesheet" href="./css/pursuit.css?v241"><link rel="stylesheet" href="./arcade.css?v249">
+  <link rel="stylesheet" href="./arcade-choice-v246.css?v249">
+  <link rel="stylesheet" href="./arcade-map-v246.css?v249">
   <link rel="stylesheet" href="./place-entry-v246.css?v247">
-  <link rel="stylesheet" href="./opening-v246.css?v248">
-  <script type="module" src="./js/app.js?v248"></script>
+  <link rel="stylesheet" href="./opening-v246.css?v249">
+  <script type="module" src="./js/app.js?v249"></script>
 </body>
 </html>

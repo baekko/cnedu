@@ -1,5 +1,3 @@
-#app[data-screen="mode"] #arcade-screen,
-#app[data-screen="resume-choice"] #arcade-screen,
 #app[data-screen="arcade-choice"] #arcade-screen {
   display: block;
   padding: 0;
@@ -237,18 +235,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   #arcade-screen .mode-option { transition: none; }
-}
-
-.mode-resume-profile {
- display:flex;
- align-items:center;
- gap:6px;
-}
-.mode-resume-profile img {
- width:30px;
- height:30px;
- flex:none;
- object-fit:contain;
- border-radius:9px;
- background:#fffdf2;
 }

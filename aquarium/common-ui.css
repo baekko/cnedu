@@ -146,3 +146,11 @@
  #app .menu-action{min-height:45px;padding:4px 8px}
 }
 @media(prefers-reduced-motion:reduce){#app button{transition:none!important}}
+
+/* Keep every methods row on the same title and explanation rhythm. */
+#app .briefing .instruction-list > div > p{display:grid;gap:4px;margin:0}
+#app .briefing .instruction-list b,
+#app .briefing .instruction-list small{margin:0;line-height:1.45}
+#app .briefing #brief-kicker{line-height:1.4}
+#app .briefing #brief-title{line-height:1.35}
+#app .briefing #brief-lead{margin-top:7px;line-height:1.55}

@@ -9,7 +9,7 @@ import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
 import {GardenGame} from './garden-core.js';
 import {DONORS,gardenBugPose} from './garden-care.js';
 import {extendExamples} from './tutorial-examples.js?v=156';
-import {groupTutorial} from './tutorial-pages.js?v242';
+import {groupTutorial} from './tutorial-pages.js?v249';
 // Isolated demonstrations. Inputs call the production game rules; no journey or storage access.
 import {AquariumGame} from './core.js';
 import {MuseumGame} from './museum-core.js';
@@ -25,7 +25,7 @@ import {NewspaperGame} from './newspaper-core.js';
 import {DessertGame} from './dessert-core.js';
 import {stampTarget} from './dessert-finishing.js';
 import {DreamGame} from './dream-core.js';
-import {LiteratureGame,roomBase,lockAt} from './literature-core.js';
+import {LiteratureGame,roomBase,lockAt} from './literature-core.js?v249';
 import {SEWING,seamX} from './literature-rules.js';
 import {ZooGame} from './zoo-core.js?v=155';
 import {DetectiveGame,canSee} from './detective-core.js';
@@ -199,9 +199,15 @@ function literature(){
  .act(4,'열기를 눌러 자물쇠를 한 단계 풀어요.',()=>g.act(),'열기')
  .until(4,'맞는 순간에 누르면 진행 표시가 채워져요.',()=>g.scene.progress>k,{},2);
  t.hold(4,'세 번 맞추면 보물상자가 열려요.',.5);
- t.cut(5,'공격에 맞아 지체될 때 책갈피로 일어나요.',()=>{Object.assign(g.player,{x:110,y:roomBase(7)+340});g.camera.y=roomBase(7);g.scenes[7]=new LiteratureGame().scenes[7];g.scene.hazards=[];g.scene.nextHazard=999;g.spawnHazard(g.scene,'barrel',{x:110,y:160,warn:.7,life:4,r:16});});
- t.until(5,'굴러오는 통나무통에 닿으면 잠시 움직이지 못해요.',()=>g.stunLeft>0,{},5).hold(5,'쓰러진 동안에는 방향키를 눌러도 움직이지 않아요.',.9);
- t.act(5,'고쳐 쓰기 책갈피를 누르면 기다림이 풀려요.',()=>g.flash(),'책갈피').input(5,'바로 일어나 옆으로 이동할 수 있어요.',.7,{x:1},'→').hold(5,'책갈피 개수가 한 개 줄어든 것도 확인해요.',1.6);return t;
+ t.cut(5,'통이 굴러오는 길을 확인해요.',()=>{
+  Object.assign(g.player,{x:110,y:roomBase(7)+340});g.camera.y=roomBase(7);
+  g.scenes[7]=new LiteratureGame().scenes[7];g.scene.nextHazard=999;
+  g.spawnHazard(g.scene,'barrel',{x:110,y:160,warn:.7,life:4,r:16});
+ })
+ .until(5,'통에 닿으면 체력이 한 칸 줄어요.',()=>g.health===2,{},5)
+ .input(5,'맞은 직후에도 움직일 수 있어요.',.45,{x:1},'→')
+ .act(5,'고쳐 쓰기 책갈피로 다음 공격을 막아요.',()=>g.flash(),'책갈피')
+ .hold(5,'책갈피는 4초 동안 보호해요.',1.6);return t;
 }
 function zoo(character){
  const g=new ZooGame({character}),t=new PlayTutorial(g,['이동 · 각도 조절','먹이 버튼 누르기 · 놓기','호루라기 아이템']);

@@ -12,7 +12,7 @@ export const HEADER_ACTIONS=Object.freeze([
  ['quit','게임 마치기','exit','확인한 뒤 게임을 마쳐요.'],
 ]);
 export function headerActionsHTML(prefix=''){
- return `<button type="button" class="icon-button arcade-pause" aria-label="일시정지" data-shell-action="pause" disabled>${icon('pause')}</button><button id="${prefix}menu-button" type="button" class="icon-button status-menu-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="utility-overlay" data-shell-action="menu">menu</button>`;
+ return `<button id="${prefix}menu-button" type="button" class="icon-button status-menu-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="utility-overlay" data-shell-action="menu">menu</button>`;
 }
 export function statusMenuHTML(exclusions=[]){
  return HEADER_ACTIONS.filter(([action])=>!exclusions.includes(action)).map(([action,label,shape,description])=>{

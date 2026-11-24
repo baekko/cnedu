@@ -2,9 +2,8 @@ import {CHARACTERS} from './config.js';
 import {icon} from './icons.js?v245';
 import {placeIcon,placeInfo} from './places.js?v231';
 import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v246';
-import {placeEntryArt} from './place-entry-art.js?v246';
 
-export const ARCADE_SCREENS=new Set(['mode','arcade-choice','resume-choice','arcade-map','arcade-records','arcade-result']);
+export const ARCADE_SCREENS=new Set(['arcade-choice','arcade-map','arcade-records','arcade-result']);
 const root=()=>document.getElementById('arcade-screen');
 const coin='<span class="arcade-coin" aria-hidden="true"></span>';
 const scrollPositions={practice:0,challenge:0};
@@ -22,12 +21,6 @@ function tally(runs,total){
  <progress aria-label="도전 완료 수" value="${runs.completed}" max="${total}"></progress>
  </div>`;
 }
-function placeIllustration(place){
- const art=placeEntryArt(place);
- const image=art.thumbnail||art.image;
- const position=art.thumbnail?art.thumbnailPosition:art.position;
- return `<span class="atlas-illustration" aria-hidden="true" style="--atlas-picture:${art.tone};--atlas-picture-position:${position}">${image?`<img src="${image}" alt="" loading="lazy" decoding="async">`:placeIcon(place.id)}</span>`;
-}
 function mapButton(action,label){
  return `<button type="button" class="secondary-button" data-arcade-action="${action}">${label}</button>`;
 }
@@ -38,7 +31,8 @@ export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  const title=challenge?'미니게임 챌린지':'미니게임 연습하기';
  const instructions=challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.';
  const stats=challenge?`<div class="arcade-tally"><span>완료 <b>${runs.completed} / ${places.length}</b></span><span>${coin} <b>${runs.total} / ${runs.maximum}점</b></span></div>`:'';
- root().innerHTML=`<header><h1 id="arcade-title" tabindex="-1">${title}</h1><p>${instructions}</p></header>
+ root().innerHTML=`<header class="arcade-map-header"><div><h1 id="arcade-title" tabindex="-1">${title}</h1><p>${instructions}</p></div>
+ <button type="button" class="arcade-map-switch" data-arcade-action="${challenge?'practice':'challenge'}">${challenge?'연습하기':'챌린지'}</button></header>
  ${stats}<p class="arcade-status" role="status" hidden></p>
  <div class="arcade-map-scroll" aria-label="미니게임 지도"><ol class="arcade-map">
  ${places.map((place,index)=>{
@@ -105,7 +99,6 @@ export function drawArcadeResult({place,mode,coins,detail,finished},runs){
  root().innerHTML=`<div class="arcade-result atlas-result">
  ${heading(placeInfo(place).name+' 결과')}
  <div class="atlas-result-stamp">
- <div class="atlas-result-picture">${placeIllustration(placeInfo(place))}</div>
  <div class="atlas-result-score">${coin}<strong>${coins}<small> / ${COINS_PER_GAME}</small></strong><span>모은 금화</span></div>
  <div class="atlas-coin-track" aria-hidden="true">${Array.from({length:COINS_PER_GAME},(_,index)=>index<coins?coin:'<span class="atlas-empty-coin"></span>').join('')}</div>
  </div>

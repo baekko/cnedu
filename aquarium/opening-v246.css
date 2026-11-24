@@ -96,7 +96,7 @@
 .title-actions{
  width:min(100%,360px);
  display:grid;
- gap:12px;
+ gap:9px;
 }
 #app .title-actions>button{
  display:flex;
@@ -104,7 +104,7 @@
  justify-content:center;
  gap:10px;
  width:100%;
- min-height:57px;
+ min-height:51px;
  height:auto;
  margin:0;
  padding:7px 12px;
@@ -115,13 +115,14 @@
  font-weight:750;
  line-height:1.35;
  letter-spacing:-.3px;
-}
-#app .title-actions .title-continue{
  background:#fffdf0;
  box-shadow:0 3px 0 #92b5a255;
- text-align:left;
+ text-align:center;
+ word-break:keep-all;
 }
-.title-continue img{width:40px;height:40px;flex:none;object-fit:contain;border-radius:11px;background:#e2f0e2}
-.title-continue strong{display:block;font:inherit;letter-spacing:inherit}
-.title-continue small{display:block;margin-top:3px;font-size:.8rem;color:#456957;overflow-wrap:anywhere}
 .title-actions button:focus-visible{outline:3px solid #386e65;outline-offset:3px}
+
+@media(max-height:680px){
+ #title-screen .opening-illustration{height:clamp(120px,28dvh,186px)}
+ #title-screen .opening-content{gap:12px}
+}
