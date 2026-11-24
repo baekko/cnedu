@@ -1,4 +1,4 @@
-import {clueCardIconShape} from './clue-card-art.js';
+import {clueCardIconShape} from './clue-card-art.js?v245';
 import {ITEM_SHAPES} from './game-items.js';
 // One source for briefing and gameplay icons; no font-dependent glyphs.
 const shapes={...ITEM_SHAPES,

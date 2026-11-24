@@ -1,5 +1,5 @@
 import {paperPattern} from './conservation-patterns.js';
-import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v=155';
+import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {workshopAssets,artMetadata,loadWorkshopEntrance} from './workshop-art.js?v=155';
 import {beginScene,drawRoom} from './layout.js';
 import {bookWorm,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js';

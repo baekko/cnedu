@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene,drawRoom} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
 export const TAU=Math.PI*2;

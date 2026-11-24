@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {hasSource} from './clue-order.js';
 import {beginScene} from './layout.js';
 import {drawExplorer,drawCarryCell} from './heroes.js?v=155';

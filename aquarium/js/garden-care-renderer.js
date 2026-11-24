@@ -1,6 +1,6 @@
-import {drawGardener} from './garden-helper-renderer.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
-import {box,oval,text,TAU} from './field-renderer.js?v=155';
+import {drawGardener} from './garden-helper-renderer.js?v245';
+import {drawClueCard} from './clue-card-art.js?v245';
+import {box,oval,text,TAU} from './field-renderer.js?v245';
 import {DONORS,POLLEN_COLORS,POLLEN_NAMES,gardenBugPose} from './garden-care.js';
 export function drawGardenCare(r,c,g,character){
  if(g.room===1){

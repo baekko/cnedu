@@ -1,5 +1,5 @@
 import { MEMORY_SCENES } from './memory-scenes.js?v224';
-import { drawMemoryPicture, loadMemoryAssets } from './memory-renderer.js?v224';
+import { drawMemoryPicture, loadMemoryAssets } from './memory-renderer.js?v245';
 
 const savedPageKey = 'memory-comparison-page';
 const page = document.querySelector('#page');

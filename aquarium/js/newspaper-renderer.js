@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene} from './layout.js';
 import {drawExplorer,drawCarryCell} from './heroes.js?v=155';
 import {ARTICLES,NEWSROOM,NEWSPAPER} from './newspaper-core.js';

@@ -1,0 +1,40 @@
+.arcade-screen{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;gap:12px;padding:calc(21px + var(--safe-top,0px)) max(16px,var(--safe-right,0px)) calc(16px + var(--safe-bottom,0px)) max(16px,var(--safe-left,0px));overflow:hidden;color:#173c48;background:radial-gradient(ellipse at 90% 0%,#b9e5d7 0,transparent 49%),linear-gradient(158deg,#eef8e9,#c7e9df 59%,#badde6)}
+.arcade-screen h1{margin:1px 0 0;font-size:clamp(24px,6.7vw,33px);line-height:1.24;letter-spacing:-.05em;word-break:keep-all}
+.arcade-screen header p,.arcade-note{margin:.46rem 0 0;font-size:.88rem;line-height:1.55;color:#325762;word-break:keep-all}
+.arcade-choice,.arcade-result{width:min(100%,384px);margin:auto;display:grid;gap:18px;text-align:center;min-height:0;overflow:auto;padding:7px 0}
+.arcade-choices{display:grid;gap:11px}.arcade-screen button{min-height:44px;touch-action:manipulation}
+.arcade-choices button{min-height:62px;padding-inline:12px;font-weight:750;word-break:keep-all}
+.arcade-tally{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #a9d0c9;background:#f8fffaac;border-radius:10px;padding:8px 12px;font-size:.84rem}
+.arcade-tally span{display:flex;align-items:center;gap:5px}.arcade-tally b{color:#133f49;white-space:nowrap}
+.arcade-map-scroll,.arcade-record-scroll{min-height:0;flex:1;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin}
+.arcade-map-scroll{border:1px solid #8abfc0;background:radial-gradient(ellipse at 8% 14%,#cee8bd 0 12%,transparent 44%),radial-gradient(ellipse at 80% 68%,#b5dba9 0 4%,transparent 46%),linear-gradient(140deg,#b7e0d4,#bde6df 52%,#9cd0db);border-radius:14px}
+.arcade-map{position:relative;isolation:isolate;padding:12px 9px;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 7px;list-style:none}
+.arcade-map::before{content:"";position:absolute;z-index:-1;inset:0;background:repeating-radial-gradient(ellipse at 20% 34%,transparent 0 25px,#527f631f 26px 27px,transparent 28px 52px);pointer-events:none}
+.arcade-map li{min-width:0}.arcade-map button{width:100%;min-height:82px;padding:6px 2px;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;align-items:center;gap:3px;border:1px solid #79a5a2;background:#f8fdf1ed;color:#164551;border-radius:10px;box-shadow:0 2px 0 #477f8033;line-height:1.15}
+.arcade-map button[disabled]{box-shadow:none;opacity:1;background:#d4e5dbe8;color:#396058;border-color:#a1beb4}
+.arcade-map-icon{display:grid;place-items:center;color:#2c6974;background:#d8eee9;width:34px;height:34px;border-radius:50%}.arcade-map-icon svg{width:24px;height:24px}
+.arcade-map-name{font-size:clamp(.72rem,3vw,.88rem);font-weight:750;text-align:center;word-break:keep-all;overflow-wrap:anywhere}
+.arcade-map button small{font-size:.72rem;color:#3a6470}
+.arcade-status{margin:0;color:#2c5360;font-size:.85rem;line-height:1.45;word-break:keep-all}
+.arcade-screen footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.arcade-screen footer button{padding:5px 3px;font-size:clamp(.78rem,3.3vw,.94rem);word-break:keep-all}
+.arcade-screen footer button:only-child{grid-column:1/-1}
+.arcade-record-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;background:#b8dcd37d;border-radius:12px}
+.arcade-record-tabs button{border:1px solid transparent;border-radius:8px;background:transparent;color:#244d59;font-weight:700}
+.arcade-record-tabs button[aria-pressed=true]{background:#f4fbf3;border-color:#a1c4bc}
+.arcade-record{display:grid;grid-template-columns:41px minmax(0,1fr) auto;align-items:center;gap:10px;margin:0 0 7px;padding:9px;background:#f7fbf1cc;border-radius:10px;border:1px solid #a9cdc5}
+.arcade-record h2{margin:0 0 3px;font-size:.98rem;overflow-wrap:anywhere}.arcade-record time{color:#48636b;font-size:.73rem}.arcade-record strong{font-size:.89rem;white-space:nowrap}
+.arcade-avatar{display:grid;place-items:center;width:41px;height:41px;overflow:hidden;border-radius:50%;background:#d8eee4}.arcade-avatar img{width:100%;height:100%;object-fit:contain}
+.arcade-empty{margin:24px 10px;text-align:center;color:#365e69;line-height:1.6}
+.arcade-result-coin{display:grid;justify-items:center;gap:5px;padding:16px;background:#f8fbedc7;border:1px solid #afd2c7;border-radius:15px}.arcade-result-coin .arcade-coin{width:44px;height:44px;border-width:2px}
+.arcade-result-coin strong{font-size:2.6rem;line-height:1}.arcade-result-coin small{font-size:1.15rem;color:#48747b}
+.arcade-coin{display:inline-block;width:19px;height:19px;flex:none;border:1px solid #9b5b15;border-radius:50%;background:radial-gradient(ellipse at 39% 29%,#ffeb89,#ffc945 62%,#e8991e);box-shadow:inset 0 0 0 2px #fff2a885,inset -2px -1px 0 #b57921}
+.arcade-coin:after{content:"";height:48%;width:17%;display:block;margin:24% auto;background:#ad6716;border-radius:2px}
+.arcade-coin-effects{position:absolute;inset:0;z-index:30;overflow:hidden;pointer-events:none}
+.arcade-coin-pop{position:absolute;display:flex;gap:4px;align-items:center;font-size:.88rem;font-weight:900;white-space:nowrap;color:#ffe893;text-shadow:0 2px #603c20,0 0 5px #251608;opacity:0;animation:arcade-pop 1.05s ease-out both}
+.arcade-coin-pop small{font-size:inherit}.arcade-coin-pop .arcade-coin{width:15px;height:15px}
+@keyframes arcade-pop{0%{opacity:0;transform:translate(calc(-50% + var(--pop-shift)),0)}15%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--pop-shift)),-45px)}}
+.arcade-mode .clue-stat .hud-label::before{content:"";display:inline-block;width:9px;height:9px;margin-right:3px;border:1px solid #a86e21;border-radius:50%;background:#ffc54f;vertical-align:baseline}
+@media(prefers-reduced-motion:reduce){.arcade-coin-pop{animation-name:arcade-pop-reduced}@keyframes arcade-pop-reduced{0%,80%{opacity:1;transform:translate(calc(-50% + var(--pop-shift)),0)}100%{opacity:0;transform:translate(calc(-50% + var(--pop-shift)),0)}}}
+#app .arcade-pause{display:none}#app.arcade-mode .arcade-pause{display:inline-grid;place-items:center;width:36px;height:36px;padding:6px;flex:none}
+#app .arcade-pause[disabled]{opacity:.54}

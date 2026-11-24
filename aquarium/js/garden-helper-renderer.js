@@ -1,4 +1,4 @@
-import {oval,text,box} from './field-renderer.js?v=155';
+import {oval,text,box} from './field-renderer.js?v245';
 import {GARDENER_TIMING} from './garden-helper.js';
 export function drawGardener(r,c,g){
  const h=g.gardener;if(!h||h.room!==g.room)return;

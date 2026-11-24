@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene,spriteAnchor,sceneText} from './layout.js';
 import { GAME, CHARACTERS, SHARKS } from './config.js';
 import { alphaMask, masksTouch } from './collision.js';

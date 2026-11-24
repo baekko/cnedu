@@ -1,9 +1,9 @@
 import {photoBriefing} from './briefing-scenes.js?v=155';
 import {loadPlayerActions,drawPlayerAction} from './player-actions.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
-import {FieldRenderer,loadFieldAssets,box,oval,text,TAU} from './field-renderer.js?v=155';
+import {drawClueCard} from './clue-card-art.js?v245';
+import {FieldRenderer,loadFieldAssets,box,oval,text,TAU} from './field-renderer.js?v245';
 import {reflectionX,photoLight,PHOTO_ROOMS,PHOTO_AIM,photoLens,photoFrame,wantedAlternate} from './photo-core.js';
-import {PhotoViewfinder} from './photo-viewfinder.js?v=155';
+import {PhotoViewfinder} from './photo-viewfinder.js?v245';
 export async function loadPhotoAssets(character){
  const images=await loadFieldAssets('photo',character,{entrance:'entrance-v129/photo.webp',room0:'photo-v182/room0.webp',room1:'photo-v182/room1.webp',room2:'photo-v182/room2.webp',subjects:'photo-v123/subjects.webp',subjectsAlt:'photo-v123/subjects-alt.webp'});
  await Promise.all(['cat','dog','rabbit','reflector-left','reflector-right'].map(key=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('촬영 소품을 불러오지 못했어요: '+key));im.src=new URL('../assets/'+(key==='cat'?'photo-v130/':'photo-v121/')+key+'.webp',import.meta.url).href;})));

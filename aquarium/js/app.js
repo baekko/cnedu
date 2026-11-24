@@ -1,91 +1,94 @@
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v243';
-import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v243';
+import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
 import {MemoryGame,MEMORY} from './memory-core.js?v224';
-import {MemoryRenderer,loadMemoryAssets,syncMemoryStats} from './memory-renderer.js?v224';
+import {MemoryRenderer,loadMemoryAssets,syncMemoryStats} from './memory-renderer.js?v245';
 import {ExpeditionScores,threePuzzleHints} from './expedition-score.js?v231';
-import {headerActionsHTML,statusMenuHTML,syncPlaceHeaders,scoresHTML,emptyInventoryHTML} from './expedition-shell.js?v231';
+import {headerActionsHTML,statusMenuHTML,syncPlaceHeaders,scoresHTML,emptyInventoryHTML} from './expedition-shell.js?v245';
 import {CINEMA,CinemaGame} from './cinema-core.js?v204-final40';
-import {CinemaRenderer,loadCinemaAssets} from './cinema-renderer.js?v225';
+import {CinemaRenderer,loadCinemaAssets} from './cinema-renderer.js?v245';
 import {CinemaUI,syncCinemaStats} from './cinema-ui.js?v204-final40';
 import {GYM,GymGame} from './gym-core.js?v212';
-import {GymRenderer,loadGymAssets} from './gym-renderer.js?v212';
+import {GymRenderer,loadGymAssets} from './gym-renderer.js?v245';
 import {isRetiredPlace,isWithdrawnResearchPlace} from './retired-places.js?v227';
 import {CLUE_PUZZLES,prepareCluePuzzle} from './clue-puzzles.js?v243';
 import {DATACENTER,DataCenterGame} from './datacenter-core.js';
-import {DataCenterRenderer,loadDataCenterAssets} from './datacenter-renderer.js?v=181';
+import {DataCenterRenderer,loadDataCenterAssets} from './datacenter-renderer.js?v245';
 import {CityHallGame,CITYHALL,CITY_CLUE_RULE} from './cityhall-core.js?v=144';
 import {CityHallGame as LegacyCityHallGame} from './cityhall-legacy.js';
-import {CityHallUI,syncCityStats,syncCityAction,citySummaryHTML} from './cityhall-ui.js?v=151';
-import {CityHallRenderer,loadCityHallAssets} from './cityhall-renderer.js?v=155';
+import {CityHallUI,syncCityStats,syncCityAction,citySummaryHTML} from './cityhall-ui.js?v245';
+import {CityHallRenderer,loadCityHallAssets} from './cityhall-renderer.js?v245';
 import {CONSERVATION,ConservationGame} from './conservation-core.js';
-import {ConservationRenderer,loadConservationAssets} from './conservation-renderer.js?v=155';
+import {ConservationRenderer,loadConservationAssets} from './conservation-renderer.js?v245';
 import {WorkshopUI} from './workshop-ui.js';
 import {instructionHTML} from './instructions.js?v242';
 import {restoreSources} from './clue-order.js';
-import {CLUE_CARD_URL,cardPositionLabel} from './clue-card-art.js';
+import {CLUE_CARD_URL,cardPositionLabel,setCoinRewards} from './clue-card-art.js?v245';
 import {PHOTO,PhotoGame,PHOTO_ROOMS} from './photo-core.js';
-import {PhotoRenderer,loadPhotoAssets} from './photo-renderer.js?v=182';
+import {PhotoRenderer,loadPhotoAssets} from './photo-renderer.js?v245';
 import {GARDEN,GardenGame,GARDEN_ROOMS} from './garden-core.js';
-import {GardenRenderer,loadGardenAssets} from './garden-renderer.js?v=155';
+import {GardenRenderer,loadGardenAssets} from './garden-renderer.js?v245';
 import {MONASTERY,MonasteryGame} from './monastery-core.js?v228';
 import {loadMonasteryAssets,MonasteryRenderer} from './monastery-renderer.js?v228';
 import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
-import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v=155';
+import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
 import {createTutorial} from './play-tutorials.js?v243';
-import {TutorialFinance} from './tutorial-finance.js?v=161';
-import {TutorialChrome} from './tutorial-chrome.js?v243';
+import {TutorialFinance} from './tutorial-finance.js?v245';
+import {TutorialChrome} from './tutorial-chrome.js?v245';
 import {TutorialPlayback} from './tutorial-playback.js';
 import {TUTORIAL_COPY} from './tutorial-pages.js?v242';
 import {breakBriefSentences} from './brief-sentences.js';
 import {POWER_WORDS,ENV_WORDS} from './ai-inference.js';
 import {DessertFinishUI} from './dessert-finish-ui.js';
 import {DESSERT,DessertGame,PASTRIES} from './dessert-core.js';
-import {loadDessertAssets,DessertRenderer} from './dessert-renderer.js?v=181';
+import {loadDessertAssets,DessertRenderer} from './dessert-renderer.js?v245';
 import {AI,AIGame,LABELS} from './ai-core.js';
-import {loadAIAssets,AIRenderer} from './ai-renderer.js?v=155';
+import {loadAIAssets,AIRenderer} from './ai-renderer.js?v245';
 import {ZOO,ZooGame,ZOO_ZONES} from './zoo-core.js?v=155';
-import {loadZooAssets,ZooRenderer} from './zoo-renderer.js?v=155';
+import {loadZooAssets,ZooRenderer} from './zoo-renderer.js?v245';
 import {LITERATURE,LiteratureGame,BOOKS} from './literature-core.js?v=185';
-import {loadLiteratureAssets,LiteratureRenderer} from './literature-renderer.js?v=184';
+import {loadLiteratureAssets,LiteratureRenderer} from './literature-renderer.js?v245';
 import {DREAM,DreamGame,DREAM_ROOMS} from './dream-core.js';
-import {loadDreamAssets,DreamRenderer} from './dream-renderer.js?v=155';
+import {loadDreamAssets,DreamRenderer} from './dream-renderer.js?v245';
 import {NEWSPAPER,NewspaperGame} from './newspaper-core.js';
-import {loadNewspaperAssets,NewspaperRenderer} from './newspaper-renderer.js?v=183';
+import {loadNewspaperAssets,NewspaperRenderer} from './newspaper-renderer.js?v245';
 import {LANGUAGE,LanguageGame,LAB_ROOMS} from './language-core.js';
-import {loadLanguageAssets,LanguageRenderer} from './language-renderer.js?v=155';
+import {loadLanguageAssets,LanguageRenderer} from './language-renderer.js?v245';
 import {WRITER,WriterGame,WRITER_CARDS,STORIES,VINE,GIANT} from './writer-core.js?v214';
-import {loadWriterAssets,WriterRenderer} from './writer-renderer.js?v=155';
+import {loadWriterAssets,WriterRenderer} from './writer-renderer.js?v245';
 import {SPACE,SpaceGame} from './space-core.js';
-import {loadSpaceAssets,SpaceRenderer} from './space-renderer.js';
+import {loadSpaceAssets,SpaceRenderer} from './space-renderer.js?v245';
 import {createSpaceSpriteCollider} from './space-collision.js';
 import {ROBOT,RobotGame,partInfo,robotTypeFor} from './robot-core.js';
-import {loadRobotAssets,RobotRenderer} from './robot-renderer.js?v=155';
+import {loadRobotAssets,RobotRenderer} from './robot-renderer.js?v245';
 import {TEMPLE,TempleGame} from './temple-core.js?v=157';
 import {DirectionPadState,padDirection} from './direction-pad.js';
-import {loadTempleAssets,TempleRenderer} from './temple-renderer.js?v=157';
+import {loadTempleAssets,TempleRenderer} from './temple-renderer.js?v245';
 import {PLACES,placeId,placeInfo,replayPlaces,unlockedPlace,nextPlace as followingPlace,placeIcon} from './places.js?v231';
 import {previousScene,installBackNavigation} from './navigation.js?v231';
-import {icon,applyIcons} from './icons.js?v213';
+import {icon,applyIcons} from './icons.js?v245';
 import {FinishTransition,keepsClues,canSolveCollection} from './finish.js';
 import {drawExplorer} from './heroes.js?v=155';
 import {drawTimeMachine} from './time-machine.js';
 import {GameLayout,sceneGeometry} from './layout.js?v214';
-import {EXCHANGE,ExchangeGame} from './exchange-core.js';
+import {EXCHANGE,ExchangeGame,cardPrice} from './exchange-core.js';
 import {loadExchangeAssets,ExchangeRenderer} from './exchange-renderer.js?v=155';
-import {ExchangeUI} from './exchange-ui.js?v215';
+import {ExchangeUI} from './exchange-ui.js?v245';
 import {HISTORY,HistoryGame} from './history-core.js?v=185';
-import {loadHistoryAssets,HistoryRenderer} from './history-renderer.js?v=183';
+import {loadHistoryAssets,HistoryRenderer} from './history-renderer.js?v245';
 import {MUSEUM,COLORS,MuseumGame} from './museum-core.js';
-import {loadMuseumAssets,MuseumRenderer} from './museum-renderer.js?v=155';
+import {loadMuseumAssets,MuseumRenderer} from './museum-renderer.js?v245';
 import { GAME, CHARACTERS, PUZZLE } from './config.js?v214';
 import { AquariumGame, readProgress, saveProgress, puzzleTiles } from './core.js';
-import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './renderer.js';
+import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './renderer.js?v245';
 
 import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v243';
 import { loadMotion, SpritePlayer } from './motions.js';
 
+import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v245';
+import {ARCADE_SCREENS,drawArcadeChoices,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,popArcadeCoins} from './arcade-view.js?v245';
+import {getArcadeTicket,loadSharedArcadeRecords,shareArcadeRecord} from './arcade-share.js?v245';
 const $ = id => document.getElementById(id);
 $('common-header-actions').innerHTML=headerActionsHTML();
 for(const [id,name] of [['shoot-button','slingshot'],['jump-button','jump'],['hammer-button','hammer']])$(id).innerHTML=icon(name);
@@ -108,6 +111,10 @@ const entry=withdrawnEntry?null:isRetiredPlace(requestedPlace)?'cityhall':reques
 const trialKind=entry==='pursuit'||location.hash==='#pursuit'?'pursuit':entry==='memory'||location.hash==='#memory'?'memory':entry==='cinema'||location.hash==='#cinema'?'cinema':entry==='gym'||location.hash==='#gym'?'gym':entry==='cityhall'||location.hash==='#cityhall'?'cityhall':entry==='datacenter'||location.hash==='#datacenter'?'datacenter':entry==='conservation'||location.hash==='#conservation'?'conservation':entry==='photo'||location.hash==='#photo'?'photo':entry==='garden'||location.hash==='#garden'?'garden':entry==='monastery'||location.hash==='#monastery'?'monastery':entry==='detective'||location.hash==='#detective'?'detective':entry==='dessert'||location.hash==='#dessert'?'dessert':entry==='ai'||location.hash==='#ai'?'ai':entry==='zoo'||location.hash==='#zoo'?'zoo':entry==='literature'||location.hash==='#literature'?'literature':entry==='dream'||location.hash==='#dream'?'dream':entry==='newspaper'||location.hash==='#newspaper'?'newspaper':entry==='language'||location.hash==='#language'?'language':entry==='writer'||location.hash==='#writer'?'writer':entry==='space'||location.hash==='#space'?'space':entry==='robot'||location.hash==='#robot'?'robot':entry==='temple'||location.hash==='#temple'?'temple':entry==='exchange'||location.hash==='#exchange'?'exchange':entry==='museum'||location.hash==='#museum'?'museum':null;
 const trial=!!trialKind;
 const normalStorage=storage;
+const arcadeRuns=new ArcadeRuns(normalStorage);
+let arcadeMode=null,arcadePlace=null,arcadeCoins=0,arcadeLoading=false,arcadeSettled=false,arcadeProfile=null;
+let arcadeRecordRequest=0,arcadeRecordScope='mine';
+const postedArcadeRuns=new Set();
 const scores=new ExpeditionScores(normalStorage,()=>{$('storage-warning').hidden=false;});
 scores.importJourneys(normalStorage);
 const preferredJourney=readJourney(storage);
@@ -193,6 +200,7 @@ const fitScreen=()=>layout.refresh();
 const workshopUI=new WorkshopUI($('game-ui'),()=>{if(state!=='playing'||activePlace!=='conservation')return;advanceLiteratureInput();game.rotate();hud();});
 
 function persist() {
+  if(arcadeMode)return;
   progress.character=character.id;
   const aquarium=activePlace==='aquarium';
   if(aquarium){aquariumClues.length=0;aquariumClues.push(...progress.clues);}
@@ -226,7 +234,12 @@ function syncSound() {
     menuSound.setAttribute('aria-pressed',String(progress.sound));
   }
 }
-function toggleSound(){progress.sound=!progress.sound;unlockAudio();syncSound();persist();if(progress.sound)tone(680);}
+function toggleSound(){
+ progress.sound=!progress.sound;unlockAudio();syncSound();
+ if(arcadeMode)saveProgress(normalStorage,{...readProgress(normalStorage),sound:progress.sound});
+ else persist();
+ if(progress.sound)tone(680);
+}
 document.addEventListener('click',event=>{
   if(event.target.closest('.sound-button'))toggleSound();
 });syncSound();
@@ -249,10 +262,24 @@ function canOpenStatusMenu(screen) {
   return isExchange()?screen==='exchange':['playing','countdown'].includes(screen)||isPursuitMenuInterlude(screen);
 }
 function setState(next) {
+  const arcadeScreen=ARCADE_SCREENS.has(next);
+  $('arcade-screen').hidden=!arcadeScreen;
+  $('game-viewport').hidden=arcadeScreen;
+  $('app').classList.toggle('arcade-mode',!!arcadeMode);
+  $('clue-label').textContent=arcadeMode?'모은 금화':'모은 단서';
+  $('city-clue-label').textContent=arcadeMode?'예상 금화':'예상 단서';
+  $('pause-save-hint').textContent=arcadeMode?'이어서 시작하기를 누르면 지금 위치에서 계속해요.':'점수와 힌트 기록은 그대로 보관돼요.';
+  if(arcadeScreen)$('arcade-coin-effects').replaceChildren();
   if(!['playing','tutorial'].includes(next))cinemaImages?.movies?.pause();
   if(next==='briefing'||next==='help'){
     document.querySelector('.instruction-list').innerHTML=instructionHTML(activePlace);applyIcons(document.querySelector('.instruction-list'));
     if(isPursuit())document.querySelector('.briefing .modal-lead').innerHTML=next==='briefing'?FIELD.pursuit.lead:'그림 세 장으로 범인이 향한 도시를 찾아요. 비행 10회로 아홉 도시를 맞히고, 행선지를 두 번 틀리면 범인을 놓쳐요.';
+    if(arcadeMode){
+     const description=document.querySelector('.briefing .modal-lead');
+     if(isExchange())description.innerHTML='다섯 번 투자해 자본을 늘리세요.<br>마지막 자본 300만원마다 금화 한 개를 얻어요.';
+     else if(!isPursuit())description.innerHTML=arcadeRewardText(description.innerHTML);
+     document.querySelector('.instruction-list').innerHTML=arcadeRewardText(document.querySelector('.instruction-list').innerHTML,isPursuit());
+    }
   }
   if(state==='tutorial'&&next!=='tutorial'){playLesson?.chrome?.destroy();playLesson=null;$('tutorial-finance').replaceChildren();}
   dessertFinish?.render(game,false);
@@ -273,12 +300,12 @@ function setState(next) {
   $('title-screen').hidden=next!=='title';
   $('select-screen').hidden=!['select','naming','welcome'].includes(next);
   $('name-overlay').hidden=next!=='naming';
-  $('exchange-ui').hidden=!isExchange()||['title','select','naming','welcome','loading','stage'].includes(next);
+  $('exchange-ui').hidden=arcadeScreen||!isExchange()||['title','select','naming','welcome','loading','stage'].includes(next);
   $('exchange-ui').inert=next!=='exchange';
   $('app').classList.toggle('cityhall-mode',isCityHall());
   $('cityhall-act').disabled=next!=='playing';$('cityhall-prev').hidden=true;
   if(next!=='playing'||!isCityHall())$('cityhall-paper').hidden=true;
-  $('game-ui').hidden=isExchange()||['title','select','naming','welcome','loading','stage'].includes(next);
+  $('game-ui').hidden=arcadeScreen||isExchange()||['title','select','naming','welcome','loading','stage'].includes(next);
   $('brief-overlay').hidden=!['briefing','help'].includes(next);$('ai-tutorial-overlay').hidden=next!=='tutorial';
   $('pursuit-report-overlay').hidden=next!=='pursuit-report';
   $('pursuit-capture-report-overlay').hidden=next!=='pursuit-capture-report';
@@ -296,6 +323,7 @@ function setState(next) {
   $('newspaper-act').disabled=next!=='playing';
   $('language-jump').disabled=next!=='playing';$('language-act').disabled=next!=='playing';$('writer-jump').disabled=next!=='playing';$('writer-act').disabled=next!=='playing';$('brake-button').disabled=next!=='playing';$('work-button').disabled=next!=='playing';$('shoot-button').disabled=next!=='playing';$('jump-button').disabled=next!=='playing';$('hammer-button').disabled=next!=='playing';$('interact-button').disabled=next!=='playing'||!game?.interaction;
   const menu=$(isExchange()?'ex-menu-button':'menu-button');
+ for(const button of document.querySelectorAll('[data-shell-action="pause"]'))button.disabled=!['playing','exchange','countdown'].includes(next);
   if(menu)menu.disabled=!game||!canOpenStatusMenu(next);
   $('flash-button').disabled=next!=='playing'||!game?.flashes;
   $('memory-revisit').hidden=!isMemory();
@@ -329,16 +357,194 @@ function createCharacterGrid() {
 }
 $('title-start').addEventListener('click',()=>{unlockAudio();setState('select');});
 $('name-cancel').addEventListener('click',()=>{++nameToken;nameMotion=null;setState('select');});
+const arcadePreferenceKey='ptb_aquarium_arcade_preference';
+function preferArcade(on){
+ try{normalStorage.setItem(arcadePreferenceKey,on?'1':'');}catch{}
+}
+function prefersArcade(){
+ try{return normalStorage.getItem(arcadePreferenceKey)==='1';}catch{return false;}
+}
+function arcadeRewardText(text,pursuit=false){
+ if(pursuit)return text;
+ return text
+  .replace(/그림 단서/g,'그림 힌트')
+  .replace(/단서(?:\s*카드)?\s*(\d+|아홉|세|한)\s*장/g,'금화 $1개')
+  .replace(/단서 카드|단서카드|단서(?=를?\s*획득|\s*획득|\s*줍기|를?\s*모|\s*한 장)/g,'금화')
+  .replace(/금화\s*(\d+|아홉|세|한)\s*장/g,'금화 $1개')
+  .replace(/개(<\/strong>)?\s+을/g,'개$1를');
+}
+function focusArcade(){
+ document.getElementById('arcade-title')?.focus({preventScroll:true});
+}
+function showArcadeChoices(screen){
+ arcadeRuns.refresh();drawArcadeChoices(screen,arcadeRuns);setState(screen);focusArcade();
+}
+function startEscapeMode(){
+ preferArcade(false);setCoinRewards(false);
+ progress.clues=[...aquariumClues];activePlace='aquarium';
+ persist();journey={character:character.id,playerName:character.name,stage:'aquarium',phase:'briefing',elapsed:0,survived:false,hintsSeen:0};
+ persistJourney();syncCharacters();showStage();
+}
+function applyArcadeCharacter(player){
+ character={...CHARACTERS.find(c=>c.id===player.character),name:player.name};
+ syncCharacters();
+}
+function enterArcadeMap(mode){
+ arcadeMode=mode;preferArcade(true);setCoinRewards(true);
+ let notice='';
+ if(mode==='challenge'){
+  arcadeRuns.refresh();
+  if(!arcadeRuns.run)arcadeRuns.start(arcadeProfile);
+  if(arcadeRuns.run.active){
+   arcadeRuns.finish(arcadeRuns.run.active.place,{abandoned:true});
+   notice='창을 닫을 때 플레이 중이던 게임은 중단으로 표시했어요. 남은 게임은 이어서 할 수 있어요.';
+  }
+  applyArcadeCharacter(arcadeRuns.run.player);
+  prepareArcadeTicket();
+  void sharePendingArcadeRecords();
+ }else applyArcadeCharacter(arcadeProfile);
+ showArcadeMap({reset:true,notice});
+}
+function showArcadeMap(options){
+ if(!arcadeMode)return;
+ showArcadeSurface();drawArcadeMap(arcadeMode,arcadeRuns,options);setState('arcade-map');focusArcade();
+}
+function showArcadeSurface(){
+ clearTimeout(finishTimeout);finishTransition.reset();clearInput();
+ cinemaImages?.movies?.pause();tutorialReturn=null;menuReturn=null;
+ if(utilityOrigin)closeUtility();
+}
+function leaveArcadeMap(){
+ showArcadeSurface();arcadeMode=null;arcadePlace=null;game=null;setCoinRewards(false);
+ applyArcadeCharacter(arcadeProfile);showArcadeChoices('arcade-choice');
+}
+function returnToArcadeTitle(){
+ showArcadeSurface();arcadeMode=null;arcadePlace=null;arcadeProfile=null;game=null;
+ journey=readJourney(normalStorage);setCoinRewards(false);
+ prepareAquarium();setState('title');$('title-start').focus({preventScroll:true});
+}
+function resetArcadeChallenge(){
+ if(!arcadeRuns.run)return;
+ if(Object.keys(arcadeRuns.run.games).length&&!window.confirm('현재 도전의 점수를 지우고 처음부터 다시 도전할까요?'))return;
+ arcadeRuns.start(arcadeProfile);
+ applyArcadeCharacter(arcadeRuns.run.player);prepareArcadeTicket();showArcadeMap({reset:true});
+}
+async function selectArcadePlace(place){
+ if(arcadeLoading||!arcadeMode||!arcadePlaces().some(p=>p.id===place))return;
+ if(arcadeMode==='challenge'&&!arcadeRuns.canPlay(place))return;
+ arcadeLoading=true;
+ showArcadeSurface();
+ arcadePlace=place;arcadeCoins=0;arcadeSettled=false;game=null;
+ journey=visitPlace(null,place,character.id,character.name);
+ showArcadeStatus(placeInfo(place).name+' 준비 중…');
+ try{
+  if(place==='aquarium'){
+   document.querySelector('.briefing .modal-kicker').innerHTML=aquariumBrief.kicker;
+   document.querySelector('.briefing .modal-lead').innerHTML=aquariumBrief.lead;
+   $('brief-title').textContent=character.name+', 준비됐나요?';
+   $('brief-sub').setAttribute('aria-label',character.name+', 잠수함에 탑승한 모습');
+   board();
+  }else await openPlaceBriefing(place,true);
+  if(state==='arcade-map'||state==='arcade-result')throw Error('게임 화면을 준비하지 못했어요.');
+ }catch(error){
+  console.error(error);
+  showArcadeMap({notice:'게임을 불러오지 못했어요. 장소를 다시 눌러 주세요.'});
+ }finally{arcadeLoading=false;}
+}
+function syncArcadeCoins(event){
+ if(!arcadeMode||!game)return;
+ const count=Math.min(COINS_PER_GAME,game.banked?.size||0);
+ if(count<=arcadeCoins)return;
+ if(arcadeMode==='challenge')arcadeRuns.progress(arcadePlace,count);
+ let position;
+ if(arcadePlace==='aquarium'&&Number.isFinite(event?.x)&&Number.isFinite(event.y)){
+  const screen=$('app').getBoundingClientRect(),canvas=$('ocean').getBoundingClientRect();
+  position={x:(canvas.left-screen.left+event.x*canvas.width/390)+'px',y:(canvas.top-screen.top+event.y*canvas.height/844)+'px'};
+ }
+ popArcadeCoins(count-arcadeCoins,position);arcadeCoins=count;
+ tone(784,.07,0,'sine',.027);tone(988,.1,.055,'sine',.023);
+}
+function settleArcadeExchange(){
+ if(game.phase!=='finished')return;
+ const count=Math.min(COINS_PER_GAME,Math.max(0,Math.floor(game.cash/cardPrice())));
+ game.openShop();game.buy(Array.from({length:count},(_,i)=>i+1));
+ queueFinish({survived:true,elapsed:0,found:[...game.banked]});
+}
+function recordArcadeResult(abandoned){
+ if(arcadeMode!=='challenge'||arcadeSettled)return;
+ syncArcadeCoins();
+ arcadeSettled=arcadeRuns.finish(arcadePlace,{abandoned});
+ if(arcadeRuns.canRecord)void sharePendingArcadeRecords();
+}
+function showArcadeResult(result){
+ const detail=endReason==='leave'?'게임을 중단했어요.':!result.survived?(isPursuit()?'범인을 놓쳤어요.':isExchange()?'투자 자본이 소진됐어요.':'도전이 끝났어요. · '+Math.floor(result.elapsed||0)+'초'):isExchange()?
+  `최종 자본 ${(game.ledger.at(-1)?.after??game.cash).toLocaleString('ko-KR')}만원`:isCityHall()?
+  `최종 지지율 ${game.approval}%`:result.elapsed>0?`플레이 시간 ${Math.floor(result.elapsed)}초`:'게임을 마쳤어요.';
+ drawArcadeResult({place:arcadePlace,mode:arcadeMode,coins:arcadeCoins,detail,finished:arcadeMode==='challenge'&&arcadeRuns.canRecord},arcadeRuns);
+ setState('arcade-result');focusArcade();
+}
+function arcadeScoreHTML(){
+ return `<div class="score-summary"><span>챌린지 누적<strong>${arcadeRuns.total}<small> / ${arcadeRuns.maximum}점</small></strong></span><span>이번 게임<strong>${arcadeCoins}<small> / 9점</small></strong></span></div><p class="panel-note">금화 한 개는 기록에서 1점이에요.</p>`;
+}
+function prepareArcadeTicket(){
+ const run=arcadeRuns.run;
+ if(!run||run.ticket||arcadeRuns.canRecord)return;
+ getArcadeTicket(run.id).then(ticket=>arcadeRuns.ticket(run.id,ticket)).catch(()=>{});
+}
+async function sharePendingArcadeRecords(){
+ const pending=arcadeRuns.records.filter(record=>!record.shared&&!postedArcadeRuns.has(record.id));
+ await Promise.all(pending.map(async record=>{
+  postedArcadeRuns.add(record.id);
+  try{await shareArcadeRecord(record);arcadeRuns.markShared(record.id);}
+  catch{}
+  finally{postedArcadeRuns.delete(record.id);}
+ }));
+}
+async function showArcadeRecords(scope){
+ arcadeRecordScope=scope;
+ const request=++arcadeRecordRequest;
+ setState('arcade-records');
+ drawArcadeRecords(scope,scope==='mine'?arcadeRuns.records:[],scope==='mine'?'아직 완주한 기록이 없어요.':'공유 기록을 불러오는 중…');focusArcade();
+ if(scope==='mine'){void sharePendingArcadeRecords();return;}
+ try{
+  await sharePendingArcadeRecords();
+  const {records}=await loadSharedArcadeRecords();
+  if(state==='arcade-records'&&arcadeRecordScope===scope&&request===arcadeRecordRequest)fillArcadeRecords(records,'아직 공유된 완주 기록이 없어요.');
+ }catch{
+  if(state==='arcade-records'&&arcadeRecordScope===scope&&request===arcadeRecordRequest)fillArcadeRecords([],'공유 기록실에 연결할 수 없어요. 공유 기록을 다시 눌러 주세요.');
+ }
+}
+const arcadeActions={
+ escape:startEscapeMode,arcade:()=>showArcadeChoices('arcade-choice'),mode:()=>showArcadeChoices('mode'),
+ practice:()=>enterArcadeMap('practice'),challenge:()=>enterArcadeMap('challenge'),
+ title:returnToArcadeTitle,quit:askToQuit,reset:resetArcadeChallenge,map:()=>showArcadeMap(),
+ again:()=>selectArcadePlace(arcadePlace),records:()=>showArcadeRecords('mine'),shared:()=>showArcadeRecords('shared'),
+};
+$('arcade-screen').addEventListener('click',event=>{
+ if(arcadeLoading||quitOpen)return;
+ const button=event.target.closest('button');
+ if(!button||button.disabled)return;
+ if(button.dataset.arcadePlace)void selectArcadePlace(button.dataset.arcadePlace);
+ else arcadeActions[button.dataset.arcadeAction]?.();
+});
+window.addEventListener('online',()=>void sharePendingArcadeRecords());
+
 $('name-form').addEventListener('submit',event=>{
   event.preventDefault();const name=normalizePlayerName($('player-name').value);
   if(!name){$('name-error').textContent='이름을 입력해 주세요.';return;}
-  character={...character,name};nameMotion=null;++nameToken;document.activeElement?.blur();unlockAudio();persist();
-  journey={character:character.id,playerName:name,stage:'aquarium',phase:'briefing',elapsed:0,survived:false,hintsSeen:0};persistJourney();syncCharacters();showStage();
+  character={...character,name};nameMotion=null;++nameToken;document.activeElement?.blur();unlockAudio();
+  arcadeProfile={character:character.id,name};
+  if(trial)startEscapeMode();
+  else showArcadeChoices('mode');
   Promise.all(['correct','wrong'].map(action=>loadMotion(character,action))).catch(()=>{});
 });
 let dessertFinish=null;
 function hud() {
   if(!game||isExchange())return;
+  if(arcadeMode){
+   const count=String(game.banked?.size||0);
+   if($('clue-value').textContent!==count)$('clue-value').textContent=count;
+  }
   if(isCityHall()){cityHallHud();return;}
   if(isCinema()){cinemaHud();return;}
   if(isMemory()){memoryHud();return;}
@@ -403,6 +609,7 @@ function hud() {
   $('flash-button').classList.toggle('recovery-ready',isLiterature()&&state==='playing'&&game.stunLeft>0&&game.flashes>0);
 }
 function handleGameEvent(event) {
+  if(arcadeMode&&event.type==='card'){syncArcadeCoins(event);return;}
   if(isField()&&journey?.[activePlace]&&game)Object.assign(journey[activePlace],{room:game.room,flashes:game.flashes});
   if(event.type==='pursuitTakeoff')tone(420,.18,0,'sine',.025);
   if(event.type==='pursuitArrival'&&!event.correct)tone(260,.12,0,'triangle',.02);
@@ -505,7 +712,7 @@ function board() {
   if(journey){journey.aquariumBoarded=true;journey.phase='briefing';persistJourney();}
   $('game-toast').classList.remove('show');setState('briefing');hud();
 }
-function persistJourney(){if(!journey)return;journey=recoverJourneyUnlocks(normalStorage,journey);if(!saveJourney(storage,journey))$('storage-warning').hidden=false;}
+function persistJourney(){if(arcadeMode||!journey)return;journey=recoverJourneyUnlocks(normalStorage,journey);if(!saveJourney(storage,journey))$('storage-warning').hidden=false;}
 async function showMotion(action,title,message,buttonText,onNext){
   if(motionLoading)return;
   motionLoading=true;activeMotion=null;motionNext=null;
@@ -564,6 +771,9 @@ function startFromInstructions(){
  if(state==='help'){resumeFromHelp();return;}
  if(!['briefing','tutorial'].includes(state))return;
  if(state==='tutorial'&&returnFromHowTo())return;
+ if(arcadeMode==='challenge'&&!arcadeRuns.begin(arcadePlace)){
+  showArcadeMap({notice:'이미 진행한 게임이에요.'});return;
+ }
  if(isCityHall()){startCityHallPlay();return;}
  if(isExchange()){startExchangePlay();return;}
  resetAdventure(true);
@@ -744,16 +954,19 @@ $('home-combine-button').addEventListener('click',openPuzzle);
 $('close-puzzle').addEventListener('click',()=>closeExtra('puzzle-overlay'));
 function queueFinish(result){
  if(!finishTransition.start(result))return;trackRunScore();
+ if(arcadeMode)recordArcadeResult(endReason==='leave');
  // Use wall time: a busy rendering frame must not turn one second into several.
  clearTimeout(finishTimeout);const pending=finishTransition.pending;
  finishTimeout=setTimeout(()=>{if(state!=='ending'||finishTransition.pending!==pending)return;const ready=finishTransition.update(finishTransition.seconds);if(ready)presentCompletedRun(ready);},finishTransition.seconds*1000);
  clearTimeout(toastTimeout);$('game-toast').classList.remove('show');$('history-message').hidden=true;
  if(!result.survived&&!isMuseum()&&!isHistory()&&!isExchange()&&!isTemple()&&!isRobot()&&!isSpace()&&!isWriter()&&!isLanguage()&&!isNewspaper()&&!isDream()&&!isLiterature()&&!isZoo()&&!isAI()&&!isDessert()&&!isDetective()&&!isMonastery()&&endReason!=='leave')game.health=0;
+ if(arcadeMode){setState('ending');hud();return;}
  const usable=keepsClues(placeId(activePlace),result,endReason);
  const rec=runRecord();if(rec){if(isCinema())rec.answered=game.answers.length;if(game.runPlan)rec.runPlan=[...game.runPlan];if(isMemory())rec.revisits=game.revisits;if(isPursuit())Object.assign(rec,{captured:game.captured,round:game.round,attemptsUsed:game.attemptsUsed,flashes:game.flashes,trace:game.trace.map(leg=>({...leg})),traceRule:PURSUIT_TRACE_RULE});if(!isExchange())Object.assign(rec,{clueSources:[...game.clueSources],clueRule:'count-v1'});rec.phase=usable?'result':'briefing';rec.survived=result.survived;rec.elapsed=result.elapsed;if(isMonastery())Object.assign(rec,{lit:[...game.clueSources],mistakes:game.mistakes,flashes:game.flashes});if(isDetective())Object.assign(rec,{room:game.roomIndex,caught:game.caught,flashes:game.flashes,evidence:game.rooms.flatMap(r=>r.evidence.filter(e=>e.collected).map(e=>e.id))});if(isTemple()){rec.reachedIthaca=game.reachedIthaca;rec.delays=game.delays;}if(isWriter())rec.reachedCastle=game.reachedCastle;if(usable){progress.clues=[...game.banked];persist();}persistJourney();}
  setState('ending');hud();
 }
 function presentCompletedRun(result){
+ if(arcadeMode){showArcadeResult(result);return;}
  if(isPursuit()&&endReason!=='leave'&&game.captured===true){showPursuitCaptureReport();return;}
  showResult(result);
 }
@@ -1031,6 +1244,7 @@ function showStage(){
 function syncCurrentPlaceHeaders(){syncPlaceHeaders(document,activePlace);}
 function trackRunScore(){
  if(!game)return;
+ if(arcadeMode){syncArcadeCoins();return;}
  const count=game.banked?.size||0;
  if(scoreRun!==game||scoreClues!==count){scoreRun=game;scoreClues=count;scores.finish(activePlace,[...(game.banked||[])]);}
 }
@@ -1039,7 +1253,7 @@ function updateResultScore(){
  $('result-score').innerHTML=`<span>게임 ${row.game} / 9 · 문제 ${row.problem} / 6</span><strong>${row.total} / 15점</strong><button type="button" class="icon-button inline-score" data-shell-action="score" aria-label="점수 자세히 보기">${icon('score')}</button>`;
 }
 function openUtility(kind,trigger){
- if(utilityOrigin||quitOpen||homeConfirmOpen||replayOpen||!game)return;
+ if(utilityOrigin||quitOpen||homeConfirmOpen||replayOpen||!game||arcadeMenuExclusions(arcadeMode).includes(kind))return;
  const menu=kind==='menu',score=kind==='score';
  if(menu&&(!canOpenStatusMenu(state)||isExchange()&&exchangeUI?.confirming))return;
  if(menu)trigger.setAttribute('aria-expanded','true');
@@ -1048,7 +1262,7 @@ function openUtility(kind,trigger){
  $('utility-title').textContent=menu?'게임 메뉴':score?'나의 점수':'나의 아이템 가방';
  $('utility-icon').hidden=menu;
  $('utility-icon').innerHTML=menu?'':icon(score?'score':'backpack');
- $('utility-content').innerHTML=menu?statusMenuHTML():score?scoresHTML(scores,activePlace):emptyInventoryHTML();
+ $('utility-content').innerHTML=menu?statusMenuHTML(arcadeMenuExclusions(arcadeMode)):score?(arcadeMode==='challenge'?arcadeScoreHTML():scoresHTML(scores,activePlace)):emptyInventoryHTML();
  $('utility-close').innerHTML=menu?icon('close'):'돌아가기';
  $('utility-close').setAttribute('aria-label',menu?'메뉴 닫기':'돌아가기');
  if(menu)syncSound();
@@ -1089,7 +1303,8 @@ function returnFromHowTo(){
  hud();return true;
 }
 function restartCurrentGame(){
- if(!game||homeConfirmOpen||quitOpen)return;
+ if(!game||homeConfirmOpen||quitOpen||arcadeMode==='challenge')return;
+ if(arcadeMode==='practice'){selectArcadePlace(arcadePlace).then(()=>{if(state==='briefing')startFromInstructions();});return;}
  if(utilityOrigin)closeUtility();if(replayOpen)closeReplay();tutorialReturn=null;
  clearTimeout(finishTimeout);finishTransition.reset();answerBusy=false;activeMotion=null;motionNext=null;
  resetAdventure();beginCountdown();
@@ -1108,7 +1323,8 @@ function cancelQuit(){
 function quitExpedition(){
  if(!quitOpen)return;
  trackRunScore();persistJourney();clearInput();cinemaImages?.movies?.pause();
- if(publicGame){
+ if(arcadeMode==='challenge')recordArcadeResult(true);
+ if(publicGame&&!arcadeMode){
   cancelQuit();prepareAquarium();game=null;setState('title');
   return;
  }
@@ -1131,7 +1347,7 @@ const menuHandlers={
 };
 document.addEventListener('click',event=>{
  const menuAction=event.target.closest('[data-menu-action]')?.dataset.menuAction;
- if(menuAction&&utilityOrigin&&$('utility-overlay').dataset.view==='menu'){
+ if(menuAction&&utilityOrigin&&$('utility-overlay').dataset.view==='menu'&&!arcadeMenuExclusions(arcadeMode).includes(menuAction)){
   if(menuAction==='sound'){toggleSound();return;}
   if(['score','items','howto','help'].includes(menuAction))menuReturn=utilityOrigin;
   closeUtility();menuHandlers[menuAction]?.();
@@ -1140,6 +1356,7 @@ document.addEventListener('click',event=>{
  const button=event.target.closest('[data-shell-action]');
  if(button?.dataset.shellAction==='menu')openUtility('menu',button);
  else if(button?.dataset.shellAction==='score')openUtility('score');
+ else if(arcadeMode&&button?.dataset.shellAction==='pause')pause();
 });
 
 function trapModalFocus(event){
@@ -1158,17 +1375,21 @@ function frame(timestamp) {
   const dt=lastFrame?Math.min(65,Math.max(0,(timestamp-lastFrame)/1000)):0;
   lastFrame=isMonastery()?Math.max(lastFrame,timestamp):timestamp;
   if(!['help','paused','panel','closed','countdown','city-summary','result','failed','stopped'].includes(state))animationTime+=dt;
+  if(ARCADE_SCREENS.has(state)){requestAnimationFrame(frame);return;}
   layout.prepare(game,activePlace);
   if(state==='tutorial'&&playLesson){if(!document.hidden)renderPlayTutorial(Math.min(dt,.2));requestAnimationFrame(frame);return;}
   if(state==='naming'&&nameMotion)nameMotion.draw(dt);
-  if(state==='exchange'&&!homeConfirmOpen)exchangeUI?.update(dt);
+  if(state==='exchange'&&!homeConfirmOpen){
+   exchangeUI?.update(dt);
+   if(arcadeMode&&game.phase==='finished')settleArcadeExchange();
+  }
   if(state==='countdown'&&!homeConfirmOpen){
     countdownLeft-=dt;
     const count=Math.max(1,Math.ceil(countdownLeft));
     if(count!==lastCount){lastCount=count;$('count-number').textContent=String(count);$('count-number').classList.remove('pop');void $('count-number').offsetWidth;$('count-number').classList.add('pop');tone(480,.1);}
     if(countdownLeft<=0){setState(countdownTarget);tone(850,.18);}
   }else if(state==='playing'&&!homeConfirmOpen){
-    updatePlay(dt);hud();
+    updatePlay(dt);if(arcadeMode)syncArcadeCoins();hud();
   }
   renderer.draw(game,character,animationTime,['help','paused','panel','closed','countdown'].includes(state)||(['failed','stopped'].includes(state)&&!isMuseum())?0:dt,isCinema()?state==='playing'&&!homeConfirmOpen&&!document.hidden:state==='playing');
   layout.present(game,activePlace,dt);
@@ -1212,6 +1433,7 @@ async function boot(){
   try {
     images=await loadAssets();renderer=new Renderer(layout.world,images);createCharacterGrid();
     const titleContext=$('title-art').getContext('2d');titleContext.setTransform(2,0,0,2,0,0);drawSubmarine(titleContext,images,null,130,115,2.7,3,0);
+    if(!entry&&prefersArcade()){setState('title');requestAnimationFrame(frame);return;}
     if(!entry&&journey?.stage==='cinema'&&journey.cinema?.phase==='result'&&!journey.memory&&scores.get('cinema').solved){
       journey=visitPlace(journey,'memory');persistJourney();
     }
@@ -1386,7 +1608,7 @@ $('cityhall-leave').addEventListener('click',leaveCityHall);
 function cityHallHud(){
  if(state==='playing')trackRunScore();
  const active=state==='playing';
- syncCityStats(game,$);syncCityAction(game,$('cityhall-act'),active);
+ syncCityStats(game,$,!!arcadeMode);syncCityAction(game,$('cityhall-act'),active);
  const prev=$('cityhall-prev');prev.hidden=!active||game.deskOpened;prev.disabled=!active||!game.canGoBack;
  const item=$('flash-button'),uses=game.flashes??0,label=`정책 전문가 조언, ${uses}회 남음`;
  if($('flash-value').textContent!==String(uses))$('flash-value').textContent=uses;
@@ -1401,8 +1623,10 @@ function cityHallAction(){
  clearInput();unlockAudio();
  if(game.stamping)tone(140,.1,.14,'triangle',.07);
  saveCityHall();
- if(game.ended)showCityHallSummary();
- else hud();
+ if(game.ended){
+  if(arcadeMode)queueFinish({survived:true,elapsed:game.elapsed||0,found:[...game.banked]});
+  else showCityHallSummary();
+ }else hud();
 }
 $('cityhall-act').addEventListener('click',cityHallAction);
 $('cityhall-prev').addEventListener('click',()=>{
@@ -1426,7 +1650,7 @@ async function enterExchange(fresh=false){
 }
 function bindExchangeUI(){
  const save=()=>{journey.exchange.run=game.snapshot();journey.exchange.phase='briefing';persistJourney();};
- exchangeUI=new ExchangeUI({root:$('exchange-ui'),game,character,onChange:save,onComplete:()=>{save();queueFinish({survived:true,elapsed:5,found:[...game.banked]});},onFailure:()=>{save();showFailure();},onHome:returnHome,onPause:pause,onHelp:showHelp});syncSound();
+ exchangeUI=new ExchangeUI({root:$('exchange-ui'),game,character,onChange:save,onComplete:()=>{save();queueFinish({survived:true,elapsed:5,found:[...game.banked]});},onFailure:()=>{save();showFailure();},onHome:arcadeMode?()=>{endReason='leave';showFailure();}:returnHome,onPause:pause,onHelp:showHelp,coinMode:!!arcadeMode});syncSound();
 }
 function showExchangeBriefing(){
  document.querySelector('.briefing .modal-kicker').textContent='시대의 흐름을 읽는 투자';
@@ -1498,6 +1722,15 @@ async function restoreCollection(place){
 }
 async function goBackScene(){
  if(quitOpen){cancelQuit();return true;}
+ if(arcadeLoading)return true;
+ if(state==='mode'){returnToArcadeTitle();return true;}
+ if(state==='arcade-choice'){showArcadeChoices('mode');return true;}
+ if(state==='arcade-records'||state==='arcade-result'){showArcadeMap();return true;}
+ if(state==='arcade-map'){leaveArcadeMap();return true;}
+ if(arcadeMode&&!utilityOrigin&&!menuReturn&&['briefing','pursuit-report'].includes(state)){
+  if(arcadeMode==='challenge'&&arcadeRuns.run?.active)recordArcadeResult(true);
+  showArcadeMap();return true;
+ }
  if(utilityOrigin){closeUtilityFromControl();return true;}
  if(state==='tutorial'){if(!returnFromHowTo())setState('briefing');return true;}
  if(state==='help'){resumeFromHelp();return true;}
@@ -1506,6 +1739,7 @@ async function goBackScene(){
  if(state==='pursuit-capture-report'){finishPursuitCaptureReport();return true;}
  if(state==='stage'&&replayOrigin&&journey.stage===replayTarget){await restoreReplayOrigin();return true;}
  if(state==='paused'){resume();return true;}
+ if(arcadeMode&&['playing','exchange','countdown','ending'].includes(state)){pause();return true;}
  if(homeConfirmOpen){cancelHome();return;}
  for(const id of ['hint-overlay','card-overlay','puzzle-overlay','reset-overlay','collection-overlay'])if(!$(id).hidden){closeExtra(id);return;}
  if(isExchange()&&exchangeUI?.confirming){exchangeUI.action('cancel-bankrupt');return;}
@@ -1747,8 +1981,9 @@ function renderPlayTutorial(dt){
  // This is demonstration state only; the real HUD, timer and inventory stay untouched.
  if(lesson.fade>0){c.fillStyle=`rgba(17,47,60,${lesson.fade})`;c.fillRect(0,0,780,height);}
  a.finance?.render();a.city?.render(true);a.chrome.render();
- const title=lesson.title;
- const copy=TUTORIAL_COPY[activePlace][playback.page];
+ const title=arcadeMode?arcadeRewardText(lesson.title,isPursuit()):lesson.title;
+ const baseCopy=TUTORIAL_COPY[activePlace][playback.page];
+ const copy=arcadeMode?arcadeRewardText(baseCopy,isPursuit()):baseCopy;
  const cap=copy.replace(/\.\s+/g,'.\n');
  if($('tutorial-step').textContent!==title)$('tutorial-step').textContent=title;
  if($('tutorial-caption').textContent!==cap)$('tutorial-caption').textContent=cap;

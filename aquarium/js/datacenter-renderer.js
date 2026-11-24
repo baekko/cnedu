@@ -1,5 +1,5 @@
 import {dataBriefing} from './briefing-scenes.js?v=155';
-import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v=155';
+import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {workshopAssets,artMetadata,loadWorkshopEntrance} from './workshop-art.js?v=155';
 import {drawPlayerAction,loadPlayerActions,leverStandpoint} from './player-actions.js?v=155';
 import {DATA_FILES,DATA_NODES,DATA_RECEIVERS,DATA_VIRUSES,dataVirusPose} from './datacenter-core.js';

@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {historyMobFrame,HISTORY_MOB_ART} from './history-mob-sprites-v99.js';
 import {beginScene,spriteAnchor,drawRoom,sceneText} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';

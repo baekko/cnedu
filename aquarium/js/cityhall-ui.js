@@ -4,10 +4,10 @@ const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>
 const lines=value=>esc(value).replace(/([.!?])\s+/g,'$1<br>');
 const delta=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
 
-export function syncCityStats(g,find){
+export function syncCityStats(g,find,coinMode=false){
  const count=cityClueCount(g.approval),next=CITY_CLUE_THRESHOLDS[count];
  for(const [id,value] of [['city-round',`${g.round} / ${CITYHALL.rounds}`],['city-approval',g.approval+'%'],
-  ['city-target',`${count} / ${CITYHALL.maxClues}`],['city-next-clue',next===undefined?'9장 기준 달성':`${next}%에 ${count+1}장`]]){
+  ['city-target',`${count} / ${CITYHALL.maxClues}`],['city-next-clue',next===undefined?(coinMode?'금화 9개 기준 달성':'9장 기준 달성'):`${next}%에 ${count+1}${coinMode?'개':'장'}`]]){
   const el=find(id);if(el.textContent!==value)el.textContent=value;
  }
 }

@@ -25,6 +25,8 @@
         <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><canvas id="title-art" width="520" height="460"></canvas><img class="opening-shark" src="./assets/aquarium-v8/shark-2.webp" alt=""></div>
         <button id="title-start" class="primary-button">시작하기 <span>→</span></button></div>
       </section>
+      <section id="arcade-screen" class="screen arcade-screen" hidden aria-labelledby="arcade-title"></section>
+      <div id="arcade-coin-effects" class="arcade-coin-effects" aria-hidden="true"></div>
       <section id="select-screen" class="screen opening-screen" hidden aria-labelledby="select-title">
         <header class="opening-header"><span class="wordmark">PLAY THE BOOK</span><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
         <div class="selection-content"><h1 id="select-title">어떤 캐릭터로<br><em>시작할까요?</em></h1><div id="character-grid" class="character-grid" role="group" aria-label="캐릭터 모습 선택"></div></div>
@@ -36,11 +38,11 @@
         <header class="game-header"><div><span class="wordmark small">PLAY THE BOOK</span><h1>수족관</h1></div><div id="common-header-actions" class="header-actions"></div></header>
         <div class="hud" aria-label="게임 상태">
           <div class="hud-stat timer"><span class="hud-label">남은 시간</span><strong id="time-value">00:50</strong><div class="time-track"><i id="time-fill"></i></div></div>
-          <div class="hud-stat clue-stat"><span class="hud-label">모은 단서</span><strong><span id="clue-value">0</span><small> / 9</small></strong></div>
+          <div class="hud-stat clue-stat"><span class="hud-label" id="clue-label">모은 단서</span><strong><span id="clue-value">0</span><small> / 9</small></strong></div>
           <div class="hud-stat health-stat"><span class="hud-label">잠수함 내구도</span><strong id="history-era" hidden>박물관</strong><div id="museum-colors" class="museum-colors" hidden aria-label="되찾은 아홉 가지 색"></div><div id="health-value" class="health-pips" aria-label="내구도 3칸"><i></i><i></i><i></i></div></div>
           <div class="hud-stat city-hud-stat"><span class="hud-label">검토 안건</span><strong id="city-round">1 / 6</strong></div>
           <div class="hud-stat city-hud-stat"><span class="hud-label">전체 지지율</span><strong id="city-approval">50%</strong></div>
-          <div class="hud-stat city-hud-stat city-clue-stat"><span class="hud-label">예상 단서</span><strong id="city-target">0 / 9</strong><span id="city-next-clue" class="city-next-clue">52%에 1장</span></div>
+          <div class="hud-stat city-hud-stat city-clue-stat"><span class="hud-label" id="city-clue-label">예상 단서</span><strong id="city-target">0 / 9</strong><span id="city-next-clue" class="city-next-clue">52%에 1장</span></div>
         </div>
         <section id="cityhall-paper" class="city-paper" hidden aria-label="시장 결재 서류"></section>
         <nav id="field-room-nav" hidden aria-label="공간 자유 이동"><button type="button" data-field-room="0" aria-label="첫 번째 공간">1</button><button type="button" data-field-room="1" aria-label="두 번째 공간">2</button><button type="button" data-field-room="2" aria-label="세 번째 공간">3</button><span id="field-room-name"></span></nav><div id="camera-status" hidden role="status"></div><div id="game-toast" class="game-toast" role="status" aria-live="polite"></div><span id="pursuit-selection-status" class="sr-only" role="status" aria-atomic="true" hidden></span>
@@ -134,7 +136,7 @@
       </div>
       <div id="countdown" class="countdown" hidden aria-live="assertive"><span>게임을 시작해요!</span><strong id="count-number">3</strong><p>방향키에 손을 올려 주세요</p></div>
       <div id="cityhall-summary" class="overlay" hidden><section class="modal city-summary-modal" role="dialog" aria-modal="true" aria-labelledby="cityhall-summary-title"><div id="cityhall-summary-content"></div><button id="cityhall-leave" type="button" class="primary-button">퇴근하기 →</button></section></div>
-      <div id="pause-overlay" class="overlay" hidden><section class="modal pause-modal" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="modal-symbol">Ⅱ</div><div class="modal-kicker">잠깐 쉬어 가요</div><h2 id="pause-title" tabindex="-1">일시정지</h2><p class="modal-lead">게임 시간도 함께 멈췄어요.</p><button id="resume-button" type="button" class="primary-button">이어서 시작하기</button><p class="save-hint">점수와 힌트 기록은 그대로 보관돼요.</p></section></div>
+      <div id="pause-overlay" class="overlay" hidden><section class="modal pause-modal" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="modal-symbol">Ⅱ</div><div class="modal-kicker">잠깐 쉬어 가요</div><h2 id="pause-title" tabindex="-1">일시정지</h2><p class="modal-lead">게임 시간도 함께 멈췄어요.</p><button id="resume-button" type="button" class="primary-button">이어서 시작하기</button><p class="save-hint" id="pause-save-hint">점수와 힌트 기록은 그대로 보관돼요.</p></section></div>
 
       <div id="failure-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="failure-title"><section class="modal failure-modal"><h2 id="failure-title" tabindex="-1">게임 실패</h2><p id="failure-message" class="modal-lead"></p><div class="failure-actions"><button id="failure-retry" class="return-button">이 게임 다시하기</button><button id="failure-home" class="return-button">지난 게임 다시하기</button></div></section></div>
       <div id="result-overlay" class="overlay" hidden><section class="modal result-modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
@@ -174,6 +176,6 @@
   <link rel="stylesheet" href="./clue-puzzles.css?v=160">
   <link rel="stylesheet" href="./gym.css?v=162">
   <link rel="stylesheet" href="./cinema.css?v=164">
-  <link rel="stylesheet" href="./common-ui.css?v215"><link rel="stylesheet" href="./css/pursuit.css?v241"><script type="module" src="./js/app.js?v244"></script>
+  <link rel="stylesheet" href="./common-ui.css?v215"><link rel="stylesheet" href="./css/pursuit.css?v241"><link rel="stylesheet" href="./arcade.css?v244"><script type="module" src="./js/app.js?v245"></script>
 </body>
 </html>

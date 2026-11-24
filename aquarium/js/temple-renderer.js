@@ -1,5 +1,5 @@
 import {templeBriefing} from './briefing-scenes.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';
 import {drawScyllaNeck} from './scylla-neck.js';
 import {SCYLLA,scyllaRest,scyllaAttackPose,scyllaSpritePose,scyllaGrabPose} from './temple-scylla.js?v=157';

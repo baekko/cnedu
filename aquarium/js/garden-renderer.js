@@ -1,11 +1,11 @@
 import {gardenBriefing} from './briefing-scenes.js?v=155';
-import {drawGardener} from './garden-helper-renderer.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
-import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v=155';
+import {drawGardener} from './garden-helper-renderer.js?v245';
+import {drawClueCard} from './clue-card-art.js?v245';
+import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {beginScene,drawRoom,spriteAnchor} from './layout.js';
 import {drawHeldWalk} from './heroes.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
-import {drawGardenCare} from './garden-care-renderer.js?v=155';
+import {drawGardenCare} from './garden-care-renderer.js?v245';
 import {gardenWindowBackground} from './garden-windows.js';
 const FILES=['heater-off','heater-on','lever-closed','lever-open','sprout','bud'];
 const NEW_FILES=['cover-closed','cover-open'];

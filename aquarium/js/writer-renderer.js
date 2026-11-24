@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {writerCardSprite,writerHeroSprite,WRITER_CARD_ART} from './writer-sprites-v99.js?v=155';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';

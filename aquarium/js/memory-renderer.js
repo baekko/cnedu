@@ -1,4 +1,4 @@
-import {FieldRenderer,box,oval,text} from './field-renderer.js';
+import {FieldRenderer,box,oval,text} from './field-renderer.js?v245';
 import {beginScene} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
 import {loadMotion} from './motions.js';

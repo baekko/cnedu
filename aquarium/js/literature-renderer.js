@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {CAST} from './literature-layout.js';
 import {drawLiteratureWork} from './literature-work.js';
 import {hasSource} from './clue-order.js';

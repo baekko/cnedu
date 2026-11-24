@@ -1,5 +1,5 @@
 import {drawSideWalk} from './side-walk.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';
 import {hasSource} from './clue-order.js';

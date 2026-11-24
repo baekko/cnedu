@@ -1,6 +1,6 @@
-import {headerActionsHTML,placeHeadingHTML} from './expedition-shell.js?v215';
-import {CLUE_CARD_URL,cardPositionLabel} from './clue-card-art.js';
-import {icon} from './icons.js?v=164';
+import {headerActionsHTML,placeHeadingHTML} from './expedition-shell.js?v245';
+import {CLUE_CARD_URL,cardPositionLabel} from './clue-card-art.js?v245';
+import {icon} from './icons.js?v245';
 import {EXCHANGE_ROUNDS,EXCHANGE_SOURCES} from './exchange-data.js';
 import {money,cardPrice} from './exchange-core.js';
 const SEGMENTS=['abcedf','bc','abged','abgcd','fgbc','afgcd','afgecd','abc','abcdefg','abfgcd'];
@@ -8,7 +8,7 @@ export function digits(value){return `<span class="segments" role="img" aria-lab
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=s=>`${s.end>=s.start?'+':''}${((s.end/s.start-1)*100).toFixed(1)}%`;
 export class ExchangeUI{
- constructor({root,game,character,onChange,onComplete,onFailure,onHome,onPause,onHelp}){Object.assign(this,{root,game,character,onChange,onComplete,onFailure,onHome,onPause,onHelp});this.shop=new Set();this.held=null;this.holdTime=0;this.repeatTime=0;this.signature='';this.confirming=false;
+ constructor({root,game,character,onChange,onComplete,onFailure,onHome,onPause,onHelp,coinMode=false}){Object.assign(this,{root,game,character,onChange,onComplete,onFailure,onHome,onPause,onHelp,coinMode});this.shop=new Set();this.held=null;this.holdTime=0;this.repeatTime=0;this.signature='';this.confirming=false;
   root.innerHTML=`<header class="ex-header"><div><h1>${placeHeadingHTML('exchange')}</h1></div><div class="header-actions">${headerActionsHTML('ex-')}</div></header><div class="ex-hud"><div><small>투자 연도</small><b id="ex-year"></b></div><div><small>총자본</small><b id="ex-capital"></b></div><div><small>투자 회차</small><b id="ex-round"></b></div></div><div id="ex-walk-note">방향키로 위쪽 안내 창구 앞으로 가세요.</div><section id="ex-panel" aria-live="polite"></section><div id="ex-year-overlay" hidden><small>시간이 흐르고 있어요</small><strong></strong><span>5년 뒤의 투자 결과를 확인해요</span></div><div class="ex-controls"><p id="ex-guide"></p><div class="ex-pad" aria-label="이동 및 투자 선택 방향키"><button data-direction="up" aria-label="위"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5 21 17H3Z"/></svg></button><button data-direction="left" aria-label="왼쪽"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12 17 3v18Z"/></svg></button><span aria-hidden="true"></span><button data-direction="right" aria-label="오른쪽"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19 12-12 9V3Z"/></svg></button><button data-direction="down" aria-label="아래"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-9-12h18Z"/></svg></button></div><button id="ex-next" data-action="next">다음 →</button><button id="ex-previous" data-action="previous">이전</button><div class="ex-items"><button id="ex-double" data-action="double">×2 더블업 <small>1회</small></button><button id="ex-special" data-action="special">✦ 특급정보 <small>1회</small></button></div></div>`;
   root.onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const a=b.dataset.action;if(a)this.action(a,b);else if(b.dataset.stock!==undefined){game.select(+b.dataset.stock);this.changed();}else if(b.dataset.card)this.toggleCard(+b.dataset.card);else if(b.dataset.direction&&e.detail===0)this.direction(b.dataset.direction);};
   root.onpointerdown=e=>{const b=e.target.closest('[data-direction]');if(!b||b.disabled)return;e.preventDefault();this.held=b.dataset.direction;this.holdTime=0;this.repeatTime=0;b.setPointerCapture(e.pointerId);b.classList.add('held');if(game.phase!=='walk')this.direction(this.held);};
@@ -43,7 +43,7 @@ export class ExchangeUI{
   `${this.character.name}님, 반갑습니다. 투자를 도와드리겠습니다.`,
   '지금부터 2000년부터 2020년까지, 5년 간격으로 다섯 번 투자합니다. 시작 자본은 100만원입니다.',
   '시대의 흐름을 담은 정보 네 줄을 읽고 종목과 금액을 정하세요. 5년 뒤에는 주식을 모두 팔아 결과를 확인합니다.',
-  '2020년의 마지막 투자는 2025년에 결과를 확인합니다. 모은 자본으로 단서 카드를 구입하세요. 회사와 주가는 게임을 위해 만든 가상입니다.'
+  this.coinMode?'2020년의 마지막 투자는 2025년에 결과를 확인합니다. 마지막 자본 300만원마다 금화 한 개를 받아요. 회사와 주가는 게임을 위해 만든 가상입니다.':'2020년의 마지막 투자는 2025년에 결과를 확인합니다. 모은 자본으로 단서 카드를 구입하세요. 회사와 주가는 게임을 위해 만든 가상입니다.'
  ];
  this.root.querySelector('#ex-year').textContent=g.data.year+'년';this.root.querySelector('#ex-capital').textContent=money(g.cash)+'만원';this.root.querySelector('#ex-round').textContent=(g.round+1)+' / '+EXCHANGE_ROUNDS.length;
  const previous=this.root.querySelector('#ex-previous');previous.textContent=['walk','dialogue'].includes(g.phase)?'이전':'파산';previous.disabled=g.phase==='walk'||g.phase==='dialogue'&&g.dialogue===0||['travel','complete','bankrupt'].includes(g.phase);this.root.querySelector('#ex-bankrupt-confirm').hidden=!this.confirming;this.root.querySelector('.ex-controls').classList.toggle('confirming',this.confirming);p.inert=this.confirming;

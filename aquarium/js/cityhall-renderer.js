@@ -3,7 +3,7 @@ import {beginScene,drawRoom} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
 import {actionFrame,drawPlayerAction,loadPlayerActions} from './player-actions.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
-import {box,oval} from './field-renderer.js?v=155';
+import {box,oval} from './field-renderer.js?v245';
 import {CITY_ROOM} from './cityhall-core.js?v=144';
 
 const clamp=n=>Math.max(0,Math.min(1,n));

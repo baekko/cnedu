@@ -1,10 +1,10 @@
-import {FieldRenderer,oval,box,text,TAU} from './field-renderer.js?v=155';
+import {FieldRenderer,oval,box,text,TAU} from './field-renderer.js?v245';
 import {drawExplorer} from './heroes.js?v=155';
 import {spriteAnchor} from './layout.js';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {heroWalkFrame} from './walk-cycle.js';
 import {sideWalkFrame} from './side-walk.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {GYM,gymThrowPose} from './gym-core.js?v212';
 import {gymCourtPoint} from './gym-court.js?v=163';
 

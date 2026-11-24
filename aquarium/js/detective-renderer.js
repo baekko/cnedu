@@ -1,6 +1,6 @@
 import {GUARD_ART} from './guard-gait-art.js';
 import {loadDetectiveInspection,drawDetectiveInspection} from './detective-inspection.js';
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene,drawRoom} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
 import {DETECTIVE_PROPS} from './detective-prop-art.js';

@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';
 import {hasSource} from './clue-order.js';
 import {beginScene} from './layout.js';

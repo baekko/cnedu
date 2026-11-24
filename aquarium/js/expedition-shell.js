@@ -1,5 +1,5 @@
 import {PLACES,placeInfo,placeIcon} from './places.js?v231';
-import {icon} from './icons.js?v213';
+import {icon} from './icons.js?v245';
 
 export const HEADER_ACTIONS=Object.freeze([
  ['score','점수','score','장소별 점수와 전체 점수를 봐요.'],
@@ -12,10 +12,10 @@ export const HEADER_ACTIONS=Object.freeze([
  ['quit','게임 마치기','exit','확인한 뒤 게임을 마쳐요.'],
 ]);
 export function headerActionsHTML(prefix=''){
- return `<button id="${prefix}menu-button" type="button" class="icon-button status-menu-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="utility-overlay" data-shell-action="menu">menu</button>`;
+ return `<button type="button" class="icon-button arcade-pause" aria-label="일시정지" data-shell-action="pause" disabled>${icon('pause')}</button><button id="${prefix}menu-button" type="button" class="icon-button status-menu-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="utility-overlay" data-shell-action="menu">menu</button>`;
 }
-export function statusMenuHTML(){
- return HEADER_ACTIONS.map(([action,label,shape,description])=>{
+export function statusMenuHTML(exclusions=[]){
+ return HEADER_ACTIONS.filter(([action])=>!exclusions.includes(action)).map(([action,label,shape,description])=>{
   const id='menu-action-'+action;
   return `<button type="button" id="${id}" class="menu-action" data-menu-action="${action}" aria-labelledby="${id}-label" aria-describedby="${id}-description"><span class="menu-action-icon" aria-hidden="true">${icon(shape)}</span><span class="menu-action-copy"><b id="${id}-label">${label}</b><small id="${id}-description">${description}</small></span></button>`;
  }).join('');

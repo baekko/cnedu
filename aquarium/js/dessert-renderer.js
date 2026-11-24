@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene,drawRoom} from './layout.js';
 import {drawExplorer,drawCarryCell} from './heroes.js?v=155';
 import {setFinishingAtlas} from './dessert-finish-art.js';

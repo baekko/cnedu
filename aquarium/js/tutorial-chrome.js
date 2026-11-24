@@ -1,9 +1,9 @@
-import {syncPursuitStats} from './pursuit-renderer.js?v243';
-import {syncMemoryStats} from './memory-renderer.js?v212';
+import {syncPursuitStats} from './pursuit-renderer.js?v245';
+import {syncMemoryStats} from './memory-renderer.js?v245';
 import {syncCinemaStats} from './cinema-ui.js?v204-final40';
 import {DessertFinishUI} from './dessert-finish-ui.js';
-import {icon} from './icons.js?v207';
-import {syncCityStats,syncCityAction} from './cityhall-ui.js';
+import {icon} from './icons.js?v245';
+import {syncCityStats,syncCityAction} from './cityhall-ui.js?v245';
 import {DEMO_ACTIONS} from './tutorial-input.js?v232';
 const ITEMS={cinema:'filmInfo',gym:'whistle',cityhall:'special',datacenter:'virusClear',conservation:'bookSupport',photo:'autoCamera',garden:'gardenerBell',monastery:'shield',detective:'decoy',aquarium:'light',museum:'time',history:'run',temple:'shield',robot:'magnet',space:'booster',writer:'bookmark',language:'magnet',newspaper:'satchel',dream:'eraser',literature:'bookmark',zoo:'whistle',ai:'autoChip',dessert:'remote'};
 function copy(source){const el=source.cloneNode(true);for(const node of [el,...el.querySelectorAll('[id]')])if(node.id){node.dataset.sourceId=node.id;node.removeAttribute('id');}for(const b of el.querySelectorAll('button')){b.tabIndex=-1;b.disabled=false;}return el;}

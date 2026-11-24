@@ -1,6 +1,6 @@
 import {hasSideAnimation,sideWalkCell} from './side-walk.js?v=155';
 import {SIDE_HERO_SIZE} from './hero-scale.js';
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene} from './layout.js';
 import {ZOO,ZOO_SUPPORT,FEED_ANIMALS,animalPose,trajectory} from './zoo-core.js?v=155';
 import {ANIMAL_ART} from './zoo-feed-art-v65.js';

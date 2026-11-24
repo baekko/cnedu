@@ -1,7 +1,7 @@
-import {box,oval,text} from './field-renderer.js';
+import {box,oval,text} from './field-renderer.js?v245';
 import {beginScene} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {PURSUIT,PURSUIT_CITIES,PURSUIT_START,getPursuitCity} from './pursuit-game.js?v243';
 
 import {PURSUIT_MAP as map,pursuitMapPoint as xy,pursuitPins,pursuitPinHit,pursuitLabelBox} from './pursuit-map.js?v235';

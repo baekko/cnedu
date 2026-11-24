@@ -1,4 +1,4 @@
-import {box,oval,text} from './field-renderer.js?v=155';
+import {box,oval,text} from './field-renderer.js?v245';
 import {photoLens,photoFrame,photoPanel,photoLivePanel,photoLight,PHOTO_AIM,subjectPose,wantedAlternate} from './photo-core.js';
 
 export class PhotoViewfinder{

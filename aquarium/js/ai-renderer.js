@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js';
+import {drawClueCard} from './clue-card-art.js?v245';
 import {AI,BODIES,POWERS,INKS,CAST,SLOTS,TABLES,LABELS} from './ai-core.js';
 import {ImageDecoder,POWER_WORDS,ENV_WORDS} from './ai-inference.js';
 import {PODS,podY,socket,sampleRect,fitArtwork} from './ai-art-layout.js';
