@@ -1,4 +1,4 @@
-import {connectTitleModes,showStartupError} from './opening.js?v252';
+import {connectTitleModes,showStartupError} from './opening.js?v253';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
 import {MemoryGame,MEMORY} from './memory-core.js?v224';
@@ -87,12 +87,12 @@ import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './ren
 import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v243';
 import { loadMotion, SpritePlayer } from './motions.js';
 
-import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v252';
-import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v252';
+import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v253';
+import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v253';
 import {drawArcadeChoices} from './arcade-choice-view.js?v252';
 import {drawPlaceEntry} from './place-entry-view.js?v251';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
-import {getArcadeTicket,loadSharedArcadeRecords,registerArcadePlayer,shareArcadeRecord} from './arcade-share.js?v252';
+import {getArcadeTicket,loadSharedArcadeRecords,registerArcadePlayer,shareArcadeRecord} from './arcade-share.js?v253';
 import {ModeCharacters} from './mode-characters.js?v252';
 const $ = id => document.getElementById(id);
 $('common-header-actions').innerHTML=headerActionsHTML();
@@ -118,7 +118,7 @@ const normalStorage=storage;
 const arcadeRuns=new ArcadeRuns(normalStorage);
 const modeCharacters=new ModeCharacters(normalStorage,()=>{$('storage-warning').hidden=false;});
 const modeNames={escape:'방탈출+미니게임',arcade:'미니게임 챌린지'};
-let characterMode=null;
+let characterMode=null,characterChallengeId=null;
 let arcadeMode=null,arcadePlace=null,arcadeCoins=0,arcadeLoading=false,arcadeSettled=false;
 let arcadeRecordRequest=0,arcadeRecordScope='mine';
 const postingArcadeRuns=new Map(),arcadeShareErrors=new Map();
@@ -387,14 +387,18 @@ function createCharacterGrid() {
   });
 }
 function savedModeCharacter(mode){
+ if(mode==='arcade'){
+  arcadeRuns.refresh();
+  const run=arcadeRuns.run;
+  if(run?.player)return {...run.player,registrationKey:run.registrationKey};
+ }
  const profile=modeCharacters.get(mode);
  if(profile)return profile;
  if(mode==='escape'){
   const adventure=readJourney(normalStorage);
   return adventure?modeCharacters.register(mode,{character:adventure.character,name:adventure.playerName||'플레이어'}):null;
  }
- arcadeRuns.refresh();
- const legacy=arcadeRuns.run?.player||arcadeRuns.records[0]?.player;
+ const legacy=arcadeRuns.records[0]?.player;
  return legacy?modeCharacters.register(mode,legacy):null;
 }
 function refreshTitleModes(){
@@ -433,16 +437,27 @@ function showArcadeChoices(){
 }
 function chooseMode(mode){
  const player=savedModeCharacter(mode);
+ if(mode==='arcade'&&arcadeRuns.characterSetupId){
+  showCharacterPicker(mode,arcadeRuns.characterSetupId);
+  return;
+ }
  if(player){openMode(mode,player);return;}
- characterMode=mode;
- $('select-mode-label').textContent=modeNames[mode];
+ showCharacterPicker(mode);
+}
+function showCharacterPicker(mode,challengeId=null){
+ characterMode=mode;characterChallengeId=challengeId;
+ if(challengeId){
+  showArcadeSurface();arcadeMode=null;arcadePlace=null;game=null;setCoinRewards(false);
+  void sharePendingArcadeRecords();
+ }
+ $('select-mode-label').textContent=challengeId?'새 미니게임 챌린지':modeNames[mode];
  $('select-mode-label').hidden=false;
  $('select-back').hidden=false;
  $('character-grid').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed','false'));
  setState('select');$('select-title').focus({preventScroll:true});
 }
 function openMode(mode,player){
- characterMode=null;
+ characterMode=null;characterChallengeId=null;
  if(mode==='escape'){
   const adventure=readJourney(normalStorage);
   if(adventure){void resumeEscape(adventure);return;}
@@ -465,6 +480,10 @@ function startEscapeMode(player){
 function enterArcadeMap(mode){
  const player=savedModeCharacter('arcade');
  if(!player)return;
+ if(mode==='challenge'&&arcadeRuns.characterSetupId){
+  showCharacterPicker('arcade',arcadeRuns.characterSetupId);
+  return;
+ }
  arcadeMode=mode;setCoinRewards(true);
  let notice='';
  if(mode==='challenge'){
@@ -494,7 +513,7 @@ function leaveArcadeMap(){
  journey=readJourney(storage);showArcadeChoices();
 }
 function returnToArcadeTitle(){
- showArcadeSurface();arcadeMode=null;arcadePlace=null;characterMode=null;game=null;
+ showArcadeSurface();arcadeMode=null;arcadePlace=null;characterMode=null;characterChallengeId=null;game=null;
  journey=readJourney(storage);replayOrigin=null;replayTarget=null;setCoinRewards(false);
  prepareAquarium();setState('title');
  $('title-escape').focus({preventScroll:true});
@@ -631,12 +650,23 @@ $('name-form').addEventListener('submit',async event=>{
   if(state!=='naming'||registeringCharacter)return;
   const name=normalizePlayerName($('player-name').value);
   if(!name){$('name-error').textContent='이름을 입력해 주세요.';return;}
-  const mode=characterMode,token=nameToken,draft={character:character.id,name};
+  const mode=characterMode,challengeId=characterChallengeId,token=nameToken,draft={character:character.id,name};
   unlockAudio();
   const register=async()=>{
    if(state!=='naming'||nameToken!==token)return null;
    if(!mode)return draft;
    const existing=savedModeCharacter(mode);
+   if(challengeId){
+    if(arcadeRuns.characterSetupId!==challengeId)return existing;
+    const nameKey=value=>value.normalize('NFKC').replace(/[\s\p{Cf}]+/gu,'').toLowerCase();
+    if(arcadeRuns.records.some(record=>record.player?.name&&nameKey(record.player.name)===nameKey(draft.name))){
+     throw Object.assign(new Error('이미 사용 중인 이름이에요.'),{code:'name_taken'});
+    }
+    const profile=await registerArcadePlayer(normalStorage,draft,challengeId);
+    arcadeRuns.refresh();
+    if(arcadeRuns.characterSetupId!==challengeId)return savedModeCharacter(mode);
+    return arcadeRuns.start(profile).player;
+   }
    if(existing)return existing;
    const profile=mode==='arcade'?await registerArcadePlayer(normalStorage,draft):draft;
    return modeCharacters.register(mode,profile);
@@ -653,7 +683,7 @@ $('name-form').addEventListener('submit',async event=>{
     :await register();
   }catch(error){
    $('name-error').textContent=error.code==='name_taken'?'이미 사용 중인 이름이에요. 다른 이름을 입력해 주세요.':
-    error.code==='already_registered'?`이 브라우저에 ‘${error.registeredName}’ 이름이 등록되어 있어요. 그 이름을 입력해 주세요.`:
+    error.code==='already_registered'?`이 도전에는 ‘${error.registeredName}’ 이름이 등록되어 있어요. 그 이름을 입력해 주세요.`:
     error.code==='invalid player'?'이름에 사용할 수 있는 글자를 입력해 주세요.':
     error.code==='storage_unavailable'?'이 브라우저에서 캐릭터를 저장할 수 없어요.':
     '공유 기록실에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.';

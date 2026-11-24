@@ -1,3 +1,5 @@
+import {canResumeArcade} from './arcade-state.js';
+
 // The title can receive a selection while the game modules are still loading.
 const title = document.getElementById('title-screen');
 const loading = document.getElementById('loading');
@@ -29,9 +31,7 @@ function chooseTitleMode(event) {
 
 const arcade = readSave('ptb_aquarium_arcade_v1');
 const escape = readSave('ptb_aquarium_character_escape_v1') || readSave('ptb_journey_v1');
-const run = arcade?.version === 1 ? arcade.run : null;
-const arcadeInProgress = run?.player?.character && Array.isArray(run.places)
- && run.places.some(place => !run.games?.[place]);
+const arcadeInProgress = arcade?.version === 1 && canResumeArcade(arcade);
 for (const mode of modes) {
  const button = document.getElementById('title-' + mode);
  if (mode === 'escape' ? escape?.character : arcadeInProgress) button.textContent = button.textContent.replace('시작하기', '이어하기');

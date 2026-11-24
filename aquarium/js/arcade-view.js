@@ -1,7 +1,7 @@
 import {CHARACTERS} from './config.js';
 import {icon} from './icons.js?v245';
 import {placeIcon,placeInfo} from './places.js?v231';
-import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v252';
+import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v253';
 
 export const ARCADE_SCREENS=new Set(['arcade-choice','arcade-map','arcade-records','arcade-result']);
 const root=()=>document.getElementById('arcade-screen');

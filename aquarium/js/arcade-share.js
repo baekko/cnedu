@@ -15,13 +15,18 @@ async function request(path,payload){
   return data;
  }finally{clearTimeout(timeout);}
 }
-export async function registerArcadePlayer(storage,player){
+export async function registerArcadePlayer(storage,player,completedRunId){
+ const key=completedRunId?`${registrationStorageKey}_next`:registrationStorageKey;
  let registrationKey;
  try{
-  registrationKey=storage.getItem(registrationStorageKey);
+  const saved=storage.getItem(key);
+  if(completedRunId){
+   const pending=JSON.parse(saved||'null');
+   if(pending?.completedRunId===completedRunId)registrationKey=pending.registrationKey;
+  }else registrationKey=saved;
   if(!registrationKey){
    registrationKey=globalThis.crypto.randomUUID();
-   storage.setItem(registrationStorageKey,registrationKey);
+   storage.setItem(key,completedRunId?JSON.stringify({completedRunId,registrationKey}):registrationKey);
   }
  }catch{
   throw Object.assign(new Error('캐릭터 저장 공간을 사용할 수 없어요.'),{code:'storage_unavailable'});
