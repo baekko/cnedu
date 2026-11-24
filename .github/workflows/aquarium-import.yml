@@ -1,0 +1,42 @@
+name: Prepare aquarium public release
+
+on:
+  push:
+    branches: [build/aquarium-release-20261124]
+    paths: ['.aquarium-import/manifest.sha256']
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 1
+          sparse-checkout: .aquarium-import
+          sparse-checkout-cone-mode: false
+      - name: Verify and import the game folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .aquarium-import/pack-* > "$RUNNER_TEMP/release.tar.gz"
+          cp .aquarium-import/manifest.sha256 "$RUNNER_TEMP/"
+          (cd "$RUNNER_TEMP" && sha256sum --check manifest.sha256)
+          mkdir "$RUNNER_TEMP/release"
+          tar -xzf "$RUNNER_TEMP/release.tar.gz" -C "$RUNNER_TEMP/release"
+          test -f "$RUNNER_TEMP/release/aquarium/index.html"
+          git fetch --depth=1 origin refs/heads/main
+          base=$(git rev-parse FETCH_HEAD)
+          if git cat-file -e "$base:aquarium" 2>/dev/null; then
+            echo "The destination folder already exists on main."
+            exit 1
+          fi
+          export GIT_INDEX_FILE="$RUNNER_TEMP/aquarium.index"
+          git read-tree "$base"
+          git -c core.sparseCheckout=false --work-tree "$RUNNER_TEMP/release" add -- aquarium
+          git diff --cached --name-only "$base" | awk '$0 !~ /^aquarium\// { exit 1 }'
+          tree=$(git write-tree)
+          commit=$(git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit-tree "$tree" -p "$base" -m "Publish Aquarium playtest at /aquarium/")
+          git push origin "$commit:refs/heads/build/aquarium-pages-ready-20261124"
