@@ -1,0 +1,90 @@
+{
+  "heater-off": {
+    "file": "heater-off.webp",
+    "width": 251,
+    "height": 333,
+    "source_bbox": [
+      140,
+      36,
+      251,
+      333
+    ]
+  },
+  "heater-on": {
+    "file": "heater-on.webp",
+    "width": 252,
+    "height": 332,
+    "source_bbox": [
+      633,
+      36,
+      252,
+      332
+    ]
+  },
+  "vent-closed": {
+    "file": "vent-closed.webp",
+    "width": 284,
+    "height": 345,
+    "source_bbox": [
+      124,
+      422,
+      284,
+      345
+    ]
+  },
+  "vent-open": {
+    "file": "vent-open.webp",
+    "width": 295,
+    "height": 345,
+    "source_bbox": [
+      610,
+      422,
+      295,
+      345
+    ]
+  },
+  "lever-closed": {
+    "file": "lever-closed.webp",
+    "width": 280,
+    "height": 254,
+    "source_bbox": [
+      110,
+      846,
+      280,
+      254
+    ]
+  },
+  "lever-open": {
+    "file": "lever-open.webp",
+    "width": 281,
+    "height": 254,
+    "source_bbox": [
+      632,
+      846,
+      281,
+      254
+    ]
+  },
+  "sprout": {
+    "file": "sprout.webp",
+    "width": 241,
+    "height": 220,
+    "source_bbox": [
+      148,
+      1249,
+      241,
+      220
+    ]
+  },
+  "bud": {
+    "file": "bud.webp",
+    "width": 241,
+    "height": 309,
+    "source_bbox": [
+      634,
+      1178,
+      241,
+      309
+    ]
+  }
+}

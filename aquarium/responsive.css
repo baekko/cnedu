@@ -1,0 +1,400 @@
+@font-face{font-family:"PTB Tutorial Bold";src:url("./assets/fonts/ptb-tutorial-bold.woff") format("woff");font-style:normal;font-weight:900;font-display:swap;unicode-range:U+0020-007E}
+/* One full-width shell; HUD, scrollable content, and controls are separate layers. */
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--safe-right:env(safe-area-inset-right,0px)}
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none}
+#viewport{position:fixed;top:0;bottom:auto;left:50%;transform:translateX(-50%);width:100%;max-width:600px;height:100vh;height:100dvh;border-radius:0;overflow:hidden;background:#244b52}
+#app{width:100%;height:100%;transform:none!important;display:grid;grid-template-rows:var(--scene-top,126px) minmax(0,1fr) var(--dock-height,170px);--scene-top:126px;--dock-height:170px;--scene-height:calc(100% - 296px)}
+#ocean{top:var(--scene-top);left:0;right:0;bottom:auto;width:100%;height:var(--scene-height)}
+.frame-line{display:none}.desktop-note{display:none}.screen{min-width:0;min-height:0}
+#game-ui,#exchange-ui{display:grid;grid-template-rows:64px 62px minmax(0,1fr) var(--dock-height);padding-top:var(--safe-top);background:linear-gradient(#244b52 0 calc(126px + var(--safe-top)),transparent calc(126px + var(--safe-top)));height:100%;overflow:hidden}
+.game-header,.ex-header{grid-row:1;margin:0;padding:9px 14px 3px;min-width:0}.game-header h1,.ex-header h1,.history-mode .game-header h1{font-size:20px}.wordmark.small{font-size:8px}.game-header .icon-button{width:40px;height:40px}
+.hud,.ex-hud{grid-row:2;margin:0;padding:3px 12px 7px;gap:6px}.hud-stat,.ex-hud>div{height:52px;padding:7px 9px;border-radius:11px;min-width:0}.hud-stat strong{font-size:20px}.hud-label,.ex-hud small{font-size:10px;margin-bottom:3px}.ex-hud b{font-size:16px}.health-stat{min-width:95px}.health-pips{margin-top:5px}.health-pips i{width:19px;height:12px}
+.controls-panel,.ex-controls{position:relative;grid-row:4;inset:auto;height:var(--dock-height);padding:0 max(10px,var(--safe-right)) var(--safe-bottom) max(10px,var(--safe-left));border-radius:22px 22px 0 0;background:#e6f8f6!important;border-top:2px solid #bcdedb!important;pointer-events:auto;overflow:hidden}
+.control-label{top:9px;left:14px;right:14px;font-size:10px;letter-spacing:0}.ex-controls>p{position:absolute;top:8px;left:8px;right:8px;margin:0;font-size:10px;line-height:15px}
+.dpad,.ex-pad{position:absolute;left:12px;top:30px;width:132px;height:132px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);filter:drop-shadow(0 2px 0 #9dd4d6);touch-action:none}
+.dpad:before,.dpad:after{display:none}.dir,.ex-pad button{min-width:44px;min-height:44px;padding:0;background:#f9ffff;color:#258aa5;border:2px solid #7ec2ca;border-radius:12px;font-size:22px;box-shadow:none;touch-action:none;display:grid;place-items:center}.dir.up,.ex-pad button:nth-child(1){grid-area:1/2;border-bottom:0;border-radius:13px 13px 0 0}.dir.left,.ex-pad button:nth-child(2){grid-area:2/1;border-right:0;border-radius:13px 0 0 13px}.dir.right,.ex-pad button:nth-child(4){grid-area:2/3;border-left:0;border-radius:0 13px 13px 0}.dir.down,.ex-pad button:nth-child(5){grid-area:3/2;border-top:0;border-radius:0 0 13px 13px}.pad-center,.ex-pad>span{grid-area:2/2;background:#f9ffff;display:grid;place-items:center;color:#8cbbc4}.ex-pad svg{width:23px;height:23px;fill:#258aa5;stroke:#237b98;stroke-width:1.2}.ex-pad>span:after{content:'';width:21px;height:21px;border:2px solid #b6dcdf;background:#e3f2f2;border-radius:50%}.dir.pressed,.ex-pad .held{background:#b6e7e8}
+/* Functional actions share shape; consumable items share their own shape. */
+.museum-action,.interact-action,#ex-next,#ex-previous{position:absolute;width:calc((100% - 169px)/2);height:62px;min-height:44px;top:33px;right:12px;left:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px;border-radius:14px;background:#ffcf5e;border:2px solid #fff1bd;outline:1px solid #dfb154;box-shadow:0 3px 0 #d0ad63;color:#68511e;font-size:12px;font-weight:800;white-space:nowrap;pointer-events:auto;touch-action:none}
+.jump-action,.interact-action{right:calc(18px + (100% - 169px)/2)}.museum-action span{font-size:23px}.museum-action b{font-size:12px;margin-top:1px}#ex-next{top:33px;left:154px;right:auto;width:calc((100% - 174px)/2);height:60px}#ex-previous{top:103px;left:154px;right:auto;width:calc((100% - 174px)/2);height:53px;font-size:11px}
+.flash-control,.museum-mode .flash-control,.history-mode .flash-control{position:absolute;top:110px;right:12px;width:calc(100% - 166px)}
+.flash-button,.museum-mode .flash-button,.history-mode .flash-button,.ex-items button{width:100%;height:46px;min-height:44px;border-radius:12px;background:#dceee4;border:2px solid #97beae;outline:none;box-shadow:0 3px 0 #8bab9e;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;color:#315f56;padding:3px 5px;font-size:12px;font-weight:800}
+.flash-button b,.museum-mode .flash-button b,.history-mode .flash-button b{font-size:12px;margin:0 26px 0 0}.flash-button svg,.flash-tip,.museum-mode .flash-tip,.history-mode .flash-tip{display:none}.flash-count,.museum-mode .flash-count,.history-mode .flash-count{right:7px;bottom:10px;border:0;padding:2px 5px;font-size:10px;background:#547b70;min-width:25px}.flash-count strong,.museum-mode .flash-count strong{font-size:12px}.flash-button b:before{display:none}.flash-control:only-child{top:60px}
+.ex-items{position:absolute;top:33px;right:12px;width:calc((100% - 174px)/2);gap:10px}.ex-items button{height:60px;display:flex;flex-direction:column;font-size:11px;gap:0}.ex-items small{font-size:10px;margin:2px 0 0}.ex-items .armed{background:#ffe5a4}#ex-previous:disabled,#ex-next:disabled{opacity:.42}
+.game-toast,.museum-mode .game-toast,.history-mode .game-toast{top:calc(var(--scene-top) + 8px);max-width:calc(100% - 20px);white-space:normal;text-align:center;z-index:9}.history-message{bottom:calc(var(--dock-height) + 7px);left:10px;right:10px;font-size:11px;padding:6px;pointer-events:none}.history-message:empty{display:none}
+#camera-status{position:absolute;top:calc(var(--scene-top) + 6px);left:50%;transform:translateX(-50%);z-index:8;pointer-events:none;padding:5px 10px;border-radius:12px;background:#edfaffec;color:#47697a;font-size:11px;white-space:nowrap}
+#ex-walk-note{top:calc(var(--scene-top) + 10px);left:16px;right:16px;font-size:12px;padding:9px}
+.ex-panel{position:absolute;top:calc(var(--scene-top) + 8px);bottom:calc(var(--dock-height) + 8px);left:10px;right:10px;padding:12px;max-height:none;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-padding:12px}
+.ex-dialogue{height:min(360px,calc(100% - var(--scene-top) - var(--dock-height) - 16px));bottom:auto;display:grid;grid-template-rows:auto minmax(0,1fr) 46px 44px;gap:6px;padding:12px}.ex-talk{grid-template-columns:82px minmax(0,1fr);gap:10px;margin:8px 0;min-height:0}.ex-talk img{width:82px;height:120px;max-height:100%}.ex-talk p{white-space:pre-line;font-size:13px;line-height:1.7;word-break:keep-all;margin-top:5px}.ex-talk b{font-size:11px}.ex-dialogue .primary-button{height:44px;margin:0}.ex-next-reminder{height:44px;display:grid;place-items:center;margin:0;font-size:11px}.ex-close-dialogue{height:44px;background:#e7f1eb;border:1px solid #b9d2c5;border-radius:11px;font-size:12px;color:#456c62}
+.ex-news b{font-size:13px}.ex-news ol{font-size:12px;line-height:1.65;padding:9px 8px 9px 24px}.ex-framing{font-size:10px}.ex-tip{font-size:12px}.ex-stocks button{min-height:52px;height:auto;padding:6px}.ex-stocks b{font-size:12px}.ex-stocks small{font-size:10px}.ex-stocks strong{font-size:15px}.amount-tools{grid-template-columns:1fr 1fr 1fr;gap:3px}.amount-tools button{height:44px;font-size:12px;padding:0}.ex-risk,.ex-error,.ex-shares{font-size:12px}.amount-box>span,.cash-box>span{font-size:11px}.ex-panel .primary-button,.ex-panel .secondary-button{min-height:44px}.ex-order{gap:8px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.ex-fiction{font-size:10px}.ex-results td{white-space:normal}.ex-results table{font-size:12px}.ex-results td small{font-size:10px}
+#ex-year-overlay{inset:var(--scene-top) 0 var(--dock-height)}#ex-bankrupt-confirm{position:absolute;inset:0;z-index:50;background:#173b4870;display:flex;align-items:center;padding:20px;pointer-events:auto}#ex-bankrupt-confirm .modal{max-height:100%}#ex-bankrupt-confirm p{font-size:13px;line-height:1.7;margin:15px 0}#ex-bankrupt-confirm button{height:48px;margin-top:10px}.ex-controls.confirming{pointer-events:none}
+/* Reading screens may scroll; no gameplay dock is inside these scroll boxes. */
+#select-screen,.stage-screen{padding:calc(22px + var(--safe-top)) max(22px,var(--safe-right)) calc(25px + var(--safe-bottom)) max(22px,var(--safe-left));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.select-footer,.stage-placeholder{position:static;margin-top:22px;font-size:10px}.character-grid{gap:10px}.character-card{height:165px}.main-title{font-size:clamp(25px,7.5vw,32px)}#stage-title{font-size:clamp(26px,7.5vw,32px)}.gallery-decoration{height:230px;margin:16px 0}#stage-art{width:min(260px,100%);height:auto;aspect-ratio:26/23;margin:auto}.stage-pilot{margin-top:24px;padding-top:18px}.stage-pilot img{width:72px;height:90px}.stage-placeholder{line-height:1.7}.select-footer{padding-bottom:5px}.collection-link{min-height:44px}
+.overlay,#app.keyboard-open .overlay{padding:calc(12px + var(--safe-top)) 12px calc(12px + var(--safe-bottom));height:100%;overflow:hidden}.modal,#app.keyboard-open .modal{max-height:100%;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;width:min(100%,420px);margin:auto;padding:20px 16px}.modal button{min-height:44px}.motion-modal{width:min(300px,100%)}.puzzle-grid{width:min(300px,100%);height:auto;aspect-ratio:1}.large-clue{max-width:100%;aspect-ratio:1}.result-modal .clue-card{height:clamp(60px,19vw,85px)}.answer-row input{font-size:16px}.result-modal .combine-button{height:44px}.return-actions{gap:7px}.return-actions button{font-size:11px}.result-stats{margin:10px 0}.result-modal .retry-note{margin:12px 0}.countdown{bottom:var(--dock-height);top:var(--scene-top);height:auto}.countdown strong{font-size:90px}
+#failure-overlay{padding:12px 12px calc(12px + var(--safe-bottom));max-height:100%}.failure-modal{margin:0 auto}.storage-warning{padding-bottom:calc(7px + var(--safe-bottom))}
+@media(min-width:601px){#viewport{border-radius:20px}.desktop-note{display:none}}
+@media(max-height:620px){.character-card{height:155px}.character-card img{height:110px}.select-header{margin-bottom:12px}.gallery-decoration{height:180px}.gallery-decoration #stage-art{height:180px;width:auto}.stage-pilot{margin-top:18px}.ex-dialogue{grid-template-rows:auto minmax(0,1fr) 44px 44px}.ex-talk{margin:4px 0}.motion-stage,.motion-stage canvas{width:180px;height:180px}.motion-stage{margin:auto}.modal h2{font-size:20px}}
+
+.ex-talk>div{min-height:0;overflow:auto;overscroll-behavior:contain}.ex-talk img{align-self:center}.ex-talk p{margin-bottom:5px}
+
+.museum-colors{grid-template-columns:repeat(5,9px);gap:3px;margin-top:3px}.museum-colors i{width:9px;height:9px}
+
+/* Compact controls; all stages use the same button shapes and ordering. */
+#game-ui,#exchange-ui{grid-template-rows:32px 50px minmax(0,1fr) 0;background:linear-gradient(#244b52 0 calc(82px + var(--safe-top)),transparent calc(82px + var(--safe-top)))}
+.game-header,.ex-header{padding:2px 10px;align-items:center}.wordmark.small{display:none}.game-header h1,.ex-header h1,.history-mode .game-header h1{font-size:15px;margin:0}.game-header .icon-button{width:28px;height:28px}.ex-home{padding:5px;font-size:10px}
+.hud,.ex-hud{padding:1px 8px 5px;gap:5px}.hud-stat,.ex-hud>div{height:44px;padding:4px 8px}.hud-stat strong{font-size:18px}.hud-label,.ex-hud small{font-size:9px;margin-bottom:1px}.health-pips{margin-top:3px}.museum-colors{grid-template-columns:repeat(9,6px);gap:2px}.museum-colors i{width:6px;height:6px}
+.controls-panel,.ex-controls{position:absolute;grid-row:auto;left:0;right:0;bottom:0;height:var(--dock-height);border:0!important;border-radius:0;background:transparent!important;overflow:visible;pointer-events:none;padding:0}
+.control-label,.ex-controls>p{display:none}.dpad,.ex-pad{left:4px;top:0;pointer-events:auto}.dir,.ex-pad button,.pad-center,.ex-pad>span{background:#efffffaa}.dir:active,.ex-pad button:active{background:#efffff}
+.museum-action,.interact-action,#ex-next,#ex-previous{top:44px;left:auto;right:56px;width:44px;height:44px;min-height:44px;padding:0;border-radius:9px;font-size:12px;opacity:.9;box-shadow:0 2px 2px #17343b66}
+.jump-action,.interact-action{right:104px}.museum-action span{display:none}.museum-action b{font-size:12px;margin:0}.shoot-action span{display:block;font-size:25px}.shoot-action b{display:none}
+.flash-control,.museum-mode .flash-control,.history-mode .flash-control{top:44px;right:8px;width:44px;pointer-events:auto}
+.flash-button,.museum-mode .flash-button,.history-mode .flash-button,.ex-items button{height:44px;width:44px;min-height:44px;border-radius:50%;padding:0;background:#dceee4db;box-shadow:0 2px 2px #17343b66;position:relative}
+.flash-button b,.museum-mode .flash-button b,.history-mode .flash-button b{display:none}.flash-button svg{display:block;width:29px;height:29px;fill:none;stroke:#315f56;stroke-width:2}
+.flash-count,.museum-mode .flash-count,.history-mode .flash-count{right:-3px;bottom:-3px;min-width:17px;padding:1px 3px;font-size:0}.flash-count strong{font-size:10px!important}
+#ex-next{left:auto;right:146px;height:44px;width:44px;top:44px}#ex-previous{left:auto;right:100px;height:44px;width:44px;top:44px}.ex-items{top:44px;right:8px;width:90px;display:flex;flex-direction:row;gap:2px}.ex-items button{flex-shrink:0;font-size:23px;pointer-events:auto}.ex-items small{position:absolute;right:-1px;bottom:-2px;background:#456e61;color:white;border-radius:9px;padding:0 4px;font-size:10px}
+@media(max-width:340px){#ex-next{right:142px}#ex-previous{right:96px}.ex-items{right:4px}}
+.history-message{bottom:calc(var(--dock-height) + 3px)}.control-legend{font-size:12px;line-height:1.7;padding:10px;background:#edf5ef;border-radius:10px}
+
+@media(max-width:340px){.dpad,.ex-pad{left:0}}
+
+/* v13: reserve a compact dock below the playable canvas. */
+#viewport{max-width:none}
+#game-ui,#exchange-ui{grid-template-rows:28px 42px minmax(0,1fr) var(--dock-height);background:linear-gradient(#244b52 0 calc(70px + var(--safe-top)),transparent calc(70px + var(--safe-top)))}
+.game-header,.ex-header{padding:1px 9px}.game-header h1,.ex-header h1,.history-mode .game-header h1{font-size:14px}
+.hud,.ex-hud{padding:0 8px 4px}.hud-stat,.ex-hud>div{height:38px;padding:3px 7px;border-radius:9px}.hud-stat strong,.ex-hud b{font-size:16px}.hud-label,.ex-hud small{font-size:8px}.health-pips{margin-top:2px}.health-pips i{height:10px}
+.controls-panel,.ex-controls{position:absolute;bottom:0;height:var(--dock-height);padding-bottom:var(--safe-bottom);background:#e6f4ee!important;border-top:1px solid #bad6ce!important;border-radius:0;overflow:hidden;pointer-events:auto}
+.dpad,.ex-pad{top:3px}.dir,.ex-pad button,.pad-center,.ex-pad>span{background:#f7fffb}
+.museum-action,.interact-action,#ex-next,#ex-previous,.flash-control,.museum-mode .flash-control,.history-mode .flash-control,.ex-items{top:47px}
+.flash-button,.museum-mode .flash-button,.history-mode .flash-button,.ex-items button{background:#dceee4}
+.museum-action,.interact-action,#ex-next,#ex-previous{opacity:1}
+.ex-dialogue{height:min(400px,calc(100% - var(--scene-top) - var(--dock-height) - 16px));grid-template-rows:20px minmax(0,1fr) 44px 44px}
+.ex-talk{grid-template-columns:38% minmax(0,1fr);gap:10px;margin:4px 0}
+.ex-talk img{width:100%;height:auto;max-height:230px;object-fit:contain;align-self:center}
+.ex-talk>div{overflow:auto;min-height:0}.ex-talk p{white-space:normal;font-size:13px;line-height:1.65;word-break:keep-all}
+.ex-talk br{display:block}.ex-talk b{font-size:11px}
+@media(min-width:800px){#viewport{max-width:600px}}
+
+/* v14: shared drawn controls and a consistent pair of return actions. */
+.game-icon{width:28px;height:28px;display:block;flex:none}
+.instruction-icon .game-icon{width:28px;height:28px}.instruction-word{font-size:12px}
+.flash-button .game-icon,.museum-mode .flash-button .game-icon,.history-mode .flash-button .game-icon{display:block;fill:none;stroke:currentColor;width:28px;height:28px;margin:0}
+.museum-action .game-icon{display:block;width:27px;height:27px;margin:auto}
+.return-actions .return-button,.failure-actions .return-button,.replay-modal .return-button{display:flex;align-items:center;justify-content:center;min-height:48px;width:100%;padding:8px 4px;border:1px solid #a7c7ba;border-radius:12px;background:#e5f1e9;color:#345b50;font-family:inherit;font-size:12px;font-weight:700;box-shadow:none;margin:0;line-height:1.4;transform:none}
+.return-button:active{background:#c9e2d4}.return-button:focus-visible{outline:3px solid #7baea4;outline-offset:2px}
+#home-confirm-overlay{z-index:100}.home-confirm-modal h2{font-size:20px;line-height:1.5;text-align:center}.home-confirm-modal .return-actions{margin-top:24px}
+
+/* v15: the same centered sound/pause controls in every stage. */
+.game-header .icon-button,.ex-header .icon-button{display:grid;place-items:center;width:28px;height:28px;padding:0;background:#137e9d55;border:1px solid #b9edf35c;color:#f2ffff;pointer-events:auto}
+.icon-button [data-game-icon]{display:grid;place-items:center;width:18px;height:18px}
+.icon-button .game-icon{width:18px;height:18px;margin:0}
+
+/* v16: full playfield, independent UI, one intentional surrounding color. */
+:root{--shell-color:#244b52}
+html,body,#viewport,#app{background:var(--shell-color)}
+#viewport{max-width:none;border-radius:0;box-shadow:none}
+#game-viewport{position:absolute;top:var(--scene-top);bottom:var(--dock-height);left:0;right:0;overflow:hidden;background:var(--shell-color);overscroll-behavior:contain}
+#game-surface{width:100%;min-height:100%;display:grid;place-items:center}
+#game-viewport #ocean{position:relative;inset:auto;flex:none;display:block;max-width:100%;touch-action:pan-y}
+.game-scrollable #game-viewport{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#80a5a2 var(--shell-color)}
+#game-ui,#exchange-ui{background:linear-gradient(var(--shell-color) 0 calc(70px + var(--safe-top)),transparent calc(70px + var(--safe-top)))}
+.controls-panel,.ex-controls{background:var(--shell-color)!important;border:0!important;box-shadow:none}
+#app[data-screen=title] #game-viewport,#app[data-screen=select] #game-viewport,#app[data-screen=naming] #game-viewport,#app[data-screen=stage] #game-viewport{visibility:hidden}
+/* v17: HUD, scene, controls and dialogs share one 390-unit column. */
+#app.aligned-layout{position:absolute;top:0;transform:scale(var(--ui-scale))!important;transform-origin:top left}
+.aligned-layout #game-viewport,.aligned-layout #game-ui,.aligned-layout #exchange-ui{left:0;right:0;width:390px}
+.aligned-layout .overlay{padding-left:0;padding-right:0}
+.aligned-layout .modal{width:390px;max-width:100%;margin-left:0;margin-right:0}
+.aligned-layout .ex-panel{left:0;right:0;width:390px;word-break:keep-all;overflow-wrap:break-word}
+.aligned-layout .ex-dialogue{height:min(400px,calc(100% - var(--scene-top) - var(--dock-height) - 16px))}
+.aligned-layout .modal-lead,.aligned-layout .instruction-list,.aligned-layout .ex-talk p{word-break:keep-all;overflow-wrap:break-word}
+#app[data-screen=ending] .controls-panel,#app[data-screen=ending] .ex-controls{pointer-events:none}
+#app[data-screen=ending] #exchange-ui{pointer-events:none}
+#app[data-screen=ending] #ex-panel,#app[data-screen=ending] #ex-walk-note{visibility:hidden}
+/* A native scrollbar must not squeeze the fixed-ratio scene inside its column. */
+.aligned-layout #game-viewport{scrollbar-width:none}
+.aligned-layout #game-viewport::-webkit-scrollbar{display:none;width:0;height:0}
+.aligned-layout #game-viewport #ocean{max-width:none}
+/* v18: visible box/button edges align with the actual scene edges. */
+.aligned-layout .hud,.aligned-layout .ex-hud{margin-left:0;margin-right:0;padding-left:0;padding-right:0}
+.aligned-layout .dpad,.aligned-layout .ex-pad{left:0}
+.aligned-layout .flash-control,.aligned-layout.museum-mode .flash-control,.aligned-layout.history-mode .flash-control{right:0}
+.aligned-layout .flash-count,.aligned-layout .ex-items small{right:0}
+.aligned-layout .shoot-action,.aligned-layout .hammer-action{right:48px}
+.aligned-layout .jump-action,.aligned-layout .interact-action{right:96px}
+.aligned-layout .ex-items{right:0;width:92px;gap:4px}
+.aligned-layout #ex-next{right:144px}.aligned-layout #ex-previous{right:96px}
+/* Failure covers only the scene; the HUD and dock stay visible and unchanged. */
+#failure-overlay{top:var(--scene-top);bottom:var(--dock-height);left:0;right:0;height:auto;padding:0;align-items:center;justify-content:center}
+#failure-overlay .failure-modal{margin:0;width:100%;max-height:100%;overflow:auto}
+#app[data-screen=failed] #ex-panel,#app[data-screen=failed] #ex-walk-note,
+#app[data-screen=stopped] #ex-panel,#app[data-screen=stopped] #ex-walk-note,
+#app[data-screen=result] #ex-panel,#app[data-screen=result] #ex-walk-note,
+#app[data-screen=feedback] #ex-panel,#app[data-screen=feedback] #ex-walk-note,
+#app[data-screen=briefing] #ex-panel,#app[data-screen=briefing] #ex-walk-note{visibility:hidden}
+#app:not([data-screen=exchange]) #ex-year-overlay{display:none}
+#app.keyboard-open .result-content{scroll-padding:12px}
+#app.aligned-layout.keyboard-open .overlay{padding-left:0;padding-right:0}
+#app.aligned-layout.keyboard-open .modal{width:390px;margin-left:0;margin-right:0}
+.result-modal{scrollbar-width:none}.result-modal::-webkit-scrollbar{display:none}
+#app .result-modal,#app.keyboard-open .result-modal{scrollbar-width:none}
+
+/* Stage five uses the same fixed-ratio shell, shared buttons and collection. */
+.temple-mode .piece-art,.temple-mode .puzzle-grid{background-image:url('./assets/temple/owl.webp')}
+.temple-mode .dir.temple-brace{background:#f6dc87!important;color:#234b52!important;box-shadow:0 0 0 3px #ffeab0,0 0 17px #e4bc5f;animation:temple-brace-pulse 1.3s infinite alternate}
+@keyframes temple-brace-pulse{to{box-shadow:0 0 0 1px #ffeab0,0 0 6px #e4bc5f}}
+@media(prefers-reduced-motion:reduce){.temple-mode .dir.temple-brace{animation:none}}
+
+/* v20: reserve separate label, number and progress-bar rows in the compact HUD. */
+.hud-stat.timer{display:grid;grid-template-rows:9px 16px 3px;row-gap:2px;padding:2px 7px 2px;align-content:center}
+.hud-stat.timer .hud-label{margin:0;line-height:9px}
+.hud-stat.timer strong{display:block;font-size:15px;line-height:16px;letter-spacing:-.4px}
+.hud-stat.timer .time-track{position:static;height:3px;min-height:3px;width:100%;margin:0;flex:none}
+.temple-mode .flash-button.recovery-ready{background:#ffedb0;border-color:#e1b451;box-shadow:0 0 0 2px #ffe197,0 0 14px #f9d870}
+
+/* v21: gameplay guidance belongs above the controls, never above the scene. */
+.game-toast,.museum-mode .game-toast,.history-mode .game-toast,#camera-status,#ex-walk-note{
+ top:auto;bottom:calc(var(--dock-height) + 8px);pointer-events:none;
+ word-break:keep-all;overflow-wrap:break-word;
+}
+#ex-walk-note{left:16px;right:16px;margin:0}
+.game-toast{transform:translate(-50%,7px)}
+.game-toast.show{transform:translate(-50%,0)}
+.history-message{bottom:calc(var(--dock-height) + 8px)}
+#game-ui:has(.history-message:not([hidden])) .game-toast,
+#game-ui:has(#camera-status:not([hidden])) .game-toast{bottom:calc(var(--dock-height) + 47px)}
+
+.temple-mode .dir.temple-brace.pressed{background:#b7ded0!important;border-color:#4c9c8c;box-shadow:0 0 0 2px #d9f5e6;animation:none}
+
+/* The replay map uses the same logical column and modal type as the collection. */
+#replay-overlay{z-index:85}.replay-modal{padding:24px;max-height:calc(100% - 24px);overflow-y:auto}.replay-modal h2{font-size:22px;margin:7px 0 19px}.replay-route{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:12px}.replay-route li{position:relative;min-height:55px}.replay-route li:not(:last-child):after{content:'';position:absolute;left:26px;top:49px;width:2px;height:26px;background:#9bc7bf;z-index:0}.replay-place{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:5px 11px 5px 4px;border:1px solid #b9d8cf;border-radius:13px;background:#f8fcf8;color:#285750}.replay-place:active{background:#e4f4e8}.replay-node{position:relative;z-index:1;display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:50%;border:1px solid #9dc7bd;background:#e6f1e7;color:#39786a}.replay-node svg{width:31px;height:31px}.replay-place strong{font-size:15px}.replay-arrow{margin-left:auto;font-size:20px;color:#53917f}.replay-place.is-current{border-color:#6ba392;background:#e8f3e8}.replay-current-label{margin-left:auto;font-size:10px;color:#397765;white-space:nowrap}.replay-place.is-current .replay-arrow{margin-left:0}#replay-cancel{width:100%;height:46px}.return-actions .return-button,.failure-actions .return-button{white-space:nowrap;font-size:12px}
+
+/* Help pauses the same run; its controls occupy the existing header only. */
+#app[data-screen=help] #ex-panel,#app[data-screen=help] #ex-walk-note{visibility:hidden}
+.replay-modal h2{margin-bottom:15px}
+.home-confirm-modal p{font-size:13px;line-height:1.65;word-break:keep-all}
+
+/* The laboratory shares the existing column, control sizes and puzzle UI. */
+#robot-actions{display:none}.robot-mode #robot-actions{display:block}
+.aligned-layout .robot-work{right:48px}
+.robot-mode .piece-art,.robot-mode .puzzle-grid{background-image:url('./assets/robot/penguin.webp')}
+.robot-mode #history-era{font-size:12px;line-height:17px;white-space:nowrap}
+.robot-mode .history-message{font-size:11px;padding:6px 10px;white-space:normal;word-break:keep-all}
+
+#space-actions{display:none}.space-mode #space-actions{display:block}.aligned-layout .space-brake{right:48px}
+.space-mode .piece-art,.space-mode .puzzle-grid{background-image:url('./assets/space/rabbit.webp')}
+.space-mode #history-era{font-size:12px;line-height:17px;white-space:nowrap}.space-mode .history-message{font-size:11px;word-break:keep-all}
+.stage-screen[data-place="writer"]{background:linear-gradient(135deg,#e9f0e7,#fbf2dc)}
+
+/* Writer uses the same independent dock and fixed scene column. */
+#writer-actions{display:none}.writer-mode #writer-actions{display:block}
+.aligned-layout .writer-jump{right:96px}.aligned-layout .writer-act{right:48px}
+.writer-mode .piece-art,.writer-mode .puzzle-grid{background-image:url('./assets/writer/fox.webp')}
+.writer-mode #history-era{font-size:13px;line-height:17px;white-space:nowrap}
+.writer-mode .history-message{font-size:11px;word-break:keep-all}
+.writer-mode .flash-button.recovery-ready{background:#ffedb0;border-color:#e1b451;box-shadow:0 0 0 2px #ffe197}
+
+/* Only the writer stories put guidance above the action; keep the floor clear. */
+.writer-mode .history-message{top:calc(var(--scene-top) + 53px);bottom:auto;left:12px;right:12px;font-size:11px;padding:6px 8px;line-height:1.45;box-shadow:none}
+
+/* The language lab uses the same game column, touch dock and collection. */
+#language-actions{display:none}.language-mode #language-actions{display:block}
+.aligned-layout .language-jump{right:96px}.aligned-layout .language-act{right:48px}
+.language-mode .piece-art,.language-mode .puzzle-grid{background-image:url('./assets/language/zebra.webp')}
+.language-mode #history-era{font-size:13px;line-height:17px;white-space:nowrap}
+.language-mode .history-message{font-size:10px;padding:5px 8px;line-height:1.4;word-break:keep-all}
+.stage-screen[data-place="language"]{background:radial-gradient(ellipse at 70% 20%,#fff5cc 0,transparent 48%),linear-gradient(150deg,#d9eee4,#faf5e6 68%,#c9e4da)}
+
+/* Newspaper: existing fixed-ratio shell, shared work/item buttons and collection. */
+#newspaper-actions{display:none}.newspaper-mode #newspaper-actions{display:block}
+.aligned-layout .newspaper-act{right:48px}
+.newspaper-mode .piece-art,.newspaper-mode .puzzle-grid{background-image:url('./assets/newspaper/giraffe.webp')}
+.newspaper-mode #history-era{font-size:12px;line-height:17px;white-space:nowrap}
+.newspaper-mode .history-message{font-size:10px;padding:5px 8px;line-height:1.4;word-break:keep-all}
+.stage-screen[data-place="newspaper"]{background:radial-gradient(ellipse at 70% 20%,#fff5cc 0,transparent 48%),linear-gradient(150deg,#dbeae1,#f4ebd3 68%,#bfd7c9)}
+
+/* Dream uses the existing portrait game column, separate control dock and puzzle. */
+#dream-actions{display:none}.dream-mode #dream-actions{display:block}.aligned-layout .dream-act{right:48px}.aligned-layout .dream-jump{right:96px}
+.dream-mode .piece-art,.dream-mode .puzzle-grid{background-image:url('./assets/dream/chameleon.webp')}
+.dream-mode #history-era{font-size:13px;line-height:17px;white-space:nowrap}
+.dream-mode .history-message{font-size:10px;padding:5px 8px;line-height:1.4;word-break:keep-all}
+.stage-screen[data-place="dream"]{background:radial-gradient(ellipse at 70% 20%,#fff0cb 0,transparent 48%),linear-gradient(150deg,#d2e3e1,#e9e2f3 68%,#bdcedb)}
+
+/* Literature uses the same fixed column, dock, icons and collection as all stages. */
+#literature-actions{display:none}.literature-mode #literature-actions{display:block}.aligned-layout .literature-act{right:48px}
+.literature-act.action-ready{border-color:#c5a66b;background:#fff0c5;box-shadow:0 0 0 2px #dfbf7450}
+.literature-mode .piece-art,.literature-mode .puzzle-grid{background-image:url('./assets/literature/panda.webp')}
+.literature-mode #history-era{font-size:13px;line-height:17px;white-space:nowrap}
+.literature-mode .history-message{font-size:10px;padding:5px 7px;line-height:1.4;word-break:keep-all;left:10px;right:10px}
+.stage-screen[data-place="literature"]{background:radial-gradient(ellipse at 70% 15%,#fff5d6 0,transparent 48%),linear-gradient(145deg,#f1e4c8,#d4dfd3 64%,#aabfb2)}
+
+/* One clear control cue for each fishing phase; no control layout changes. */
+.literature-mode .dir.fishing-brace{background:#ffdc89;border-color:#b48739;box-shadow:inset 0 0 0 3px #fff2bf;animation:fishing-cue .65s ease-in-out infinite alternate}
+.literature-mode .literature-act.fishing-reel{background:#b7e7c5;border-color:#4d9169;box-shadow:0 0 0 3px #7ac49865;animation:fishing-cue .65s ease-in-out infinite alternate}
+@keyframes fishing-cue{to{filter:brightness(1.13)}}
+@media(prefers-reduced-motion:reduce){.literature-mode .fishing-brace,.literature-mode .fishing-reel{animation:none}}
+
+/* Zoo shares the single-column HUD, D-pad, square actions and round item. */
+#zoo-actions{display:none}.zoo-mode #zoo-actions{display:block}.aligned-layout .zoo-act{right:48px}
+.zoo-act.action-ready{border-color:#4c9678;background:#d9efbc;box-shadow:0 0 0 2px #8ab66b50}
+.zoo-mode .piece-art,.zoo-mode .puzzle-grid{background-image:url('./assets/zoo/clue.webp')}
+.zoo-mode #history-era{font-size:13px;line-height:17px;white-space:nowrap}
+.zoo-mode .history-message{font-size:10px;padding:5px 7px;line-height:1.4;word-break:keep-all;left:10px;right:10px}
+.stage-screen[data-place="zoo"]{background:radial-gradient(ellipse at 72% 18%,#fff3cc 0,transparent 50%),linear-gradient(145deg,#d9ead0,#f3efdb 65%,#b9d9cf)}
+#stage-screen[data-place=zoo]{--chapter-paper:#edf0dc;--chapter-ink:#487864;--chapter-wash:#d2dfb4;--chapter-line:#9bb68e}
+
+/* Three Korean syllables fit the same compact action button. */
+.aligned-layout #writer-act.three-letters{font-size:13px;letter-spacing:-.5px;white-space:nowrap;padding-inline:1px}
+
+/* AI lab shares the existing fixed-width stage, HUD and compact control dock. */
+#ai-actions{display:none}.ai-mode #ai-actions{display:block}.aligned-layout .ai-act{right:48px}
+.ai-act.action-ready{border-color:#6eabaa;background:#dbefdc}
+.ai-mode .piece-art,.ai-mode .puzzle-grid{background-image:url('./assets/ai/chameleon.webp')}
+.stage-screen[data-place="ai"]{background:radial-gradient(ellipse at 65% 16%,#fff5d3 0,transparent 48%),linear-gradient(145deg,#d4ede7,#e9ead5 60%,#9bbdb8)}
+#stage-screen[data-place=ai]{--chapter-paper:#e4efe8;--chapter-ink:#31696d;--chapter-wash:#b9d7ce;--chapter-line:#81aeb0}
+
+.ai-mode #ai-act.action-ready{background:#ffe392;border:3px solid #947432;box-shadow:0 0 0 2px #ffeb9a}
+
+.aligned-layout .ai-original{right:96px}#ai-original[hidden]{display:none}
+
+#stage-screen[data-place=ai]{--chapter-paper:#dce9ec;--chapter-ink:#274d69;--chapter-wash:#a6cecf;--chapter-line:#729fae}.ai-mode #ocean{background:#213952}.stage-screen[data-place=ai]{background:radial-gradient(ellipse at 60% 20%,#e1f8f1 0,transparent 50%),linear-gradient(145deg,#cbdae8,#d3eeeb 57%,#a9bdd5)}
+
+.ai-mode #game-surface{position:relative}
+#ai-tunes{display:none;position:absolute;left:50%;top:50%;width:390px;height:500px;transform:translate(-50%,-50%);pointer-events:none}
+#app.ai-mode[data-screen=playing] #ai-tunes:not([hidden]){display:block}
+#ai-tunes button{position:absolute;width:91px;height:40px;pointer-events:auto;opacity:0;border:0;background:#acece0;color:#214f58;cursor:pointer;touch-action:manipulation}
+#ai-tunes button:focus-visible{opacity:1;outline:2px solid #ffdb88;border-radius:6px}
+#ai-tunes [data-ch="0"]{top:311px}#ai-tunes [data-ch="1"]{top:351px}
+#ai-tunes [data-level="0"]{left:68px}#ai-tunes [data-level="1"]{left:160px}#ai-tunes [data-level="2"]{left:252px}
+
+/* Full miniature of the real room, manually paged complete examples. */
+#ai-tutorial-overlay{background:#102a3bdc;align-items:center;justify-content:center}
+#ai-tutorial-overlay[hidden]{display:none}
+.tutorial-modal{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:5px;width:min(100%,376px);height:min(100%,680px);max-height:100%;padding:13px 12px 12px;border:1px solid #80b7bc;border-radius:16px;background:#eff6ef;color:#254952;box-shadow:0 9px 30px #0d233b5c;overflow:hidden}
+.tutorial-modal header{display:grid;grid-template-columns:43px 1fr 43px;align-items:center;padding:0 3px}
+.tutorial-modal h2{grid-column:2;margin:0;font-size:19px;white-space:nowrap;text-align:center}.tutorial-modal header span{grid-column:3;text-align:right;color:#386b74;font-size:13px;font-weight:750}
+.tutorial-modal .how-to-play-title{font-family:"PTB Tutorial Bold",Arial,sans-serif;font-synthesis:weight;font-weight:900;color:#102f3a;letter-spacing:.3px;text-align:center;line-height:1.4}
+.briefing .brief-actions button{font-family:"PTB Tutorial Bold","Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-synthesis:weight}
+.tutorial-picture{min-height:0;min-width:0;display:flex;align-items:center;justify-content:center;border-radius:8px;overflow:hidden;background:#eff6ef}
+.tutorial-picture canvas{display:block;height:100%;width:100%;object-fit:contain}
+.tutorial-copy{height:102px;min-height:102px;max-height:102px;box-sizing:border-box;display:grid;align-content:center;padding:1px 3px;line-height:1.45}.tutorial-copy b{font-size:14px;color:#28646c}.tutorial-copy p{font-size:13px;margin:4px 0 0;min-height:18px;word-break:keep-all}
+.tutorial-modal footer{display:grid;grid-template-columns:1fr;gap:8px}
+.tutorial-modal footer button{margin:0;min-height:44px;height:44px;padding:0 8px;font-size:15px}
+
+/* A little breathing room between each button explanation, including resumed help. */
+.instruction-list>div{padding-block:8px;min-height:61px}
+.instruction-list>div+div{margin-top:3px}
+.instruction-list small{line-height:1.55;margin-top:5px}
+.tutorial-picture{position:relative}
+.tutorial-arrow{position:absolute;z-index:6;top:50%;transform:translateY(-50%);width:40px;height:56px;display:grid;place-items:center;padding:0;border:1px solid #e7bd58;border-radius:12px;background:#ffcf5e;color:#68511e;box-shadow:0 3px 0 #d7af4e;cursor:pointer;touch-action:manipulation}
+.tutorial-arrow svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.tutorial-arrow:disabled{background:#e8eee5;color:#b0bdb3;border-color:#d7dfd4;box-shadow:none;cursor:default}
+.tutorial-arrow:focus-visible{outline:3px solid #287a83;outline-offset:1px}
+.tutorial-arrow:active:not(:disabled){transform:translateY(calc(-50% + 2px));box-shadow:0 1px 0 #d7af4e}
+#tutorial-previous{left:0}#tutorial-next{right:0}
+#tutorial-next.is-ready{animation:tutorial-next-blink 1.2s ease-in-out infinite}
+@keyframes tutorial-next-blink{0%,100%{opacity:1}50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){#tutorial-next.is-ready{animation:none;outline:3px solid #e7bd58;outline-offset:2px}}
+.tutorial-copy p{white-space:pre-line}
+#tutorial-finance{position:absolute;inset:0;z-index:3;pointer-events:none}
+#tutorial-finance .tutorial-trading-panel{position:absolute!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:378px!important;max-width:none!important;height:476px!important;min-height:0!important;max-height:476px!important;box-sizing:border-box;transform:translate(-50%,-50%);margin:0!important;padding:12px!important;transform-origin:center;overflow:hidden!important;font-size:11px;background:#f4faf4;border:1px solid #a5c7be;border-radius:13px;box-shadow:0 7px 20px #18372b40}
+#tutorial-finance .ex-news ol{font-size:10px;line-height:1.4;margin:5px 0;padding-left:18px}
+#tutorial-finance .ex-talk{min-height:195px;height:195px}
+#tutorial-finance .ex-talk p{font-size:13px}
+#tutorial-finance .ex-trading .ex-framing,#tutorial-finance .ex-fiction,#tutorial-finance .ex-error:empty{display:none}
+#tutorial-finance .ex-order{margin-top:7px;gap:7px}
+#tutorial-finance .ex-stocks button{min-height:42px;padding:4px 6px}
+#tutorial-finance .ex-stocks b{font-size:11px}
+#tutorial-finance .ex-stocks small{font-size:9px}
+#tutorial-finance .primary-button{min-height:34px;height:auto;font-size:12px;padding:7px;margin-top:7px}
+#tutorial-finance .ex-risk,#tutorial-finance .ex-shares,#tutorial-finance .ex-foot,#tutorial-finance .ex-result-reason{font-size:10px;line-height:1.4;margin:5px 0}
+#tutorial-finance h2{font-size:17px;margin:6px 0}
+#tutorial-finance .ex-tip{font-size:10px;line-height:1.45;padding:5px;margin:5px 0}
+#tutorial-finance details{display:none}
+#tutorial-finance table{font-size:11px}
+#tutorial-finance .ex-next-reminder{font-size:11px}
+#tutorial-finance .ex-capital-total{font-size:15px}
+
+/* v80: the demonstration includes the actual HUD and one compact control dock. */
+.tutorial-modal{padding:10px 8px;gap:5px;height:min(100%,740px)}
+.tutorial-modal footer{grid-template-columns:1fr}
+.tutorial-modal footer #tutorial-start{width:100%;height:46px;min-height:46px}
+.tutorial-device{position:absolute;left:50%;top:50%;width:390px;height:calc(70px + var(--demo-scene-height) + 138px);transform-origin:center;background:var(--shell-color);pointer-events:none;overflow:hidden}
+.tutorial-device [hidden],#tutorial-finance[hidden]{display:none!important}
+.tutorial-device .demo-header{position:absolute;top:0;left:0;width:390px;height:28px;padding:1px 5px;margin:0;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box}
+.tutorial-device .demo-header h1{font-size:14px;margin:0;color:#f5ffff;line-height:1.3}
+.tutorial-device .demo-header .wordmark{display:none}
+.tutorial-device .demo-header .header-actions{display:flex;gap:5px}
+.tutorial-device .demo-header .icon-button{width:26px;height:26px;min-height:0}
+.tutorial-device .demo-header .game-icon{width:18px;height:18px}
+.tutorial-device .demo-hud{position:absolute;top:28px;left:0;width:390px;height:42px;display:flex;gap:5px;margin:0;padding:0 0 4px;box-sizing:border-box}
+.tutorial-device .demo-hud>div{flex:1;min-width:0;height:38px;margin:0;padding:3px 7px;box-sizing:border-box;border-radius:9px}
+.tutorial-device .hud-stat strong{font-size:16px;line-height:18px}
+.tutorial-device .hud-label{font-size:8px;line-height:10px;margin:0}
+.tutorial-device .time-track{bottom:3px}
+.tutorial-device .demo-hud .health-pips{margin-top:2px}
+.tutorial-game{position:absolute;left:0;top:70px;width:390px;height:var(--demo-scene-height);overflow:hidden}
+.tutorial-picture .tutorial-game canvas{display:block;width:390px;height:var(--demo-scene-height);object-fit:fill}
+.tutorial-device .demo-dock{position:absolute;left:0;bottom:0;width:390px;height:138px;background:var(--shell-color);overflow:hidden}
+.tutorial-device .demo-dock .dpad,.tutorial-device .demo-dock .ex-pad{left:0;top:3px;width:132px;height:132px;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);margin:0}
+.tutorial-device .demo-dock .dir,.tutorial-device .ex-pad button{width:44px;height:44px;min-height:44px;font-size:22px}
+.tutorial-device .demo-actions{position:absolute;right:0;top:47px;display:flex;align-items:center;gap:4px}
+.tutorial-device .demo-actions>button{position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;width:44px!important;height:44px!important;min-height:44px;flex:0 0 44px;margin:0;padding:0;border:2px solid #fff1bd;border-radius:9px;background:#ffcf5e;color:#68511e;box-shadow:0 2px 2px #17343b66;display:grid;place-items:center;font-size:12px;font-weight:800;white-space:nowrap}
+.tutorial-device .demo-actions>button.flash-button,.tutorial-device .demo-actions>[data-demo-control=ex-special],.tutorial-device .demo-actions>[data-demo-control=ex-double]{border-color:#97beae;border-radius:50%;background:#dceee4;color:#315f56}
+.tutorial-device .demo-actions .game-icon{display:block;width:28px;height:28px;margin:0}
+.tutorial-device .demo-actions .flash-count{position:absolute;right:0;bottom:-3px;min-width:17px;margin:0}
+.tutorial-device .demo-actions [data-demo-control^=ex-] small{position:absolute;bottom:-3px;right:0;font-size:10px;border-radius:9px;padding:0 4px;color:white;background:#456e61}
+.tutorial-device .demo-actions button:disabled{opacity:.45}
+.tutorial-device button.demo-pressed{background:#8ee9d5!important;box-shadow:inset 0 3px 0 #278e8266,0 0 0 3px #ffdc76!important;outline:2px solid #fff5c5!important;outline-offset:1px;opacity:1!important;transform:translateY(2px)}
+.tutorial-device button.demo-pressed:after{content:'';position:absolute;right:3px;bottom:3px;width:15px;height:15px;box-sizing:border-box;border:2px solid white;border-radius:50%;background:#e6b56e99;box-shadow:0 0 0 3px #fff6c744;pointer-events:none}
+.tutorial-device .dir{position:relative}
+#tutorial-finance .demo-pressed{position:relative}
+
+/* Keep the same panel size through the finance result; compact spacing, not scale. */
+#tutorial-finance .ex-results table{margin:8px 0;font-size:11px;line-height:1.3}
+#tutorial-finance .ex-results th,#tutorial-finance .ex-results td{padding:6px 4px}
+#tutorial-finance .ex-profit{margin-top:6px;line-height:1.2}
+#tutorial-finance .ex-capital-total{margin-top:8px;padding-top:8px}
+
+/* Dessert workshop shares the existing character controls and clue collection. */
+#dessert-actions{display:none}.dessert-mode #dessert-actions{display:block}
+.aligned-layout .dessert-act{right:48px;font-size:14px}
+.dessert-mode .piece-art,.dessert-mode .puzzle-grid{background-image:url('./assets/dessert/clue.webp')}
+.dessert-mode #history-era{font-size:12px;line-height:17px;white-space:nowrap}
+.dessert-mode .history-message{font-size:10px;padding:5px 8px;line-height:1.4;word-break:keep-all}
+.dessert-mode #dessert-act.action-ready{background:#f2dca7;border-color:#ae8750}
+#stage-screen[data-place=dessert]{--chapter-paper:#f2e4cc;--chapter-ink:#735345;--chapter-wash:#d8b2a2;--chapter-line:#b99976;background:radial-gradient(ellipse at 60% 20%,#fff6df 0,transparent 50%),linear-gradient(145deg,#e6e8d2,#f4e1ce 57%,#dcbfae)}
+
+
+
+/* Finishing happens on a framed work surface, with the ovens visible above it. */
+.dessert-finish{position:absolute;left:10px;right:10px;bottom:12px;z-index:8;pointer-events:auto;background:#fff4df;border:2px solid #b99b75;border-radius:15px;padding:11px 12px;box-shadow:0 5px 18px #263c3b50;color:#684e3d;touch-action:none}
+.dessert-finish[hidden],.dessert-finish [hidden]{display:none!important}
+.dessert-finish header,.dessert-finish footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dessert-finish header b{font-size:14px}.dessert-finish button{pointer-events:auto;touch-action:none;color:#624c38;background:#e6ce9e;border:1px solid #b89865;border-radius:9px;min-height:40px;font-size:12px;font-weight:750;padding:5px 10px}
+.dessert-finish header button,.dessert-finish footer button{font-size:10px;min-height:32px;background:#dce6d3;border-color:#a6b49a;white-space:nowrap}
+.finish-instruction{font-size:12px;line-height:1.5;text-align:center;margin:8px 0 0;word-break:keep-all}.dessert-finish .finish-art{display:block;width:100%;height:auto;max-height:144px;object-fit:contain;margin:2px 0}
+.finish-inputs>button{width:100%;font-size:14px;min-height:46px}.fruit-choices{display:flex;gap:7px}.fruit-choices button{flex:1;display:flex;align-items:center;justify-content:center;gap:3px;padding:3px;font-size:10px}.fruit-choices svg,.fruit-choices .fruit-art{width:31px;height:31px}.dessert-finish footer{margin-top:7px}.finish-note{font-size:10px;line-height:1.4}.dessert-finish button:disabled{opacity:.5}.dessert-finish button:active:not(:disabled){background:#d0e2bd}
+.demo-dock~.dessert-finish{bottom:12px}
+@media(max-height:620px){.dessert-finish{padding:7px 9px;bottom:6px;left:8px;right:8px}.dessert-finish .finish-art{max-height:132px}.finish-instruction{font-size:11px;margin-top:4px}.dessert-finish footer{margin-top:4px}.dessert-finish header b{font-size:12px}}
+
+.dessert-finish [data-cream].is-holding{background:#c6dcb7;border-color:#7e9c75}
+
+.dessert-finish .fruit-art{margin:0;height:31px;flex:0 0 31px;object-fit:contain}
+.cream-readout{margin:1px 1px 7px;color:#5e5c4a}.cream-readout>div:first-child{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:10px}.cream-amount{font-size:11px;color:#a9476a}.cream-readout.in-range .cream-amount{color:#376d4d}
+.cream-meter{height:12px;border-radius:7px;overflow:hidden;position:relative;background:#254c58;border:1px solid #476875}.cream-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c75f89,#f6aac0);border-right:2px solid #fff1f1}.cream-meter em{position:absolute;left:60%;width:24%;top:0;bottom:0;border-left:2px solid #d2f6a8;border-right:2px solid #d2f6a8;background:repeating-linear-gradient(120deg,#b9e1a137 0 3px,transparent 3px 6px);pointer-events:none}
+
+#stage-screen[data-place=dessert]>header{display:none}
+
+/* The dessert guidance sits in the floor strip just above the foreground counter. */
+.dessert-mode #history-message{top:calc(var(--room-origin-y,70px) + 442px);bottom:auto;transform:translateY(-100%);left:14px;right:14px;font-size:10px;line-height:1.3;padding:4px 7px;z-index:3;box-shadow:0 1px 3px #3b4c3926}
+
+.dessert-finish .finish-art.tart-art{max-height:180px}
+@media(max-height:620px){.dessert-finish .finish-art.tart-art{max-height:168px}}
+
+/* Detective office: a shared room view with readable, separate stealth controls. */
+#detective-actions{display:none}.detective-mode #detective-actions{display:block}
+.aligned-layout .detective-hide{right:96px;font-size:13px}.aligned-layout .detective-act{right:48px;font-size:14px;touch-action:none}
+.detective-mode .piece-art,.detective-mode .puzzle-grid{background-image:url('./assets/detective/clue.webp')}
+.detective-mode .history-message{top:auto;bottom:calc(var(--dock-height) + 8px);transform:none;font-size:10px;line-height:1.4;padding:5px 8px;background:#f8efdc;border-color:#b8a17c;color:#5e5943}
+.detective-mode .detective-hide.action-ready{background:#c5dcb7;border-color:#8cad83}.detective-mode .detective-act:not(:disabled){background:#efcf8b;border-color:#b39054}
+#stage-screen[data-place=detective]{--chapter-paper:#eee7d5;--chapter-ink:#735f42;--chapter-wash:#c9c9ae;--chapter-line:#a7aa89;background:radial-gradient(ellipse at 80% 15%,#fff4d9 0,transparent 54%),linear-gradient(140deg,#e4e9da,#f0e3c9 65%,#d7c8ac)}

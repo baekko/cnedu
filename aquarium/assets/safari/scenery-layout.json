@@ -1,0 +1,147 @@
+{
+  "ground": {
+    "columns": 3,
+    "rows": 1,
+    "cell": 512,
+    "names": [
+      "savanna",
+      "forest",
+      "wetland"
+    ],
+    "size": [
+      1536,
+      512
+    ]
+  },
+  "props": {
+    "columns": 4,
+    "rows": 2,
+    "cell": 512,
+    "size": [
+      2048,
+      1024
+    ],
+    "frames": [
+      {
+        "name": "acacia",
+        "col": 0,
+        "row": 0,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          111,
+          458,
+          355
+        ]
+      },
+      {
+        "name": "broadleaf",
+        "col": 1,
+        "row": 0,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          50,
+          458,
+          416
+        ]
+      },
+      {
+        "name": "bush",
+        "col": 2,
+        "row": 0,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          213,
+          458,
+          253
+        ]
+      },
+      {
+        "name": "rocks",
+        "col": 3,
+        "row": 0,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          242,
+          458,
+          224
+        ]
+      },
+      {
+        "name": "pond",
+        "col": 0,
+        "row": 1,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          191,
+          458,
+          275
+        ]
+      },
+      {
+        "name": "fence",
+        "col": 1,
+        "row": 1,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          277,
+          458,
+          189
+        ]
+      },
+      {
+        "name": "finish",
+        "col": 2,
+        "row": 1,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          27,
+          105,
+          458,
+          361
+        ]
+      },
+      {
+        "name": "sign",
+        "col": 3,
+        "row": 1,
+        "anchor": [
+          256,
+          466
+        ],
+        "bounds": [
+          73,
+          20,
+          366,
+          446
+        ]
+      }
+    ]
+  }
+}

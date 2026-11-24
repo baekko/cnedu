@@ -1,0 +1,22 @@
+{
+  "file": "cart.webp",
+  "width": 768,
+  "height": 557,
+  "bbox": [
+    0,
+    0,
+    768,
+    557
+  ],
+  "footAnchorX": 384.0,
+  "footAnchorY": 557,
+  "sourceAlphaBounds": [
+    35,
+    100,
+    1374,
+    1071
+  ],
+  "recommendedDrawWidth": 52,
+  "recommendedDrawHeight": 37.713541666666664,
+  "occlusion": "The complete painted silhouette, including camera case above the wooden body, is the opaque obstruction. Use the complete image box rather than only the wood shelf."
+}

@@ -1,0 +1,109 @@
+{
+  "image": "soldier.webp",
+  "cellSize": 512,
+  "columns": 4,
+  "rows": 2,
+  "foot": [
+    256,
+    470
+  ],
+  "worldHeight": 44,
+  "walkFrames": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "idleFrame": 4,
+  "recommendedFps": 5,
+  "cadenceNote": "old8poses at10fps -> new4poses at5fps keeps0.8s full-cycle duration; movement speed untouched",
+  "allPhaseDurationsEqual": true,
+  "wholeFramePhaseMirroring": false,
+  "frames": [
+    {
+      "phase": 0,
+      "source": "docs/art-source/mob-v130/soldier-first-rejected.png",
+      "sourceCell": [
+        0,
+        0,
+        630,
+        623
+      ],
+      "scale": 0.8,
+      "translation": [
+        -40,
+        24
+      ],
+      "sourceBodyHipX": 328,
+      "sourceGround": 557,
+      "note": "valid contact A from sheet; other three draft cells rejected and unused"
+    },
+    {
+      "phase": 1,
+      "source": "docs/art-source/mob-v130/soldier-passing-a.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceBodyHipX": 620,
+      "sourceGround": 1206,
+      "scale": 0.38954012623985573,
+      "translation": [
+        -20,
+        0
+      ],
+      "bounds": [
+        101,
+        38,
+        348,
+        469
+      ]
+    },
+    {
+      "phase": 2,
+      "source": "docs/art-source/mob-v130/soldier-contact-b.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceBodyHipX": 615,
+      "sourceGround": 1181,
+      "scale": 0.3985239852398524,
+      "translation": [
+        -23,
+        -1
+      ],
+      "bounds": [
+        71,
+        38,
+        354,
+        470
+      ]
+    },
+    {
+      "phase": 3,
+      "source": "docs/art-source/mob-v130/soldier-passing-b.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceBodyHipX": 615,
+      "sourceGround": 1181,
+      "scale": 0.39926062846580407,
+      "translation": [
+        -24,
+        -2
+      ],
+      "bounds": [
+        100,
+        38,
+        353,
+        470
+      ]
+    }
+  ],
+  "preservedIdleSource": {
+    "file": "literature/soldier-walk-v58.webp",
+    "frame": 1
+  }
+}

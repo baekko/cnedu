@@ -1,0 +1,12 @@
+.cinema-mode .health-pips,.cinema-mode #history-message,.cinema-mode #field-room-nav{display:none!important}
+.cinema-mode #history-era{display:block!important}
+.cinema-mode #time-value{font-size:14px;line-height:1.8;white-space:nowrap}
+.cinema-mode .time-track{visibility:hidden}
+.cinema-mode #field-act{font-size:14px}
+.cinema-mode #game-surface{position:relative}
+.cinema-choice-layer{position:absolute;top:50%;left:0;right:0;height:500px;transform:translateY(-50%);pointer-events:none;z-index:4}
+.cinema-choice-layer[hidden]{display:none}
+.cinema-choice-hit{position:absolute;left:25px;width:340px;height:35px;border:0;padding:0;border-radius:7px;background:transparent;cursor:pointer;pointer-events:auto;font-size:0;color:transparent;touch-action:manipulation}
+.cinema-choice-hit:focus-visible{outline:2px solid #ffe797;outline-offset:2px}
+.cinema-choice-hit:disabled{cursor:default}
+#stage-screen[data-place=cinema]{--chapter-paper:#f6e8ce;--chapter-ink:#4d5855;--chapter-wash:#c69c77;--chapter-line:#a6b6aa;background:radial-gradient(ellipse at 75% 20%,#fff4d9 0,transparent 55%),linear-gradient(140deg,#dce7db,#f3dec8 70%,#d5aa85)}

@@ -1,0 +1,2 @@
+.configured-puzzle .piece-art,.configured-puzzle .puzzle-grid{background-image:var(--configured-clue-image);background-color:#ede1c8}
+.configured-puzzle .puzzle-placeholder{display:block;font-size:12px;word-break:keep-all}

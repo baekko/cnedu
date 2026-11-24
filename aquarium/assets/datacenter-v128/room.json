@@ -1,0 +1,30 @@
+{
+  "file": "datacenter-v128/room.webp",
+  "size": [
+    780,
+    1000
+  ],
+  "camera": "fixed elevated frontal room, same390x500 composition as newspaper/robot",
+  "sockets": [
+    {
+      "x": 102.5,
+      "y": 134
+    },
+    {
+      "x": 197.5,
+      "y": 134
+    },
+    {
+      "x": 292.5,
+      "y": 134
+    }
+  ],
+  "rackFeetY": 141,
+  "clearFloor": {
+    "left": 18,
+    "right": 372,
+    "top": 179,
+    "bottom": 472
+  },
+  "note": "Measured final art, not prompt targets. Route final edges into these socket centers. Original requested x65/195/325,y172 were not honored by imagegen."
+}

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#114d70">
+  <meta name="description" content="작은 잠수함을 타고 50초 동안 상어를 피해 단서 카드를 모아 보세요. PLAY THE BOOK 수족관 미니게임.">
+  <title>어서오세요, 이곳은 수족관입니다 · PLAY THE BOOK</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <aside class="desktop-note" aria-hidden="true"><div class="brand-mark">P<span>●</span>B</div><span>PLAY THE BOOK</span><p>책 너머의 세상으로<br>함께 떠나요.</p><div class="desktop-keys">방향키 이동 · SPACE 빛 발사</div></aside>
+  <main id="viewport">
+    <div id="app" data-screen="loading">
+      <div id="game-viewport"><div id="game-surface"><canvas id="ocean" width="780" height="1688" aria-label="수족관 게임 화면"></canvas><div id="cinema-choices" class="cinema-choice-layer" hidden aria-label="영화 제목 보기"></div><div id="ai-tunes" hidden aria-label="생성 조건"><button type="button" data-ch="0" data-level="0"></button><button type="button" data-ch="0" data-level="1"></button><button type="button" data-ch="0" data-level="2"></button><button type="button" data-ch="1" data-level="0"></button><button type="button" data-ch="1" data-level="1"></button><button type="button" data-ch="1" data-level="2"></button></div></div></div>
+      <div class="frame-line" aria-hidden="true"></div>
+      <section id="loading" class="screen loading-screen">
+        <div class="loading-bubble">◌</div><h1>수족관을 준비하고 있어요</h1><p id="loading-note">캐릭터를 불러오는 중…</p>
+      </section>
+
+      <section id="title-screen" class="screen opening-screen" hidden aria-labelledby="opening-title">
+        <header class="opening-header"><span class="wordmark">PLAY THE BOOK</span><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
+        <div class="opening-content"><p id="test-edition-label" hidden>테스트판</p><h1 id="opening-title"><span>어서오세요,</span><span>이곳은</span><em>수족관입니다.</em></h1>
+        <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><canvas id="title-art" width="520" height="460"></canvas><img class="opening-shark" src="./assets/aquarium-v8/shark-2.webp" alt=""></div>
+        <button id="title-start" class="primary-button">시작하기 <span>→</span></button></div>
+      </section>
+      <section id="select-screen" class="screen opening-screen" hidden aria-labelledby="select-title">
+        <header class="opening-header"><span class="wordmark">PLAY THE BOOK</span><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
+        <div class="selection-content"><h1 id="select-title">어떤 캐릭터로<br><em>시작할까요?</em></h1><div id="character-grid" class="character-grid" role="group" aria-label="캐릭터 모습 선택"></div></div>
+        <button id="board-button" hidden></button><button id="collection-button" hidden></button><p id="character-reaction" hidden></p>
+      </section>
+      <div id="name-overlay" class="overlay" hidden><section class="modal name-modal" role="dialog" aria-modal="true" aria-labelledby="name-title"><button id="name-cancel" class="name-close" aria-label="다른 캐릭터 고르기">×</button><canvas id="name-character" width="512" height="512" aria-label="선택한 캐릭터의 인사"></canvas><h2 id="name-title">캐릭터의 이름을 정해주세요</h2><form id="name-form" autocomplete="off"><label class="sr-only" for="player-name">캐릭터 이름</label><input id="player-name" type="text" maxlength="12" placeholder="이름" enterkeyhint="done" required aria-describedby="name-error"><p id="name-error" role="status"></p><button type="submit" class="primary-button">입력 <span>→</span></button></form></section></div>
+
+      <section id="game-ui" class="screen" hidden aria-label="게임 조작">
+        <header class="game-header"><div><span class="wordmark small">PLAY THE BOOK</span><h1>수족관</h1></div><div id="common-header-actions" class="header-actions"></div></header>
+        <div class="hud" aria-label="게임 상태">
+          <div class="hud-stat timer"><span class="hud-label">남은 시간</span><strong id="time-value">00:50</strong><div class="time-track"><i id="time-fill"></i></div></div>
+          <div class="hud-stat clue-stat"><span class="hud-label">모은 단서</span><strong><span id="clue-value">0</span><small> / 9</small></strong></div>
+          <div class="hud-stat health-stat"><span class="hud-label">잠수함 내구도</span><strong id="history-era" hidden>박물관</strong><div id="museum-colors" class="museum-colors" hidden aria-label="되찾은 아홉 가지 색"></div><div id="health-value" class="health-pips" aria-label="내구도 3칸"><i></i><i></i><i></i></div></div>
+          <div class="hud-stat city-hud-stat"><span class="hud-label">검토 안건</span><strong id="city-round">1 / 6</strong></div>
+          <div class="hud-stat city-hud-stat"><span class="hud-label">전체 지지율</span><strong id="city-approval">50%</strong></div>
+          <div class="hud-stat city-hud-stat city-clue-stat"><span class="hud-label">예상 단서</span><strong id="city-target">0 / 9</strong><span id="city-next-clue" class="city-next-clue">52%에 1장</span></div>
+        </div>
+        <section id="cityhall-paper" class="city-paper" hidden aria-label="시장 결재 서류"></section>
+        <nav id="field-room-nav" hidden aria-label="공간 자유 이동"><button type="button" data-field-room="0" aria-label="첫 번째 공간">1</button><button type="button" data-field-room="1" aria-label="두 번째 공간">2</button><button type="button" data-field-room="2" aria-label="세 번째 공간">3</button><span id="field-room-name"></span></nav><div id="camera-status" hidden role="status"></div><div id="game-toast" class="game-toast" role="status" aria-live="polite"></div><span id="pursuit-selection-status" class="sr-only" role="status" aria-atomic="true" hidden></span>
+        <div id="history-message" class="history-message" hidden role="status"></div><div class="controls-panel">
+          <div class="control-label"><span>방향키로 이동</span><span id="pilot-label">하루의 잠수함</span></div>
+          <div id="dpad" class="dpad" aria-label="잠수함 방향키">
+            <button class="dir up" data-direction="up" aria-label="위로 이동"><svg viewBox="0 0 24 24"><path d="M12 5 21 17H3Z"/></svg></button>
+            <button class="dir left" data-direction="left" aria-label="왼쪽으로 이동"><svg viewBox="0 0 24 24"><path d="M5 12 17 3v18Z"/></svg></button>
+            <div class="pad-center"><span></span></div>
+            <button class="dir right" data-direction="right" aria-label="오른쪽으로 이동"><svg viewBox="0 0 24 24"><path d="m19 12-12 9V3Z"/></svg></button>
+            <button class="dir down" data-direction="down" aria-label="아래로 이동"><svg viewBox="0 0 24 24"><path d="m12 19-9-12h18Z"/></svg></button>
+          </div>
+          <div id="cityhall-actions"><button id="cityhall-prev" type="button" class="interact-action" hidden disabled aria-label="대화 이전">이전</button><button id="cityhall-act" type="button" class="interact-action" disabled aria-label="대화 다음">다음</button></div>
+          <div id="workshop-actions" hidden><button id="workshop-rotate" class="interact-action" type="button" hidden>회전</button></div><div id="field-actions"><button id="field-act" class="interact-action field-act" aria-label="촬영 또는 물길 조작">촬영</button></div><div id="ai-actions"><button id="ai-original" hidden class="interact-action ai-original" aria-label="스캐너로 돌아가기">다시</button><button id="ai-act" class="interact-action ai-act" aria-label="작업실 행동">스캔</button></div><div id="zoo-actions"><button id="zoo-act" class="museum-action zoo-act" aria-label="누르고 힘을 모아 먹이 던지기" data-game-icon="feed"></button></div><div id="literature-actions"><button id="literature-act" class="interact-action literature-act" aria-label="장면에 맞는 행동">행동</button></div><div id="dream-actions"><button id="dream-jump" class="museum-action dream-jump" aria-label="점프" data-game-icon="jump"></button><button id="dream-act" class="interact-action dream-act" aria-label="중력 반전">반전</button></div><div id="monastery-actions"><button id="monastery-balance" class="interact-action monastery-balance" aria-label="누르고 균형 잡기" aria-pressed="false"><b>균형</b><small>누르고 있기</small></button></div><div id="detective-actions"><button id="detective-hide" class="interact-action detective-hide" aria-label="가구 뒤에 숨기">숨기</button><button id="detective-act" class="interact-action detective-act" aria-label="누르고 조사하기">조사</button></div><div id="dessert-actions"><button id="dessert-act" class="interact-action dessert-act" aria-label="오븐에서 꺼내기">꺼내기</button></div><div id="newspaper-actions"><button id="newspaper-act" class="interact-action newspaper-act" aria-label="사진·제목 집기 또는 배치">작업</button></div><div id="language-actions"><button id="language-jump" class="museum-action language-jump" aria-label="점프" data-game-icon="jump"></button><button id="language-act" class="interact-action language-act" aria-label="글자 집기">집기</button></div><div id="writer-actions"><button id="writer-jump" class="museum-action writer-jump" aria-label="점프" data-game-icon="jump"></button><button id="writer-act" class="interact-action writer-act" aria-label="이야기 행동">행동</button></div><div id="space-actions"><button id="brake-button" class="interact-action space-brake" aria-label="제동">제동</button></div><div id="robot-actions"><button id="work-button" class="interact-action robot-work" aria-label="부품 집기 또는 로봇 수리">작업</button></div><div id="history-actions" hidden><button id="hammer-button" class="museum-action hammer-action" aria-label="망치로 내려치기"><span>⚒</span><b>망치</b></button><button id="interact-button" class="interact-action" disabled>탑승</button></div><div id="museum-actions" hidden><button id="jump-button" class="museum-action jump-action" aria-label="점프"><span>↥</span><b>점프</b></button><button id="shoot-button" class="museum-action shoot-action" aria-label="새총 발사"><span>Y</span><b>새총</b></button></div>
+          <button id="memory-revisit" class="flash-button memory-revisit" type="button" aria-label="원본 10초 더보기, 1회 남음" title="원본 10초 더보기" hidden disabled><span class="memory-item-name">원본<br>10초</span><span class="flash-count">×<strong id="memory-revisit-value">1</strong></span></button>
+          <div class="flash-control"><button id="flash-button" class="flash-button" aria-label="빛 발사, 3회 남음"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m9 25 9-9 9 9-9 9Z"/><path d="m15 14 5-5 13 13-5 5Z"/><path d="m26 7 3-4M32 12l5-2M35 18h4" class="rays"/></svg><b>빛 발사</b><span class="flash-count">×<strong id="flash-value">3</strong></span></button><span class="flash-tip">위험할 때 눌러요</span></div>
+        </div>
+      </section>
+
+      <section id="exchange-ui" class="screen" hidden aria-label="증권거래소 모의투자"></section>
+      <div id="pursuit-report-overlay" class="overlay" hidden>
+        <section class="modal pursuit-report" role="dialog" aria-labelledby="pursuit-report-title">
+          <header>
+            <p class="modal-kicker">국제수사본부</p>
+            <h2 id="pursuit-report-title" tabindex="-1">수사보고서</h2>
+          </header>
+          <div class="pursuit-report-brief">
+            <img src="./assets/pursuit/case-officer.webp?v233" alt="범인 추적을 지시하는 수사팀 요원" loading="lazy" draggable="false">
+            <div>
+              <p id="pursuit-report-name" class="pursuit-report-name"></p>
+              <p>박물관 특별전의 황금 나침반을 훔친 용의자가 인천공항에서 비행기를 타고 달아났습니다.</p>
+            </div>
+          </div>
+          <section class="pursuit-report-profile" aria-labelledby="pursuit-profile-title">
+            <figure><img src="./assets/pursuit/capture-suspect.webp?v233" alt="짙은 갈색 머리에 붉은 재킷과 갈색 바지를 입은 용의자" loading="lazy" draggable="false"></figure>
+            <div>
+              <h3 id="pursuit-profile-title">용의자 인상착의</h3>
+              <ul><li>짙은 갈색 머리</li><li>붉은 재킷</li><li>갈색 바지</li></ul>
+            </div>
+          </section>
+          <section class="pursuit-report-orders" aria-labelledby="pursuit-orders-title">
+            <h3 id="pursuit-orders-title">추적 지시</h3>
+            <p>그림 단서 세 장으로 후보 일곱 곳 중 행선지를 찾으세요.</p>
+            <p>행선지를 맞히면 현지 수사팀이 다음 단서를 보냅니다.</p>
+            <p>비행 10번으로 아홉 도시를 맞히세요.</p>
+            <p>두 번 틀리면 용의자를 놓칩니다.</p>
+          </section>
+          <button id="pursuit-report-continue" type="button" class="primary-button">추적하러 가기</button>
+        </section>
+      </div>
+      <div id="pursuit-capture-report-overlay" class="overlay" hidden>
+        <section class="modal pursuit-report" role="dialog" aria-labelledby="pursuit-capture-report-title">
+          <header>
+            <p class="modal-kicker">국제수사본부</p>
+            <h2 id="pursuit-capture-report-title" tabindex="-1">범인 체포보고서</h2>
+          </header>
+          <div class="pursuit-report-brief">
+            <img src="./assets/pursuit/case-officer.webp?v233" alt="체포 결과를 전하는 수사팀 요원" loading="lazy" draggable="false">
+            <div>
+              <p id="pursuit-capture-report-name" class="pursuit-report-name"></p>
+              <p id="pursuit-capture-report-details"></p>
+            </div>
+          </div>
+          <button id="pursuit-capture-report-continue" type="button" class="primary-button">모은 단서 보기</button>
+        </section>
+      </div>
+      <div id="brief-overlay" class="overlay" hidden>
+        <section class="modal briefing" role="dialog" aria-modal="true" aria-labelledby="brief-title">
+          <div class="modal-kicker">탑승 완료</div><canvas id="brief-sub" width="360" height="230" aria-label="선택한 친구가 탄 잠수함"></canvas>
+          <h2 id="brief-title" tabindex="-1">하루, 준비됐나요?</h2><p class="modal-lead">50초 동안 상어를 피해<br><strong>단서 카드 9장</strong>을 모아 주세요!</p>
+          <div class="instruction-list">
+            <div><span class="instruction-icon move-icon" data-game-icon="move"></span><p><b>방향키로 자유롭게 이동</b><small>상어만 조심! 다른 물고기는 안전해요.</small></p></div>
+            <div><span class="instruction-icon light-icon" data-game-icon="light"></span><p><b>위험하면 빛 발사 · 3회</b><small>가까이 있는 상어가 도망가요.</small></p></div>
+            <div><span class="instruction-icon hull-icon">◇</span><p><b>내구도 3칸 · 금이 가면 조심!</b><small>한 번 닿을 때마다 한 칸씩 줄어요.</small></p></div>
+            <div><img src="./assets/jelly.png" class="instruction-jelly" alt="수리해파리"><p><b>수리해파리를 먹으면 +1칸</b><small>닿는 즉시 잠수함이 수리돼요.</small></p></div>
+          </div>
+          <div class="brief-actions">
+            <button id="start-button" type="button" class="primary-button">HOW TO PLAY <span aria-hidden="true">→</span></button>
+            <button id="brief-play-button" type="button" class="primary-button">START</button>
+          </div>
+        </section>
+      </div>
+
+      <div id="ai-tutorial-overlay" class="overlay" hidden>
+        <section class="tutorial-modal" role="dialog" aria-modal="true" aria-labelledby="tutorial-heading">
+          <header><h2 id="tutorial-heading" class="how-to-play-title">HOW TO PLAY</h2><span id="tutorial-page">1 / 2</span></header>
+          <div class="tutorial-picture"><button id="tutorial-previous" class="tutorial-arrow" type="button" aria-label="이전 시범" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><div id="tutorial-device" class="tutorial-device"><div class="tutorial-game"><canvas id="tutorial-scene" width="780" height="1000" aria-label="실제 게임 화면과 조작 시범"></canvas><div id="tutorial-finance" hidden inert></div><div id="tutorial-cityhall" class="city-paper" hidden inert></div></div></div><button id="tutorial-next" class="tutorial-arrow" type="button" aria-label="다음 시범"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7"/></svg></button></div>
+          <div class="tutorial-copy" aria-live="polite" aria-atomic="true"><b id="tutorial-step">주문 읽기</b><p id="tutorial-caption"></p></div>
+          <footer><button id="tutorial-start" class="primary-button" type="button">START</button></footer>
+        </section>
+      </div>
+      <div id="countdown" class="countdown" hidden aria-live="assertive"><span>게임을 시작해요!</span><strong id="count-number">3</strong><p>방향키에 손을 올려 주세요</p></div>
+      <div id="cityhall-summary" class="overlay" hidden><section class="modal city-summary-modal" role="dialog" aria-modal="true" aria-labelledby="cityhall-summary-title"><div id="cityhall-summary-content"></div><button id="cityhall-leave" type="button" class="primary-button">퇴근하기 →</button></section></div>
+      <div id="pause-overlay" class="overlay" hidden><section class="modal pause-modal" role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="modal-symbol">Ⅱ</div><div class="modal-kicker">잠깐 쉬어 가요</div><h2 id="pause-title" tabindex="-1">일시정지</h2><p class="modal-lead">게임 시간도 함께 멈췄어요.</p><button id="resume-button" type="button" class="primary-button">이어서 시작하기</button><p class="save-hint">점수와 힌트 기록은 그대로 보관돼요.</p></section></div>
+
+      <div id="failure-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="failure-title"><section class="modal failure-modal"><h2 id="failure-title" tabindex="-1">게임 실패</h2><p id="failure-message" class="modal-lead"></p><div class="failure-actions"><button id="failure-retry" class="return-button">이 게임 다시하기</button><button id="failure-home" class="return-button">지난 게임 다시하기</button></div></section></div>
+      <div id="result-overlay" class="overlay" hidden><section class="modal result-modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
+        <div id="result-content" class="result-content">
+          <h2 id="result-title" tabindex="-1">게임을 마쳤어요!</h2><p id="result-description" class="modal-lead">단서 보관함을 확인해 보세요.</p>
+          <div class="result-stats"><div><span>게임 시간</span><strong id="result-time">50<small>초</small></strong></div><div><span>이번에 찾은 단서</span><strong id="result-new">+0<small>장</small></strong></div></div>
+          <div class="collection-heading"><h3>나의 단서 보관함</h3><span><b id="result-total">0</b> / 9</span></div>
+          <div id="clue-grid" class="clue-grid"></div>
+          <p class="result-footnote">카드를 누르면 조각을 자세히 볼 수 있어요.</p>
+          <button id="combine-button" class="combine-button">단서 조합하기</button>
+          <form id="answer-form" class="answer-form" autocomplete="off"><label for="answer-input">정답 입력</label><div class="answer-row"><input id="answer-input" type="text" inputmode="text" enterkeyhint="done" maxlength="12" placeholder="정답" aria-describedby="answer-help"><button id="answer-submit" type="submit">입력</button><button id="hint-button" type="button">힌트</button></div><p id="answer-help" aria-live="polite">그림 단서를 보고 정답을 입력해 보세요.</p></form>
+          <div id="result-score" class="result-score" aria-live="polite"></div><p id="retry-note" class="retry-note">이 게임을 다시 하면 단서를 새로 모아요.</p>
+        </div>
+        <div class="return-actions result-actions"><button id="retry-button" class="return-button">이 게임 다시하기</button><button id="home-button" class="return-button">지난 게임 다시하기</button></div>
+      </section></div>
+
+      <div id="collection-overlay" class="overlay" hidden><section class="modal collection-modal" role="dialog" aria-modal="true" aria-labelledby="collection-title"><div class="modal-kicker">MY COLLECTION</div><h2 id="collection-title">나의 단서 보관함</h2><p class="modal-lead">이전에 찾은 단서예요.</p><div id="home-clue-grid" class="clue-grid"></div><p id="home-collection-count" class="retry-note">0 / 9장 수집</p><button id="home-combine-button" class="combine-button">단서 조합하기</button><button id="close-collection" class="primary-button">돌아가기 <span>→</span></button><button id="reset-button" class="text-button">수집 기록 초기화</button></section></div>
+      <div id="replay-overlay" class="overlay" hidden><section class="modal replay-modal" role="dialog" aria-modal="true" aria-labelledby="replay-title"><h2 id="replay-title">지난 게임 다시하기</h2><div class="return-actions replay-actions"><button id="replay-home" type="button" class="return-button">처음으로 돌아가기</button><button id="replay-cancel" type="button" class="return-button">취소하기</button></div><ol id="replay-route" class="replay-route" aria-label="다시 플레이할 수 있는 장소"></ol></section></div>
+      <div id="home-confirm-overlay" class="overlay" hidden><section class="modal home-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="home-confirm-title"><h2 id="home-confirm-title">정말 처음으로 돌아가시겠습니까?</h2><p>처음부터 새로 시작하면 캐릭터와 열린 장소 기록이 초기화돼요.</p><div class="return-actions"><button id="home-confirm-yes" class="return-button">네</button><button id="home-confirm-no" class="return-button">아니오</button></div></section></div>
+      <div id="reset-overlay" class="overlay" hidden><section class="modal pause-modal" role="dialog" aria-modal="true" aria-labelledby="reset-title"><div class="modal-kicker">기록 초기화</div><h2 id="reset-title">처음부터 모을까요?</h2><p class="modal-lead">보관한 단서 카드가 모두 지워져요.</p><button id="cancel-reset" class="primary-button">기록 유지하기</button><button id="confirm-reset" class="secondary-button">모든 카드 초기화</button></section></div>
+      <div id="card-overlay" class="overlay" hidden><section class="modal card-detail" role="dialog" aria-modal="true" aria-labelledby="card-title"><div class="modal-kicker">찾아낸 단서</div><div class="large-clue"><div id="card-piece" class="piece-art"></div></div><h2 id="card-title">찾아낸 그림 조각</h2><p class="modal-lead">그림의 한 조각을 찾았어요!<br>보관함에서 단서카드를 조합해 보세요.</p><button id="close-card" class="primary-button">보관함으로 <span>→</span></button></section></div>
+      <div id="puzzle-overlay" class="overlay" hidden><section class="modal puzzle-modal" role="dialog" aria-modal="true" aria-labelledby="puzzle-title"><div class="modal-kicker">PICTURE CLUE</div><h2 id="puzzle-title">단서카드 조합</h2><p id="puzzle-count" class="modal-lead">0 / 9장 조합</p><div id="puzzle-grid" class="puzzle-grid" role="group" aria-label="3행 3열로 조합한 그림 단서"></div><p id="puzzle-note" class="modal-lead"></p><p class="puzzle-placeholder">지금은 그림 조합을 확인하는 임시 단서예요.</p><button id="close-puzzle" class="primary-button">보관함으로 <span>→</span></button></section></div>
+      <div id="motion-overlay" class="overlay" hidden><section class="modal motion-modal" role="dialog" aria-modal="true" aria-labelledby="motion-title"><div id="motion-kicker" class="modal-kicker"></div><h2 id="motion-title" tabindex="-1"></h2><div class="motion-stage"><div class="motion-floor"></div><canvas id="motion-canvas" width="512" height="512" role="img" aria-label="캐릭터 동작"></canvas></div><p id="motion-message" class="modal-lead"></p><button id="motion-next" class="primary-button" disabled>잠시만요…</button></section></div>
+      <div id="hint-overlay" class="overlay" hidden><section class="modal hint-modal" role="dialog" aria-modal="true" aria-labelledby="hint-title"><div class="modal-kicker">조금만 도와줄게요</div><h2 id="hint-title">문제 힌트</h2><ol id="hint-list" class="hint-list" aria-live="polite"></ol><button id="hint-back" class="primary-button">다시 문제 풀기</button><button id="hint-next" class="secondary-button">다음 힌트 보기</button></section></div>
+      <section id="stage-screen" class="screen stage-screen" hidden aria-labelledby="stage-title"><header><span class="wordmark">PLAY THE BOOK</span></header><div class="gallery-decoration" aria-hidden="true"><canvas id="stage-art" width="520" height="460"></canvas></div><h1 id="stage-title" tabindex="-1">어서오세요,<br>이곳은 <em>미술관</em>입니다.</h1><div class="stage-pilot"><img id="stage-character" alt="" draggable="false"><span id="stage-companion"></span></div><button id="museum-enter" class="primary-button">미술관 입장하기 <span>→</span></button><p class="stage-placeholder">다음 이야기가 이곳에서 이어집니다.</p></section>
+      <div id="utility-overlay" class="overlay" hidden><section class="modal utility-modal" role="dialog" aria-modal="true" aria-labelledby="utility-title"><div id="utility-icon" class="panel-icon" aria-hidden="true"></div><h2 id="utility-title"></h2><div id="utility-content"></div><button id="utility-close" type="button" class="primary-button">돌아가기</button></section></div>
+      <div id="quit-overlay" class="overlay" hidden><section class="modal quit-modal" role="dialog" aria-modal="true" aria-labelledby="quit-title"><div class="panel-icon" aria-hidden="true"><span data-game-icon="pocket"></span></div><h2 id="quit-title">정말로 게임을 마칠까요?</h2><p class="modal-lead">다시 찾아오면 보관한 점수와 힌트 기록을 확인할 수 있어요.</p><div class="return-actions"><button id="quit-yes" type="button" class="return-button">예, 마칠게요</button><button id="quit-no" type="button" class="return-button">아니요, 계속할게요</button></div></section></div>
+      <div id="storage-warning" class="storage-warning" hidden>이 브라우저에서는 기록을 저장할 수 없어요. 창을 닫으면 기록이 사라져요.</div>
+    </div>
+  </main>
+  <link rel="stylesheet" href="./exchange.css">
+  <link rel="stylesheet" href="./responsive.css?v215">
+  <link rel="stylesheet" href="./welcome.css">
+  <link rel="stylesheet" href="./monastery.css">
+  <link rel="stylesheet" href="./field.css?v228">
+  <link rel="stylesheet" href="./cityhall.css?v=151">
+  <link rel="stylesheet" href="./clue-puzzles.css?v=160">
+  <link rel="stylesheet" href="./gym.css?v=162">
+  <link rel="stylesheet" href="./cinema.css?v=164">
+  <link rel="stylesheet" href="./common-ui.css?v215"><link rel="stylesheet" href="./css/pursuit.css?v241"><script type="module" src="./js/app.js?v244"></script>
+</body>
+</html>

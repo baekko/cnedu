@@ -1,0 +1,427 @@
+{
+  "image": "gardener.webp",
+  "atlasSize": [
+    1024,
+    768
+  ],
+  "cellSize": 256,
+  "footX": 128,
+  "footY": 238,
+  "referenceHeight": 210,
+  "suggestedWorldHeight": 64,
+  "animations": {
+    "walk": {
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 5,
+      "facing": "right"
+    },
+    "tend": {
+      "frames": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "fps": 4,
+      "facing": "right"
+    },
+    "spray": {
+      "frames": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "fps": 5,
+      "facing": "left"
+    }
+  },
+  "frames": [
+    {
+      "id": 0,
+      "sx": 0,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        70,
+        28,
+        191,
+        238
+      ],
+      "source": "docs/art-source/mob-v130/gardener-first-rejected.png",
+      "sourceCrop": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "sourceBounds": [
+        169,
+        28,
+        500,
+        602
+      ],
+      "sourceBodyHipX": 327,
+      "sourceGround": 602,
+      "scale": 0.36585365853658536,
+      "translation": [
+        8,
+        18
+      ],
+      "alphaPreserved": true,
+      "wholePoseOnly": true
+    },
+    {
+      "id": 1,
+      "sx": 256,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        89,
+        28,
+        160,
+        238
+      ],
+      "source": "docs/art-source/mob-v130/gardener-first-rejected.png",
+      "sourceCrop": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "sourceBounds": [
+        216,
+        28,
+        411,
+        607
+      ],
+      "sourceBodyHipX": 323,
+      "sourceGround": 607,
+      "scale": 0.3626943005181347,
+      "translation": [
+        11,
+        18
+      ],
+      "alphaPreserved": true,
+      "wholePoseOnly": true
+    },
+    {
+      "id": 2,
+      "sx": 512,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        74,
+        28,
+        183,
+        238
+      ],
+      "source": "docs/art-source/mob-v130/gardener-contact-b.png",
+      "sourceCrop": null,
+      "sourceBounds": [
+        362,
+        137,
+        892,
+        1153
+      ],
+      "sourceBodyHipX": 625,
+      "sourceGround": 1153,
+      "scale": 0.20669291338582677,
+      "translation": [
+        -1,
+        0
+      ],
+      "alphaPreserved": true,
+      "wholePoseOnly": true
+    },
+    {
+      "id": 3,
+      "sx": 768,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        89,
+        29,
+        167,
+        239
+      ],
+      "source": "docs/art-source/mob-v130/gardener-passing-b-proportions.png",
+      "sourceCrop": null,
+      "sourceBounds": [
+        504,
+        322,
+        741,
+        963
+      ],
+      "sourceBodyHipX": 623,
+      "sourceGround": 963,
+      "scale": 0.32761310452418096,
+      "translation": [
+        -76,
+        -77
+      ],
+      "alphaPreserved": true,
+      "wholePoseOnly": true
+    },
+    {
+      "id": 4,
+      "sx": 0,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        91,
+        26,
+        180,
+        238
+      ],
+      "sourceCell": [
+        0,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        178.263,
+        334
+      ]
+    },
+    {
+      "id": 5,
+      "sx": 256,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        85,
+        30,
+        189,
+        238
+      ],
+      "sourceCell": [
+        362,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        176.516,
+        334
+      ]
+    },
+    {
+      "id": 6,
+      "sx": 512,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        81,
+        32,
+        215,
+        238
+      ],
+      "sourceCell": [
+        724,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        176.332,
+        334
+      ]
+    },
+    {
+      "id": 7,
+      "sx": 768,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        86,
+        31,
+        180,
+        238
+      ],
+      "sourceCell": [
+        1086,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        178.057,
+        334
+      ]
+    },
+    {
+      "id": 8,
+      "sx": 0,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        85,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        0,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        185.399,
+        336
+      ],
+      "nozzle": {
+        "x": 84.96,
+        "y": 93.64,
+        "dx": -1,
+        "dy": -0.15
+      }
+    },
+    {
+      "id": 9,
+      "sx": 256,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        71,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        362,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        185.294,
+        335
+      ],
+      "nozzle": {
+        "x": 71.36,
+        "y": 84.12,
+        "dx": -1,
+        "dy": -0.15
+      }
+    },
+    {
+      "id": 10,
+      "sx": 512,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        68,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        724,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        184.929,
+        336
+      ],
+      "nozzle": {
+        "x": 68.64,
+        "y": 69.84,
+        "dx": -1,
+        "dy": -0.15
+      }
+    },
+    {
+      "id": 11,
+      "sx": 768,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        69,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        1086,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        184.907,
+        336
+      ],
+      "nozzle": {
+        "x": 69.32,
+        "y": 86.84,
+        "dx": -1,
+        "dy": -0.15
+      }
+    }
+  ],
+  "notes": "Twelve individually generated poses, equal scale and normalized foot anchors. Four walk poses are a short illustrative cycle, not a full eight-direction locomotion set. Tending is a connected hand-brush reach; spraying nozzle faces left. Mirror complete frames if opposite facing is needed.",
+  "revision": "v130-walk-only",
+  "walkPhaseNames": [
+    "near-forward contact",
+    "far-leg swing / near support",
+    "far-forward contact",
+    "near-leg swing / far support"
+  ],
+  "nonWalkFramesPreserved": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "wholeFramePhaseMirroring": false
+}

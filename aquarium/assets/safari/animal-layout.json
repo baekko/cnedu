@@ -1,0 +1,699 @@
+{
+  "columns": 4,
+  "rows": 3,
+  "cell": 512,
+  "anchor": [
+    256,
+    466
+  ],
+  "facing": "right",
+  "files": {
+    "a-animals.webp": {
+      "size": [
+        2048,
+        1536
+      ],
+      "animals": [
+        "lion",
+        "tiger",
+        "rhinoceros"
+      ],
+      "frames": [
+        {
+          "animal": "lion",
+          "row": 0,
+          "col": 0,
+          "sourceBoundsInCell": [
+            43,
+            130,
+            343,
+            321
+          ],
+          "outputBounds": [
+            47,
+            199,
+            419,
+            267
+          ],
+          "scale": 1.3968253968253967
+        },
+        {
+          "animal": "lion",
+          "row": 0,
+          "col": 1,
+          "sourceBoundsInCell": [
+            42,
+            101,
+            335,
+            322
+          ],
+          "outputBounds": [
+            52,
+            157,
+            409,
+            309
+          ],
+          "scale": 1.3968253968253967
+        },
+        {
+          "animal": "lion",
+          "row": 0,
+          "col": 2,
+          "sourceBoundsInCell": [
+            26,
+            74,
+            308,
+            327
+          ],
+          "outputBounds": [
+            59,
+            113,
+            394,
+            353
+          ],
+          "scale": 1.3968253968253967
+        },
+        {
+          "animal": "lion",
+          "row": 0,
+          "col": 3,
+          "sourceBoundsInCell": [
+            7,
+            82,
+            322,
+            321
+          ],
+          "outputBounds": [
+            36,
+            132,
+            440,
+            334
+          ],
+          "scale": 1.3968253968253967
+        },
+        {
+          "animal": "tiger",
+          "row": 1,
+          "col": 0,
+          "sourceBoundsInCell": [
+            29,
+            124,
+            339,
+            291
+          ],
+          "outputBounds": [
+            65,
+            260,
+            383,
+            206
+          ],
+          "scale": 1.2359550561797752
+        },
+        {
+          "animal": "tiger",
+          "row": 1,
+          "col": 1,
+          "sourceBoundsInCell": [
+            18,
+            55,
+            329,
+            297
+          ],
+          "outputBounds": [
+            64,
+            167,
+            384,
+            299
+          ],
+          "scale": 1.2359550561797752
+        },
+        {
+          "animal": "tiger",
+          "row": 1,
+          "col": 2,
+          "sourceBoundsInCell": [
+            0,
+            51,
+            356,
+            222
+          ],
+          "outputBounds": [
+            36,
+            255,
+            440,
+            211
+          ],
+          "scale": 1.2359550561797752
+        },
+        {
+          "animal": "tiger",
+          "row": 1,
+          "col": 3,
+          "sourceBoundsInCell": [
+            20,
+            115,
+            335,
+            296
+          ],
+          "outputBounds": [
+            62,
+            242,
+            389,
+            224
+          ],
+          "scale": 1.2359550561797752
+        },
+        {
+          "animal": "rhinoceros",
+          "row": 2,
+          "col": 0,
+          "sourceBoundsInCell": [
+            28,
+            58,
+            333,
+            286
+          ],
+          "outputBounds": [
+            52,
+            160,
+            409,
+            306
+          ],
+          "scale": 1.3414634146341464
+        },
+        {
+          "animal": "rhinoceros",
+          "row": 2,
+          "col": 1,
+          "sourceBoundsInCell": [
+            14,
+            56,
+            342,
+            281
+          ],
+          "outputBounds": [
+            36,
+            164,
+            440,
+            302
+          ],
+          "scale": 1.3414634146341464
+        },
+        {
+          "animal": "rhinoceros",
+          "row": 2,
+          "col": 2,
+          "sourceBoundsInCell": [
+            10,
+            58,
+            337,
+            282
+          ],
+          "outputBounds": [
+            37,
+            166,
+            439,
+            300
+          ],
+          "scale": 1.3414634146341464
+        },
+        {
+          "animal": "rhinoceros",
+          "row": 2,
+          "col": 3,
+          "sourceBoundsInCell": [
+            23,
+            42,
+            328,
+            289
+          ],
+          "outputBounds": [
+            52,
+            135,
+            409,
+            331
+          ],
+          "scale": 1.3414634146341464
+        }
+      ]
+    },
+    "b-animals.webp": {
+      "size": [
+        2048,
+        1536
+      ],
+      "animals": [
+        "ostrich",
+        "hippopotamus",
+        "monkey"
+      ],
+      "frames": [
+        {
+          "animal": "ostrich",
+          "row": 0,
+          "col": 0,
+          "sourceBoundsInCell": [
+            42,
+            19,
+            333,
+            332
+          ],
+          "outputBounds": [
+            66,
+            58,
+            380,
+            408
+          ],
+          "scale": 1.3043478260869565
+        },
+        {
+          "animal": "ostrich",
+          "row": 0,
+          "col": 1,
+          "sourceBoundsInCell": [
+            58,
+            20,
+            331,
+            342
+          ],
+          "outputBounds": [
+            78,
+            46,
+            356,
+            420
+          ],
+          "scale": 1.3043478260869565
+        },
+        {
+          "animal": "ostrich",
+          "row": 0,
+          "col": 2,
+          "sourceBoundsInCell": [
+            55,
+            20,
+            327,
+            342
+          ],
+          "outputBounds": [
+            79,
+            46,
+            355,
+            420
+          ],
+          "scale": 1.3043478260869565
+        },
+        {
+          "animal": "ostrich",
+          "row": 0,
+          "col": 3,
+          "sourceBoundsInCell": [
+            60,
+            19,
+            328,
+            341
+          ],
+          "outputBounds": [
+            81,
+            46,
+            350,
+            420
+          ],
+          "scale": 1.3043478260869565
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 1,
+          "col": 0,
+          "sourceBoundsInCell": [
+            32,
+            174,
+            333,
+            295
+          ],
+          "outputBounds": [
+            45,
+            296,
+            423,
+            170
+          ],
+          "scale": 1.4057507987220448
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 1,
+          "col": 1,
+          "sourceBoundsInCell": [
+            23,
+            107,
+            334,
+            297
+          ],
+          "outputBounds": [
+            38,
+            199,
+            437,
+            267
+          ],
+          "scale": 1.4057507987220448
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 1,
+          "col": 2,
+          "sourceBoundsInCell": [
+            25,
+            65,
+            333,
+            299
+          ],
+          "outputBounds": [
+            40,
+            137,
+            433,
+            329
+          ],
+          "scale": 1.4057507987220448
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 1,
+          "col": 3,
+          "sourceBoundsInCell": [
+            23,
+            64,
+            336,
+            300
+          ],
+          "outputBounds": [
+            36,
+            134,
+            440,
+            332
+          ],
+          "scale": 1.4057507987220448
+        },
+        {
+          "animal": "monkey",
+          "row": 2,
+          "col": 0,
+          "sourceBoundsInCell": [
+            42,
+            38,
+            300,
+            334
+          ],
+          "outputBounds": [
+            79,
+            59,
+            355,
+            407
+          ],
+          "scale": 1.375
+        },
+        {
+          "animal": "monkey",
+          "row": 2,
+          "col": 1,
+          "sourceBoundsInCell": [
+            24,
+            37,
+            321,
+            334
+          ],
+          "outputBounds": [
+            52,
+            58,
+            408,
+            408
+          ],
+          "scale": 1.375
+        },
+        {
+          "animal": "monkey",
+          "row": 2,
+          "col": 2,
+          "sourceBoundsInCell": [
+            19,
+            37,
+            339,
+            335
+          ],
+          "outputBounds": [
+            36,
+            56,
+            440,
+            410
+          ],
+          "scale": 1.375
+        },
+        {
+          "animal": "monkey",
+          "row": 2,
+          "col": 3,
+          "sourceBoundsInCell": [
+            41,
+            39,
+            286,
+            336
+          ],
+          "outputBounds": [
+            88,
+            58,
+            337,
+            408
+          ],
+          "scale": 1.375
+        }
+      ]
+    },
+    "walk-animals.webp": {
+      "size": [
+        2048,
+        1536
+      ],
+      "animals": [
+        "giraffe",
+        "lion",
+        "hippopotamus"
+      ],
+      "frames": [
+        {
+          "animal": "giraffe",
+          "row": 0,
+          "col": 0,
+          "sourceBoundsInCell": [
+            65,
+            26,
+            329,
+            350
+          ],
+          "outputBounds": [
+            85,
+            46,
+            342,
+            420
+          ],
+          "scale": 1.2962962962962963
+        },
+        {
+          "animal": "giraffe",
+          "row": 0,
+          "col": 1,
+          "sourceBoundsInCell": [
+            64,
+            32,
+            327,
+            343
+          ],
+          "outputBounds": [
+            86,
+            63,
+            341,
+            403
+          ],
+          "scale": 1.2962962962962963
+        },
+        {
+          "animal": "giraffe",
+          "row": 0,
+          "col": 2,
+          "sourceBoundsInCell": [
+            59,
+            38,
+            325,
+            345
+          ],
+          "outputBounds": [
+            84,
+            68,
+            345,
+            398
+          ],
+          "scale": 1.2962962962962963
+        },
+        {
+          "animal": "giraffe",
+          "row": 0,
+          "col": 3,
+          "sourceBoundsInCell": [
+            60,
+            28,
+            327,
+            347
+          ],
+          "outputBounds": [
+            83,
+            52,
+            346,
+            414
+          ],
+          "scale": 1.2962962962962963
+        },
+        {
+          "animal": "lion",
+          "row": 1,
+          "col": 0,
+          "sourceBoundsInCell": [
+            14,
+            52,
+            350,
+            322
+          ],
+          "outputBounds": [
+            36,
+            112,
+            440,
+            354
+          ],
+          "scale": 1.3095238095238095
+        },
+        {
+          "animal": "lion",
+          "row": 1,
+          "col": 1,
+          "sourceBoundsInCell": [
+            20,
+            52,
+            346,
+            318
+          ],
+          "outputBounds": [
+            43,
+            118,
+            427,
+            348
+          ],
+          "scale": 1.3095238095238095
+        },
+        {
+          "animal": "lion",
+          "row": 1,
+          "col": 2,
+          "sourceBoundsInCell": [
+            18,
+            59,
+            348,
+            321
+          ],
+          "outputBounds": [
+            40,
+            123,
+            432,
+            343
+          ],
+          "scale": 1.3095238095238095
+        },
+        {
+          "animal": "lion",
+          "row": 1,
+          "col": 3,
+          "sourceBoundsInCell": [
+            14,
+            60,
+            347,
+            318
+          ],
+          "outputBounds": [
+            38,
+            128,
+            436,
+            338
+          ],
+          "scale": 1.3095238095238095
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 2,
+          "col": 0,
+          "sourceBoundsInCell": [
+            13,
+            71,
+            360,
+            313
+          ],
+          "outputBounds": [
+            36,
+            159,
+            440,
+            307
+          ],
+          "scale": 1.2680115273775217
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 2,
+          "col": 1,
+          "sourceBoundsInCell": [
+            31,
+            69,
+            356,
+            311
+          ],
+          "outputBounds": [
+            50,
+            159,
+            412,
+            307
+          ],
+          "scale": 1.2680115273775217
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 2,
+          "col": 2,
+          "sourceBoundsInCell": [
+            14,
+            69,
+            354,
+            315
+          ],
+          "outputBounds": [
+            41,
+            154,
+            431,
+            312
+          ],
+          "scale": 1.2680115273775217
+        },
+        {
+          "animal": "hippopotamus",
+          "row": 2,
+          "col": 3,
+          "sourceBoundsInCell": [
+            24,
+            69,
+            353,
+            320
+          ],
+          "outputBounds": [
+            48,
+            148,
+            417,
+            318
+          ],
+          "scale": 1.2680115273775217
+        }
+      ]
+    }
+  }
+}

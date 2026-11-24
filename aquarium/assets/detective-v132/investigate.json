@@ -1,0 +1,859 @@
+{
+  "version": 132,
+  "image": "investigate.webp",
+  "cell": 256,
+  "columns": 4,
+  "rows": 4,
+  "anchor": [
+    128,
+    244
+  ],
+  "commonDrawSize": 56,
+  "view": "rear-three-quarter-right",
+  "rowsByCharacter": {
+    "haru": 0,
+    "doyun": 1,
+    "narin": 2,
+    "soi": 3
+  },
+  "fps": 4,
+  "suggestedSequence": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "sourceImage": "investigate-source.png",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "objectsEmbedded": [
+    "left hand holding clue",
+    "right hand holding magnifier"
+  ],
+  "notes": [
+    "Render the whole frame at unchanged player x/y. Do not draw another paper or lens.",
+    "All frames retain two connected grips and the same paper. Far upper arm is naturally occluded by the torso.",
+    "Feature centers are measured visible-region centers, not skeletal joints or collision bounds.",
+    "Uniform 0.8 source scaling plus translation aligns every ground-contact midpoint at [128,244]; no nonuniform anatomy transforms."
+  ],
+  "characters": {
+    "haru": {
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            0,
+            0,
+            314,
+            314
+          ],
+          "sourceAnchor": [
+            139.0,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            89,
+            19,
+            244,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.8,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            199.14,
+            121.67
+          ],
+          "rightMagnifierGrip": [
+            174.43,
+            143.59
+          ],
+          "lensCenter": [
+            181.87,
+            120.5
+          ],
+          "visiblePaperCenter": [
+            196.0,
+            143.2
+          ]
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            314,
+            0,
+            313,
+            314
+          ],
+          "sourceAnchor": [
+            138.5,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            90,
+            22,
+            244,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              17.2,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            200.81,
+            123.53
+          ],
+          "rightMagnifierGrip": [
+            172.61,
+            146.09
+          ],
+          "lensCenter": [
+            183.22,
+            128.66
+          ],
+          "visiblePaperCenter": [
+            196.4,
+            143.2
+          ]
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            627,
+            0,
+            313,
+            314
+          ],
+          "sourceAnchor": [
+            139.5,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            91,
+            27,
+            245,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.4,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            201.51,
+            123.25
+          ],
+          "rightMagnifierGrip": [
+            173.86,
+            145.32
+          ],
+          "lensCenter": [
+            187.41,
+            127.49
+          ],
+          "visiblePaperCenter": [
+            195.6,
+            143.2
+          ]
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            940,
+            0,
+            314,
+            314
+          ],
+          "sourceAnchor": [
+            140.0,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            92,
+            22,
+            245,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.0,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            199.41,
+            124.11
+          ],
+          "rightMagnifierGrip": [
+            173.34,
+            143.38
+          ],
+          "lensCenter": [
+            180.62,
+            123.83
+          ],
+          "visiblePaperCenter": [
+            195.2,
+            143.2
+          ]
+        }
+      ]
+    },
+    "doyun": {
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            0,
+            314,
+            314,
+            313
+          ],
+          "sourceAnchor": [
+            139.5,
+            298.0
+          ],
+          "sourceOpaqueBounds": [
+            91,
+            16,
+            244,
+            298
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.4,
+              5.6
+            ]
+          },
+          "leftPaperGrip": [
+            198.46,
+            122.05
+          ],
+          "rightMagnifierGrip": [
+            171.63,
+            146.15
+          ],
+          "lensCenter": [
+            181.1,
+            121.84
+          ],
+          "visiblePaperCenter": [
+            195.6,
+            144.0
+          ]
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            314,
+            314,
+            313,
+            313
+          ],
+          "sourceAnchor": [
+            138.5,
+            298.0
+          ],
+          "sourceOpaqueBounds": [
+            90,
+            19,
+            244,
+            298
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              17.2,
+              5.6
+            ]
+          },
+          "leftPaperGrip": [
+            200.69,
+            122.71
+          ],
+          "rightMagnifierGrip": [
+            172.35,
+            148.4
+          ],
+          "lensCenter": [
+            183.79,
+            131.57
+          ],
+          "visiblePaperCenter": [
+            196.4,
+            144.0
+          ]
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            627,
+            314,
+            313,
+            313
+          ],
+          "sourceAnchor": [
+            139.5,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            91,
+            23,
+            245,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.4,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            204.34,
+            123.26
+          ],
+          "rightMagnifierGrip": [
+            174.85,
+            146.92
+          ],
+          "lensCenter": [
+            190.68,
+            125.56
+          ],
+          "visiblePaperCenter": [
+            195.6,
+            143.2
+          ]
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            940,
+            314,
+            314,
+            313
+          ],
+          "sourceAnchor": [
+            139.5,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            91,
+            19,
+            244,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.4,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            199.9,
+            121.32
+          ],
+          "rightMagnifierGrip": [
+            171.07,
+            146.31
+          ],
+          "lensCenter": [
+            180.35,
+            123.71
+          ],
+          "visiblePaperCenter": [
+            195.6,
+            143.2
+          ]
+        }
+      ]
+    },
+    "narin": {
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            0,
+            627,
+            314,
+            313
+          ],
+          "sourceAnchor": [
+            139.0,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            80,
+            23,
+            245,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.8,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            200.15,
+            123.65
+          ],
+          "rightMagnifierGrip": [
+            173.76,
+            145.17
+          ],
+          "lensCenter": [
+            180.77,
+            125.72
+          ],
+          "visiblePaperCenter": [
+            196.0,
+            148.0
+          ]
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            314,
+            627,
+            313,
+            313
+          ],
+          "sourceAnchor": [
+            138.5,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            82,
+            27,
+            244,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              17.2,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            201.66,
+            126.96
+          ],
+          "rightMagnifierGrip": [
+            169.56,
+            146.85
+          ],
+          "lensCenter": [
+            182.18,
+            136.34
+          ],
+          "visiblePaperCenter": [
+            196.4,
+            148.0
+          ]
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            627,
+            627,
+            313,
+            313
+          ],
+          "sourceAnchor": [
+            139.5,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            84,
+            32,
+            246,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.4,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            204.6,
+            124.75
+          ],
+          "rightMagnifierGrip": [
+            172.7,
+            145.56
+          ],
+          "lensCenter": [
+            190.29,
+            127.63
+          ],
+          "visiblePaperCenter": [
+            195.6,
+            148.0
+          ]
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            940,
+            627,
+            314,
+            313
+          ],
+          "sourceAnchor": [
+            140.0,
+            299.0
+          ],
+          "sourceOpaqueBounds": [
+            83,
+            26,
+            245,
+            299
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.0,
+              4.8
+            ]
+          },
+          "leftPaperGrip": [
+            199.95,
+            126.21
+          ],
+          "rightMagnifierGrip": [
+            172.22,
+            145.41
+          ],
+          "lensCenter": [
+            179.41,
+            126.07
+          ],
+          "visiblePaperCenter": [
+            195.2,
+            148.0
+          ]
+        }
+      ]
+    },
+    "soi": {
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            0,
+            940,
+            314,
+            314
+          ],
+          "sourceAnchor": [
+            139.0,
+            300.0
+          ],
+          "sourceOpaqueBounds": [
+            69,
+            24,
+            245,
+            300
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.8,
+              4.0
+            ]
+          },
+          "leftPaperGrip": [
+            202.5,
+            125.49
+          ],
+          "rightMagnifierGrip": [
+            173.83,
+            144.5
+          ],
+          "lensCenter": [
+            180.49,
+            124.08
+          ],
+          "visiblePaperCenter": [
+            196.0,
+            147.2
+          ]
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            314,
+            940,
+            313,
+            314
+          ],
+          "sourceAnchor": [
+            139.0,
+            300.0
+          ],
+          "sourceOpaqueBounds": [
+            69,
+            29,
+            244,
+            300
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.8,
+              4.0
+            ]
+          },
+          "leftPaperGrip": [
+            201.69,
+            126.99
+          ],
+          "rightMagnifierGrip": [
+            173.38,
+            149.2
+          ],
+          "lensCenter": [
+            184.0,
+            133.92
+          ],
+          "visiblePaperCenter": [
+            196.0,
+            147.2
+          ]
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            627,
+            940,
+            313,
+            314
+          ],
+          "sourceAnchor": [
+            139.5,
+            300.0
+          ],
+          "sourceOpaqueBounds": [
+            71,
+            31,
+            245,
+            300
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.4,
+              4.0
+            ]
+          },
+          "leftPaperGrip": [
+            202.74,
+            125.5
+          ],
+          "rightMagnifierGrip": [
+            174.84,
+            146.43
+          ],
+          "lensCenter": [
+            184.49,
+            125.91
+          ],
+          "visiblePaperCenter": [
+            195.6,
+            147.2
+          ]
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "sourceRect": [
+            940,
+            940,
+            314,
+            314
+          ],
+          "sourceAnchor": [
+            140.0,
+            300.0
+          ],
+          "sourceOpaqueBounds": [
+            71,
+            28,
+            245,
+            300
+          ],
+          "packTransform": {
+            "scale": 0.8,
+            "translate": [
+              16.0,
+              4.0
+            ]
+          },
+          "leftPaperGrip": [
+            201.88,
+            125.26
+          ],
+          "rightMagnifierGrip": [
+            171.07,
+            145.66
+          ],
+          "lensCenter": [
+            179.94,
+            125.67
+          ],
+          "visiblePaperCenter": [
+            195.2,
+            147.2
+          ]
+        }
+      ]
+    }
+  }
+}

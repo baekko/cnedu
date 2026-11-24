@@ -1,0 +1,148 @@
+/* One compact header and the original logical type scale in all24places. */
+#app .game-header,#app .ex-header{padding:0 8px;gap:5px;min-width:0;align-items:center}
+#app .game-header>div:first-child,#app .ex-header>div:first-child{min-width:0;flex:1}
+#app .game-header .wordmark,#app .ex-header .wordmark{display:none}
+#app .game-header h1,#app .ex-header h1{display:flex;align-items:center;gap:5px;margin:0;font-size:14px;line-height:1.2;letter-spacing:-.55px;font-weight:800;white-space:nowrap;color:#f0faf5}
+#app .game-header h1>svg,#app .ex-header h1>svg{width:18px;height:18px;flex:0 0 18px;color:#c8e2d8}
+#app .header-actions{display:flex;align-items:center;gap:3px;flex:0 0 auto}
+#app .game-header .icon-button,#app .ex-header .icon-button{display:grid;place-items:center;width:28px;height:27px;min-height:0;padding:0;border-radius:9px;background:#ecf6ef16;border:1px solid #c9e7dd55;color:#edf8f2;box-shadow:none;flex:0 0 28px}
+#app .header-actions .icon-button .game-icon,#app .header-actions .icon-button>svg{width:18px;height:18px;margin:0}
+#app .header-actions .icon-button:focus-visible{outline:2px solid #cce6dc;outline-offset:1px}
+#app .header-actions .icon-button:active{background:#d5eadb44;transform:translateY(1px)}
+#app .header-actions .status-menu-button{width:42px;min-height:28px;flex-basis:42px;font-size:11px;font-weight:750}
+#app .hud-stat strong,#app .ex-hud b{font-size:16px;letter-spacing:-.4px}
+#app .hud-label,#app .ex-hud small{font-size:8px}
+#app.cinema-mode .timer strong{font-size:12px;white-space:nowrap}
+.tutorial-device .demo-header h1{max-width:145px}
+.tutorial-device .demo-header .header-actions{gap:3px}
+.tutorial-device .demo-header .icon-button{width:26px!important;height:26px!important;flex-basis:26px!important}
+
+/* Soft paper panels, rounded tabs and equal-colour choices; room art is intact. */
+#app .overlay{background:#173f4966;backdrop-filter:blur(2px)}
+#app .modal{border-radius:28px 28px 25px 25px;border:2px solid #d2e6d9;background:linear-gradient(160deg,#fffdf4,#f0f7ef);box-shadow:0 6px 0 #c0d8cb,0 16px 38px #102e3930;color:#365b54;scrollbar-width:thin;scrollbar-color:#bfd6c7 transparent}
+#app .modal-kicker{display:inline-flex;align-items:center;justify-content:center;padding:5px 12px;border-radius:20px;background:#e1eee3;color:#608777;letter-spacing:1px;font-size:9px;font-weight:800}
+#app .modal h2{color:#375d54;font-size:21px;letter-spacing:-.7px;font-weight:800}
+#app .modal-lead{font-size:12px;line-height:1.75;color:#6c8579}
+#app .instruction-list{background:#e7f0e3;border:1px solid #d1dfcb;border-radius:20px}
+#app .instruction-list b{font-size:13px;color:#496a5b}
+#app .instruction-list small{font-size:11px;color:#738876}
+#app .primary-button,#app .secondary-button,#app .return-button,#app .combine-button,#app .answer-row>button,#app .ex-panel .primary-button{background:#e2edda;color:#45674f;border:1px solid #b8cdb1;box-shadow:0 3px 0 #b1c5aa;border-radius:17px;font-weight:750}
+#app .primary-button{height:49px;font-size:14px;gap:12px}
+#app .secondary-button,#app .return-button{min-height:44px;font-size:12px}
+#app .primary-button:active:not(:disabled),#app .secondary-button:active:not(:disabled),#app .return-button:active:not(:disabled),#app .combine-button:active{transform:translateY(2px);box-shadow:0 1px 0 #b1c5aa;background:#d6e5cd}
+#app .modal-symbol{background:#e2eadd;color:#72917b;border:1px dashed #afc6ab;border-radius:23px;transform:rotate(-4deg)}
+#app .pause-modal .primary-button{margin-top:20px}
+#app .pause-modal .secondary-button{margin-top:10px}
+#app .pause-modal .save-hint{font-size:10px;line-height:1.6;color:#778e7d}
+#app .brief-actions{display:grid;gap:10px;margin-top:17px}
+#app .brief-actions>button{width:100%;margin:0}
+#app .combine-button:focus-visible,#app .brief-actions>button:focus-visible{outline:2px solid #5b8274;outline-offset:2px}
+#app .stage-screen{background-color:#edf3e7}
+#app #museum-enter{max-width:340px;margin-left:auto;margin-right:auto;border-radius:21px}
+#app .stage-pilot{border:1px solid #c7d9c3;background:#ffffff80;border-radius:24px;padding:7px 16px;box-shadow:0 3px 0 #b9cbb44d}
+#app .stage-placeholder{font-size:12px;line-height:1.7;color:#718272}
+#app .replay-place{border-radius:18px;background:#edf3e7;border-color:#c8d9c2;box-shadow:0 2px 0 #c1d2ba}
+#app .replay-place.is-current{background:#e0ecd9;border-color:#9fb895}
+#app .replay-node{border-radius:14px;background:#f7faf1;color:#719076}
+#app .replay-actions{margin-bottom:14px}
+#app .replay-actions .return-button{margin:0;height:46px;min-height:46px;font-size:12px}
+.utility-modal{position:relative}
+.panel-icon{width:53px;height:53px;display:grid;place-items:center;margin:0 auto 9px;background:#e5edda;border:1px dashed #adc19f;border-radius:18px;transform:rotate(-5deg);color:#78916a}
+.panel-icon .game-icon{width:31px;height:31px}
+.panel-note{font-size:11px;line-height:1.75;color:#6e8676;text-align:center;margin:12px 0;word-break:keep-all}
+.score-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}
+.score-summary>span{background:#eaf0e0;border-radius:18px;padding:11px 7px;color:#71866b;font-size:11px}
+.score-summary strong{display:block;font-size:28px;color:#5d7b57;margin-top:7px;font-variant-numeric:tabular-nums}
+.score-summary small{font-size:11px;margin-left:3px;font-weight:600}
+.score-table-wrap{max-height:300px;overflow:auto;border:1px solid #d4dfca;border-radius:16px;background:#fbfcf4;scrollbar-width:thin}
+.score-table{border-collapse:collapse;width:100%;font-size:11px;text-align:center;font-variant-numeric:tabular-nums}
+.score-table thead{position:sticky;top:0;background:#e4edda;color:#627d58;z-index:1}
+.score-table td,.score-table th{padding:9px 5px;border-bottom:1px solid #e2e9db}
+.score-table tbody th{display:flex;align-items:center;gap:6px;text-align:left;font-size:11px;font-weight:650}
+.score-table th svg{width:19px;height:19px;flex:none;color:#78946e}
+.score-table small{font-size:9px;color:#8b9a80}
+.score-table tr[aria-current]{background:#f0f5e9}
+.inventory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;padding:8px 0;margin:17px 0;list-style:none}
+.inventory-grid li{aspect-ratio:1/1.13;border:1px dashed #becdb0;background:#f0f4e6;border-radius:19px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;box-shadow:inset 0 2px 0 #fffdf8}
+.empty-pocket{color:#c1ceb0}.empty-pocket .game-icon{width:28px;height:28px}
+.inventory-grid small{font-size:9px;color:#95a187}
+.utility-modal>.primary-button{margin-top:16px}
+.result-score{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;padding:9px 12px;background:#edf3e3;border-radius:14px;color:#6a815f;font-size:11px}
+.result-score strong{font-size:15px;color:#506d45}
+#app .result-modal,#app.keyboard-open .result-modal{
+ display:flex;flex-direction:column;gap:8px;overflow:hidden;padding:14px 16px 13px;
+}
+#app .result-content{min-height:0;overflow:auto;padding:2px 4px;overscroll-behavior:contain;scrollbar-width:thin}
+#app .result-actions{flex:none;padding:0 4px 3px}
+#app .result-stats{margin:7px 0;padding:6px 0}
+#app .result-stats span{margin-bottom:2px}
+#app .collection-heading{margin-bottom:4px}
+#app .result-modal .clue-grid{gap:4px 7px}
+#app .result-modal .clue-card,#app .collection-modal .clue-card{height:52px}
+#app .result-modal .combine-button,#app .collection-modal .combine-button{margin:6px 0 0}
+#app .result-modal .answer-form{margin-top:9px}
+#app .result-modal .answer-form label{margin-bottom:4px}
+#app .result-modal #answer-help{margin-top:4px}
+#app .result-modal .result-score{margin:6px 0;padding:5px 9px}
+#app .result-modal .retry-note{margin:4px 0 0}
+#app .result-footnote{margin:3px 0 0}
+#app .collection-modal .clue-grid{margin:10px 0 6px}
+#quit-overlay{z-index:110}#utility-overlay{z-index:95}
+.quit-modal .return-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+
+#app #utility-overlay[data-view="menu"]{
+ background:#122d3454;
+ backdrop-filter:blur(2px);
+}
+#app #utility-overlay[data-view="menu"] .utility-modal{
+ display:flex;
+ flex-direction:column;
+ width:min(100%,355px);
+ max-height:100%;
+ padding:19px 16px 16px;
+ border:1px solid #e3fffd62;
+ border-radius:22px;
+ background:linear-gradient(155deg,#2c5157e6,#142f37e8);
+ box-shadow:0 20px 46px #061b2466,inset 0 1px 0 #f2ffff30;
+ backdrop-filter:blur(15px) saturate(125%);
+ color:#f0fbf8;
+ text-align:left;
+ overflow:hidden;
+}
+#app #utility-overlay[data-view="menu"] #utility-title{
+ flex:none;min-height:29px;margin:0 44px 11px 2px;color:#f0fbf8;font-size:19px;line-height:1.4;
+}
+#app #utility-overlay[data-view="menu"] #utility-content{
+ display:grid;gap:5px;min-height:0;overflow-y:auto;padding:4px;margin:-4px;
+}
+#app #utility-overlay[data-view="menu"] #utility-close{
+ position:absolute;top:11px;right:12px;
+ display:grid;place-items:center;
+ width:36px;height:36px;min-height:36px;margin:0;padding:0;border-radius:10px;
+ background:#ffffff10;border:1px solid #d3faf030;box-shadow:none;color:#e9faf4;
+}
+#utility-close .game-icon{width:19px;height:19px}
+#app .menu-action{
+ display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:10px;
+ width:100%;min-height:49px;padding:6px 10px;
+ background:#ecffff14;border:1px solid #d3faf02e;border-radius:11px;
+ box-shadow:none;color:#f0fbf8;text-align:left;
+}
+#app .menu-action-icon{
+ display:grid;place-items:center;width:32px;height:32px;
+ background:#c1f4e718;border:1px solid #c1f4e725;border-radius:9px;color:#ceeee8;
+}
+.menu-action-icon .game-icon{width:19px;height:19px}
+.menu-action-copy{display:grid;gap:1px}
+.menu-action-copy b{font-size:14px;font-weight:750;line-height:1.35}
+.menu-action-copy small{font-size:11px;line-height:1.4;color:#cce0dc;word-break:keep-all}
+#app .menu-action:hover,#app .menu-action:active,
+#app #utility-overlay[data-view="menu"] #utility-close:hover{background:#e8ffff27}
+#app .menu-action:focus-visible,#app #utility-overlay[data-view="menu"] #utility-close:focus-visible{
+ outline:2px solid #c3e9df;outline-offset:2px;
+}
+@media(max-height:545px){
+ #app #utility-overlay[data-view="menu"] .utility-modal{padding:15px 13px}
+ #app .menu-action{min-height:45px;padding:4px 8px}
+}
+@media(prefers-reduced-motion:reduce){#app button{transition:none!important}}

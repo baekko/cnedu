@@ -1,0 +1,186 @@
+{
+  "subjects": [
+    {
+      "sx": 40,
+      "sy": 8,
+      "sw": 175,
+      "sh": 242
+    },
+    {
+      "sx": 263,
+      "sy": 13,
+      "sw": 242,
+      "sh": 237
+    },
+    {
+      "sx": 525,
+      "sy": 8,
+      "sw": 229,
+      "sh": 242
+    },
+    {
+      "sx": 7,
+      "sy": 281,
+      "sw": 242,
+      "sh": 225
+    },
+    {
+      "sx": 263,
+      "sy": 288,
+      "sw": 242,
+      "sh": 218
+    },
+    {
+      "sx": 535,
+      "sy": 264,
+      "sw": 210,
+      "sh": 242
+    },
+    {
+      "sx": 7,
+      "sy": 523,
+      "sw": 242,
+      "sh": 239
+    },
+    {
+      "sx": 281,
+      "sy": 520,
+      "sw": 206,
+      "sh": 242
+    },
+    {
+      "sx": 519,
+      "sy": 529,
+      "sw": 242,
+      "sh": 233
+    }
+  ],
+  "alternate": [
+    {
+      "sx": 40,
+      "sy": 8,
+      "sw": 175,
+      "sh": 242
+    },
+    {
+      "sx": 263,
+      "sy": 13,
+      "sw": 242,
+      "sh": 237
+    },
+    {
+      "sx": 525,
+      "sy": 8,
+      "sw": 229,
+      "sh": 242
+    },
+    {
+      "sx": 7,
+      "sy": 281,
+      "sw": 242,
+      "sh": 225
+    },
+    {
+      "sx": 263,
+      "sy": 288,
+      "sw": 242,
+      "sh": 218
+    },
+    {
+      "sx": 535,
+      "sy": 264,
+      "sw": 210,
+      "sh": 242
+    },
+    {
+      "sx": 7,
+      "sy": 523,
+      "sw": 242,
+      "sh": 239
+    },
+    {
+      "sx": 281,
+      "sy": 520,
+      "sw": 206,
+      "sh": 242
+    },
+    {
+      "sx": 519,
+      "sy": 529,
+      "sw": 242,
+      "sh": 233
+    }
+  ],
+  "names": [
+    "cat",
+    "dog",
+    "teddy",
+    "plane",
+    "train",
+    "pinwheel",
+    "fishbowl",
+    "vase",
+    "bubbles"
+  ],
+  "atlasSize": [
+    768,
+    768
+  ],
+  "sourceBoxes": [
+    [
+      78,
+      22,
+      352,
+      400
+    ],
+    [
+      452,
+      72,
+      785,
+      398
+    ],
+    [
+      842,
+      23,
+      1202,
+      404
+    ],
+    [
+      45,
+      455,
+      405,
+      789
+    ],
+    [
+      427,
+      454,
+      811,
+      800
+    ],
+    [
+      880,
+      424,
+      1208,
+      802
+    ],
+    [
+      36,
+      845,
+      404,
+      1208
+    ],
+    [
+      447,
+      804,
+      804,
+      1223
+    ],
+    [
+      810,
+      795,
+      1256,
+      1224
+    ]
+  ],
+  "notes": "Both poses share the same hand-inspected crop and scale per subject. Actual sprite bounds supplied; cell pitch256. Source atlas is not perfectly regular; explicit crops prevent clipping top of flowers or leaking adjacent cells."
+}

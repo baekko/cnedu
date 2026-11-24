@@ -1,0 +1,371 @@
+{
+  "image": "gardener.webp",
+  "atlasSize": [
+    1024,
+    768
+  ],
+  "cellSize": 256,
+  "footX": 128,
+  "footY": 238,
+  "referenceHeight": 210,
+  "suggestedWorldHeight": 64,
+  "animations": {
+    "walk": {
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 5,
+      "facing": "right"
+    },
+    "tend": {
+      "frames": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "fps": 4,
+      "facing": "right"
+    },
+    "spray": {
+      "frames": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "fps": 5,
+      "facing": "left"
+    }
+  },
+  "frames": [
+    {
+      "id": 0,
+      "sx": 0,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        90,
+        29,
+        165,
+        239
+      ],
+      "sourceCell": [
+        0,
+        0,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        193.47,
+        330
+      ]
+    },
+    {
+      "id": 1,
+      "sx": 256,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        80,
+        29,
+        158,
+        239
+      ],
+      "sourceCell": [
+        362,
+        0,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        203.923,
+        331
+      ]
+    },
+    {
+      "id": 2,
+      "sx": 512,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        83,
+        30,
+        164,
+        238
+      ],
+      "sourceCell": [
+        724,
+        0,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        199.891,
+        331
+      ]
+    },
+    {
+      "id": 3,
+      "sx": 768,
+      "sy": 0,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        65,
+        31,
+        156,
+        238
+      ],
+      "sourceCell": [
+        1086,
+        0,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        220.728,
+        329
+      ]
+    },
+    {
+      "id": 4,
+      "sx": 0,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        91,
+        26,
+        180,
+        238
+      ],
+      "sourceCell": [
+        0,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        178.263,
+        334
+      ]
+    },
+    {
+      "id": 5,
+      "sx": 256,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        85,
+        30,
+        189,
+        238
+      ],
+      "sourceCell": [
+        362,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        176.516,
+        334
+      ]
+    },
+    {
+      "id": 6,
+      "sx": 512,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        81,
+        32,
+        215,
+        238
+      ],
+      "sourceCell": [
+        724,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        176.332,
+        334
+      ]
+    },
+    {
+      "id": 7,
+      "sx": 768,
+      "sy": 256,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        86,
+        31,
+        180,
+        238
+      ],
+      "sourceCell": [
+        1086,
+        362,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        178.057,
+        334
+      ]
+    },
+    {
+      "id": 8,
+      "sx": 0,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        85,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        0,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        185.399,
+        336
+      ],
+      "nozzle": {
+        "x": 84.96,
+        "y": 93.64,
+        "dx": -1,
+        "dy": -0.15
+      }
+    },
+    {
+      "id": 9,
+      "sx": 256,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        71,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        362,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        185.294,
+        335
+      ],
+      "nozzle": {
+        "x": 71.36,
+        "y": 84.12,
+        "dx": -1,
+        "dy": -0.15
+      }
+    },
+    {
+      "id": 10,
+      "sx": 512,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        68,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        724,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        184.929,
+        336
+      ],
+      "nozzle": {
+        "x": 68.64,
+        "y": 69.84,
+        "dx": -1,
+        "dy": -0.15
+      }
+    },
+    {
+      "id": 11,
+      "sx": 768,
+      "sy": 512,
+      "sw": 256,
+      "sh": 256,
+      "footX": 128,
+      "footY": 238,
+      "bounds": [
+        69,
+        28,
+        173,
+        238
+      ],
+      "sourceCell": [
+        1086,
+        724,
+        362,
+        362
+      ],
+      "sourceFoot": [
+        184.907,
+        336
+      ],
+      "nozzle": {
+        "x": 69.32,
+        "y": 86.84,
+        "dx": -1,
+        "dy": -0.15
+      }
+    }
+  ],
+  "notes": "Twelve individually generated poses, equal scale and normalized foot anchors. Four walk poses are a short illustrative cycle, not a full eight-direction locomotion set. Tending is a connected hand-brush reach; spraying nozzle faces left. Mirror complete frames if opposite facing is needed."
+}

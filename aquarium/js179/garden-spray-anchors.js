@@ -1,0 +1,2 @@
+// Measured trigger-frame nozzle positions at the shared 56px sprite size.
+export const SPRAY_NOZZLES={"haru":{"down":{"x":0.71,"y":-25.87},"up":{"x":13.33,"y":-34.3},"right":{"x":9.2,"y":-27.82}},"doyun":{"down":{"x":0.26,"y":-24.99},"up":{"x":13.96,"y":-31.36},"right":{"x":11.24,"y":-26.35}},"narin":{"down":{"x":0.54,"y":-26.36},"up":{"x":15.19,"y":-36.49},"right":{"x":11.16,"y":-27.41}},"soi":{"down":{"x":0.14,"y":-26.8},"up":{"x":14.36,"y":-34.65},"right":{"x":12.36,"y":-28.75}}};

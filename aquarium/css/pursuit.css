@@ -1,0 +1,101 @@
+#stage-screen[data-place="pursuit"] {
+  --chapter-paper:#ecf3ec;
+  --chapter-ink:#3e625d;
+  --chapter-wash:#c4d9d4;
+  --chapter-line:#92b3a8;
+  background:radial-gradient(ellipse at 74% 18%,#fff7dd,transparent 55%),linear-gradient(145deg,#c5dbd8,#e5eee3 72%,#d5dfd2);
+}
+.pursuit-mode .field-act { top:47px;right:56px;touch-action:manipulation }
+.aligned-layout.pursuit-mode .field-act { right:48px }
+.pursuit-mode[data-screen="playing"] #ocean { touch-action:manipulation;cursor:pointer }
+.pursuit-mode .demo-actions [data-demo-control="flash-button"][hidden] { display:none }
+.pursuit-mode .demo-actions:has([data-demo-control="flash-button"][hidden]) { right:48px }
+#app.pursuit-mode .field-act,
+#app.pursuit-mode .tutorial-device .demo-actions [data-demo-control="field-act"] {
+  background:#d8ebe6;
+  border-color:#84a9a5;
+  outline:none;
+  box-shadow:0 3px 0 #71928e;
+  color:#294e4e;
+}
+#app.pursuit-mode .field-act.action-ready { background:#bce3d9;border-color:#74a59e }
+#app.pursuit-mode button:focus-visible,
+#stage-screen[data-place="pursuit"] button:focus-visible {
+  outline:2px solid #549ca8;
+  outline-offset:2px;
+}
+@media (prefers-reduced-motion:reduce) {
+  #app.pursuit-mode #tutorial-next.is-ready { outline-color:#549ca8 }
+}
+#app.pursuit-mode .tutorial-device button.demo-pressed {
+  box-shadow:inset 0 3px 0 #278e8266 !important;
+  outline:2px solid #549ca8 !important;
+}
+#app.pursuit-mode .tutorial-device button.demo-pressed::after {
+  background:#549ca8;
+  box-shadow:none;
+}
+#pursuit-report-title:focus,
+#pursuit-capture-report-title:focus { outline:none }
+#app #pursuit-report-overlay,
+#app #pursuit-capture-report-overlay,
+#app.pursuit-mode[data-screen="briefing"] #brief-overlay {
+  top:var(--scene-top);
+  height:auto;
+}
+#app #pursuit-report-overlay,
+#app #pursuit-capture-report-overlay {
+  padding:12px;
+}
+#app .pursuit-report {
+  display:grid;
+  gap:12px;
+  width:min(100%,350px);
+  max-height:100%;
+  overflow:auto;
+  padding:18px 20px 21px;
+  text-align:left;
+  word-break:keep-all;
+}
+.pursuit-report > header {
+  padding-bottom:10px;
+  text-align:center;
+  border-bottom:1px solid #b7cbbb;
+}
+.pursuit-report > header .modal-kicker { margin:0 0 5px }
+#app .pursuit-report h2 { margin:0;font-size:24px }
+.pursuit-report h3 { margin:0 0 6px;font-size:14px;color:#365b54 }
+.pursuit-report p,.pursuit-report ul { margin:0;color:#49665c;font-size:13px;line-height:1.5 }
+.pursuit-report-brief,.pursuit-report-profile {
+  display:grid;
+  grid-template-columns:92px minmax(0,1fr);
+  column-gap:13px;
+  align-items:center;
+}
+.pursuit-report-brief img {
+  display:block;
+  width:92px;
+  height:94px;
+  object-fit:contain;
+}
+.pursuit-report .pursuit-report-name { margin-bottom:6px;color:#345b51;font-weight:800 }
+.pursuit-report-profile {
+  padding:8px 10px;
+  border:1px solid #c7d8cc;
+  border-radius:14px;
+  background:#e7f0e8;
+}
+.pursuit-report-profile figure {
+  display:grid;
+  place-items:center;
+  margin:0;
+  height:104px;
+  background:#dce9df;
+  border:1px solid #c3d7c9;
+  border-radius:8px;
+}
+.pursuit-report-profile img { display:block;width:100%;height:96px;object-fit:contain }
+.pursuit-report-profile ul { padding-left:18px }
+.pursuit-report-orders { padding:2px 0 }
+.pursuit-report-orders p + p { margin-top:4px }
+.pursuit-report .primary-button { width:100%;margin:0 }

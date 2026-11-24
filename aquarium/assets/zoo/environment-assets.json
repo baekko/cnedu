@@ -1,0 +1,72 @@
+{
+  "savanna-bg": {
+    "file": "savanna-bg.webp",
+    "size": [
+      780,
+      700
+    ],
+    "mode": "RGB",
+    "bytes": 175240,
+    "source": "originals/savanna-bg.png",
+    "source_size": [
+      1324,
+      1188
+    ]
+  },
+  "forest-bg": {
+    "file": "forest-bg.webp",
+    "size": [
+      780,
+      700
+    ],
+    "mode": "RGB",
+    "bytes": 170310,
+    "source": "originals/forest-bg.png",
+    "source_size": [
+      1324,
+      1188
+    ]
+  },
+  "water-bg": {
+    "file": "water-bg.webp",
+    "size": [
+      780,
+      700
+    ],
+    "mode": "RGB",
+    "bytes": 194658,
+    "source": "originals/water-bg.png",
+    "source_size": [
+      1324,
+      1188
+    ]
+  },
+  "entrance": {
+    "file": "entrance.webp",
+    "size": [
+      768,
+      512
+    ],
+    "mode": "RGBA",
+    "bytes": 108036,
+    "source": "originals/entrance.png",
+    "source_size": [
+      1536,
+      1024
+    ]
+  },
+  "clue": {
+    "file": "clue.webp",
+    "size": [
+      900,
+      900
+    ],
+    "mode": "RGB",
+    "bytes": 336304,
+    "source": "originals/clue.png",
+    "source_size": [
+      1254,
+      1254
+    ]
+  }
+}

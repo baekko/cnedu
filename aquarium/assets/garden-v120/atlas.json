@@ -1,0 +1,78 @@
+{
+  "cover-closed": {
+    "size": [
+      301,
+      500
+    ],
+    "source_cell": [
+      0,
+      455,
+      768,
+      1024
+    ],
+    "source_alpha_bbox": [
+      226,
+      15,
+      547,
+      548
+    ],
+    "alpha_cleanup": "alpha<20 to zero; no painted form changes"
+  },
+  "cover-open": {
+    "size": [
+      388,
+      500
+    ],
+    "source_cell": [
+      768,
+      455,
+      1536,
+      1024
+    ],
+    "source_alpha_bbox": [
+      171,
+      18,
+      578,
+      542
+    ],
+    "alpha_cleanup": "alpha<20 to zero; no painted form changes"
+  },
+  "roof-closed": {
+    "size": [
+      500,
+      199
+    ],
+    "source_cell": [
+      0,
+      0,
+      991,
+      793
+    ],
+    "source_alpha_bbox": [
+      36,
+      249,
+      950,
+      612
+    ],
+    "alpha_cleanup": "alpha<20 to zero; no painted form changes"
+  },
+  "roof-open": {
+    "size": [
+      500,
+      262
+    ],
+    "source_cell": [
+      991,
+      0,
+      1983,
+      793
+    ],
+    "source_alpha_bbox": [
+      24,
+      141,
+      947,
+      624
+    ],
+    "alpha_cleanup": "alpha<20 to zero; no painted form changes"
+  }
+}

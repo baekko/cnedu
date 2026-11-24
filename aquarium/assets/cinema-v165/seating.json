@@ -1,0 +1,49 @@
+{
+  "room": [
+    780,
+    1000
+  ],
+  "logicalRoom": [
+    390,
+    500
+  ],
+  "unchangedPixelRows": [
+    0,
+    825
+  ],
+  "seatRows": 2,
+  "seatsPerRow": 7,
+  "rowTopLogical": [
+    431,
+    459
+  ],
+  "foreground": {
+    "path": "cinema-v165/chairs-foreground.webp",
+    "source": [
+      0,
+      0,
+      780,
+      82
+    ],
+    "target": [
+      0,
+      459,
+      390,
+      41
+    ]
+  },
+  "player": {
+    "x": 195,
+    "y": 483,
+    "size": 72
+  },
+  "seatCentersLogical": [
+    29,
+    84,
+    139,
+    195,
+    251,
+    306,
+    361
+  ]
+}

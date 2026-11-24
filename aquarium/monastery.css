@@ -1,0 +1,17 @@
+#monastery-actions{display:none}
+.monastery-mode #monastery-actions{display:block}
+.monastery-mode .monastery-balance{right:56px;top:44px;width:44px;height:44px;touch-action:none}
+.monastery-balance b{font-size:12px}.monastery-balance small{display:none}
+.monastery-mode .monastery-balance.action-ready{background:#b9e4ce;border-color:#edfdf1;box-shadow:0 3px 0 #7da98e;outline-color:#84ad94;color:#285e48}
+.monastery-mode .piece-art,.monastery-mode .puzzle-grid{background-image:url('./assets/monastery-v105/clue.webp')}
+.monastery-mode .game-header h1{font-size:21px}
+.monastery-mode #history-era{font-size:17px}
+.monastery-mode .game-toast{font-size:11px}
+.monastery-mode .history-message{background:#fff5dfed;border-color:#c6b08a;color:#5b563c}
+.monastery-mode .history-message.danger{background:#fff0e6f2;border-color:#cb9c7a;color:#92533a}
+.monastery-mode .controls-panel{background:#eee9df;border-color:#d6cbb7}
+.monastery-mode .flash-button{background:#e1ecdf;border-color:#9fb59b;color:#4a6545}
+.monastery-mode .history-message{font-size:10px;padding:5px 8px;line-height:1.4;word-break:keep-all}
+#stage-screen[data-place=monastery]{--chapter-paper:#f1e5cc;--chapter-ink:#74603f;--chapter-wash:#d0d5b6;--chapter-line:#a2ab80;background:radial-gradient(ellipse at 80% 15%,#fff1cf 0,transparent 54%),linear-gradient(140deg,#dfe7d6,#f2e4ca 65%,#ddc9aa)}
+
+.monastery-mode .history-message{font-size:11px}

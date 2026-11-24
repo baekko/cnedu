@@ -1,0 +1,83 @@
+{
+  "base": "garden-v119/room0..2.webp",
+  "size": [
+    639,
+    820
+  ],
+  "open_files": [
+    "room0-open.webp",
+    "room1-open.webp",
+    "room2-open.webp"
+  ],
+  "side_window_polygons": [
+    [
+      [
+        0,
+        55
+      ],
+      [
+        80,
+        65
+      ],
+      [
+        80,
+        235
+      ],
+      [
+        0,
+        280
+      ]
+    ],
+    [
+      [
+        559,
+        65
+      ],
+      [
+        639,
+        55
+      ],
+      [
+        639,
+        280
+      ],
+      [
+        559,
+        235
+      ]
+    ]
+  ],
+  "format": "lossless WebP; decoded pixels outside window polygons exactly equal to base",
+  "checks": [
+    {
+      "room": 0,
+      "size": [
+        639,
+        820
+      ],
+      "changed_pixels": 31790,
+      "outside_sidewindow_mask_changed_pixels": 0,
+      "bytes": 555510
+    },
+    {
+      "room": 1,
+      "size": [
+        639,
+        820
+      ],
+      "changed_pixels": 31721,
+      "outside_sidewindow_mask_changed_pixels": 0,
+      "bytes": 545414
+    },
+    {
+      "room": 2,
+      "size": [
+        639,
+        820
+      ],
+      "changed_pixels": 31809,
+      "outside_sidewindow_mask_changed_pixels": 0,
+      "bytes": 565046
+    }
+  ]
+}

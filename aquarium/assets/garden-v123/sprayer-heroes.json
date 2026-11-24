@@ -1,0 +1,524 @@
+{
+  "cell": 256,
+  "columns": 3,
+  "rows": 2,
+  "directions": [
+    "down",
+    "up",
+    "right"
+  ],
+  "poses": [
+    "holding",
+    "trigger"
+  ],
+  "footX": 128,
+  "footY": 244,
+  "commonSize": 56,
+  "renderX": -28,
+  "renderY": -53.375,
+  "left": "mirror right about footX",
+  "commonMuzzle": {
+    "up": {
+      "x": 14,
+      "y": -34,
+      "dx": 0,
+      "dy": -1
+    },
+    "down": {
+      "x": 0,
+      "y": -26,
+      "dx": 0,
+      "dy": 1
+    },
+    "right": {
+      "x": 11,
+      "y": -27,
+      "dx": 1,
+      "dy": 0
+    },
+    "left": {
+      "x": -11,
+      "y": -27,
+      "dx": -1,
+      "dy": 0
+    }
+  },
+  "characters": {
+    "haru": {
+      "file": "haru-spray.webp",
+      "frames": [
+        {
+          "direction": "down",
+          "pose": "holding",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 131.25,
+            "y": 125.73,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.71,
+            "y": -25.87
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "holding",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 188.92,
+            "y": 86.69,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 13.33,
+            "y": -34.41
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "holding",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 170.07,
+            "y": 117.82,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 9.2,
+            "y": -27.6
+          }
+        },
+        {
+          "direction": "down",
+          "pose": "trigger",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 131.25,
+            "y": 125.73,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.71,
+            "y": -25.87
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "trigger",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 188.92,
+            "y": 87.19,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 13.33,
+            "y": -34.3
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "trigger",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 170.07,
+            "y": 116.82,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 9.2,
+            "y": -27.82
+          }
+        }
+      ]
+    },
+    "doyun": {
+      "file": "doyun-spray.webp",
+      "frames": [
+        {
+          "direction": "down",
+          "pose": "holding",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 129.21,
+            "y": 130.74,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.26,
+            "y": -24.78
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "holding",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 191.8,
+            "y": 100.62,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 13.96,
+            "y": -31.36
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "holding",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 179.4,
+            "y": 123.55,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 11.24,
+            "y": -26.35
+          }
+        },
+        {
+          "direction": "down",
+          "pose": "trigger",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 129.21,
+            "y": 129.74,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.26,
+            "y": -24.99
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "trigger",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 191.8,
+            "y": 100.62,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 13.96,
+            "y": -31.36
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "trigger",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 179.4,
+            "y": 123.55,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 11.24,
+            "y": -26.35
+          }
+        }
+      ]
+    },
+    "narin": {
+      "file": "narin-spray.webp",
+      "frames": [
+        {
+          "direction": "down",
+          "pose": "holding",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 130.45,
+            "y": 123.52,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.54,
+            "y": -26.36
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "holding",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 197.42,
+            "y": 80.18,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 15.19,
+            "y": -35.84
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "holding",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 179.03,
+            "y": 118.68,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 11.16,
+            "y": -27.41
+          }
+        },
+        {
+          "direction": "down",
+          "pose": "trigger",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 130.45,
+            "y": 123.52,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.54,
+            "y": -26.36
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "trigger",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 197.42,
+            "y": 77.17,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 15.19,
+            "y": -36.49
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "trigger",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 179.03,
+            "y": 118.68,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 11.16,
+            "y": -27.41
+          }
+        }
+      ]
+    },
+    "soi": {
+      "file": "soi-spray.webp",
+      "frames": [
+        {
+          "direction": "down",
+          "pose": "holding",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 129.64,
+            "y": 121.47,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.36,
+            "y": -26.8
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "holding",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 193.65,
+            "y": 85.12,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 14.36,
+            "y": -34.75
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "holding",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 184.52,
+            "y": 112.55,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 12.36,
+            "y": -28.75
+          }
+        },
+        {
+          "direction": "down",
+          "pose": "trigger",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 128.64,
+            "y": 121.47,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 0.14,
+            "y": -26.8
+          }
+        },
+        {
+          "direction": "up",
+          "pose": "trigger",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 193.65,
+            "y": 85.62,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 14.36,
+            "y": -34.65
+          }
+        },
+        {
+          "direction": "right",
+          "pose": "trigger",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "footX": 128,
+          "footY": 244,
+          "nozzle": {
+            "x": 184.52,
+            "y": 112.55,
+            "occluded": false
+          },
+          "nozzleWorld": {
+            "x": 12.36,
+            "y": -28.75
+          }
+        }
+      ]
+    }
+  }
+}

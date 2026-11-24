@@ -1,0 +1,44 @@
+#field-actions{display:none}
+.field-mode #field-actions{display:block}
+.field-mode .field-act{right:56px;top:44px;width:44px;height:44px;touch-action:none;font-size:12px;white-space:normal;line-height:1.2;padding:3px}
+.field-mode .field-act.action-ready{background:#c2dfc6;border-color:#eff9e6;color:#3b6d55;box-shadow:0 3px 0 #8aac8d}
+.field-mode .health-pips{display:none}
+.field-mode .game-header h1{font-size:21px}
+.field-mode .history-message{font-size:11px;line-height:1.4;padding:5px 9px;background:#fff5dfee;color:#5e6f58;border-color:#c9c4a4}
+.field-mode #field-room-nav{position:absolute;left:12px;right:12px;top:calc(var(--scene-top) + 3px);height:44px;display:flex;gap:6px;align-items:center;z-index:9;pointer-events:auto}
+#field-room-nav[hidden]{display:none!important}
+#field-room-nav button{flex:none;width:44px;height:44px;border:1px solid #c0b18c;border-radius:9px;background:#fff2dbed;color:#8a785a;font-size:15px;font-weight:800;box-shadow:0 2px 0 #908d6e55;touch-action:manipulation}
+#field-room-nav button[aria-pressed=true]{background:#789d85;color:#fff5db;border-color:#eff4d7}
+#field-room-name{margin-left:auto;background:#fff2dcdf;color:#68715b;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:700}
+.photo-mode .piece-art,.photo-mode .puzzle-grid{background-image:url('./assets/photo-v117/clue.webp')}
+.garden-mode .piece-art,.garden-mode .puzzle-grid{background-image:url('./assets/garden-v117/clue.webp')}
+#stage-screen[data-place=photo]{--chapter-paper:#f5ead6;--chapter-ink:#776448;--chapter-wash:#c7d3cc;--chapter-line:#a1b5aa;background:radial-gradient(ellipse at 75% 20%,#fff8e1 0,transparent 55%),linear-gradient(140deg,#d9e2db,#f0e2c8 70%,#dac7a9)}
+#stage-screen[data-place=garden]{--chapter-paper:#edf1d9;--chapter-ink:#617952;--chapter-wash:#c1d4bb;--chapter-line:#9fb896;background:radial-gradient(ellipse at 75% 20%,#fff5d9 0,transparent 55%),linear-gradient(140deg,#d5e8d5,#edf1d6 70%,#baccad)}
+.field-mode .demo-actions [data-demo-control=field-act]{width:44px;height:44px;font-size:12px;white-space:normal;line-height:1.2;padding:3px}
+
+.garden-mode #field-room-nav button{white-space:pre-line;font-size:10px;line-height:1.35}
+.garden-mode #field-room-nav button::first-line{font-size:13px}
+
+.garden-mode #field-room-name{white-space:pre-line;font-size:9px;line-height:1.5;padding:5px 8px;max-width:202px}
+.garden-mode #field-room-name::first-line{font-size:11px}
+
+/* New room and close-work games share the common control dimensions. */
+#workshop-actions[hidden],#workshop-rotate[hidden]{display:none!important}
+#workshop-rotate{width:44px;height:44px;top:44px;right:108px;font-size:11px;line-height:1.2;padding:3px;touch-action:manipulation}
+.datacenter-mode .piece-art,.datacenter-mode .puzzle-grid{background-image:url('./assets/datacenter-v128/entrance.webp')}
+.conservation-mode .piece-art,.conservation-mode .puzzle-grid{background-image:url('./assets/conservation-v128/entrance.webp')}
+#stage-screen[data-place=datacenter]{--chapter-paper:#edf0dc;--chapter-ink:#507c78;--chapter-wash:#a9c9bc;--chapter-line:#94afa6;background:linear-gradient(140deg,#d6e5db,#f0e7d0 70%,#b9d5cc)}
+#stage-screen[data-place=conservation]{--chapter-paper:#f4e6c9;--chapter-ink:#816b46;--chapter-wash:#d6bb87;--chapter-line:#b7a276;background:linear-gradient(140deg,#e9d9bc,#f8efd9 70%,#cab182)}
+/* Korean syllables stay together within their existing words, on all help pages. */
+.briefing h2,.briefing .modal-lead,.instruction-list,.instruction-list b,.instruction-list small,.tutorial-copy b,.tutorial-copy p,.desktop-keys{word-break:keep-all!important;overflow-wrap:normal!important;line-break:strict}
+.instruction-list p{min-width:0;flex:1}.instruction-list b,.instruction-list small{white-space:normal}
+
+.memory-mode[data-screen="playing"] #ocean{touch-action:manipulation;cursor:crosshair}
+.memory-revisit[hidden]{display:none!important}
+.memory-mode #memory-revisit{position:absolute;top:47px;right:56px;width:44px;height:44px;pointer-events:auto;touch-action:manipulation}
+.memory-mode .field-act{top:47px;right:104px}
+.aligned-layout.memory-mode #memory-revisit{right:48px}
+.aligned-layout.memory-mode .field-act{right:96px}
+.memory-item-name{font-size:10px;font-weight:800;line-height:1.15;text-align:center}
+.demo-actions .memory-revisit{width:44px;height:44px}
+#stage-screen[data-place="memory"] #stage-character{display:none}

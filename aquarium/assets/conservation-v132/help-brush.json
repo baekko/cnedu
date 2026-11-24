@@ -1,0 +1,647 @@
+{
+  "version": 132,
+  "file": "conservation-v132/help-brush.webp",
+  "width": 1024,
+  "height": 1024,
+  "columns": 4,
+  "rows": 4,
+  "cell": 256,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "heroRows": {
+    "haru": 0,
+    "doyun": 1,
+    "narin": 2,
+    "soi": 3
+  },
+  "frameOrder": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "suggestedFps": 4,
+  "anchor": [
+    128,
+    244
+  ],
+  "footAnchor": [
+    128,
+    244
+  ],
+  "workAnchor": [
+    128,
+    177
+  ],
+  "bookSpineAnchor": [
+    128,
+    177
+  ],
+  "bookBounds": [
+    60,
+    153,
+    198,
+    204
+  ],
+  "benchBounds": [
+    38,
+    166,
+    219,
+    245
+  ],
+  "view": "front-three-quarter shallow elevated, seated behind low bookbench",
+  "includes": [
+    "selected hero",
+    "two connected arms",
+    "cream gloves",
+    "soft brush",
+    "open parchment book",
+    "workbench",
+    "stool"
+  ],
+  "intendedUse": "help header only; do not replace full-body gameplay explorer",
+  "anchorMethod": "manual native visual registration; tool-contact tolerance about 2px",
+  "characters": {
+    "haru": {
+      "row": 0,
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            13,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            94,
+            154
+          ],
+          "brushTip": [
+            115,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "touch-inner"
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            13,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            83,
+            151
+          ],
+          "brushTip": [
+            100,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-middle"
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            14,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            69,
+            145
+          ],
+          "brushTip": [
+            75,
+            188
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-outer"
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            14,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            76,
+            138
+          ],
+          "brushTip": [
+            89,
+            173
+          ],
+          "brushTouchesPage": false,
+          "phase": "lift-return"
+        }
+      ]
+    },
+    "doyun": {
+      "row": 1,
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            10,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            94,
+            154
+          ],
+          "brushTip": [
+            115,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "touch-inner"
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            10,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            83,
+            151
+          ],
+          "brushTip": [
+            100,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-middle"
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            11,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            69,
+            145
+          ],
+          "brushTip": [
+            75,
+            188
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-outer"
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            13,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            76,
+            138
+          ],
+          "brushTip": [
+            89,
+            173
+          ],
+          "brushTouchesPage": false,
+          "phase": "lift-return"
+        }
+      ]
+    },
+    "narin": {
+      "row": 2,
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            17,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            94,
+            154
+          ],
+          "brushTip": [
+            115,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "touch-inner"
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            17,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            83,
+            151
+          ],
+          "brushTip": [
+            100,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-middle"
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            17,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            69,
+            145
+          ],
+          "brushTip": [
+            75,
+            188
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-outer"
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            17,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            76,
+            138
+          ],
+          "brushTip": [
+            89,
+            173
+          ],
+          "brushTouchesPage": false,
+          "phase": "lift-return"
+        }
+      ]
+    },
+    "soi": {
+      "row": 3,
+      "frames": [
+        {
+          "frame": 0,
+          "sx": 0,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            19,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            94,
+            154
+          ],
+          "brushTip": [
+            115,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "touch-inner"
+        },
+        {
+          "frame": 1,
+          "sx": 256,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            19,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            83,
+            151
+          ],
+          "brushTip": [
+            100,
+            185
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-middle"
+        },
+        {
+          "frame": 2,
+          "sx": 512,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            19,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            69,
+            145
+          ],
+          "brushTip": [
+            75,
+            188
+          ],
+          "brushTouchesPage": true,
+          "phase": "sweep-outer"
+        },
+        {
+          "frame": 3,
+          "sx": 768,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "bounds": [
+            38,
+            20,
+            219,
+            245
+          ],
+          "footAnchor": [
+            128,
+            244
+          ],
+          "workAnchor": [
+            128,
+            177
+          ],
+          "steadyingLeftHand": [
+            179,
+            157
+          ],
+          "rightBrushGrip": [
+            76,
+            138
+          ],
+          "brushTip": [
+            89,
+            173
+          ],
+          "brushTouchesPage": false,
+          "phase": "lift-return"
+        }
+      ]
+    }
+  },
+  "sha256": "0d7f0af615dee1648d998b2b7607398ab61cbcdf4360c3993f2cb41abe2f860a"
+}

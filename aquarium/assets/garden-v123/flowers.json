@@ -1,0 +1,58 @@
+{
+  "flower-open": {
+    "width": 274,
+    "height": 342,
+    "footAnchor": 1,
+    "centerAnchor": 0.5,
+    "headBelowY": 174,
+    "hueClipY": 188.1
+  },
+  "plants": {
+    "source": "garden-v117/plants.webp",
+    "size": [
+      1536,
+      1536
+    ],
+    "changedId": 3,
+    "changedRect": [
+      1123,
+      46,
+      333,
+      402
+    ],
+    "atlas": "garden-v117/atlas.json unchanged",
+    "outsideChangedRectRgbaEqual": true,
+    "changedIds": [
+      3,
+      9
+    ],
+    "camelliaRect": [
+      1075,
+      1076,
+      389,
+      392
+    ],
+    "camelliaHeadMasks": [
+      [
+        80,
+        22,
+        251,
+        182
+      ],
+      [
+        210,
+        119,
+        366,
+        257
+      ]
+    ],
+    "camelliaPotRgbaEqual": true,
+    "outsideCamelliaHeadMasksRgbaEqualToPriorAtlas": true
+  },
+  "preservedDonors": [
+    "donor-gold ordinary daisies",
+    "donor-pink ordinary cosmos",
+    "donor-blue ordinary bluebells"
+  ],
+  "preservedOtherSpecies": "iris,lily,hydrangea,marigold,lotus,lavender,orchid unchanged; camellia flowers changed to singleform, potunchanged"
+}

@@ -1,0 +1,100 @@
+{
+  "size": [
+    639,
+    820
+  ],
+  "base": "garden-v123/room0.webp",
+  "backplate": "window-backplate.webp",
+  "duration": 0.9,
+  "technique": "fixed-hinge projective original painted sash; transparent glass over stationary generated outdoor aperture",
+  "windows": [
+    {
+      "key": "left",
+      "texture": "window-left-leaf.webp",
+      "closed": [
+        [
+          5,
+          63
+        ],
+        [
+          43,
+          86
+        ],
+        [
+          43,
+          221
+        ],
+        [
+          5,
+          250
+        ]
+      ],
+      "open": [
+        [
+          87,
+          109
+        ],
+        [
+          43,
+          86
+        ],
+        [
+          43,
+          221
+        ],
+        [
+          87,
+          247
+        ]
+      ],
+      "hingeIndices": [
+        1,
+        2
+      ]
+    },
+    {
+      "key": "right",
+      "texture": "window-right-leaf.webp",
+      "closed": [
+        [
+          596,
+          86
+        ],
+        [
+          634,
+          63
+        ],
+        [
+          634,
+          250
+        ],
+        [
+          596,
+          221
+        ]
+      ],
+      "open": [
+        [
+          596,
+          86
+        ],
+        [
+          552,
+          109
+        ],
+        [
+          552,
+          247
+        ],
+        [
+          596,
+          221
+        ]
+      ],
+      "hingeIndices": [
+        0,
+        3
+      ]
+    }
+  ]
+}

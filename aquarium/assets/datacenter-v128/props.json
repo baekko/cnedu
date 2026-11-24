@@ -1,0 +1,128 @@
+{
+  "version": 128,
+  "file": "datacenter-v128/props.webp",
+  "cell": 512,
+  "columns": 3,
+  "rows": 2,
+  "frames": {
+    "leverLeft": {
+      "sx": 0,
+      "sy": 0,
+      "sw": 512,
+      "sh": 512,
+      "anchor": [
+        264,
+        432
+      ],
+      "opaqueBounds": [
+        94,
+        75,
+        434,
+        432
+      ],
+      "recommendedHeight": 30,
+      "handle": [
+        166,
+        142
+      ],
+      "pivot": [
+        264,
+        311
+      ]
+    },
+    "leverRight": {
+      "sx": 512,
+      "sy": 0,
+      "sw": 512,
+      "sh": 512,
+      "anchor": [
+        256,
+        432
+      ],
+      "opaqueBounds": [
+        85,
+        75,
+        426,
+        432
+      ],
+      "recommendedHeight": 30,
+      "handle": [
+        354,
+        142
+      ],
+      "pivot": [
+        260,
+        311
+      ]
+    },
+    "source": {
+      "sx": 1024,
+      "sy": 0,
+      "sw": 512,
+      "sh": 512,
+      "anchor": [
+        261,
+        425
+      ],
+      "opaqueBounds": [
+        105,
+        145,
+        417,
+        425
+      ],
+      "recommendedHeight": 38
+    },
+    "virus": {
+      "sx": 0,
+      "sy": 512,
+      "sw": 512,
+      "sh": 512,
+      "anchor": [
+        257,
+        268
+      ],
+      "opaqueBounds": [
+        92,
+        143,
+        422,
+        391
+      ],
+      "recommendedHeight": 18
+    },
+    "quarantine": {
+      "sx": 512,
+      "sy": 512,
+      "sw": 512,
+      "sh": 512,
+      "anchor": [
+        255.5,
+        424
+      ],
+      "opaqueBounds": [
+        79,
+        64,
+        432,
+        424
+      ],
+      "recommendedHeight": 29
+    },
+    "relay": {
+      "sx": 1024,
+      "sy": 512,
+      "sw": 512,
+      "sh": 512,
+      "anchor": [
+        260,
+        414
+      ],
+      "opaqueBounds": [
+        85,
+        120,
+        435,
+        414
+      ],
+      "recommendedHeight": 26
+    }
+  },
+  "note": "Anchor and contact points are LOCAL CELL pixels. Use opaqueBounds height for desired visible height and anchor to foot, not full512cell size. Virus anchor is body center rather than foot. All alpha retained exactly."
+}

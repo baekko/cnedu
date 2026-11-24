@@ -1,0 +1,3332 @@
+{
+  "version": 128,
+  "cell": 256,
+  "columns": 4,
+  "rows": 5,
+  "anchor": [
+    128,
+    244
+  ],
+  "commonDrawSize": 56,
+  "referenceStandingPixelHeight": 228,
+  "commonReferenceHeight": 228,
+  "standingReferenceHeight": 228,
+  "uniformDrawScale": 1,
+  "rowsByAction": {
+    "photoBack": 0,
+    "investigateUp": 1,
+    "investigateDown": 2,
+    "investigateRight": 3,
+    "leverUp": 4
+  },
+  "modes": {
+    "photoBack": {
+      "row": 0,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "view": "back",
+      "rearCameraOnly": true,
+      "lensDirection": [
+        0,
+        -1
+      ],
+      "frontLensVisible": false
+    },
+    "investigateUp": {
+      "row": 1,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "view": "back-three-quarter-right",
+      "mirrorForLeft": true
+    },
+    "investigateDown": {
+      "row": 2,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "view": "front"
+    },
+    "investigateRight": {
+      "row": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "view": "right",
+      "mirrorForLeft": true
+    },
+    "leverUp": {
+      "row": 4,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "view": "back"
+    }
+  },
+  "characters": {
+    "haru": {
+      "file": "player-actions-v128/haru.webp",
+      "frames": [
+        {
+          "row": 0,
+          "column": 0,
+          "action": "photoBack",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            69,
+            17,
+            186,
+            245
+          ],
+          "sourceBounds": [
+            98,
+            20,
+            225,
+            267
+          ],
+          "wholeFigureScale": 0.923077,
+          "palms": [
+            [
+              175.6,
+              106.0
+            ],
+            [
+              91.7,
+              110.2
+            ]
+          ],
+          "tip": [
+            133.7,
+            108.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "action": "photoBack",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            70,
+            18,
+            186,
+            245
+          ],
+          "sourceBounds": [
+            364,
+            21,
+            490,
+            267
+          ],
+          "wholeFigureScale": 0.923077,
+          "palms": [
+            [
+              174.2,
+              104.3
+            ],
+            [
+              91.8,
+              110.3
+            ]
+          ],
+          "tip": [
+            133.0,
+            107.3
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "action": "photoBack",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            69,
+            19,
+            185,
+            245
+          ],
+          "sourceBounds": [
+            629,
+            21,
+            755,
+            265
+          ],
+          "wholeFigureScale": 0.923077,
+          "palms": [
+            [
+              172.3,
+              108.3
+            ],
+            [
+              90.7,
+              103.7
+            ]
+          ],
+          "tip": [
+            131.5,
+            106.0
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 3,
+          "action": "photoBack",
+          "sx": 768,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            66,
+            21,
+            182,
+            245
+          ],
+          "sourceBounds": [
+            898,
+            22,
+            1024,
+            265
+          ],
+          "wholeFigureScale": 0.923077,
+          "palms": [
+            [
+              170.4,
+              106.5
+            ],
+            [
+              90.2,
+              107.7
+            ]
+          ],
+          "tip": [
+            130.3,
+            107.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "action": "investigateUp",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            89,
+            27,
+            218,
+            245
+          ],
+          "sourceBounds": [
+            101,
+            308,
+            240,
+            542
+          ],
+          "wholeFigureScale": 0.931624,
+          "palms": [
+            [
+              189.7,
+              153.6
+            ]
+          ],
+          "tip": [
+            189.7,
+            153.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "action": "investigateUp",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            89,
+            28,
+            220,
+            245
+          ],
+          "sourceBounds": [
+            369,
+            310,
+            510,
+            542
+          ],
+          "wholeFigureScale": 0.931624,
+          "palms": [
+            [
+              183.2,
+              152.5
+            ]
+          ],
+          "tip": [
+            183.2,
+            152.5
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "action": "investigateUp",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            90,
+            30,
+            218,
+            246
+          ],
+          "sourceBounds": [
+            638,
+            310,
+            776,
+            541
+          ],
+          "wholeFigureScale": 0.931624,
+          "palms": [
+            [
+              179.2,
+              157.6
+            ]
+          ],
+          "tip": [
+            179.2,
+            157.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 3,
+          "action": "investigateUp",
+          "sx": 768,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            90,
+            29,
+            218,
+            245
+          ],
+          "sourceBounds": [
+            905,
+            310,
+            1043,
+            542
+          ],
+          "wholeFigureScale": 0.931624,
+          "palms": [
+            [
+              183.4,
+              165.1
+            ]
+          ],
+          "tip": [
+            183.4,
+            165.1
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "action": "investigateDown",
+          "sx": 0,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            79,
+            30,
+            208,
+            245
+          ],
+          "sourceBounds": [
+            89,
+            577,
+            229,
+            809
+          ],
+          "wholeFigureScale": 0.926724,
+          "palms": [
+            [
+              130.0,
+              185.1
+            ],
+            [
+              184.2,
+              171.0
+            ]
+          ],
+          "tip": [
+            157.1,
+            178.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "action": "investigateDown",
+          "sx": 256,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            78,
+            30,
+            208,
+            245
+          ],
+          "sourceBounds": [
+            356,
+            577,
+            495,
+            809
+          ],
+          "wholeFigureScale": 0.926724,
+          "palms": [
+            [
+              121.7,
+              181.8
+            ],
+            [
+              172.1,
+              175.7
+            ]
+          ],
+          "tip": [
+            146.9,
+            178.8
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "action": "investigateDown",
+          "sx": 512,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            69,
+            30,
+            198,
+            245
+          ],
+          "sourceBounds": [
+            620,
+            578,
+            760,
+            809
+          ],
+          "wholeFigureScale": 0.926724,
+          "palms": [
+            [
+              113.6,
+              178.6
+            ],
+            [
+              158.3,
+              174.4
+            ]
+          ],
+          "tip": [
+            135.9,
+            176.5
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 3,
+          "action": "investigateDown",
+          "sx": 768,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            74,
+            30,
+            203,
+            245
+          ],
+          "sourceBounds": [
+            891,
+            577,
+            1031,
+            809
+          ],
+          "wholeFigureScale": 0.926724,
+          "palms": [
+            [
+              110.9,
+              184.4
+            ],
+            [
+              167.5,
+              178.2
+            ]
+          ],
+          "tip": [
+            139.2,
+            181.3
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 0,
+          "action": "investigateRight",
+          "sx": 0,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            88,
+            21,
+            213,
+            245
+          ],
+          "sourceBounds": [
+            95,
+            841,
+            236,
+            1093
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              192.0,
+              157.5
+            ]
+          ],
+          "tip": [
+            192.0,
+            157.5
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "action": "investigateRight",
+          "sx": 256,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            86,
+            21,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            361,
+            841,
+            501,
+            1093
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              186.6,
+              143.2
+            ]
+          ],
+          "tip": [
+            186.6,
+            143.2
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "action": "investigateRight",
+          "sx": 512,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            85,
+            21,
+            210,
+            245
+          ],
+          "sourceBounds": [
+            626,
+            841,
+            766,
+            1093
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              169.6,
+              162.0
+            ]
+          ],
+          "tip": [
+            169.6,
+            162.0
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 3,
+          "action": "investigateRight",
+          "sx": 768,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            86,
+            21,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            892,
+            841,
+            1033,
+            1093
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              165.5,
+              162.6
+            ]
+          ],
+          "tip": [
+            165.5,
+            162.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 0,
+          "action": "leverUp",
+          "sx": 0,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            66,
+            17,
+            189,
+            245
+          ],
+          "sourceBounds": [
+            91,
+            1133,
+            227,
+            1383
+          ],
+          "wholeFigureScale": 0.908,
+          "palms": [
+            [
+              90.2,
+              119.1
+            ],
+            [
+              167.4,
+              119.2
+            ]
+          ],
+          "tip": [
+            128.8,
+            119.2
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "action": "leverUp",
+          "sx": 256,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            47,
+            19,
+            176,
+            245
+          ],
+          "sourceBounds": [
+            344,
+            1134,
+            487,
+            1383
+          ],
+          "wholeFigureScale": 0.908,
+          "palms": [
+            [
+              72.0,
+              132.6
+            ],
+            [
+              79.0,
+              114.8
+            ]
+          ],
+          "tip": [
+            75.5,
+            123.7
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "action": "leverUp",
+          "sx": 512,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            66,
+            17,
+            189,
+            245
+          ],
+          "sourceBounds": [
+            625,
+            1133,
+            760,
+            1383
+          ],
+          "wholeFigureScale": 0.908,
+          "palms": [
+            [
+              167.9,
+              119.6
+            ],
+            [
+              87.8,
+              119.4
+            ]
+          ],
+          "tip": [
+            127.8,
+            119.5
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 3,
+          "action": "leverUp",
+          "sx": 768,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            82,
+            20,
+            221,
+            245
+          ],
+          "sourceBounds": [
+            897,
+            1135,
+            1050,
+            1383
+          ],
+          "wholeFigureScale": 0.908,
+          "palms": [
+            [
+              193.0,
+              130.6
+            ],
+            [
+              178.5,
+              111.9
+            ]
+          ],
+          "tip": [
+            185.8,
+            121.2
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        }
+      ],
+      "commonReferenceHeight": 228,
+      "standingReferenceHeight": 228,
+      "uniformDrawScale": 1,
+      "standingVisibleWorldHeight": 49.875,
+      "originalVisibleWorldHeight": 49.875,
+      "sha256": "5ef8fffd15f4f782658e9e7b2fc03e029bca4b5762191c15ce08af734bf03cfc"
+    },
+    "doyun": {
+      "file": "player-actions-v128/doyun.webp",
+      "frames": [
+        {
+          "row": 0,
+          "column": 0,
+          "action": "photoBack",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            69,
+            17,
+            189,
+            245
+          ],
+          "sourceBounds": [
+            76,
+            10,
+            211,
+            265
+          ],
+          "wholeFigureScale": 0.894118,
+          "palms": [
+            [
+              175.0,
+              114.8
+            ],
+            [
+              164.5,
+              102.6
+            ]
+          ],
+          "tip": [
+            169.8,
+            108.7
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "action": "photoBack",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            68,
+            17,
+            188,
+            245
+          ],
+          "sourceBounds": [
+            354,
+            10,
+            489,
+            265
+          ],
+          "wholeFigureScale": 0.894118,
+          "palms": [
+            [
+              176.5,
+              115.1
+            ],
+            [
+              162.0,
+              102.8
+            ]
+          ],
+          "tip": [
+            169.2,
+            108.9
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "action": "photoBack",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            69,
+            17,
+            192,
+            245
+          ],
+          "sourceBounds": [
+            632,
+            10,
+            770,
+            265
+          ],
+          "wholeFigureScale": 0.894118,
+          "palms": [
+            [
+              180.1,
+              115.1
+            ],
+            [
+              163.6,
+              102.5
+            ]
+          ],
+          "tip": [
+            171.8,
+            108.8
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 3,
+          "action": "photoBack",
+          "sx": 768,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            71,
+            19,
+            194,
+            246
+          ],
+          "sourceBounds": [
+            909,
+            10,
+            1047,
+            263
+          ],
+          "wholeFigureScale": 0.894118,
+          "palms": [
+            [
+              181.7,
+              116.6
+            ],
+            [
+              164.5,
+              104.5
+            ]
+          ],
+          "tip": [
+            173.1,
+            110.5
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "action": "investigateUp",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            87,
+            27,
+            204,
+            245
+          ],
+          "sourceBounds": [
+            81,
+            296,
+            214,
+            545
+          ],
+          "wholeFigureScale": 0.875502,
+          "palms": [
+            [
+              180.3,
+              142.0
+            ]
+          ],
+          "tip": [
+            180.3,
+            142.0
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "action": "investigateUp",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            86,
+            27,
+            200,
+            245
+          ],
+          "sourceBounds": [
+            364,
+            296,
+            495,
+            545
+          ],
+          "wholeFigureScale": 0.875502,
+          "palms": [
+            [
+              169.1,
+              153.6
+            ]
+          ],
+          "tip": [
+            169.1,
+            153.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "action": "investigateUp",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            81,
+            29,
+            193,
+            246
+          ],
+          "sourceBounds": [
+            641,
+            297,
+            770,
+            544
+          ],
+          "wholeFigureScale": 0.875502,
+          "palms": [
+            [
+              160.8,
+              157.9
+            ]
+          ],
+          "tip": [
+            160.8,
+            157.9
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 3,
+          "action": "investigateUp",
+          "sx": 768,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            88,
+            28,
+            204,
+            245
+          ],
+          "sourceBounds": [
+            921,
+            296,
+            1054,
+            544
+          ],
+          "wholeFigureScale": 0.875502,
+          "palms": [
+            [
+              178.6,
+              150.8
+            ]
+          ],
+          "tip": [
+            178.6,
+            150.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "action": "investigateDown",
+          "sx": 0,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            78,
+            31,
+            198,
+            245
+          ],
+          "sourceBounds": [
+            75,
+            576,
+            215,
+            826
+          ],
+          "wholeFigureScale": 0.856574,
+          "palms": [
+            [
+              125.1,
+              182.0
+            ],
+            [
+              175.1,
+              174.4
+            ]
+          ],
+          "tip": [
+            150.1,
+            178.2
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "action": "investigateDown",
+          "sx": 256,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            78,
+            31,
+            198,
+            245
+          ],
+          "sourceBounds": [
+            354,
+            576,
+            494,
+            826
+          ],
+          "wholeFigureScale": 0.856574,
+          "palms": [
+            [
+              117.0,
+              170.2
+            ],
+            [
+              163.2,
+              169.2
+            ]
+          ],
+          "tip": [
+            140.1,
+            169.7
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "action": "investigateDown",
+          "sx": 512,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            79,
+            30,
+            198,
+            244
+          ],
+          "sourceBounds": [
+            633,
+            576,
+            773,
+            827
+          ],
+          "wholeFigureScale": 0.856574,
+          "palms": [
+            [
+              111.7,
+              174.8
+            ],
+            [
+              158.1,
+              174.0
+            ]
+          ],
+          "tip": [
+            134.9,
+            174.4
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 3,
+          "action": "investigateDown",
+          "sx": 768,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            71,
+            31,
+            191,
+            245
+          ],
+          "sourceBounds": [
+            909,
+            575,
+            1050,
+            825
+          ],
+          "wholeFigureScale": 0.856574,
+          "palms": [
+            [
+              108.8,
+              183.1
+            ],
+            [
+              156.4,
+              180.3
+            ]
+          ],
+          "tip": [
+            132.6,
+            181.7
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 0,
+          "action": "investigateRight",
+          "sx": 0,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            89,
+            21,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            77,
+            856,
+            215,
+            1108
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              187.3,
+              154.4
+            ]
+          ],
+          "tip": [
+            187.3,
+            154.4
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "action": "investigateRight",
+          "sx": 256,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            91,
+            21,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            359,
+            856,
+            495,
+            1108
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              182.0,
+              152.7
+            ]
+          ],
+          "tip": [
+            182.0,
+            152.7
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "action": "investigateRight",
+          "sx": 512,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            90,
+            22,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            639,
+            857,
+            774,
+            1108
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              154.6,
+              167.1
+            ]
+          ],
+          "tip": [
+            154.6,
+            167.1
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 3,
+          "action": "investigateRight",
+          "sx": 768,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            91,
+            22,
+            212,
+            245
+          ],
+          "sourceBounds": [
+            918,
+            856,
+            1055,
+            1107
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              193.9,
+              173.6
+            ]
+          ],
+          "tip": [
+            193.9,
+            173.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 0,
+          "action": "leverUp",
+          "sx": 0,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            65,
+            18,
+            192,
+            246
+          ],
+          "sourceBounds": [
+            72,
+            1135,
+            213,
+            1387
+          ],
+          "wholeFigureScale": 0.900794,
+          "palms": [
+            [
+              170.1,
+              125.4
+            ],
+            [
+              88.2,
+              125.4
+            ]
+          ],
+          "tip": [
+            129.2,
+            125.4
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "action": "leverUp",
+          "sx": 256,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            47,
+            22,
+            180,
+            245
+          ],
+          "sourceBounds": [
+            330,
+            1139,
+            478,
+            1387
+          ],
+          "wholeFigureScale": 0.900794,
+          "palms": [
+            [
+              168.8,
+              120.2
+            ],
+            [
+              85.6,
+              133.9
+            ]
+          ],
+          "tip": [
+            127.2,
+            127.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "action": "leverUp",
+          "sx": 512,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            65,
+            18,
+            192,
+            246
+          ],
+          "sourceBounds": [
+            628,
+            1135,
+            769,
+            1387
+          ],
+          "wholeFigureScale": 0.900794,
+          "palms": [
+            [
+              169.9,
+              125.3
+            ],
+            [
+              87.1,
+              125.5
+            ]
+          ],
+          "tip": [
+            128.5,
+            125.4
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 3,
+          "action": "leverUp",
+          "sx": 768,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            89,
+            20,
+            217,
+            245
+          ],
+          "sourceBounds": [
+            927,
+            1137,
+            1070,
+            1387
+          ],
+          "wholeFigureScale": 0.900794,
+          "palms": [
+            [
+              97.6,
+              121.5
+            ],
+            [
+              174.7,
+              133.5
+            ]
+          ],
+          "tip": [
+            136.1,
+            127.5
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        }
+      ],
+      "commonReferenceHeight": 228,
+      "standingReferenceHeight": 228,
+      "uniformDrawScale": 1,
+      "standingVisibleWorldHeight": 49.875,
+      "originalVisibleWorldHeight": 49.875,
+      "sha256": "954770c2684f08ccb8ff77fa34015fc372cf9d880cd5b51e442ed44fbfe609df"
+    },
+    "narin": {
+      "file": "player-actions-v128/narin.webp",
+      "frames": [
+        {
+          "row": 0,
+          "column": 0,
+          "action": "photoBack",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            61,
+            17,
+            190,
+            245
+          ],
+          "sourceBounds": [
+            84,
+            41,
+            212,
+            268
+          ],
+          "wholeFigureScale": 1.004405,
+          "palms": [
+            [
+              182.6,
+              104.8
+            ]
+          ],
+          "tip": [
+            182.6,
+            104.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "action": "photoBack",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            56,
+            17,
+            185,
+            245
+          ],
+          "sourceBounds": [
+            351,
+            41,
+            479,
+            268
+          ],
+          "wholeFigureScale": 1.004405,
+          "palms": [
+            [
+              176.4,
+              104.6
+            ]
+          ],
+          "tip": [
+            176.4,
+            104.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "action": "photoBack",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            58,
+            17,
+            186,
+            245
+          ],
+          "sourceBounds": [
+            617,
+            41,
+            744,
+            268
+          ],
+          "wholeFigureScale": 1.004405,
+          "palms": [
+            [
+              177.6,
+              104.8
+            ]
+          ],
+          "tip": [
+            177.6,
+            104.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 3,
+          "action": "photoBack",
+          "sx": 768,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            55,
+            17,
+            183,
+            245
+          ],
+          "sourceBounds": [
+            884,
+            41,
+            1011,
+            268
+          ],
+          "wholeFigureScale": 1.004405,
+          "palms": [
+            [
+              174.8,
+              104.6
+            ]
+          ],
+          "tip": [
+            174.8,
+            104.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "action": "investigateUp",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            83,
+            28,
+            208,
+            245
+          ],
+          "sourceBounds": [
+            82,
+            300,
+            219,
+            537
+          ],
+          "wholeFigureScale": 0.915966,
+          "palms": [
+            [
+              195.6,
+              146.8
+            ]
+          ],
+          "tip": [
+            195.6,
+            146.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "action": "investigateUp",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            80,
+            28,
+            201,
+            245
+          ],
+          "sourceBounds": [
+            357,
+            301,
+            488,
+            537
+          ],
+          "wholeFigureScale": 0.915966,
+          "palms": [
+            [
+              180.2,
+              145.8
+            ]
+          ],
+          "tip": [
+            180.2,
+            145.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "action": "investigateUp",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            81,
+            27,
+            201,
+            245
+          ],
+          "sourceBounds": [
+            633,
+            300,
+            764,
+            538
+          ],
+          "wholeFigureScale": 0.915966,
+          "palms": [
+            [
+              175.6,
+              143.7
+            ]
+          ],
+          "tip": [
+            175.6,
+            143.7
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 3,
+          "action": "investigateUp",
+          "sx": 768,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            83,
+            28,
+            202,
+            245
+          ],
+          "sourceBounds": [
+            911,
+            300,
+            1041,
+            537
+          ],
+          "wholeFigureScale": 0.915966,
+          "palms": [
+            [
+              177.7,
+              157.8
+            ]
+          ],
+          "tip": [
+            177.7,
+            157.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "action": "investigateDown",
+          "sx": 0,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            64,
+            31,
+            199,
+            245
+          ],
+          "sourceBounds": [
+            74,
+            576,
+            223,
+            811
+          ],
+          "wholeFigureScale": 0.911017,
+          "palms": [
+            [
+              122.7,
+              188.3
+            ],
+            [
+              173.3,
+              184.6
+            ]
+          ],
+          "tip": [
+            148.0,
+            186.4
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "action": "investigateDown",
+          "sx": 256,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            71,
+            31,
+            207,
+            246
+          ],
+          "sourceBounds": [
+            346,
+            577,
+            495,
+            812
+          ],
+          "wholeFigureScale": 0.911017,
+          "palms": [
+            [
+              125.8,
+              174.4
+            ],
+            [
+              171.5,
+              173.7
+            ]
+          ],
+          "tip": [
+            148.7,
+            174.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "action": "investigateDown",
+          "sx": 512,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            66,
+            30,
+            202,
+            245
+          ],
+          "sourceBounds": [
+            620,
+            578,
+            770,
+            814
+          ],
+          "wholeFigureScale": 0.911017,
+          "palms": [
+            [
+              119.7,
+              172.1
+            ],
+            [
+              167.5,
+              172.3
+            ]
+          ],
+          "tip": [
+            143.6,
+            172.2
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 3,
+          "action": "investigateDown",
+          "sx": 768,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            58,
+            34,
+            195,
+            245
+          ],
+          "sourceBounds": [
+            894,
+            580,
+            1045,
+            812
+          ],
+          "wholeFigureScale": 0.911017,
+          "palms": [
+            [
+              98.4,
+              190.6
+            ],
+            [
+              166.4,
+              181.7
+            ]
+          ],
+          "tip": [
+            132.4,
+            186.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 0,
+          "action": "investigateRight",
+          "sx": 0,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            88,
+            21,
+            222,
+            245
+          ],
+          "sourceBounds": [
+            76,
+            835,
+            226,
+            1087
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              203.7,
+              153.0
+            ]
+          ],
+          "tip": [
+            203.7,
+            153.0
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "action": "investigateRight",
+          "sx": 256,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            82,
+            23,
+            210,
+            245
+          ],
+          "sourceBounds": [
+            347,
+            837,
+            491,
+            1087
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              177.9,
+              149.2
+            ]
+          ],
+          "tip": [
+            177.9,
+            149.2
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "action": "investigateRight",
+          "sx": 512,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            72,
+            23,
+            201,
+            246
+          ],
+          "sourceBounds": [
+            615,
+            837,
+            760,
+            1087
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              182.2,
+              151.4
+            ]
+          ],
+          "tip": [
+            182.2,
+            151.4
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 3,
+          "action": "investigateRight",
+          "sx": 768,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            71,
+            24,
+            200,
+            245
+          ],
+          "sourceBounds": [
+            888,
+            838,
+            1032,
+            1087
+          ],
+          "wholeFigureScale": 0.888889,
+          "palms": [
+            [
+              177.9,
+              159.7
+            ]
+          ],
+          "tip": [
+            177.9,
+            159.7
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 0,
+          "action": "leverUp",
+          "sx": 0,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            64,
+            18,
+            189,
+            245
+          ],
+          "sourceBounds": [
+            79,
+            1125,
+            221,
+            1382
+          ],
+          "wholeFigureScale": 0.879845,
+          "palms": [
+            [
+              170.4,
+              126.9
+            ],
+            [
+              85.6,
+              127.3
+            ]
+          ],
+          "tip": [
+            128.0,
+            127.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "action": "leverUp",
+          "sx": 256,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            62,
+            19,
+            192,
+            245
+          ],
+          "sourceBounds": [
+            347,
+            1125,
+            494,
+            1382
+          ],
+          "wholeFigureScale": 0.879845,
+          "palms": [
+            [
+              181.8,
+              125.1
+            ]
+          ],
+          "tip": [
+            181.8,
+            125.1
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "action": "leverUp",
+          "sx": 512,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            67,
+            18,
+            191,
+            245
+          ],
+          "sourceBounds": [
+            625,
+            1124,
+            767,
+            1382
+          ],
+          "wholeFigureScale": 0.879845,
+          "palms": [
+            [
+              171.2,
+              125.2
+            ],
+            [
+              85.7,
+              126.2
+            ]
+          ],
+          "tip": [
+            128.4,
+            125.7
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 3,
+          "action": "leverUp",
+          "sx": 768,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            80,
+            18,
+            207,
+            245
+          ],
+          "sourceBounds": [
+            904,
+            1125,
+            1048,
+            1383
+          ],
+          "wholeFigureScale": 0.879845,
+          "palms": [
+            [
+              91.4,
+              125.5
+            ]
+          ],
+          "tip": [
+            91.4,
+            125.5
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        }
+      ],
+      "commonReferenceHeight": 228,
+      "standingReferenceHeight": 228,
+      "uniformDrawScale": 1,
+      "standingVisibleWorldHeight": 49.875,
+      "originalVisibleWorldHeight": 49.875,
+      "sha256": "19170e6d1d9265679572baf3bc9719f6f59bbf9ceb88fd75f1526d5af73724d8"
+    },
+    "soi": {
+      "file": "player-actions-v128/soi.webp",
+      "frames": [
+        {
+          "row": 0,
+          "column": 0,
+          "action": "photoBack",
+          "sx": 0,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            43,
+            17,
+            201,
+            245
+          ],
+          "sourceBounds": [
+            56,
+            21,
+            225,
+            266
+          ],
+          "wholeFigureScale": 0.930612,
+          "palms": [
+            [
+              188.9,
+              79.5
+            ],
+            [
+              159.5,
+              104.5
+            ]
+          ],
+          "tip": [
+            174.2,
+            92.0
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 1,
+          "action": "photoBack",
+          "sx": 256,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            42,
+            17,
+            201,
+            245
+          ],
+          "sourceBounds": [
+            322,
+            21,
+            493,
+            266
+          ],
+          "wholeFigureScale": 0.930612,
+          "palms": [
+            [
+              189.0,
+              77.9
+            ],
+            [
+              81.2,
+              102.4
+            ]
+          ],
+          "tip": [
+            135.1,
+            90.2
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 2,
+          "action": "photoBack",
+          "sx": 512,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            41,
+            17,
+            200,
+            245
+          ],
+          "sourceBounds": [
+            588,
+            21,
+            758,
+            266
+          ],
+          "wholeFigureScale": 0.930612,
+          "palms": [
+            [
+              188.2,
+              78.3
+            ],
+            [
+              80.9,
+              102.3
+            ]
+          ],
+          "tip": [
+            134.6,
+            90.3
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 0,
+          "column": 3,
+          "action": "photoBack",
+          "sx": 768,
+          "sy": 0,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            35,
+            17,
+            195,
+            246
+          ],
+          "sourceBounds": [
+            855,
+            21,
+            1026,
+            266
+          ],
+          "wholeFigureScale": 0.930612,
+          "palms": [
+            [
+              182.9,
+              79.0
+            ],
+            [
+              152.1,
+              104.1
+            ]
+          ],
+          "tip": [
+            167.5,
+            91.5
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 0,
+          "action": "investigateUp",
+          "sx": 0,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            63,
+            27,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            69,
+            306,
+            232,
+            545
+          ],
+          "wholeFigureScale": 0.912134,
+          "palms": [
+            [
+              190.0,
+              156.5
+            ]
+          ],
+          "tip": [
+            190.0,
+            156.5
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 1,
+          "action": "investigateUp",
+          "sx": 256,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            65,
+            30,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            339,
+            309,
+            498,
+            545
+          ],
+          "wholeFigureScale": 0.912134,
+          "palms": [
+            [
+              185.0,
+              149.7
+            ]
+          ],
+          "tip": [
+            185.0,
+            149.7
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 2,
+          "action": "investigateUp",
+          "sx": 512,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            64,
+            29,
+            208,
+            245
+          ],
+          "sourceBounds": [
+            607,
+            308,
+            764,
+            545
+          ],
+          "wholeFigureScale": 0.912134,
+          "palms": [
+            [
+              178.9,
+              154.8
+            ]
+          ],
+          "tip": [
+            178.9,
+            154.8
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 1,
+          "column": 3,
+          "action": "investigateUp",
+          "sx": 768,
+          "sy": 256,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            63,
+            30,
+            207,
+            245
+          ],
+          "sourceBounds": [
+            873,
+            309,
+            1031,
+            545
+          ],
+          "wholeFigureScale": 0.912134,
+          "palms": [
+            [
+              183.6,
+              160.0
+            ]
+          ],
+          "tip": [
+            183.6,
+            160.0
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 0,
+          "action": "investigateDown",
+          "sx": 0,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            63,
+            30,
+            221,
+            245
+          ],
+          "sourceBounds": [
+            64,
+            580,
+            243,
+            823
+          ],
+          "wholeFigureScale": 0.884774,
+          "palms": [
+            [
+              133.9,
+              178.2
+            ],
+            [
+              185.2,
+              174.4
+            ]
+          ],
+          "tip": [
+            159.6,
+            176.3
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 1,
+          "action": "investigateDown",
+          "sx": 256,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            57,
+            32,
+            215,
+            245
+          ],
+          "sourceBounds": [
+            333,
+            581,
+            511,
+            822
+          ],
+          "wholeFigureScale": 0.884774,
+          "palms": [
+            [
+              129.6,
+              181.1
+            ],
+            [
+              165.1,
+              179.5
+            ]
+          ],
+          "tip": [
+            147.3,
+            180.3
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 2,
+          "action": "investigateDown",
+          "sx": 512,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            56,
+            34,
+            215,
+            245
+          ],
+          "sourceBounds": [
+            601,
+            582,
+            780,
+            821
+          ],
+          "wholeFigureScale": 0.884774,
+          "palms": [
+            [
+              122.0,
+              173.6
+            ],
+            [
+              162.0,
+              173.7
+            ]
+          ],
+          "tip": [
+            142.0,
+            173.6
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 2,
+          "column": 3,
+          "action": "investigateDown",
+          "sx": 768,
+          "sy": 512,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            55,
+            32,
+            211,
+            245
+          ],
+          "sourceBounds": [
+            870,
+            582,
+            1047,
+            823
+          ],
+          "wholeFigureScale": 0.884774,
+          "palms": [
+            [
+              111.5,
+              178.7
+            ],
+            [
+              176.1,
+              174.8
+            ]
+          ],
+          "tip": [
+            143.8,
+            176.8
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 0,
+          "action": "investigateRight",
+          "sx": 0,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            68,
+            22,
+            216,
+            245
+          ],
+          "sourceBounds": [
+            72,
+            857,
+            234,
+            1101
+          ],
+          "wholeFigureScale": 0.914286,
+          "palms": [
+            [
+              198.4,
+              145.4
+            ]
+          ],
+          "tip": [
+            198.4,
+            145.4
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 1,
+          "action": "investigateRight",
+          "sx": 256,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            64,
+            21,
+            195,
+            245
+          ],
+          "sourceBounds": [
+            338,
+            857,
+            482,
+            1101
+          ],
+          "wholeFigureScale": 0.914286,
+          "palms": [
+            [
+              181.2,
+              144.2
+            ]
+          ],
+          "tip": [
+            181.2,
+            144.2
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 2,
+          "action": "investigateRight",
+          "sx": 512,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            64,
+            21,
+            197,
+            246
+          ],
+          "sourceBounds": [
+            605,
+            857,
+            751,
+            1102
+          ],
+          "wholeFigureScale": 0.914286,
+          "palms": [
+            [
+              166.9,
+              148.6
+            ]
+          ],
+          "tip": [
+            166.9,
+            148.6
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 3,
+          "column": 3,
+          "action": "investigateRight",
+          "sx": 768,
+          "sy": 768,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            62,
+            21,
+            192,
+            245
+          ],
+          "sourceBounds": [
+            872,
+            856,
+            1015,
+            1101
+          ],
+          "wholeFigureScale": 0.914286,
+          "palms": [
+            [
+              176.6,
+              150.5
+            ]
+          ],
+          "tip": [
+            176.6,
+            150.5
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 0,
+          "action": "leverUp",
+          "sx": 0,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            43,
+            18,
+            204,
+            245
+          ],
+          "sourceBounds": [
+            56,
+            1133,
+            231,
+            1380
+          ],
+          "wholeFigureScale": 0.919028,
+          "palms": [
+            [
+              88.8,
+              121.9
+            ],
+            [
+              165.0,
+              121.0
+            ]
+          ],
+          "tip": [
+            126.9,
+            121.5
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 1,
+          "action": "leverUp",
+          "sx": 256,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            50,
+            22,
+            202,
+            245
+          ],
+          "sourceBounds": [
+            330,
+            1137,
+            496,
+            1380
+          ],
+          "wholeFigureScale": 0.919028,
+          "palms": [
+            [
+              181.0,
+              120.2
+            ]
+          ],
+          "tip": [
+            181.0,
+            120.2
+          ],
+          "occludedSecondPalm": true,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 2,
+          "action": "leverUp",
+          "sx": 512,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            47,
+            20,
+            206,
+            245
+          ],
+          "sourceBounds": [
+            595,
+            1135,
+            767,
+            1380
+          ],
+          "wholeFigureScale": 0.919028,
+          "palms": [
+            [
+              90.2,
+              121.2
+            ],
+            [
+              164.7,
+              121.0
+            ]
+          ],
+          "tip": [
+            127.4,
+            121.1
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        },
+        {
+          "row": 4,
+          "column": 3,
+          "action": "leverUp",
+          "sx": 768,
+          "sy": 1024,
+          "sw": 256,
+          "sh": 256,
+          "anchor": [
+            128,
+            244
+          ],
+          "bounds": [
+            51,
+            21,
+            210,
+            245
+          ],
+          "sourceBounds": [
+            866,
+            1137,
+            1039,
+            1380
+          ],
+          "wholeFigureScale": 0.919028,
+          "palms": [
+            [
+              177.6,
+              133.2
+            ],
+            [
+              93.1,
+              116.2
+            ]
+          ],
+          "tip": [
+            135.3,
+            124.7
+          ],
+          "occludedSecondPalm": false,
+          "tipMethod": "visible warm-skin palm components; whole-figure anchor unchanged"
+        }
+      ],
+      "commonReferenceHeight": 228,
+      "standingReferenceHeight": 228,
+      "uniformDrawScale": 1,
+      "standingVisibleWorldHeight": 49.875,
+      "originalVisibleWorldHeight": 49.875,
+      "sha256": "b6f5b8c7b28aced12c54f85802f2557483a75b0664844130088feda65e306f07"
+    }
+  }
+}

@@ -1,0 +1,413 @@
+{
+  "image": "pigs.webp",
+  "cellSize": 256,
+  "columns": 6,
+  "rows": [
+    {
+      "row": 0,
+      "phases": [
+        {
+          "source": "docs/art-source/mob-v130/pig-yellow-draft.png",
+          "sourceCrop": [
+            0,
+            0,
+            630,
+            623
+          ],
+          "sourceBounds": [
+            173,
+            83,
+            527,
+            523
+          ],
+          "sourceBodyHipX": 337,
+          "sourceGround": 523,
+          "scale": 0.43636363636363634,
+          "translation": [
+            -19,
+            12
+          ],
+          "bounds": [
+            57,
+            48,
+            211,
+            241
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 0
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-yellow-draft.png",
+          "sourceCrop": [
+            630,
+            0,
+            1261,
+            623
+          ],
+          "sourceBounds": [
+            151,
+            82,
+            425,
+            528
+          ],
+          "sourceBodyHipX": 280,
+          "sourceGround": 528,
+          "scale": 0.4304932735426009,
+          "translation": [
+            7,
+            13
+          ],
+          "bounds": [
+            72,
+            48,
+            190,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 1
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-yellow-draft.png",
+          "sourceCrop": [
+            0,
+            623,
+            630,
+            1247
+          ],
+          "sourceBounds": [
+            196,
+            72,
+            471,
+            524
+          ],
+          "sourceBodyHipX": 334,
+          "sourceGround": 524,
+          "scale": 0.4247787610619469,
+          "translation": [
+            -14,
+            17
+          ],
+          "bounds": [
+            69,
+            48,
+            186,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 2
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-yellow-passing-b.png",
+          "sourceCrop": null,
+          "sourceBounds": [
+            333,
+            207,
+            953,
+            1158
+          ],
+          "sourceBodyHipX": 622,
+          "sourceGround": 1158,
+          "scale": 0.20189274447949526,
+          "translation": [
+            2,
+            6
+          ],
+          "bounds": [
+            69,
+            48,
+            194,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 3
+        }
+      ]
+    },
+    {
+      "row": 1,
+      "phases": [
+        {
+          "source": "docs/art-source/mob-v130/pig-vest.png",
+          "sourceCrop": [
+            0,
+            0,
+            627,
+            627
+          ],
+          "sourceBounds": [
+            139,
+            111,
+            517,
+            591
+          ],
+          "sourceBodyHipX": 318,
+          "sourceGround": 591,
+          "scale": 0.4083333333333333,
+          "translation": [
+            -2,
+            -1
+          ],
+          "bounds": [
+            55,
+            44,
+            209,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 0
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-vest.png",
+          "sourceCrop": [
+            627,
+            0,
+            1254,
+            627
+          ],
+          "sourceBounds": [
+            175,
+            111,
+            467,
+            591
+          ],
+          "sourceBodyHipX": 315,
+          "sourceGround": 591,
+          "scale": 0.4083333333333333,
+          "translation": [
+            -1,
+            -1
+          ],
+          "bounds": [
+            70,
+            44,
+            190,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 1
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-vest.png",
+          "sourceCrop": [
+            0,
+            627,
+            627,
+            1254
+          ],
+          "sourceBounds": [
+            167,
+            111,
+            458,
+            588
+          ],
+          "sourceBodyHipX": 315,
+          "sourceGround": 588,
+          "scale": 0.4109014675052411,
+          "translation": [
+            -1,
+            -2
+          ],
+          "bounds": [
+            68,
+            44,
+            188,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 2
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-vest.png",
+          "sourceCrop": [
+            627,
+            627,
+            1254,
+            1254
+          ],
+          "sourceBounds": [
+            170,
+            115,
+            475,
+            590
+          ],
+          "sourceBodyHipX": 315,
+          "sourceGround": 590,
+          "scale": 0.4126315789473684,
+          "translation": [
+            -2,
+            -3
+          ],
+          "bounds": [
+            68,
+            44,
+            194,
+            241
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 3
+        }
+      ]
+    },
+    {
+      "row": 2,
+      "phases": [
+        {
+          "source": "docs/art-source/mob-v130/pig-overalls.png",
+          "sourceCrop": [
+            0,
+            0,
+            627,
+            627
+          ],
+          "sourceBounds": [
+            138,
+            108,
+            518,
+            592
+          ],
+          "sourceBodyHipX": 318,
+          "sourceGround": 592,
+          "scale": 0.4090909090909091,
+          "translation": [
+            -2,
+            -2
+          ],
+          "bounds": [
+            55,
+            42,
+            210,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 0
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-overalls.png",
+          "sourceCrop": [
+            627,
+            0,
+            1254,
+            627
+          ],
+          "sourceBounds": [
+            174,
+            109,
+            469,
+            590
+          ],
+          "sourceBodyHipX": 315,
+          "sourceGround": 590,
+          "scale": 0.41164241164241167,
+          "translation": [
+            -2,
+            -3
+          ],
+          "bounds": [
+            70,
+            42,
+            191,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 1
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-overalls.png",
+          "sourceCrop": [
+            0,
+            627,
+            627,
+            1254
+          ],
+          "sourceBounds": [
+            165,
+            107,
+            458,
+            589
+          ],
+          "sourceBodyHipX": 315,
+          "sourceGround": 589,
+          "scale": 0.4107883817427386,
+          "translation": [
+            -1,
+            -2
+          ],
+          "bounds": [
+            67,
+            42,
+            187,
+            241
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 2
+        },
+        {
+          "source": "docs/art-source/mob-v130/pig-overalls.png",
+          "sourceCrop": [
+            627,
+            627,
+            1254,
+            1254
+          ],
+          "sourceBounds": [
+            168,
+            113,
+            478,
+            590
+          ],
+          "sourceBodyHipX": 315,
+          "sourceGround": 590,
+          "scale": 0.41509433962264153,
+          "translation": [
+            -3,
+            -5
+          ],
+          "bounds": [
+            66,
+            42,
+            195,
+            240
+          ],
+          "alphaPreserved": true,
+          "wholePoseOnly": true,
+          "phase": 3
+        }
+      ]
+    }
+  ],
+  "foot": [
+    128,
+    240
+  ],
+  "worldSize": 53,
+  "runFrames": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "preservedInviteFrame": 0,
+  "preservedSafeFrame": 5,
+  "phaseNames": [
+    "near-forward contact",
+    "near support / far swing",
+    "far-forward contact",
+    "far support / near swing"
+  ],
+  "frameDistance": 18,
+  "originalWorldSpeed": 285,
+  "allPhaseDurationsEqual": true,
+  "wholeFramePhaseMirroring": false,
+  "note": "Only running cells replaced. All six invitation/safe cells are exact original pixel copies. Original distance-based 18 px per phase and movement speed must remain unchanged."
+}

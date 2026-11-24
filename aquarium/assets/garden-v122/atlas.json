@@ -1,0 +1,223 @@
+{
+  "format": "garden-care-v122",
+  "sourceSize": [
+    1448,
+    1086
+  ],
+  "grid": [
+    4,
+    3
+  ],
+  "alphaCleanupThreshold": 20,
+  "props": {
+    "donor-gold": {
+      "file": "donor-gold.webp",
+      "width": 296,
+      "height": 336,
+      "sourceCell": [
+        0,
+        0,
+        362,
+        362
+      ],
+      "sourceAlphaBBox": [
+        34,
+        14,
+        330,
+        350
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "donor-pink": {
+      "file": "donor-pink.webp",
+      "width": 331,
+      "height": 339,
+      "sourceCell": [
+        362,
+        0,
+        724,
+        362
+      ],
+      "sourceAlphaBBox": [
+        19,
+        11,
+        350,
+        350
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "donor-blue": {
+      "file": "donor-blue.webp",
+      "width": 317,
+      "height": 338,
+      "sourceCell": [
+        724,
+        0,
+        1086,
+        362
+      ],
+      "sourceAlphaBBox": [
+        30,
+        11,
+        347,
+        349
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "flower-open": {
+      "file": "flower-open.webp",
+      "width": 274,
+      "height": 342,
+      "sourceCell": [
+        1086,
+        0,
+        1448,
+        362
+      ],
+      "sourceAlphaBBox": [
+        51,
+        9,
+        325,
+        351
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "flower-closed": {
+      "file": "flower-closed.webp",
+      "width": 274,
+      "height": 323,
+      "sourceCell": [
+        0,
+        362,
+        362,
+        724
+      ],
+      "sourceAlphaBBox": [
+        51,
+        10,
+        325,
+        333
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "beetle": {
+      "file": "beetle.webp",
+      "width": 246,
+      "height": 247,
+      "sourceCell": [
+        362,
+        362,
+        724,
+        724
+      ],
+      "sourceAlphaBBox": [
+        53,
+        60,
+        299,
+        307
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "moth-open": {
+      "file": "moth-open.webp",
+      "width": 351,
+      "height": 189,
+      "sourceCell": [
+        724,
+        362,
+        1086,
+        724
+      ],
+      "sourceAlphaBBox": [
+        6,
+        78,
+        357,
+        267
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "moth-folded": {
+      "file": "moth-folded.webp",
+      "width": 154,
+      "height": 232,
+      "sourceCell": [
+        1086,
+        362,
+        1448,
+        724
+      ],
+      "sourceAlphaBBox": [
+        104,
+        58,
+        258,
+        290
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "brush": {
+      "file": "brush.webp",
+      "width": 276,
+      "height": 324,
+      "sourceCell": [
+        0,
+        724,
+        362,
+        1086
+      ],
+      "sourceAlphaBBox": [
+        55,
+        15,
+        331,
+        339
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "sprayer": {
+      "file": "sprayer.webp",
+      "width": 223,
+      "height": 327,
+      "sourceCell": [
+        362,
+        724,
+        724,
+        1086
+      ],
+      "sourceAlphaBBox": [
+        74,
+        14,
+        297,
+        341
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    },
+    "aphid": {
+      "file": "aphid.webp",
+      "width": 216,
+      "height": 240,
+      "sourceCell": [
+        724,
+        724,
+        1086,
+        1086
+      ],
+      "sourceAlphaBBox": [
+        76,
+        48,
+        292,
+        288
+      ],
+      "footAnchor": 1,
+      "centerAnchor": 0.5
+    }
+  }
+}

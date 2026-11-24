@@ -1,0 +1,14 @@
+{
+  "id": "worm",
+  "file": "worm.webp",
+  "sx": 86,
+  "sy": 227,
+  "sw": 341,
+  "sh": 78,
+  "anchor": [
+    170.5,
+    39.0
+  ],
+  "faces": "left",
+  "recommendedWidth": 24
+}

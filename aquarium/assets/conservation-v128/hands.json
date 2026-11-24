@@ -1,0 +1,518 @@
+{
+  "file": "hands.webp",
+  "cell": 384,
+  "columns": 4,
+  "rows": 4,
+  "frames": [
+    {
+      "id": "brush0",
+      "sx": 0,
+      "sy": 0,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        40,
+        41,
+        363,
+        379
+      ],
+      "wrist": [
+        303.0,
+        372.0
+      ],
+      "toolTip": [
+        65.14,
+        68.58
+      ],
+      "contact": [
+        65.14,
+        68.58
+      ],
+      "direction": [
+        -0.61695,
+        -0.787
+      ],
+      "contactRadius": 24
+    },
+    {
+      "id": "brush1",
+      "sx": 384,
+      "sy": 0,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        37,
+        56,
+        370,
+        378
+      ],
+      "wrist": [
+        312.0,
+        371.0
+      ],
+      "toolTip": [
+        60.87,
+        80.57
+      ],
+      "contact": [
+        60.87,
+        80.57
+      ],
+      "direction": [
+        -0.65407,
+        -0.75643
+      ],
+      "contactRadius": 24
+    },
+    {
+      "id": "brush2",
+      "sx": 768,
+      "sy": 0,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        35,
+        75,
+        375,
+        379
+      ],
+      "wrist": [
+        322.0,
+        372.0
+      ],
+      "toolTip": [
+        59.32,
+        99.34
+      ],
+      "contact": [
+        59.32,
+        99.34
+      ],
+      "direction": [
+        -0.6938,
+        -0.72016
+      ],
+      "contactRadius": 24
+    },
+    {
+      "id": "brush3",
+      "sx": 1152,
+      "sy": 0,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        28,
+        119,
+        378,
+        378
+      ],
+      "wrist": [
+        324.0,
+        371.0
+      ],
+      "toolTip": [
+        54.11,
+        143.45
+      ],
+      "contact": [
+        54.11,
+        143.45
+      ],
+      "direction": [
+        -0.76453,
+        -0.64459
+      ],
+      "contactRadius": 24
+    },
+    {
+      "id": "spatula0",
+      "sx": 0,
+      "sy": 384,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        73,
+        45,
+        366,
+        379
+      ],
+      "wrist": [
+        302.0,
+        372.0
+      ],
+      "toolTip": [
+        88.36,
+        59.57
+      ],
+      "contact": [
+        88.36,
+        59.57
+      ],
+      "direction": [
+        -0.56445,
+        -0.82546
+      ],
+      "contactRadius": 8
+    },
+    {
+      "id": "spatula1",
+      "sx": 384,
+      "sy": 384,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        66,
+        68,
+        369,
+        379
+      ],
+      "wrist": [
+        308.0,
+        372.0
+      ],
+      "toolTip": [
+        81.28,
+        82.04
+      ],
+      "contact": [
+        81.28,
+        82.04
+      ],
+      "direction": [
+        -0.61596,
+        -0.78778
+      ],
+      "contactRadius": 8
+    },
+    {
+      "id": "spatula2",
+      "sx": 768,
+      "sy": 384,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        54,
+        88,
+        374,
+        379
+      ],
+      "wrist": [
+        318.0,
+        372.0
+      ],
+      "toolTip": [
+        69.64,
+        102.1
+      ],
+      "contact": [
+        69.64,
+        102.1
+      ],
+      "direction": [
+        -0.67713,
+        -0.73586
+      ],
+      "contactRadius": 8
+    },
+    {
+      "id": "spatula3",
+      "sx": 1152,
+      "sy": 384,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        37,
+        128,
+        377,
+        379
+      ],
+      "wrist": [
+        323.0,
+        372.0
+      ],
+      "toolTip": [
+        53.43,
+        141.46
+      ],
+      "contact": [
+        53.43,
+        141.46
+      ],
+      "direction": [
+        -0.75998,
+        -0.64995
+      ],
+      "contactRadius": 8
+    },
+    {
+      "id": "pin0",
+      "sx": 0,
+      "sy": 768,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        7,
+        40,
+        317,
+        378
+      ],
+      "wrist": [
+        69.0,
+        371.0
+      ],
+      "toolTip": [
+        278,
+        66
+      ],
+      "contact": [
+        278,
+        66
+      ],
+      "direction": [
+        0.56527,
+        -0.82491
+      ],
+      "contactRadius": 14
+    },
+    {
+      "id": "pin1",
+      "sx": 384,
+      "sy": 768,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        6,
+        56,
+        308,
+        378
+      ],
+      "wrist": [
+        64.0,
+        371.0
+      ],
+      "toolTip": [
+        276.49,
+        75.58
+      ],
+      "contact": [
+        276.49,
+        75.58
+      ],
+      "direction": [
+        0.58392,
+        -0.81181
+      ],
+      "contactRadius": 14
+    },
+    {
+      "id": "pin2",
+      "sx": 768,
+      "sy": 768,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        7,
+        58,
+        308,
+        378
+      ],
+      "wrist": [
+        67.0,
+        371.0
+      ],
+      "toolTip": [
+        288.84,
+        76.46
+      ],
+      "contact": [
+        288.84,
+        76.46
+      ],
+      "direction": [
+        0.60162,
+        -0.79878
+      ],
+      "contactRadius": 14
+    },
+    {
+      "id": "pin3",
+      "sx": 1152,
+      "sy": 768,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        7,
+        61,
+        309,
+        378
+      ],
+      "wrist": [
+        66.0,
+        371.0
+      ],
+      "toolTip": [
+        288.72,
+        80.63
+      ],
+      "contact": [
+        288.72,
+        80.63
+      ],
+      "direction": [
+        0.60861,
+        -0.79347
+      ],
+      "contactRadius": 14
+    },
+    {
+      "id": "pressLeft0",
+      "sx": 0,
+      "sy": 1152,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        6,
+        53,
+        336,
+        378
+      ],
+      "wrist": [
+        63.0,
+        371.0
+      ],
+      "toolTip": [
+        237.0,
+        119.0
+      ],
+      "contact": [
+        237.0,
+        119.0
+      ],
+      "direction": [
+        0.56819,
+        -0.8229
+      ],
+      "contactRadius": 35
+    },
+    {
+      "id": "pressLeft1",
+      "sx": 384,
+      "sy": 1152,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        6,
+        90,
+        325,
+        378
+      ],
+      "wrist": [
+        60.0,
+        371.0
+      ],
+      "toolTip": [
+        250.0,
+        165.0
+      ],
+      "contact": [
+        250.0,
+        165.0
+      ],
+      "direction": [
+        0.67798,
+        -0.73508
+      ],
+      "contactRadius": 35
+    },
+    {
+      "id": "pressRight0",
+      "sx": 768,
+      "sy": 1152,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        66,
+        40,
+        378,
+        378
+      ],
+      "wrist": [
+        324.0,
+        371.0
+      ],
+      "toolTip": [
+        156.0,
+        116.0
+      ],
+      "contact": [
+        156.0,
+        116.0
+      ],
+      "direction": [
+        -0.55016,
+        -0.83506
+      ],
+      "contactRadius": 35
+    },
+    {
+      "id": "pressRight1",
+      "sx": 1152,
+      "sy": 1152,
+      "sw": 384,
+      "sh": 384,
+      "bounds": [
+        47,
+        99,
+        378,
+        378
+      ],
+      "wrist": [
+        326.0,
+        371.0
+      ],
+      "toolTip": [
+        121.0,
+        174.0
+      ],
+      "contact": [
+        121.0,
+        174.0
+      ],
+      "direction": [
+        -0.72104,
+        -0.6929
+      ],
+      "contactRadius": 35
+    }
+  ],
+  "groups": {
+    "brush": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "patch": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "pin": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "pressLeft": [
+      12,
+      13
+    ],
+    "pressRight": [
+      14,
+      15
+    ]
+  },
+  "rendering": "Translate the WHOLE coherent hand-and-tool sprite by its measured toolTip/contact anchor. Do not rotate individual fingers, detach the brush, or emit effects from a guessed wrist point. Neutral cream conservation gloves/cuffs are shared for every selected hero.",
+  "anchorValidation": "Every exported contact point lands on an actual source pixel with alpha>=220, including open finger poses."
+}

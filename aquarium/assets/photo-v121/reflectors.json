@@ -1,0 +1,50 @@
+{
+  "reflector-left": {
+    "file": "reflector-left.webp",
+    "width": 512,
+    "height": 768,
+    "footAnchorX": 256,
+    "footAnchorY": 752,
+    "bbox": [
+      25,
+      22,
+      412,
+      752
+    ],
+    "lightOrigin": {
+      "x": 219,
+      "y": 211
+    },
+    "sourceBounds": [
+      129,
+      14,
+      658,
+      1011
+    ],
+    "nativeScale": 0.7321965897693079
+  },
+  "reflector-right": {
+    "file": "reflector-right.webp",
+    "width": 512,
+    "height": 768,
+    "footAnchorX": 256,
+    "footAnchorY": 752,
+    "bbox": [
+      107,
+      22,
+      477,
+      752
+    ],
+    "lightOrigin": {
+      "x": 292,
+      "y": 211
+    },
+    "sourceBounds": [
+      115,
+      12,
+      622,
+      1011
+    ],
+    "nativeScale": 0.7307307307307307
+  }
+}

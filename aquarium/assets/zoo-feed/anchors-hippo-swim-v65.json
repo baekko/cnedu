@@ -1,0 +1,339 @@
+{
+  "image": "hippo-swim-v65.webp",
+  "width": 3072,
+  "height": 384,
+  "cell": 384,
+  "columns": 8,
+  "rows": 1,
+  "frameCount": 8,
+  "sourceImage": "docs/zoo-feed-sources/hippo-swim-v65.png",
+  "sourceSize": [
+    1774,
+    887
+  ],
+  "uniformScale": 0.82,
+  "waterline": 344,
+  "lowerCut": 350,
+  "frames": [
+    {
+      "frame": 0,
+      "pose": "low",
+      "sourceCrop": [
+        0,
+        0,
+        444,
+        444
+      ],
+      "sourceAlphaBounds": [
+        43,
+        315,
+        430,
+        404
+      ],
+      "sourceMouth": [
+        87,
+        389
+      ],
+      "offset": [
+        3,
+        20
+      ],
+      "mouth": [
+        74.34,
+        338.98
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        38,
+        279,
+        356,
+        351
+      ]
+    },
+    {
+      "frame": 1,
+      "pose": "lifting",
+      "sourceCrop": [
+        444,
+        0,
+        887,
+        444
+      ],
+      "sourceAlphaBounds": [
+        30,
+        278,
+        427,
+        403
+      ],
+      "sourceMouth": [
+        94,
+        353
+      ],
+      "offset": [
+        6,
+        20
+      ],
+      "mouth": [
+        83.08,
+        309.46
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        31,
+        248,
+        356,
+        351
+      ]
+    },
+    {
+      "frame": 2,
+      "pose": "raised-closed",
+      "sourceCrop": [
+        887,
+        0,
+        1330,
+        444
+      ],
+      "sourceAlphaBounds": [
+        24,
+        224,
+        428,
+        404
+      ],
+      "sourceMouth": [
+        92,
+        286
+      ],
+      "offset": [
+        5,
+        20
+      ],
+      "mouth": [
+        80.44,
+        254.52
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        24,
+        203,
+        356,
+        351
+      ]
+    },
+    {
+      "frame": 3,
+      "pose": "half-open",
+      "sourceCrop": [
+        1330,
+        0,
+        1774,
+        444
+      ],
+      "sourceAlphaBounds": [
+        26,
+        200,
+        428,
+        404
+      ],
+      "sourceMouth": [
+        90,
+        288
+      ],
+      "offset": [
+        5,
+        20
+      ],
+      "mouth": [
+        78.8,
+        256.16
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        27,
+        184,
+        356,
+        351
+      ]
+    },
+    {
+      "frame": 4,
+      "pose": "wide-open",
+      "sourceCrop": [
+        0,
+        444,
+        444,
+        887
+      ],
+      "sourceAlphaBounds": [
+        38,
+        118,
+        430,
+        366
+      ],
+      "sourceMouth": [
+        99,
+        245
+      ],
+      "offset": [
+        3,
+        51
+      ],
+      "mouth": [
+        84.18,
+        251.9
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        34,
+        148,
+        355,
+        351
+      ]
+    },
+    {
+      "frame": 5,
+      "pose": "closing",
+      "sourceCrop": [
+        444,
+        444,
+        887,
+        887
+      ],
+      "sourceAlphaBounds": [
+        29,
+        148,
+        428,
+        366
+      ],
+      "sourceMouth": [
+        93,
+        235
+      ],
+      "offset": [
+        5,
+        51
+      ],
+      "mouth": [
+        81.26,
+        243.7
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        28,
+        172,
+        356,
+        351
+      ]
+    },
+    {
+      "frame": 6,
+      "pose": "chewing",
+      "sourceCrop": [
+        887,
+        444,
+        1330,
+        887
+      ],
+      "sourceAlphaBounds": [
+        19,
+        186,
+        427,
+        366
+      ],
+      "sourceMouth": [
+        94,
+        248
+      ],
+      "offset": [
+        6,
+        51
+      ],
+      "mouth": [
+        83.08,
+        254.36
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        21,
+        203,
+        356,
+        351
+      ]
+    },
+    {
+      "frame": 7,
+      "pose": "lowered",
+      "sourceCrop": [
+        1330,
+        444,
+        1774,
+        887
+      ],
+      "sourceAlphaBounds": [
+        32,
+        278,
+        428,
+        367
+      ],
+      "sourceMouth": [
+        91,
+        348
+      ],
+      "offset": [
+        5,
+        50
+      ],
+      "mouth": [
+        79.62,
+        335.36
+      ],
+      "waterline": 344,
+      "lowerCut": 350,
+      "backAnchor": [
+        355,
+        350
+      ],
+      "alphaBounds": [
+        31,
+        278,
+        356,
+        351
+      ]
+    }
+  ]
+}

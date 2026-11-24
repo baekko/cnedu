@@ -1,0 +1,7 @@
+.gym-mode #field-actions,.gym-mode #field-room-nav{display:none!important}
+.gym-mode .health-pips{display:flex}
+.gym-mode .health-pips>i:nth-child(n+3){display:none}
+.gym-mode #history-era{display:none!important}
+.gym-mode #history-message{max-width:320px;width:max-content;left:50%;transform:translateX(-50%);bottom:auto;top:calc(var(--scene-top) + 36px);font-size:10px;padding:5px 10px;border-radius:20px}
+.gym-mode .flash-button:not(:disabled){border-color:#9abfa8}
+#stage-screen[data-place=gym]{--chapter-paper:#f5e8c9;--chapter-ink:#4a706c;--chapter-wash:#d1ba83;--chapter-line:#a6b8a6;background:radial-gradient(ellipse at 75% 20%,#fff6da 0,transparent 55%),linear-gradient(140deg,#d5e7df,#f2e4c7 70%,#d5b781)}
