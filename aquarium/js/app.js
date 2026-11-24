@@ -86,9 +86,9 @@ import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPla
 import { loadMotion, SpritePlayer } from './motions.js';
 
 import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v246';
-import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,popArcadeCoins} from './arcade-view.js?v246';
+import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,popArcadeCoins} from './arcade-view.js?v247';
 import {drawArcadeChoices,drawResumeChoices} from './arcade-choice-view.js?v246';
-import {drawPlaceEntry} from './place-entry-view.js?v246';
+import {drawPlaceEntry} from './place-entry-view.js?v247';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
 import {getArcadeTicket,loadSharedArcadeRecords,shareArcadeRecord} from './arcade-share.js?v245';
 const $ = id => document.getElementById(id);

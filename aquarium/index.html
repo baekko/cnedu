@@ -23,11 +23,13 @@
         <header class="opening-header"><span class="wordmark">PLAY THE BOOK</span><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
         <div class="opening-content"><p id="test-edition-label" hidden>테스트판</p><h1 id="opening-title"><span>어서오세요,</span><span>이곳은</span><em>수족관입니다.</em></h1>
         <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><canvas id="title-art" width="520" height="460"></canvas><img class="opening-shark" src="./assets/aquarium-v8/shark-2.webp" alt=""></div>
-        <button id="title-continue" type="button" class="title-continue" hidden>
-          <img id="title-continue-character" alt="" draggable="false">
-          <span><strong>이어서 도전하기</strong><small id="title-continue-progress"></small></span>
-        </button>
-        <button id="title-start" class="primary-button">시작하기 <span>→</span></button></div>
+        <div class="title-actions">
+          <button id="title-continue" type="button" class="title-continue" hidden>
+            <img id="title-continue-character" alt="" draggable="false">
+            <span><strong>이어서 도전하기</strong><small id="title-continue-progress"></small></span>
+          </button>
+          <button id="title-start" type="button" class="primary-button">시작하기 <span aria-hidden="true">→</span></button>
+        </div></div>
       </section>
       <section id="arcade-screen" class="screen arcade-screen" hidden aria-labelledby="arcade-title"></section>
       <div id="arcade-reset-overlay" class="overlay" hidden>
@@ -35,8 +37,8 @@
           <h2 id="arcade-reset-title">다시 도전할까요?</h2>
           <p id="arcade-reset-description">현재 챌린지의 점수와 완료한 게임 기록이 모두 초기화돼요. 기록실의 완주 기록은 남아요.</p>
           <div class="return-actions">
-            <button id="arcade-reset-no" type="button" class="secondary-button">계속 도전하기</button>
-            <button id="arcade-reset-yes" type="button" class="primary-button">다시 도전하기</button>
+            <button id="arcade-reset-no" type="button" class="return-button">계속 도전하기</button>
+            <button id="arcade-reset-yes" type="button" class="return-button">다시 도전하기</button>
           </div>
         </section>
       </div>
@@ -174,7 +176,7 @@
       <div id="card-overlay" class="overlay" hidden><section class="modal card-detail" role="dialog" aria-modal="true" aria-labelledby="card-title"><div class="modal-kicker">찾아낸 단서</div><div class="large-clue"><div id="card-piece" class="piece-art"></div></div><h2 id="card-title">찾아낸 그림 조각</h2><p class="modal-lead">그림의 한 조각을 찾았어요!<br>보관함에서 단서카드를 조합해 보세요.</p><button id="close-card" class="primary-button">보관함으로 <span>→</span></button></section></div>
       <div id="puzzle-overlay" class="overlay" hidden><section class="modal puzzle-modal" role="dialog" aria-modal="true" aria-labelledby="puzzle-title"><div class="modal-kicker">PICTURE CLUE</div><h2 id="puzzle-title">단서카드 조합</h2><p id="puzzle-count" class="modal-lead">0 / 9장 조합</p><div id="puzzle-grid" class="puzzle-grid" role="group" aria-label="3행 3열로 조합한 그림 단서"></div><p id="puzzle-note" class="modal-lead"></p><p class="puzzle-placeholder">지금은 그림 조합을 확인하는 임시 단서예요.</p><button id="close-puzzle" class="primary-button">보관함으로 <span>→</span></button></section></div>
       <div id="motion-overlay" class="overlay" hidden><section class="modal motion-modal" role="dialog" aria-modal="true" aria-labelledby="motion-title"><div id="motion-kicker" class="modal-kicker"></div><h2 id="motion-title" tabindex="-1"></h2><div class="motion-stage"><div class="motion-floor"></div><canvas id="motion-canvas" width="512" height="512" role="img" aria-label="캐릭터 동작"></canvas></div><p id="motion-message" class="modal-lead"></p><button id="motion-next" class="primary-button" disabled>잠시만요…</button></section></div>
-      <div id="hint-overlay" class="overlay" hidden><section class="modal hint-modal" role="dialog" aria-modal="true" aria-labelledby="hint-title"><div class="modal-kicker">조금만 도와줄게요</div><h2 id="hint-title">문제 힌트</h2><ol id="hint-list" class="hint-list" aria-live="polite"></ol><button id="hint-back" class="primary-button">다시 문제 풀기</button><button id="hint-next" class="secondary-button">다음 힌트 보기</button></section></div>
+      <div id="hint-overlay" class="overlay" hidden><section class="modal hint-modal" role="dialog" aria-modal="true" aria-labelledby="hint-title"><div class="modal-kicker">조금만 도와줄게요</div><h2 id="hint-title">문제 힌트</h2><ol id="hint-list" class="hint-list" aria-live="polite"></ol><button id="hint-back" class="primary-button">다시 문제 풀기</button><button id="hint-next" class="primary-button">다음 힌트 보기</button></section></div>
       <section id="stage-screen" class="screen stage-screen stage-entry" hidden aria-labelledby="stage-title"><button id="museum-enter" type="button" class="primary-button">입장하기</button><p class="stage-placeholder" hidden></p></section>
       <div id="utility-overlay" class="overlay" hidden><section class="modal utility-modal" role="dialog" aria-modal="true" aria-labelledby="utility-title"><div id="utility-icon" class="panel-icon" aria-hidden="true"></div><h2 id="utility-title"></h2><div id="utility-content"></div><button id="utility-close" type="button" class="primary-button">돌아가기</button></section></div>
       <div id="quit-overlay" class="overlay" hidden><section class="modal quit-modal" role="dialog" aria-modal="true" aria-labelledby="quit-title"><div class="panel-icon" aria-hidden="true"><span data-game-icon="pocket"></span></div><h2 id="quit-title">정말로 게임을 마칠까요?</h2><p class="modal-lead">다시 찾아오면 보관한 점수와 힌트 기록을 확인할 수 있어요.</p><div class="return-actions"><button id="quit-yes" type="button" class="return-button">예, 마칠게요</button><button id="quit-no" type="button" class="return-button">아니요, 계속할게요</button></div></section></div>
@@ -192,9 +194,9 @@
   <link rel="stylesheet" href="./cinema.css?v=164">
   <link rel="stylesheet" href="./common-ui.css?v215"><link rel="stylesheet" href="./css/pursuit.css?v241"><link rel="stylesheet" href="./arcade.css?v246">
   <link rel="stylesheet" href="./arcade-choice-v246.css?v246">
-  <link rel="stylesheet" href="./arcade-map-v246.css?v246">
-  <link rel="stylesheet" href="./place-entry-v246.css?v246">
-  <link rel="stylesheet" href="./opening-v246.css?v246">
-  <script type="module" src="./js/app.js?v246"></script>
+  <link rel="stylesheet" href="./arcade-map-v246.css?v247">
+  <link rel="stylesheet" href="./place-entry-v246.css?v247">
+  <link rel="stylesheet" href="./opening-v246.css?v247">
+  <script type="module" src="./js/app.js?v247"></script>
 </body>
 </html>

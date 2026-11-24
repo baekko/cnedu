@@ -55,32 +55,70 @@
  outline:3px solid #386e65;
  outline-offset:3px;
 }
-.opening-content .title-continue{
+#title-screen{
+ display:flex;
+ flex-direction:column;
+}
+#title-screen .opening-header{
+ flex:none;
+ width:min(100%,560px);
+ margin-bottom:14px;
+}
+#title-screen .opening-content{
+ flex:none;
+ display:grid;
+ justify-items:center;
+ gap:clamp(14px,2.7dvh,24px);
+ padding:0;
+}
+#title-screen #opening-title{margin:0;text-align:center}
+#title-screen #opening-title em{white-space:normal;word-break:keep-all}
+#title-screen .opening-illustration{
+ width:min(100%,324px);
+ height:clamp(175px,34dvh,286px);
+ margin:0;
+ isolation:isolate;
+ overflow:hidden;
+}
+#title-screen #title-art{
+ position:absolute;
+ inset:4% 7%;
+ width:86%;
+ height:92%;
+ object-fit:contain;
+}
+#title-screen .orbit{width:70%;height:76%;max-width:230px}
+#title-screen .orbit-two{width:83%;height:57%;max-width:270px}
+#title-screen .opening-shark{width:26%;max-width:88px;right:4%;bottom:8%}
+.title-actions{
+ width:min(100%,360px);
+ display:grid;
+ gap:12px;
+}
+#app .title-actions>button{
  display:flex;
  align-items:center;
  justify-content:center;
- gap:11px;
- width:min(100%,360px);
+ gap:10px;
+ width:100%;
  min-height:57px;
- padding:6px 12px;
- margin:0 auto 12px;
+ height:auto;
+ margin:0;
+ padding:7px 12px;
  border:1px solid #a0c2af;
  border-radius:16px;
  color:#26554e;
+ font-size:16px;
+ font-weight:750;
+ line-height:1.35;
+ letter-spacing:-.3px;
+}
+#app .title-actions .title-continue{
  background:#fffdf0;
  box-shadow:0 3px 0 #92b5a255;
  text-align:left;
 }
-.opening-content .title-continue[hidden]{display:none}
 .title-continue img{width:40px;height:40px;flex:none;object-fit:contain;border-radius:11px;background:#e2f0e2}
-.title-continue strong,.title-continue small{display:block;line-height:1.35}
-.title-continue strong{font-size:1rem}
-.title-continue small{margin-top:3px;font-size:.8rem;color:#456957;overflow-wrap:anywhere}
-.title-continue:focus-visible{outline:3px solid #386e65;outline-offset:3px}
-@media(max-height:700px){
- .opening-content:has(.title-continue:not([hidden])) .opening-illustration{
-  height:clamp(172px,28dvh,228px);
-  margin-bottom:11px;
- }
- .opening-content:has(.title-continue:not([hidden])) #title-art{width:min(240px,83%)}
-}
+.title-continue strong{display:block;font:inherit;letter-spacing:inherit}
+.title-continue small{display:block;margin-top:3px;font-size:.8rem;color:#456957;overflow-wrap:anywhere}
+.title-actions button:focus-visible{outline:3px solid #386e65;outline-offset:3px}

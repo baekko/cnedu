@@ -135,22 +135,26 @@
 }
 .stage-entry-fallback svg {width:34%;height:58%}
 .stage-entry-heading {padding:0 3px}
-.stage-entry-heading p {
+.stage-entry-greeting {
+ display:block;
  margin:0 0 2px;
  color:#496274;
  font-size:clamp(.86rem,3.4vw,1rem);
  font-weight:600;
+ letter-spacing:0;
+ line-height:1.35;
 }
 #stage-screen.stage-entry #stage-title {
  margin:0;
  max-width:none;
  color:#213f56;
- font-size:clamp(2.0rem,9vw,3.15rem);
+ font-size:clamp(1.6rem,7.6vw,2.75rem);
  line-height:1.14;
  letter-spacing:-.065em;
  word-break:keep-all;
  overflow-wrap:break-word;
 }
+.stage-entry-ending {font-size:.78em}
 .stage-entry-brief {
  display:flex;
  align-items:center;

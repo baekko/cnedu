@@ -28,26 +28,31 @@ function placeIllustration(place){
  const position=art.thumbnail?art.thumbnailPosition:art.position;
  return `<span class="atlas-illustration" aria-hidden="true" style="--atlas-picture:${art.tone};--atlas-picture-position:${position}">${image?`<img src="${image}" alt="" loading="lazy" decoding="async">`:placeIcon(place.id)}</span>`;
 }
-function placeTile(place,game){
- const result=game?(game.abandoned?'중단':game.coins+' / '+COINS_PER_GAME+'점'):'';
- return `<li><button type="button" class="atlas-tile" data-arcade-place="${place.id}"${game?' disabled':''}>
- ${placeIllustration(place)}<span class="atlas-tile-name">${place.name}</span>${result?`<small class="atlas-tile-status${game.abandoned?' atlas-tile-abandoned':''}">${result}</small>`:''}
- </button></li>`;
+function mapButton(action,label){
+ return `<button type="button" class="secondary-button" data-arcade-action="${action}">${label}</button>`;
 }
 
 export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  const challenge=mode==='challenge';
  const places=arcadePlaces().filter(place=>!challenge||runs.run.places.includes(place.id));
- root().innerHTML=`<div class="arcade-atlas" data-atlas-mode="${mode}">
- ${heading(challenge?'미니게임 챌린지':'미니게임 연습하기',challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.',placeIcon('pursuit'))}
- ${challenge?tally(runs,places.length):''}<p class="arcade-status atlas-status" role="status" hidden></p>
- <div class="arcade-map-scroll atlas-pan" aria-label="미니게임 지도" tabindex="0"><ol class="arcade-map atlas-route">
- ${places.map(place=>placeTile(place,challenge?runs.run.games[place.id]:null)).join('')}
+ const title=challenge?'미니게임 챌린지':'미니게임 연습하기';
+ const instructions=challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.';
+ const stats=challenge?`<div class="arcade-tally"><span>완료 <b>${runs.completed} / ${places.length}</b></span><span>${coin} <b>${runs.total} / ${runs.maximum}점</b></span></div>`:'';
+ root().innerHTML=`<header><h1 id="arcade-title" tabindex="-1">${title}</h1><p>${instructions}</p></header>
+ ${stats}<p class="arcade-status" role="status" hidden></p>
+ <div class="arcade-map-scroll" aria-label="미니게임 지도"><ol class="arcade-map">
+ ${places.map((place,index)=>{
+  const game=challenge?runs.run.games[place.id]:null;
+  const status=game?(game.abandoned?'중단':game.coins+' / '+COINS_PER_GAME+'점'):String(index+1).padStart(2,'0');
+  return `<li><button type="button" data-arcade-place="${place.id}"${game?' disabled':''}>
+  <span class="arcade-map-icon">${placeIcon(place.id)}</span><span class="arcade-map-name">${place.name}</span><small>${status}</small>
+  </button></li>`;
+ }).join('')}
  </ol></div>
- <footer class="arcade-map-actions atlas-actions">
- ${challenge?button('reset','다시 도전하기',{symbol:'restart'})+button('records','기록보기',{symbol:'score',primary:true}):''}
- ${button('title','처음으로 돌아가기')}${button('quit','게임 마치기')}
- </footer></div>`;
+ <footer class="arcade-map-actions">
+ ${challenge?mapButton('reset','다시 도전하기')+mapButton('records','기록보기'):''}
+ ${mapButton('title','처음으로 돌아가기')}${mapButton('quit','게임 마치기')}
+ </footer>`;
  const scroll=root().querySelector('.arcade-map-scroll');
  if(reset)scrollPositions[mode]=0;
  const savedScroll=scrollPositions[mode];

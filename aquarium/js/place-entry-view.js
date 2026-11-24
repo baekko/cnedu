@@ -26,10 +26,7 @@ export function drawPlaceEntry(screen,{place,character,enterButton}){
    <div class="stage-entry-picture"></div>
    <span class="stage-entry-icon">${placeIcon(place.id)}</span>
   </figure>
-  <div class="stage-entry-heading">
-   <p>어서오세요, 이곳은</p>
-   <h1 id="stage-title" tabindex="-1"></h1>
-  </div>
+  <h1 id="stage-title" class="stage-entry-heading" tabindex="-1"><span class="stage-entry-greeting">어서오세요, 이곳은</span> <span class="stage-entry-place"></span><span class="stage-entry-ending">입니다.</span></h1>
   <div class="stage-entry-brief">
    <span class="stage-entry-avatar"><img id="stage-character" alt="" draggable="false"></span>
    <div><strong id="stage-companion"></strong><p class="stage-placeholder" aria-live="polite"></p></div>
@@ -44,7 +41,7 @@ export function drawPlaceEntry(screen,{place,character,enterButton}){
  const progress=card.querySelector('.stage-entry-progress');
  progress.textContent=stage+' / '+PLACES.length;
  progress.setAttribute('aria-label','전체 '+PLACES.length+'곳 중 '+stage+'번째 장소');
- card.querySelector('#stage-title').textContent=place.name;
+ card.querySelector('.stage-entry-place').textContent=place.name;
  const hero=card.querySelector('#stage-character');
  if(character?.asset)hero.src='./assets/'+character.asset;
  else hero.hidden=true;
