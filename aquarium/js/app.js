@@ -91,6 +91,7 @@ import {drawArcadeChoices,drawResumeChoices} from './arcade-choice-view.js?v246'
 import {drawPlaceEntry} from './place-entry-view.js?v247';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
 import {getArcadeTicket,loadSharedArcadeRecords,shareArcadeRecord} from './arcade-share.js?v245';
+import {ModeCharacters} from './mode-characters.js';
 const $ = id => document.getElementById(id);
 $('common-header-actions').innerHTML=headerActionsHTML();
 for(const [id,name] of [['shoot-button','slingshot'],['jump-button','jump'],['hammer-button','hammer']])$(id).innerHTML=icon(name);
@@ -114,13 +115,16 @@ const trialKind=entry==='pursuit'||location.hash==='#pursuit'?'pursuit':entry===
 const trial=!!trialKind;
 const normalStorage=storage;
 const arcadeRuns=new ArcadeRuns(normalStorage);
-let arcadeMode=null,arcadePlace=null,arcadeCoins=0,arcadeLoading=false,arcadeSettled=false,arcadeProfile=null;
+const modeCharacters=new ModeCharacters(normalStorage,()=>{$('storage-warning').hidden=false;});
+const modeNames={escape:'미니게임 + 방탈출',arcade:'미니게임 챌린지'};
+let characterMode=null;
+let arcadeMode=null,arcadePlace=null,arcadeCoins=0,arcadeLoading=false,arcadeSettled=false;
 let arcadeRecordRequest=0,arcadeRecordScope='mine';
 const postedArcadeRuns=new Set();
 const scores=new ExpeditionScores(normalStorage,()=>{$('storage-warning').hidden=false;});
 scores.importJourneys(normalStorage);
-const preferredJourney=readJourney(storage);
-const preferredCharacter=preferredJourney?.character||readProgress(storage).character;
+const preferredPlayer=savedModeCharacter('escape');
+const preferredCharacter=preferredPlayer?.character||readProgress(storage).character;
 if(trial)storage={getItem:key=>normalStorage.getItem(trialKind+'_trial_'+key),setItem:(key,v)=>normalStorage.setItem(trialKind+'_trial_'+key,v)};
 if(entry==='character'||entry==='title'){
  resetJourney(normalStorage);
@@ -128,7 +132,7 @@ if(entry==='character'||entry==='title'){
 }else if(entry==='pursuit'||entry==='memory'||entry==='cinema'||entry==='gym'||entry==='cityhall'||entry==='datacenter'||entry==='conservation'||entry==='photo'||entry==='garden'||entry==='monastery'||entry==='detective'||entry==='dessert'||entry==='ai'||entry==='zoo'||entry==='museum'||entry==='exchange'||entry==='temple'||entry==='robot'||entry==='space'||entry==='writer'||entry==='language'||entry==='newspaper'||entry==='dream'||entry==='literature'){
  // A direct game link starts this game anew, even when an older trial is saved.
  // Keep the regular adventure and its chosen explorer in normalStorage.
- const next=visitPlace(null,entry==='museum'?'history':entry,preferredCharacter||'haru',preferredJourney?.playerName||'플레이어');
+ const next=visitPlace(null,entry==='museum'?'history':entry,preferredCharacter||'haru',preferredPlayer?.name||'플레이어');
  saveJourney(storage,recoverJourneyUnlocks(normalStorage,next));
  saveProgress(storage,{...readProgress(storage),character:preferredCharacter||'haru',clues:[],clueSources:[]});
  history.replaceState(null,'',location.pathname+'#'+trialKind);
@@ -238,8 +242,8 @@ function syncSound() {
 }
 function toggleSound(){
  progress.sound=!progress.sound;unlockAudio();syncSound();
- if(arcadeMode)saveProgress(normalStorage,{...readProgress(normalStorage),sound:progress.sound});
- else persist();
+ const audioStorage=arcadeMode?normalStorage:storage;
+ if(!saveProgress(audioStorage,{...readProgress(audioStorage),sound:progress.sound}))$('storage-warning').hidden=false;
  if(progress.sound)tone(680);
 }
 document.addEventListener('click',event=>{
@@ -347,19 +351,35 @@ function syncCharacters() {
   $('brief-title').textContent=`${character.name}, 준비됐나요?`;
 }
 function clearCharacterAssets(){
+  cinemaImages?.movies?.pause();cinemaImages=null;gymImages=null;
   photoImages=null;gardenImages=null;cityHallImages=null;cityHallUI=null;dataCenterImages=null;conservationImages=null;monasteryImages=null;detectiveImages=null;dessertImages=null;aiImages=null;museumImages=null;historyImages=null;exchangeImages=null;templeImages=null;robotImages=null;spaceImages=null;writerImages=null;languageImages=null;zooImages=null;literatureImages=null;dreamImages=null;newspaperImages=null;exchangeUI=null;
+}
+function usePlayer(player){
+ if(character.id!==player.character)clearCharacterAssets();
+ character={...CHARACTERS.find(c=>c.id===player.character),name:player.name};
+ syncCharacters();
 }
 function createCharacterGrid() {
   $('character-grid').innerHTML=CHARACTERS.map((c,i)=>`<button class="character-card" data-character="${c.id}" style="--character-color:${c.color}" aria-pressed="false" aria-label="${i+1}번 캐릭터 선택"><span class="character-check" aria-hidden="true">✓</span><img src="./assets/${c.asset}" alt="" draggable="false"></button>`).join('');
   $('character-grid').addEventListener('click',async event=>{
     const button=event.target.closest('[data-character]');if(!button||state!=='select')return;
-    clearCharacterAssets();
-    character={...CHARACTERS.find(c=>c.id===button.dataset.character),name:''};syncCharacters();
+    usePlayer({character:button.dataset.character,name:''});
     $('player-name').value='';$('name-error').textContent='';setState('naming');
     const c=$('name-character').getContext('2d');c.clearRect(0,0,512,512);const img=images[character.asset];const h=420,w=img.width/img.height*h;c.drawImage(img,(512-w)/2,40,w,h);
     const token=++nameToken;nameMotion=null;$('player-name').focus({preventScroll:true});
     try{const img=await loadMotion(character,'start');if(token===nameToken&&state==='naming')nameMotion=new SpritePlayer($('name-character'),img);}catch{}
   });
+}
+function savedModeCharacter(mode){
+ const profile=modeCharacters.get(mode);
+ if(profile)return profile;
+ if(mode==='escape'){
+  const adventure=readJourney(normalStorage);
+  return adventure?modeCharacters.register(mode,{character:adventure.character,name:adventure.playerName||'플레이어'}):null;
+ }
+ arcadeRuns.refresh();
+ const legacy=arcadeRuns.run?.player||arcadeRuns.records[0]?.player;
+ return legacy?modeCharacters.register(mode,legacy):null;
 }
 function savedModes(){
  const adventure=readJourney(normalStorage);
@@ -390,12 +410,11 @@ function refreshTitleResume(){
 async function resumeEscape(adventure){
  setState('loading');
  journey=recoverJourneyUnlocks(normalStorage,adventure);
- if(character.id!==journey.character)clearCharacterAssets();
- character={...CHARACTERS.find(c=>c.id===journey.character),name:journey.playerName||'플레이어'};
+ usePlayer({character:journey.character,name:journey.playerName||'플레이어'});
  const saved=readProgress(normalStorage);
  aquariumClues.splice(0,aquariumClues.length,...saved.clues);
  Object.assign(progress,saved,{character:character.id,clues:[...saved.clues]});
- syncCharacters();syncSound();
+ syncSound();
  try{await restoreAdventureScreen();}catch(error){console.error(error);showStage();}
 }
 function resumeSavedMode(mode){
@@ -403,7 +422,7 @@ function resumeSavedMode(mode){
  const {adventure,challenge}=savedModes();
  if(mode==='escape'&&adventure){unlockAudio();void resumeEscape(adventure);}
  else if(mode==='challenge'&&challenge){
-  unlockAudio();arcadeProfile={...challenge.player};enterArcadeMap('challenge');
+  unlockAudio();enterArcadeMap('challenge');
  }else returnToArcadeTitle();
 }
 $('title-continue').addEventListener('click',()=>{
@@ -412,8 +431,14 @@ $('title-continue').addEventListener('click',()=>{
  if(entries.length===1){resumeSavedMode(entries[0].mode);return;}
  if(entries.length===2){drawResumeChoices(entries);setState('resume-choice');focusArcade();}
 });
-$('title-start').addEventListener('click',()=>{unlockAudio();setState('select');});
-$('name-cancel').addEventListener('click',()=>{++nameToken;nameMotion=null;setState('select');});
+$('title-start').addEventListener('click',()=>{if(state==='title'){unlockAudio();showModeChoice();}});
+$('select-back').addEventListener('click',()=>{if(state==='select')showModeChoice();});
+function cancelCharacterName(){
+ if(state!=='naming')return;
+ ++nameToken;nameMotion=null;setState('select');
+ $('character-grid').querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
+}
+$('name-cancel').addEventListener('click',cancelCharacterName);
 function arcadeRewardText(text,pursuit=false){
  if(pursuit)return text;
  return text
@@ -429,33 +454,51 @@ function focusArcade(){
 function showArcadeChoices(screen){
  arcadeRuns.refresh();drawArcadeChoices(screen,arcadeRuns);setState(screen);focusArcade();
 }
-function startEscapeMode(){
- if(!trial&&readJourney(normalStorage)&&!window.confirm('기존 방탈출 진행을 지우고 새로 시작할까요?'))return;
+function showModeChoice(){
+ characterMode=null;
+ showArcadeChoices('mode');
+}
+function chooseMode(mode){
+ if(state!=='mode')return;
+ const player=savedModeCharacter(mode);
+ if(player){openMode(mode,player);return;}
+ characterMode=mode;
+ $('select-mode-label').textContent=modeNames[mode];
+ $('select-mode-label').hidden=false;
+ $('select-back').hidden=false;
+ $('character-grid').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed','false'));
+ setState('select');$('select-title').focus({preventScroll:true});
+}
+function openMode(mode,player){
+ characterMode=null;
+ if(mode==='escape')startEscapeMode(player);
+ else{usePlayer(player);showArcadeChoices('arcade-choice');}
+}
+function startEscapeMode(player){
+ if(!trial&&readJourney(normalStorage)&&!window.confirm('방탈출을 처음부터 시작할까요? 캐릭터와 힌트 사용 기록은 유지돼요.'))return;
+ usePlayer(player);
  setCoinRewards(false);activePlace='aquarium';
  aquariumClues.length=0;progress.clues=[];progress.clueSources=[];
  persist();journey={character:character.id,playerName:character.name,stage:'aquarium',phase:'briefing',elapsed:0,survived:false,hintsSeen:0};
  if(!saveJourney(storage,journey))$('storage-warning').hidden=false;
- syncCharacters();showStage();
-}
-function applyArcadeCharacter(player){
- if(character.id!==player.character)clearCharacterAssets();
- character={...CHARACTERS.find(c=>c.id===player.character),name:player.name};
- syncCharacters();
+ showStage();
 }
 function enterArcadeMap(mode){
+ const player=savedModeCharacter('arcade');
+ if(!player)return;
  arcadeMode=mode;setCoinRewards(true);
  let notice='';
  if(mode==='challenge'){
   arcadeRuns.refresh();
-  if(!arcadeRuns.run)arcadeRuns.start(arcadeProfile);
+  if(!arcadeRuns.run)arcadeRuns.start(player);
   if(arcadeRuns.run.active){
    arcadeRuns.finish(arcadeRuns.run.active.place,{abandoned:true});
    notice='창을 닫을 때 플레이 중이던 게임은 중단으로 표시했어요. 남은 게임은 이어서 할 수 있어요.';
   }
-  applyArcadeCharacter(arcadeRuns.run.player);
+  usePlayer(arcadeRuns.run.player);
   prepareArcadeTicket();
   void sharePendingArcadeRecords();
- }else applyArcadeCharacter(arcadeProfile);
+ }else usePlayer(player);
  showArcadeMap({reset:true,notice});
 }
 function showArcadeMap(options){
@@ -469,10 +512,10 @@ function showArcadeSurface(){
 }
 function leaveArcadeMap(){
  showArcadeSurface();arcadeMode=null;arcadePlace=null;game=null;setCoinRewards(false);
- applyArcadeCharacter(arcadeProfile);showArcadeChoices('arcade-choice');
+ journey=readJourney(storage);showArcadeChoices('arcade-choice');
 }
 function returnToArcadeTitle(){
- showArcadeSurface();arcadeMode=null;arcadePlace=null;arcadeProfile=null;game=null;
+ showArcadeSurface();arcadeMode=null;arcadePlace=null;characterMode=null;game=null;
  journey=readJourney(storage);replayOrigin=null;replayTarget=null;setCoinRewards(false);
  prepareAquarium();setState('title');
  ($('title-continue').hidden?$('title-start'):$('title-continue')).focus({preventScroll:true});
@@ -488,8 +531,10 @@ function closeArcadeReset(){
 }
 $('arcade-reset-no').addEventListener('click',closeArcadeReset);
 $('arcade-reset-yes').addEventListener('click',()=>{
- closeArcadeReset();arcadeRuns.start(arcadeProfile);
- applyArcadeCharacter(arcadeRuns.run.player);prepareArcadeTicket();showArcadeMap({reset:true});
+ const player=savedModeCharacter('arcade');
+ closeArcadeReset();if(!player)return;
+ arcadeRuns.start(player);
+ usePlayer(arcadeRuns.run.player);prepareArcadeTicket();showArcadeMap({reset:true});
 });
 async function selectArcadePlace(place){
  if(arcadeLoading||!arcadeMode||!arcadePlaces().some(p=>p.id===place))return;
@@ -573,7 +618,7 @@ async function showArcadeRecords(scope){
  }
 }
 const arcadeActions={
- escape:startEscapeMode,arcade:()=>showArcadeChoices('arcade-choice'),mode:()=>showArcadeChoices('mode'),
+ escape:()=>chooseMode('escape'),arcade:()=>chooseMode('arcade'),mode:showModeChoice,
  practice:()=>enterArcadeMap('practice'),challenge:()=>enterArcadeMap('challenge'),
  title:returnToArcadeTitle,quit:askToQuit,reset:askArcadeReset,map:()=>showArcadeMap(),
  again:()=>selectArcadePlace(arcadePlace),records:()=>showArcadeRecords('mine'),shared:()=>showArcadeRecords('shared'),
@@ -588,13 +633,27 @@ $('arcade-screen').addEventListener('click',event=>{
 });
 window.addEventListener('online',()=>void sharePendingArcadeRecords());
 
-$('name-form').addEventListener('submit',event=>{
-  event.preventDefault();const name=normalizePlayerName($('player-name').value);
+$('name-form').addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(state!=='naming')return;
+  const name=normalizePlayerName($('player-name').value);
   if(!name){$('name-error').textContent='이름을 입력해 주세요.';return;}
-  character={...character,name};nameMotion=null;++nameToken;document.activeElement?.blur();unlockAudio();
-  arcadeProfile={character:character.id,name};
-  if(trial)startEscapeMode();
-  else showArcadeChoices('mode');
+  const mode=characterMode,token=nameToken,draft={character:character.id,name};
+  unlockAudio();
+  const register=()=>state==='naming'&&nameToken===token
+   ? (mode?(savedModeCharacter(mode)||modeCharacters.register(mode,draft)):draft)
+   : null;
+  let player;
+  if(mode&&window.navigator.locks){
+   try{player=await window.navigator.locks.request('ptb_aquarium_character_'+mode,register);}
+   catch{player=register();}
+  }else player=register();
+  if(!player||state!=='naming'||nameToken!==token)return;
+  nameMotion=null;++nameToken;document.activeElement?.blur();
+  const adventure=mode==='escape'?readJourney(normalStorage):null;
+  if(adventure){characterMode=null;void resumeEscape(adventure);}
+  else if(mode)openMode(mode,player);
+  else if(trial)startEscapeMode(player);
   Promise.all(['correct','wrong'].map(action=>loadMotion(character,action))).catch(()=>{});
 });
 let dessertFinish=null;
@@ -920,6 +979,8 @@ window.addEventListener('keydown',event=>{
   const movement=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'];
   if(event.code==='Escape'){
     if(!$('arcade-reset-overlay').hidden){event.preventDefault();closeArcadeReset();return;}
+    if(state==='naming'){event.preventDefault();cancelCharacterName();return;}
+    if(state==='select'&&characterMode){event.preventDefault();showModeChoice();return;}
     if(state==='tutorial'){event.preventDefault();if(!returnFromHowTo())setState('briefing');return;}
     if(state==='help'){event.preventDefault();resumeFromHelp();return;}
     if(!$('hint-overlay').hidden){closeExtra('hint-overlay');return;}
@@ -1458,7 +1519,8 @@ async function boot(){
   try {
     images=await loadAssets();renderer=new Renderer(layout.world,images);createCharacterGrid();
     const titleContext=$('title-art').getContext('2d');titleContext.setTransform(2,0,0,2,0,0);drawSubmarine(titleContext,images,null,130,115,2.7,3,0);
-    if(!entry&&!trial)setState('title');
+    if(entry==='character')showModeChoice();
+    else if(!entry&&!trial)setState('title');
     else await restoreAdventureScreen();
     requestAnimationFrame(frame);
   }catch(error){$('loading-note').textContent='그림을 불러오지 못했어요. 새로고침해 다시 시도해 주세요.';console.error(error);}
@@ -1497,7 +1559,7 @@ async function restoreAdventureScreen(){
     game=new AquariumGame({onEvent:handleGameEvent,collides:createSpriteCollider(images,character)});
     game.banked=new Set(progress.clues);game.found=new Set(progress.clues);game.elapsed=journey.elapsed;game.ended=true;
     showResult({survived:journey.survived,elapsed:journey.elapsed,found:progress.clues});
-  }else if(journey)showStage();else setState(entry==='character'?'select':'title');
+  }else if(journey)showStage();else setState('title');
 }
 async function prepareMuseum(){
   museumImages ||= await loadMuseumAssets(character);
@@ -1753,7 +1815,8 @@ async function goBackScene(){
  if(quitOpen){cancelQuit();return true;}
  if(arcadeLoading)return true;
  if(state==='mode'||state==='resume-choice'){returnToArcadeTitle();return true;}
- if(state==='arcade-choice'){showArcadeChoices('mode');return true;}
+ if(state==='arcade-choice'||(state==='select'&&characterMode)){showModeChoice();return true;}
+ if(state==='naming'){cancelCharacterName();return true;}
  if(state==='arcade-records'||state==='arcade-result'){showArcadeMap();return true;}
  if(state==='arcade-map'){leaveArcadeMap();return true;}
  if(arcadeMode&&!utilityOrigin&&!menuReturn&&['briefing','pursuit-report'].includes(state)){
@@ -1767,6 +1830,7 @@ async function goBackScene(){
  if(state==='pursuit-report'){setState('briefing');hud();return true;}
  if(state==='pursuit-capture-report'){finishPursuitCaptureReport();return true;}
  if(state==='stage'&&replayOrigin&&journey.stage===replayTarget){await restoreReplayOrigin();return true;}
+ if(state==='stage'&&!trial&&journey?.stage==='aquarium'){showModeChoice();return true;}
  if(state==='paused'){resume();return true;}
  if(arcadeMode&&['playing','exchange','countdown','ending'].includes(state)){pause();return true;}
  if(homeConfirmOpen){cancelHome();return;}
