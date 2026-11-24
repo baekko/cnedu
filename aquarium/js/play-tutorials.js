@@ -1,4 +1,4 @@
-import {PursuitGame} from './pursuit-game.js?v243';
+import {PursuitGame} from './pursuit-game.js?v252';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
 import {CinemaGame} from './cinema-core.js?v204-final40';
 import {GymGame} from './gym-core.js?v212';

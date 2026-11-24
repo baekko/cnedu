@@ -8,7 +8,7 @@
   <title>어서오세요, 이곳은 수족관입니다 · PLAY THE BOOK</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./js/opening.js?v250"></script>
+  <script type="module" src="./js/opening.js?v252"></script>
 </head>
 <body>
   <aside class="desktop-note" aria-hidden="true"><div class="brand-mark">P<span>●</span>B</div><span>PLAY THE BOOK</span><p>책 너머의 세상으로<br>함께 떠나요.</p><div class="desktop-keys">방향키 이동 · SPACE 빛 발사</div></aside>
@@ -33,7 +33,7 @@
       <div id="arcade-reset-overlay" class="overlay" hidden>
         <section class="modal arcade-reset-modal" role="alertdialog" aria-modal="true" aria-labelledby="arcade-reset-title" aria-describedby="arcade-reset-description">
           <h2 id="arcade-reset-title">다시 도전할까요?</h2>
-          <p id="arcade-reset-description">현재 챌린지의 점수와 완료한 게임 기록이 모두 초기화돼요. 기록실의 완주 기록은 남아요.</p>
+          <p id="arcade-reset-description">이번 도전의 진행 상황과 점수가 초기화돼요. 이전 완주 기록은 기록실에 남아요.</p>
           <div class="return-actions">
             <button id="arcade-reset-no" type="button" class="return-button">계속 도전하기</button>
             <button id="arcade-reset-yes" type="button" class="return-button">다시 도전하기</button>
@@ -191,8 +191,8 @@
   <link rel="stylesheet" href="./place-entry-v246.css?v251">
   <link rel="stylesheet" href="./opening-v246.css?v249">
   <script type="module" async>
-    import('./js/app.js?v251').catch(async error => {
-      const {showStartupError} = await import('./js/opening.js?v250');
+    import('./js/app.js?v252').catch(async error => {
+      const {showStartupError} = await import('./js/opening.js?v252');
       showStartupError();
       console.error(error);
     });

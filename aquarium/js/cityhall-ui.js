@@ -17,17 +17,21 @@ export function syncCityAction(g,button,active){
  if(button.getAttribute('aria-label')!==access)button.setAttribute('aria-label',access);
  const disabled=!active||!g.actionReady;if(button.disabled!==disabled)button.disabled=disabled;
 }
-function clueThresholds(){
- return `<table class="city-clue-goals" aria-label="단서별 최소 지지율"><tbody>
- <tr><th scope="row">단서</th>${CITY_CLUE_THRESHOLDS.map((_,i)=>`<td>${i+1}장</td>`).join('')}</tr>
+const rewardName=coinMode=>coinMode?'금화':'단서';
+const rewardUnit=coinMode=>coinMode?'개':'장';
+const CITY_COIN_RULE='최종 지지율에 따라 금화를 드립니다. 52%에서 한 개, 64%까지는 3%p마다 한 개씩 더 받아요. 이후 4%p마다 한 개씩 늘어 80%에 아홉 개를 받아요.';
+function clueThresholds(coinMode){
+ const reward=rewardName(coinMode),unit=rewardUnit(coinMode);
+ return `<table class="city-clue-goals" aria-label="${reward} 개수별 최소 지지율"><tbody>
+ <tr><th scope="row">${reward}</th>${CITY_CLUE_THRESHOLDS.map((_,i)=>`<td>${i+1}${unit}</td>`).join('')}</tr>
  <tr><th scope="row">지지율</th>${CITY_CLUE_THRESHOLDS.map(n=>`<td>${n}%</td>`).join('')}</tr></tbody></table>`;
 }
-function dialogue(g){
- const rule=g.introPage===1?`<div class="city-clue-guide"><p>${lines(CITY_CLUE_RULE)}</p>${clueThresholds()}</div>`:'';
+function dialogue(g,coinMode){
+ const rule=g.introPage===1?`<div class="city-clue-guide"><p>${lines(coinMode?CITY_COIN_RULE:CITY_CLUE_RULE)}</p>${clueThresholds(coinMode)}</div>`:'';
  return `<div class="city-kicker">첫날 · 시장 집무실</div><div class="city-dialogue"><span class="city-speaker" aria-hidden="true"></span><div><h2>비서실 직원</h2><p>${esc(CITY_DIALOGUE[g.introPage]).replace(/\.\s+/g,'.<br>')}</p></div></div>${rule}`;
 }
-export function citySummaryHTML(g){
- return `<div class="city-kicker">시장 집무실 · 결재 완료</div><h2 id="cityhall-summary-title">여섯 정책의 결과</h2><p class="city-summary-lead">시민의 평가를 확인하고 퇴근하세요.</p><ol class="city-summary-list">${g.history.map(r=>`<li><div><b>${esc(r.title)}</b><span>${r.before}% → ${r.after}% <strong class="${r.after<r.before?'city-down':'city-up'}">${delta(r.after-r.before)}%p</strong></span></div><p>${esc(r.policy)} · ${esc(r.reason)}</p></li>`).join('')}</ol><div class="city-summary-total"><span>최종 지지율</span><strong>${g.approval}%</strong><span>단서 ${g.clueCount}장</span></div>`;
+export function citySummaryHTML(g,coinMode=false){
+ return `<div class="city-kicker">시장 집무실 · 결재 완료</div><h2 id="cityhall-summary-title">여섯 정책의 결과</h2><p class="city-summary-lead">시민의 평가를 확인하고 퇴근하세요.</p><ol class="city-summary-list">${g.history.map(r=>`<li><div><b>${esc(r.title)}</b><span>${r.before}% → ${r.after}% <strong class="${r.after<r.before?'city-down':'city-up'}">${delta(r.after-r.before)}%p</strong></span></div><p>${esc(r.policy)} · ${esc(r.reason)}</p></li>`).join('')}</ol><div class="city-summary-total"><span>최종 지지율</span><strong>${g.approval}%</strong><span>${rewardName(coinMode)} ${g.clueCount}${rewardUnit(coinMode)}</span></div>`;
 }
 function ledger(g){
  if(!g.history.length)return '';
@@ -40,15 +44,17 @@ function report(g){
  <div class="city-policy-sheet"><p class="city-policy-instruction" role="status">${recommended?`전문가 추천 · ${esc(recommended.name)}`:'네 정책을 비교하고 하나를 선택하세요'}</p>
  <div class="city-policy-list" role="group" aria-label="결재할 정책 네 개">${g.options.map(p=>`<button type="button" class="city-policy ${recommended?.id===p.id?'city-expert-pick':''}" data-city-policy="${p.id}" aria-pressed="${p.id===g.selectedPolicy}" ${recommended?.id===p.id?'aria-description="정책 전문가가 추천한 정책"':''}><span class="city-choice-dot" aria-hidden="true"></span><span class="city-choice-content"><span class="city-policy-heading"><strong>${esc(p.name)}</strong>${p.timing?`<small>${esc(p.timing)}</small>`:''}</span><span>${lines(p.text)}</span></span></button>`).join('')}</div></div>`;
 }
-function review(g){
+function review(g,coinMode){
+ const reward=rewardName(coinMode),unit=rewardUnit(coinMode);
  const r=g.review,trend=r.after-r.before,before=cityClueCount(r.before),after=cityClueCount(r.after);
  return `<div class="city-kicker">정책 시행 결과 · ${g.round} / ${CITYHALL.rounds}</div><h2 tabindex="-1">${esc(r.policy)}</h2>
  <div class="city-trend"><span>지지율</span><strong>${r.before}% → ${r.after}%</strong><b class="${trend<0?'city-down':'city-up'}">${delta(trend)}%p</b></div>
  <p class="city-rule">${lines(r.reason)}</p>
- <details class="city-file"><summary>예상 단서 <b>${before===after?`${after}장`:`${before}장 → ${after}장`}</b></summary>${clueThresholds()}</details>${ledger(g)}`;
+ <details class="city-file"><summary>예상 ${reward} <b>${before===after?`${after}${unit}`:`${before}${unit} → ${after}${unit}`}</b></summary>${clueThresholds(coinMode)}</details>${ledger(g)}`;
 }
 export class CityHallUI{
- constructor(panel,game,onSelect){
+ constructor(panel,game,onSelect,coinMode=false){
+  this.coinMode=coinMode;
   this.panel=panel;this.game=game;this.signature='';this.selected=null;
   panel.onclick=onSelect?event=>{
    const b=event.target.closest('button[data-city-policy]');
@@ -62,7 +68,7 @@ export class CityHallUI{
   if(!visible)return;
   const key=intro?'intro:'+g.introPage:`${g.round}:${g.phase}:${g.adviceTurn}`;
   if(this.signature!==key){
-   this.signature=key;p.classList.toggle('city-selecting',!intro&&g.phase==='report');p.innerHTML=intro?dialogue(g):g.phase==='report'?report(g):review(g);
+   this.signature=key;p.classList.toggle('city-selecting',!intro&&g.phase==='report');p.innerHTML=intro?dialogue(g,this.coinMode):g.phase==='report'?report(g):review(g,this.coinMode);
    this.selected=null;p.scrollTop=0;
   }
   if(intro||this.selected===g.selectedPolicy)return;

@@ -3,13 +3,13 @@ import {syncMemoryStats} from './memory-renderer.js?v245';
 import {syncCinemaStats} from './cinema-ui.js?v204-final40';
 import {DessertFinishUI} from './dessert-finish-ui.js';
 import {icon} from './icons.js?v245';
-import {syncCityStats,syncCityAction} from './cityhall-ui.js?v245';
+import {syncCityStats,syncCityAction} from './cityhall-ui.js?v252';
 import {DEMO_ACTIONS} from './tutorial-input.js?v232';
 const ITEMS={cinema:'filmInfo',gym:'whistle',cityhall:'special',datacenter:'virusClear',conservation:'bookSupport',photo:'autoCamera',garden:'gardenerBell',monastery:'shield',detective:'decoy',aquarium:'light',museum:'time',history:'run',temple:'shield',robot:'magnet',space:'booster',writer:'bookmark',language:'magnet',newspaper:'satchel',dream:'eraser',literature:'bookmark',zoo:'whistle',ai:'autoChip',dessert:'remote'};
 function copy(source){const el=source.cloneNode(true);for(const node of [el,...el.querySelectorAll('[id]')])if(node.id){node.dataset.sourceId=node.id;node.removeAttribute('id');}for(const b of el.querySelectorAll('button')){b.tabIndex=-1;b.disabled=false;}return el;}
 export class TutorialChrome{
- constructor(root,place,lesson,source,duration){
-  Object.assign(this,{root,place,lesson,source,duration});root.inert=true;this.nodes=[];this.exchange=place==='exchange';
+ constructor(root,place,lesson,source,duration,coinMode=false){
+  Object.assign(this,{root,place,lesson,source,duration,coinMode});root.inert=true;this.nodes=[];this.exchange=place==='exchange';
   this.header=copy(source.querySelector(this.exchange?'.ex-header':'.game-header'));this.header.classList.add('demo-header');
   this.hud=copy(source.querySelector(this.exchange?'.ex-hud':'.hud'));this.hud.classList.add('demo-hud');
   this.dock=document.createElement('div');this.dock.className='demo-dock';this.dock.append(copy(source.querySelector(this.exchange?'.ex-pad':'.dpad')));
@@ -46,7 +46,7 @@ export class TutorialChrome{
    const item=this.find('flash-button');item.innerHTML=icon('filmInfo')+`<span class="flash-count"><strong>${g.flashes}</strong></span>`;item.disabled=g.flashes<1;this.text('field-act','결정');this.find('field-act').disabled=!g.canAct;
   }
   else if(place==='cityhall'){
-   syncCityStats(g,id=>this.find(id));
+   syncCityStats(g,id=>this.find(id),this.coinMode);
    syncCityAction(g,this.find('cityhall-act'),true);
    const item=this.find('flash-button');
    if(item.dataset.cityAdvice!==String(g.flashes)){item.dataset.cityAdvice=String(g.flashes);item.innerHTML=icon('special')+`<span class="flash-count"><strong>${g.flashes}</strong></span>`;}

@@ -47,6 +47,7 @@ export class ArcadeRuns{
  start(player){
   this.refresh();
   this.data.run={id:this.createId(),player:arcadePlayer(player),places:arcadePlaces().map(place=>place.id),games:{},active:null,ticket:null};
+  if(player.registrationKey)this.run.registrationKey=player.registrationKey;
   this.save();
   return this.run;
  }
@@ -67,6 +68,7 @@ export class ArcadeRuns{
   this.save();
  }
  ticket(id,ticket){
+  this.refresh();
   const run=this.run;
   if(run?.id!==id||run.ticket===ticket)return;
   run.ticket=ticket;
@@ -79,12 +81,14 @@ export class ArcadeRuns{
   run.active=null;
   if(this.canRecord&&!this.records.some(record=>record.id===run.id)){
    this.records.unshift({id:run.id,player:run.player,finishedAt:this.clock().toISOString(),score:this.total,maximum:this.maximum,
-    games:run.places.map(id=>({place:id,coins:run.games[id].coins})),ticket:run.ticket,shared:false});
+    games:run.places.map(id=>({place:id,coins:run.games[id].coins})),ticket:run.ticket,shared:false,
+    ...(run.registrationKey?{registrationKey:run.registrationKey}:{})});
   }
   this.save();
   return true;
  }
  markShared(id){
+  this.refresh();
   const record=this.records.find(row=>row.id===id);
   if(!record)return;
   record.shared=true;

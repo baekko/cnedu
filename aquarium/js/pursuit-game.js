@@ -1,6 +1,6 @@
 import {awardClue,normalizeClueRewards,restoreSources} from './clue-order.js';
 import {PURSUIT_CITIES,RETIRED_PURSUIT_CITIES} from './pursuit-cities.js?v243';
-import {pursuitNextPin,removePursuitPin} from './pursuit-map.js?v235';
+import {pursuitNextPin,pursuitPins,removePursuitPin} from './pursuit-map.js?v235';
 
 export const PURSUIT=Object.freeze({
  rounds:9,attempts:10,flashes:3,answer:'수갑',
@@ -124,7 +124,20 @@ export class PursuitGame{
   return true;
  }
  selectionIndex(dx,dy){
-  return this.canSelect?pursuitNextPin(this.choices,this.selected,this.origin,dx,dy):-1;
+  if(!this.canSelect)return -1;
+  const next=pursuitNextPin(this.choices,this.selected,this.origin,dx,dy);
+  if(next>=0||!dx||dy||this.selected<0)return next;
+
+  const pins=pursuitPins(this.choices),current=pins[this.selected];
+  const direction=Math.sign(dx);
+  let opposite=-1;
+  for(const [index,pin] of pins.entries()){
+   if(index===this.selected)continue;
+   const prior=pins[opposite];
+   if(!prior||(pin.x-prior.x)*direction<0||
+     (pin.x===prior.x&&Math.abs(pin.y-current.y)<Math.abs(prior.y-current.y)))opposite=index;
+  }
+  return opposite;
  }
  canMoveSelection(dx,dy){
   return this.selectionIndex(dx,dy)>=0;

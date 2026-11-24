@@ -32,8 +32,23 @@ export const BUTTON_INSTRUCTIONS=Object.freeze({
  photo:[['move','방향키로 이동 · 피사체를 눌러 선택해요','양옆 출입구로 다른 촬영실에 갈 수 있어요.'],['camera','촬영을 누르며 초점을 맞춰요','대상을 조준 표시 안에 두고, 초록색이 되면 손을 떼어 찍어요.'],['autoCamera','자동 촬영 · 1회','선택한 피사체를 따라가 초점을 맞추고 한 장을 자동으로 찍어요.']],
  garden:[['move','방향키로 이동 · 공간 버튼으로 온실 선택','가까운 식물이나 장치에 따라 조작 버튼의 이름이 바뀌어요.'],['thermostat','심기 → 히터 켜기 · 끄기 → 덮기','히터나 환기창으로 화분의 목표 온도를 맞춘 뒤 덮으세요.'],['@조작','꽃가루는 세 번 · 분무는 벌레마다 두 번','같은 색 꽃가루를 옮기고, 벌레 쪽을 향해 잎에 앉았을 때 분무해요.'],['gardenerBell','정원사 호출벨 · 1회','원하는 식물 앞에서 누르면 그 식물의 남은 작업을 정원사가 끝내 줘요.']]
 });
-const coinExchangeRow=['@교환','금화 교환','다섯 번 투자한 뒤 남은 자본 300만 원당 금화 한 개를 받아요.'];
+const COIN_INSTRUCTIONS={
+ exchange:[
+  BUTTON_INSTRUCTIONS.exchange[0],
+  ['@교환','금화 교환','다섯 번 투자한 뒤 남은 자본 300만 원당 금화 한 개를 받아요.'],
+  ...BUTTON_INSTRUCTIONS.exchange.slice(2),
+ ],
+ cityhall:[
+  ...BUTTON_INSTRUCTIONS.cityhall.slice(0,2),
+  ['@금화','지지율에 따른 금화','최종 지지율이 52%면 금화 한 개, 80%면 아홉 개를 받아요.'],
+  BUTTON_INSTRUCTIONS.cityhall[3],
+ ],
+ gym:[
+  ['move','방향키로 공을 피해요','공이 날아오는 방향을 보고 피하며 금화를 주워요.'],
+  ['whistle','타임아웃 휘슬 · 2회','공과 상대가 멈춘 3초 동안 금화를 주울 수 있어요.'],
+  BUTTON_INSTRUCTIONS.gym[2],
+ ],
+};
 export function instructionHTML(place,{coins=false}={}){
- const rows=coins&&place==='exchange'?[BUTTON_INSTRUCTIONS.exchange[0],coinExchangeRow,...BUTTON_INSTRUCTIONS.exchange.slice(2)]:
-  BUTTON_INSTRUCTIONS[place==='art'?'museum':place]||BUTTON_INSTRUCTIONS.aquarium;
+ const rows=(coins&&COIN_INSTRUCTIONS[place])||BUTTON_INSTRUCTIONS[place==='art'?'museum':place]||BUTTON_INSTRUCTIONS.aquarium;
  return rows.map(([symbol,title,copy])=>`<div><span class="instruction-icon${symbol.startsWith('@')?' instruction-word':''}"${symbol.startsWith('@')?'':` data-game-icon="${symbol}"`}>${symbol.startsWith('@')?symbol.slice(1):''}</span><p><b>${title}</b><small>${copy}</small></p></div>`).join('');}

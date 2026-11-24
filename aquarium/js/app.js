@@ -1,5 +1,5 @@
-import {connectTitleModes,showStartupError} from './opening.js?v250';
-import {PursuitGame,PURSUIT} from './pursuit-game.js?v243';
+import {connectTitleModes,showStartupError} from './opening.js?v252';
+import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
 import {MemoryGame,MEMORY} from './memory-core.js?v224';
 import {MemoryRenderer,loadMemoryAssets,syncMemoryStats} from './memory-renderer.js?v245';
@@ -16,12 +16,12 @@ import {DATACENTER,DataCenterGame} from './datacenter-core.js';
 import {DataCenterRenderer,loadDataCenterAssets} from './datacenter-renderer.js?v245';
 import {CityHallGame,CITYHALL} from './cityhall-core.js?v=144';
 import {CityHallGame as LegacyCityHallGame} from './cityhall-legacy.js';
-import {CityHallUI,syncCityStats,syncCityAction,citySummaryHTML} from './cityhall-ui.js?v245';
+import {CityHallUI,syncCityStats,syncCityAction,citySummaryHTML} from './cityhall-ui.js?v252';
 import {CityHallRenderer,loadCityHallAssets} from './cityhall-renderer.js?v245';
 import {CONSERVATION,ConservationGame} from './conservation-core.js';
 import {ConservationRenderer,loadConservationAssets} from './conservation-renderer.js?v245';
 import {WorkshopUI} from './workshop-ui.js';
-import {instructionHTML} from './instructions.js?v249';
+import {instructionHTML} from './instructions.js?v252';
 import {briefingCopy} from './briefing-copy.js';
 import {restoreSources} from './clue-order.js';
 import {CLUE_CARD_URL,cardPositionLabel,setCoinRewards} from './clue-card-art.js?v245';
@@ -35,9 +35,9 @@ import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
 import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
-import {createTutorial} from './play-tutorials.js?v249';
+import {createTutorial} from './play-tutorials.js?v252';
 import {TutorialFinance} from './tutorial-finance.js?v249';
-import {TutorialChrome} from './tutorial-chrome.js?v245';
+import {TutorialChrome} from './tutorial-chrome.js?v252';
 import {TutorialPlayback} from './tutorial-playback.js';
 import {TUTORIAL_COPY} from './tutorial-pages.js?v249';
 import {breakBriefSentences} from './brief-sentences.js';
@@ -87,13 +87,13 @@ import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './ren
 import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v243';
 import { loadMotion, SpritePlayer } from './motions.js';
 
-import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v246';
-import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,popArcadeCoins} from './arcade-view.js?v249';
-import {drawArcadeChoices} from './arcade-choice-view.js?v249';
+import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v252';
+import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v252';
+import {drawArcadeChoices} from './arcade-choice-view.js?v252';
 import {drawPlaceEntry} from './place-entry-view.js?v251';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
-import {getArcadeTicket,loadSharedArcadeRecords,shareArcadeRecord} from './arcade-share.js?v245';
-import {ModeCharacters} from './mode-characters.js';
+import {getArcadeTicket,loadSharedArcadeRecords,registerArcadePlayer,shareArcadeRecord} from './arcade-share.js?v252';
+import {ModeCharacters} from './mode-characters.js?v252';
 const $ = id => document.getElementById(id);
 $('common-header-actions').innerHTML=headerActionsHTML();
 for(const [id,name] of [['shoot-button','slingshot'],['jump-button','jump'],['hammer-button','hammer']])$(id).innerHTML=icon(name);
@@ -121,7 +121,8 @@ const modeNames={escape:'방탈출+미니게임',arcade:'미니게임 챌린지'
 let characterMode=null;
 let arcadeMode=null,arcadePlace=null,arcadeCoins=0,arcadeLoading=false,arcadeSettled=false;
 let arcadeRecordRequest=0,arcadeRecordScope='mine';
-const postedArcadeRuns=new Set();
+const postingArcadeRuns=new Map(),arcadeShareErrors=new Map();
+let registeringCharacter=false;
 const scores=new ExpeditionScores(normalStorage,()=>{$('storage-warning').hidden=false;});
 scores.importJourneys(normalStorage);
 const preferredPlayer=savedModeCharacter('escape');
@@ -284,14 +285,14 @@ function setState(next) {
   if(!['playing','tutorial'].includes(next))cinemaImages?.movies?.pause();
   if(next==='briefing'||next==='help'){
     const copy=briefingCopy(activePlace,character.name,duration());
-    $('brief-kicker').textContent=copy.kicker;
+    $('brief-kicker').textContent=arcadeRewardText(copy.kicker);
     $('brief-title').textContent=copy.title;
     $('brief-lead').textContent=arcadeMode&&isExchange()
       ?'다섯 번 투자하고 마지막 자본 300만 원당 금화 한 개를 얻어요.'
-      :arcadeMode?arcadeRewardText(copy.lead,isPursuit()):copy.lead;
+      :arcadeRewardText(copy.lead);
     const list=document.querySelector('.instruction-list');
     const rows=instructionHTML(activePlace,{coins:!!arcadeMode});
-    list.innerHTML=arcadeMode?arcadeRewardText(rows,isPursuit()):rows;
+    list.innerHTML=arcadeRewardText(rows);
     applyIcons(list);
   }
   if(state==='tutorial'&&next!=='tutorial'){playLesson?.chrome?.destroy();playLesson=null;$('tutorial-finance').replaceChildren();}
@@ -397,10 +398,9 @@ function savedModeCharacter(mode){
  return legacy?modeCharacters.register(mode,legacy):null;
 }
 function refreshTitleModes(){
- for(const mode of Object.keys(modeNames)){
-  const player=savedModeCharacter(mode);
-  $('title-'+mode).textContent=modeNames[mode]+(player?' 이어하기':' 시작하기');
- }
+ arcadeRuns.refresh();
+ $('title-escape').textContent=modeNames.escape+(savedModeCharacter('escape')?' 이어하기':' 시작하기');
+ $('title-arcade').textContent=modeNames.arcade+(arcadeRuns.canResume?' 이어하기':' 시작하기');
 }
 async function resumeEscape(adventure){
  setState('loading');
@@ -414,21 +414,16 @@ async function resumeEscape(adventure){
 }
 $('select-back').addEventListener('click',()=>{if(state==='select')returnToArcadeTitle();});
 function cancelCharacterName(){
- if(state!=='naming')return;
+ if(state!=='naming'||registeringCharacter)return;
  ++nameToken;nameMotion=null;setState('select');
  $('character-grid').querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
 }
 $('name-cancel').addEventListener('click',cancelCharacterName);
-function arcadeRewardText(text,pursuit=false){
- if(pursuit)return text;
- return text
-  .replace(/그림 단서/g,'그림 힌트')
-  .replace(/단서(?:\s*카드)?\s*(\d+|아홉|세|한)\s*장|금화\s*(\d+|아홉|세|한)\s*장/g,(_,clueCount,coinCount)=>{
-   const count=clueCount||coinCount;
-   return '금화 '+count+(/^\d/.test(count)?'':' ')+'개';
-  })
-  .replace(/단서 카드|단서카드|단서(?=가?\s*나오|로\s*받|에\s*닿|[를은]?\s*(?:획득|줍|모|받|얻|찾))/g,'금화')
-  .replace(/개(<\/strong>)?\s*을/g,'개$1를');
+function arcadeRewardText(text){
+ if(!arcadeMode||isPursuit())return text;
+ if(isGym())text=text.replace(/카드(?=\s*(?:줍기|를 주우세요))/g,'금화');
+ return text.replace(/단서\s*카드|단서/g,'금화')
+  .replace(/(금화\s*(?:\d+|아홉|세|두|한)\s*)장/g,'$1개');
 }
 function focusArcade(){
  document.getElementById('arcade-title')?.focus({preventScroll:true});
@@ -474,7 +469,7 @@ function enterArcadeMap(mode){
  let notice='';
  if(mode==='challenge'){
   arcadeRuns.refresh();
-  if(!arcadeRuns.run)arcadeRuns.start(player);
+  if(!arcadeRuns.canResume)arcadeRuns.start(player);
   if(arcadeRuns.run.active){
    arcadeRuns.finish(arcadeRuns.run.active.place,{abandoned:true});
    notice='창을 닫을 때 플레이 중이던 게임은 중단으로 표시했어요. 남은 게임은 이어서 할 수 있어요.';
@@ -487,7 +482,7 @@ function enterArcadeMap(mode){
 }
 function showArcadeMap(options){
  if(!arcadeMode)return;
- showArcadeSurface();drawArcadeMap(arcadeMode,arcadeRuns,options);setState('arcade-map');focusArcade();
+ showArcadeSurface();drawArcadeMap(arcadeMode,arcadeRuns,options);setState('arcade-map');updateArcadeShareStatus();focusArcade();
 }
 function showArcadeSurface(){
  clearTimeout(finishTimeout);finishTransition.reset();clearInput();
@@ -505,7 +500,7 @@ function returnToArcadeTitle(){
  $('title-escape').focus({preventScroll:true});
 }
 function askArcadeReset(){
- if(state!=='arcade-map'||arcadeMode!=='challenge'||!arcadeRuns.run)return;
+ if(state!=='arcade-map'||arcadeMode!=='challenge'||!arcadeRuns.canResume)return;
  $('arcade-screen').inert=true;
  openExtra('arcade-reset-overlay','arcade-reset-no');
 }
@@ -565,7 +560,7 @@ function showArcadeResult(result){
   `최종 자본 ${(game.ledger.at(-1)?.after??game.cash).toLocaleString('ko-KR')}만원`:isCityHall()?
   `최종 지지율 ${game.approval}%`:result.elapsed>0?`플레이 시간 ${Math.floor(result.elapsed)}초`:'게임을 마쳤어요.';
  drawArcadeResult({place:arcadePlace,mode:arcadeMode,coins:arcadeCoins,detail,finished:arcadeMode==='challenge'&&arcadeRuns.canRecord},arcadeRuns);
- setState('arcade-result');focusArcade();
+ setState('arcade-result');updateArcadeShareStatus();focusArcade();
 }
 function arcadeScoreHTML(){
  return `<div class="score-summary"><span>챌린지 누적<strong>${arcadeRuns.total}<small> / ${arcadeRuns.maximum}점</small></strong></span><span>이번 게임<strong>${arcadeCoins}<small> / 9점</small></strong></span></div><p class="panel-note">금화 한 개는 기록에서 1점이에요.</p>`;
@@ -575,14 +570,33 @@ function prepareArcadeTicket(){
  if(!run||run.ticket||arcadeRuns.canRecord)return;
  getArcadeTicket(run.id).then(ticket=>arcadeRuns.ticket(run.id,ticket)).catch(()=>{});
 }
+function updateArcadeShareStatus(){
+ if(!arcadeRuns.canRecord)return;
+ const id=arcadeRuns.run.id;
+ const record=arcadeRuns.records.find(row=>row.id===id);
+ if(!record)return;
+ const error=arcadeShareErrors.get(id);
+ const status=record.shared?'완주 기록이 공유 기록실에 등록됐어요.':postingArcadeRuns.has(id)?'26개 게임 완주! 공유 기록실에 등록 중이에요.':
+  error==='name_taken'?'같은 이름이 먼저 등록되어 이번 완주 기록은 내 기록에 저장했어요.':
+  error?'완주 기록을 내 기록에 저장했어요. 공유 기록실은 연결되면 다시 시도해요.':
+  '26개 게임 완주! 공유 기록실에 등록 중이에요.';
+ showArcadeShareStatus(status);
+}
 async function sharePendingArcadeRecords(){
- const pending=arcadeRuns.records.filter(record=>!record.shared&&!postedArcadeRuns.has(record.id));
- await Promise.all(pending.map(async record=>{
-  postedArcadeRuns.add(record.id);
-  try{await shareArcadeRecord(record);arcadeRuns.markShared(record.id);}
-  catch{}
-  finally{postedArcadeRuns.delete(record.id);}
- }));
+ arcadeRuns.refresh();
+ const pending=arcadeRuns.records.filter(record=>!record.shared);
+ const requests=pending.map(record=>{
+  if(postingArcadeRuns.has(record.id))return postingArcadeRuns.get(record.id);
+  const request=shareArcadeRecord(record).then(()=>{
+   arcadeRuns.markShared(record.id);arcadeShareErrors.delete(record.id);
+  }).catch(error=>arcadeShareErrors.set(record.id,error.code||'connection')).finally(()=>{
+   postingArcadeRuns.delete(record.id);updateArcadeShareStatus();
+  });
+  postingArcadeRuns.set(record.id,request);
+  return request;
+ });
+ updateArcadeShareStatus();
+ await Promise.all(requests);
 }
 async function showArcadeRecords(scope){
  arcadeRecordScope=scope;
@@ -614,21 +628,42 @@ window.addEventListener('online',()=>void sharePendingArcadeRecords());
 
 $('name-form').addEventListener('submit',async event=>{
   event.preventDefault();
-  if(state!=='naming')return;
+  if(state!=='naming'||registeringCharacter)return;
   const name=normalizePlayerName($('player-name').value);
   if(!name){$('name-error').textContent='이름을 입력해 주세요.';return;}
   const mode=characterMode,token=nameToken,draft={character:character.id,name};
   unlockAudio();
-  const register=()=>state==='naming'&&nameToken===token
-   ? (mode?(savedModeCharacter(mode)||modeCharacters.register(mode,draft)):draft)
-   : null;
+  const register=async()=>{
+   if(state!=='naming'||nameToken!==token)return null;
+   if(!mode)return draft;
+   const existing=savedModeCharacter(mode);
+   if(existing)return existing;
+   const profile=mode==='arcade'?await registerArcadePlayer(normalStorage,draft):draft;
+   return modeCharacters.register(mode,profile);
+  };
+  const submit=event.currentTarget.querySelector('button[type="submit"]');
+  const cancel=$('name-cancel');
   let player;
-  if(mode&&window.navigator.locks){
-   try{player=await window.navigator.locks.request('ptb_aquarium_character_'+mode,register);}
-   catch{player=register();}
-  }else player=register();
+  registeringCharacter=true;
+  submit.disabled=cancel.disabled=true;
+  $('name-error').textContent=mode==='arcade'?'이름을 확인하는 중이에요…':'';
+  try{
+   player=mode&&window.navigator.locks
+    ?await window.navigator.locks.request('ptb_aquarium_character_'+mode,register)
+    :await register();
+  }catch(error){
+   $('name-error').textContent=error.code==='name_taken'?'이미 사용 중인 이름이에요. 다른 이름을 입력해 주세요.':
+    error.code==='already_registered'?`이 브라우저에 ‘${error.registeredName}’ 이름이 등록되어 있어요. 그 이름을 입력해 주세요.`:
+    error.code==='invalid player'?'이름에 사용할 수 있는 글자를 입력해 주세요.':
+    error.code==='storage_unavailable'?'이 브라우저에서 캐릭터를 저장할 수 없어요.':
+    '공유 기록실에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.';
+   $('player-name').focus({preventScroll:true});
+  }finally{
+   registeringCharacter=false;
+   submit.disabled=cancel.disabled=false;
+  }
   if(!player||state!=='naming'||nameToken!==token)return;
-  nameMotion=null;++nameToken;document.activeElement?.blur();
+  $('name-error').textContent='';nameMotion=null;++nameToken;document.activeElement?.blur();
   if(mode)openMode(mode,player);
   else if(trial)startEscapeMode(player);
   Promise.all(['correct','wrong'].map(action=>loadMotion(character,action))).catch(()=>{});
@@ -1669,14 +1704,14 @@ async function enterCityHall(fresh=false){
  }finally{enter.disabled=false;}
 }
 function bindCityHallUI(){
- cityHallUI=new CityHallUI($('cityhall-paper'),game,id=>{if(state==='playing'&&game.selectPolicy(id))hud();});
+ cityHallUI=new CityHallUI($('cityhall-paper'),game,id=>{if(state==='playing'&&game.selectPolicy(id))hud();},!!arcadeMode);
 }
 function startCityHallPlay(){beginCountdown('playing');hud();}
 async function restoreCityHallSummary(){
  await prepareCityHall();game=new CityHallGame({saved:journey.cityhall.run});bindCityHallUI();showCityHallSummary();
 }
 function showCityHallSummary(){
- $('cityhall-summary-content').innerHTML=citySummaryHTML(game);
+ $('cityhall-summary-content').innerHTML=citySummaryHTML(game,!!arcadeMode);
  journey.cityhall.phase='summary';persistJourney();setState('city-summary');hud();$('cityhall-leave').focus({preventScroll:true});
 }
 function leaveCityHall(){
@@ -2019,10 +2054,10 @@ function showPlayTutorial(page=0,loopCount=0){
  // Keep the current demonstration intact until its replacement is ready.
  playLesson?.chrome?.destroy();
  lesson.onEvent=e=>{if(activePlace==='aquarium')painter.effect?.(e.type,e.x??lesson.game.player.x,e.y??lesson.game.player.y);};
- playLesson={lesson,world,painter,playback,ended:false,loopCount,repeatDelay:0,city:isCityHall()?new CityHallUI($('tutorial-cityhall'),lesson.game):null,finance:isExchange()?new TutorialFinance(lesson.game,character,$('tutorial-finance'),!!arcadeMode):null};
+ playLesson={lesson,world,painter,playback,ended:false,loopCount,repeatDelay:0,city:isCityHall()?new CityHallUI($('tutorial-cityhall'),lesson.game,null,!!arcadeMode):null,finance:isExchange()?new TutorialFinance(lesson.game,character,$('tutorial-finance'),!!arcadeMode):null};
  $('tutorial-finance').hidden=!isExchange();$('tutorial-cityhall').hidden=true;
  playLesson.finance?.render();
- playLesson.chrome=new TutorialChrome($('tutorial-device'),activePlace,lesson,playLesson.finance?.root||$('game-ui'),duration());
+ playLesson.chrome=new TutorialChrome($('tutorial-device'),activePlace,lesson,playLesson.finance?.root||$('game-ui'),duration(),!!arcadeMode);
  if(loopCount===0){
   $('tutorial-start').textContent=menuReturn?'돌아가기':'START';
   setState('tutorial');
@@ -2040,9 +2075,9 @@ function renderPlayTutorial(dt){
  // This is demonstration state only; the real HUD, timer and inventory stay untouched.
  if(lesson.fade>0){c.fillStyle=`rgba(17,47,60,${lesson.fade})`;c.fillRect(0,0,780,height);}
  a.finance?.render();a.city?.render(true);a.chrome.render();
- const title=arcadeMode?arcadeRewardText(lesson.title,isPursuit()):lesson.title;
+ const title=arcadeRewardText(lesson.title);
  const baseCopy=TUTORIAL_COPY[activePlace][playback.page];
- const copy=arcadeMode?arcadeRewardText(baseCopy,isPursuit()):baseCopy;
+ const copy=arcadeRewardText(baseCopy);
  if($('tutorial-step').textContent!==title)$('tutorial-step').textContent=title;
  if($('tutorial-caption').textContent!==copy)$('tutorial-caption').textContent=copy;
  $('tutorial-page').textContent=(playback.page+1)+' / '+lesson.total;

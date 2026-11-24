@@ -28,14 +28,13 @@ function chooseTitleMode(event) {
 }
 
 const arcade = readSave('ptb_aquarium_arcade_v1');
-const legacyPlayers = {
- escape: readSave('ptb_journey_v1'),
- arcade: arcade?.version === 1 ? arcade.run?.player || arcade.records?.[0]?.player : null,
-};
+const escape = readSave('ptb_aquarium_character_escape_v1') || readSave('ptb_journey_v1');
+const run = arcade?.version === 1 ? arcade.run : null;
+const arcadeInProgress = run?.player?.character && Array.isArray(run.places)
+ && run.places.some(place => !run.games?.[place]);
 for (const mode of modes) {
  const button = document.getElementById('title-' + mode);
- const player = readSave('ptb_aquarium_character_' + mode + '_v1') || legacyPlayers[mode];
- if (player?.character) button.textContent = button.textContent.replace('시작하기', '이어하기');
+ if (mode === 'escape' ? escape?.character : arcadeInProgress) button.textContent = button.textContent.replace('시작하기', '이어하기');
  button.addEventListener('click', chooseTitleMode);
 }
 if (publicGame) document.getElementById('test-edition-label').hidden = false;

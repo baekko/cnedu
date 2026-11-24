@@ -15,7 +15,7 @@ export function drawArcadeChoices(runs) {
  const resumable=runs.canResume;
  const options=[
   {action:'practice',title:'미니게임 연습하기',description:'원하는 장소에서 마음껏 연습해요.',art:'submarine',tone:'blue'},
-  {action:'challenge',title:resumable?'이어서 도전하기':'미니게임 챌린지',
+  {action:'challenge',title:resumable?'이어서 도전하기':'미니게임 챌린지 시작하기',
    description:resumable?`완료한 게임 ${runs.completed} / ${total}`:'모든 게임에 한 번씩 도전해요.',art:'trophy',tone:'apricot',
    status:resumable?`<span class="mode-option-track" aria-hidden="true"><span style="--mode-progress:${runs.completed/total*100}%"></span></span>`:''},
  ];

@@ -1,7 +1,7 @@
 import {CHARACTERS} from './config.js';
 import {icon} from './icons.js?v245';
 import {placeIcon,placeInfo} from './places.js?v231';
-import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v246';
+import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v252';
 
 export const ARCADE_SCREENS=new Set(['arcade-choice','arcade-map','arcade-records','arcade-result']);
 const root=()=>document.getElementById('arcade-screen');
@@ -29,11 +29,12 @@ export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  const challenge=mode==='challenge';
  const places=arcadePlaces().filter(place=>!challenge||runs.run.places.includes(place.id));
  const title=challenge?'미니게임 챌린지':'미니게임 연습하기';
- const instructions=challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.';
+ const finished=challenge&&runs.canRecord;
+ const instructions=finished?'모든 게임을 완주했어요.':challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.';
  const stats=challenge?`<div class="arcade-tally"><span>완료 <b>${runs.completed} / ${places.length}</b></span><span>${coin} <b>${runs.total} / ${runs.maximum}점</b></span></div>`:'';
  root().innerHTML=`<header class="arcade-map-header"><div><h1 id="arcade-title" tabindex="-1">${title}</h1><p>${instructions}</p></div>
  <button type="button" class="arcade-map-switch" data-arcade-action="${challenge?'practice':'challenge'}">${challenge?'연습하기':'챌린지'}</button></header>
- ${stats}<p class="arcade-status" role="status" hidden></p>
+ ${stats}<p class="arcade-status" role="status" hidden></p>${finished?shareStatus():''}
  <div class="arcade-map-scroll" aria-label="미니게임 지도"><ol class="arcade-map">
  ${places.map((place,index)=>{
   const game=challenge?runs.run.games[place.id]:null;
@@ -44,7 +45,7 @@ export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  }).join('')}
  </ol></div>
  <footer class="arcade-map-actions">
- ${challenge?mapButton('reset','다시 도전하기')+mapButton('records','기록보기'):''}
+ ${challenge?(runs.canResume?mapButton('reset','다시 도전하기'):mapButton('challenge','새 챌린지 시작하기'))+mapButton('records','기록보기'):''}
  ${mapButton('title','처음으로 돌아가기')}${mapButton('quit','게임 마치기')}
  </footer>`;
  const scroll=root().querySelector('.arcade-map-scroll');
@@ -95,6 +96,14 @@ export function fillArcadeRecords(records,message){
  list.replaceChildren(...rows);
 }
 
+function shareStatus(){
+ return '<p id="arcade-share-status" class="arcade-status" role="status"></p>';
+}
+export function showArcadeShareStatus(text){
+ const status=document.getElementById('arcade-share-status');
+ if(status)status.textContent=text;
+}
+
 export function drawArcadeResult({place,mode,coins,detail,finished},runs){
  root().innerHTML=`<div class="arcade-result atlas-result">
  ${heading(placeInfo(place).name+' 결과')}
@@ -104,9 +113,11 @@ export function drawArcadeResult({place,mode,coins,detail,finished},runs){
  </div>
  <p class="arcade-status atlas-result-detail" role="status" hidden></p>
  ${mode==='challenge'?tally(runs,runs.run.places.length):''}
- <footer class="atlas-actions">${mode==='practice'?button('again','이 게임 다시하기',{symbol:'restart'}):''}${button('map','게임맵으로 돌아가기',{primary:true})}</footer>
+ ${finished?shareStatus():''}
+ <footer class="atlas-actions">${finished?button('records','기록 보기')+button('title','처음으로 돌아가기',{primary:true}):
+  (mode==='practice'?button('again','이 게임 다시하기',{symbol:'restart'}):'')+button('map','게임맵으로 돌아가기',{primary:true})}</footer>
  </div>`;
- showArcadeStatus([detail,finished?'전체 게임을 완주했어요. 기록실에서 확인하세요.':''].filter(Boolean).join(' '));
+ showArcadeStatus(detail);
 }
 
 export function popArcadeCoins(count,position){
