@@ -54,7 +54,26 @@ const art = name => name.startsWith('scene:')?name:asset(`assets/art/${artAliase
 const qArt = (mode, question) => art(artNames[mode.track][question.number - 1]);
 const clueRedraws = {'assets/original/rabbit/bduq111.png':'assets/clues/rabbit-bread-flags.png','assets/original/rabbit/bduq333.png':'assets/clues/rabbit-gifts.png','assets/original/letter/ptbq111.png':'assets/clues/letter-houses.svg','assets/original/letter/ptbq444.png':'assets/clues/letter-symbols.svg','assets/original/letter/ptbq555.png':'assets/clues/letter-dots.svg'};
 let creditsCleanup = null, storyBack = null;
-if(!history.state?.bddScene)history.replaceState({bddScene:true,depth:0,previous:null},'',location.href);
+const publicURL = new URL('../bookboost/', BASE);
+function sceneURL() {
+  return new URL(history.state.scene, BASE);
+}
+function initializeScene() {
+  const entry = new URL(location.href);
+  const saved = history.state?.bddScene ? history.state : {};
+  let path = entry.pathname.startsWith(BASE.pathname) ? entry.pathname.slice(BASE.pathname.length) : '';
+  if (!path || path.endsWith('/')) path += 'index.html';
+  const scene = entry.pathname === publicURL.pathname && saved.scene
+    ? saved.scene : (Object.hasOwn(data.routes,path) ? path : 'index.html') + entry.search;
+  // Keep legacy documents' styles and favicon anchored when the visible path changes.
+  for (const link of document.querySelectorAll('head link[href]')) link.href = link.href;
+  history.replaceState({depth:0,previous:null,...saved,bddScene:true,scene,group:activeClass}, '', publicURL);
+  $('.skip-link')?.addEventListener('click', event => {
+    event.preventDefault();
+    const main = $('#main');
+    if (main) { main.tabIndex = -1; main.focus(); }
+  });
+}
 let activeCinema = null, currentRoute = null, currentMode = null, returnFocus = null, modalCleanup = null;
 let soundOn = false, audioContext, localStorageWarning = false;
 const transientReveal = new Map();
@@ -194,7 +213,7 @@ function editClassRow(row,{id,name},modeId,deleting) {
         activeClass = '';
         sessionStorage.removeItem('bdd_active_group');
         transientReveal.clear();
-        history.replaceState({bddScene:true,group:'',depth:0,previous:null}, '', new URL('ptb.html',BASE));
+        history.replaceState({bddScene:true,group:'',depth:0,previous:null,scene:'ptb.html'}, '', publicURL);
         render();
         $('.admin-intro strong',DIALOG).textContent = '개인 활동';
         $('#class-personal',DIALOG)?.remove();
@@ -248,16 +267,16 @@ function celebrateAnswer() {
   document.body.append(card);setTimeout(()=>card.remove(),1450);
 }
 function getRoute() {
-  let path = decodeURI(location.pathname);
+  let path = decodeURI(sceneURL().pathname);
   if (path.startsWith(BASE.pathname)) path = path.slice(BASE.pathname.length);
   path = path.replace(/^\/+/, '') || 'index.html';
   return { path, ...(data.routes[path] || {type:'landing'}) };
 }
 function navigate(path, query = {}, replace = false) {
   closeDialog(); const url = new URL(path, BASE); Object.entries(query).forEach(([k,v])=>url.searchParams.set(k,v));
-  if(url.href===location.href && (history.state?.group || '')===activeClass){render();return;}
+  if(url.href===sceneURL().href && (history.state?.group || '')===activeClass){render();return;}
   const previous=history.state?.bddScene?history.state:{depth:0,previous:null};
-  history[replace ? 'replaceState' : 'pushState']({bddScene:true,group:activeClass,depth:previous.depth+(replace?0:1),previous:replace?previous.previous:location.href}, '', url);
+  history[replace ? 'replaceState' : 'pushState']({bddScene:true,group:activeClass,depth:previous.depth+(replace?0:1),previous:replace?previous.previous:sceneURL().href,scene:path+url.search}, '', publicURL);
   render(); window.scrollTo({top:0,behavior:'instant'});
 }
 function setView(query, replace = false) { navigate(currentRoute.path, query, replace); }
@@ -271,7 +290,7 @@ window.addEventListener('storage', e => {
   if (activeClass && (!e.key || e.key === scopedKey('name')) && !classLabel(activeClass)) switchClass('',currentMode);
   if (list && (!e.key || (e.key.startsWith(CLASS_PREFIX) && e.key.endsWith(':name')))) adminClasses(list.dataset.mode);
 });
-window.addEventListener('popstate', () => { closeDialog(); if ((history.state?.group || '') !== activeClass) return navigate('ptb.html',{},true); render();window.scrollTo({top:0,behavior:'instant'}); });
+window.addEventListener('popstate', () => { closeDialog(); if (!history.state?.scene) initializeScene(); if ((history.state?.group || '') !== activeClass) return navigate('ptb.html',{},true); render();window.scrollTo({top:0,behavior:'instant'}); });
 window.addEventListener('storage', e => { if ([data.admin.storageKey, HINT_TEXT_KEY].includes(e.key) && DIALOG.open && DIALOG.dataset.kind === 'hint') closeDialog(); });
 
 function adminTrigger() { return `<button class="icon-button admin-trigger" data-action="admin" aria-label="관리자 설정">${icon('key')}</button>`; }
@@ -310,8 +329,8 @@ function render() {
   currentRoute = getRoute(); currentMode = data.modes[currentRoute.mode] || null;
   document.title = currentMode?`${currentMode.title} · 북돋움`:'북돋움';
   if(currentMode && !allowed(currentMode)) { renderGate(currentMode); return; }
-  if(currentMode) write(scopedKey('bdd_last_visit'),{mode:currentMode.id,path:currentRoute.path,search:location.search});
-  if (currentMode && activeClass) write(scopedKey('visit:' + currentMode.id),{path:currentRoute.path,search:location.search});
+  if(currentMode) write(scopedKey('bdd_last_visit'),{mode:currentMode.id,path:currentRoute.path,search:sceneURL().search});
+  if (currentMode && activeClass) write(scopedKey('visit:' + currentMode.id),{path:currentRoute.path,search:sceneURL().search});
   const type = currentRoute.type;
   if(type==='entry') { navigate(currentMode.opening || currentMode.hub,{},true); return; }
   if(type==='landing') return renderLanding();
@@ -354,13 +373,13 @@ function accessModal(mode, after) {
 function slideArt(slide, ending=false, index=0) { return art((ending ? LETTER_ENDING : LETTER_OPENING)[index]); }
 function storyFlow(mode, {title, steps, onFinish, back=mode.hub, nextLabel='다음 이야기', prefix='이야기', param='s', autoFinishCinema=false}) {
   steps = paginateStory(steps).map(s=>({...s,letter:s.letter||mode.id==='letter'}));
-  const idx=Math.max(0,Math.min(steps.length-1,Number(new URLSearchParams(location.search).get(param))||0)), s=steps[idx];
+  const idx=Math.max(0,Math.min(steps.length-1,Number(new URLSearchParams(sceneURL().search).get(param))||0)), s=steps[idx];
   frame(`${header(mode,{back})}<main id="main" class="story-main"><div class="chapter-line"><span>${prefix}</span><span>${idx+1} <i>/ ${steps.length}</i></span></div><h1 class="story-title">${bookTitle(title)}</h1>${s.titleCard?letterTitleCard():s.portalStart?`<figure class="scene portal-scene" data-portal-start aria-busy="true"><canvas width="768" height="512" role="img" aria-label="돌다리에 들어선 주인공의 뒷모습과 앞서 있는 보라토끼" hidden></canvas><span class="scene-status" role="status">장면을 준비하고 있어요…</span></figure>`:s.mirrorPose!==undefined?`<figure class="scene mirror-dialogue" data-mirror-pose="${s.mirrorPose}" aria-busy="true"><canvas width="768" height="512" role="img" aria-label="고정된 거울 속에서 말하는 보라토끼" hidden></canvas><span class="scene-status" role="status">장면을 준비하고 있어요…</span></figure>`:s.cinema?'<div id="cinema" class="cinema-stage"></div>':(s.original?`<figure class="original-letter"><img src="${s.image}" alt="내일의 나에게 보내는 원본 편지"></figure><details class="letter-transcript"><summary>큰 글씨로 읽기</summary>${paragraph(s.text)}</details>`:artFigure(s.image||art(mode.track==='rabbit'?'rabbit-hub':'letter-desk'),s.alt||title))}${s.text&&!s.original?`<div class="story-paper ${s.letter?'letter-paper':''} ${s.compact?'compact-story':''}"><span class="speaker">${icon(s.letter?'mail':mode.track==='rabbit'?'rabbit':'book')}${esc(s.speaker||(s.letter?'책 속의 편지':mode.track==='rabbit'?'래빗홀의 이야기':'편지왔어요'))}</span>${paragraph(s.text)}</div>`:''}<div class="story-navigation"><button id="story-prev" class="icon-button" aria-label="이전 이야기" ${idx===0?'disabled':''}>${icon('back')}</button><div class="story-progress" aria-label="${steps.length}장 중 ${idx+1}장"><i style="width:${(idx+1)/steps.length*100}%"></i></div><button id="story-next" class="button">${esc(idx===steps.length-1?nextLabel:'다음')}${icon('arrow')}</button></div>${s.cinema&&!autoFinishCinema?'<p class="small-note">재생이 끝나면 다음 이야기로 넘어가 주세요.</p>':''}</main>`,'story-page');
-  const move=(n,replace=false)=>{const query=Object.fromEntries(new URLSearchParams(location.search));query[param]=n;setView(query,replace);};
+  const move=(n,replace=false)=>{const query=Object.fromEntries(new URLSearchParams(sceneURL().search));query[param]=n;setView(query,replace);};
   storyBack=()=>{
     if(idx===0){historyBack(back);return;}
     const previous=history.state?.previous?new URL(history.state.previous):null;
-    const here=new URL(location.href);
+    const here=sceneURL();
     const sameStory=previous?.pathname===here.pathname&&previous.searchParams.get('v')===here.searchParams.get('v');
     if(history.state?.depth>0&&sameStory&&Number(previous.searchParams.get(param)||0)===idx-1)history.back();
     else move(idx-1,true);
@@ -389,7 +408,7 @@ function renderOpening(mode) {
   storyFlow(mode,{title:mode.title,steps,prefix:'프롤로그',back:'ptb.html',nextLabel:'모험 시작하기',onFinish:()=>{setMeta(mode,{openingDone:true});navigate(mode.hub,mode.id==='rabbit'?{v:'intro'}:{});}});
 }
 function renderHub(mode) {
-  setMeta(mode,{lastHub:true});const p=progress(mode), count=completedCount(p), isClass=mode.kind==='classroom', params=new URLSearchParams(location.search), v=params.get('v');
+  setMeta(mode,{lastHub:true});const p=progress(mode), count=completedCount(p), isClass=mode.kind==='classroom', params=new URLSearchParams(sceneURL().search), v=params.get('v');
   if(v==='intro'&&!isClass){const texts=mode.id==='rabbit'?data.story.rabbit.hub.intro:[data.story.letter.hub.intro];return storyFlow(mode,{prefix:mode.id==='rabbit'?'프롤로그':'이야기',title:mode.id==='rabbit'?'래빗홀에 온 걸 환영해!':'다섯 권에 남겨진 기억',steps:texts.map((text,i)=>({text:mode.id==='rabbit'&&i===3?text.replace(/\n{2,}/g,'\n'):text,image:art(mode.id==='rabbit'?RABBIT_HUB_INTRO[i]:'scene:library-emotion'),letter:mode.id==='letter',keepTogether:mode.id==='rabbit'&&i===3,compact:mode.id==='rabbit'&&i===3})),nextLabel:'책 고르기',back:'ptb.html',onFinish:()=>{setMeta(mode,{hubIntroDone:true});navigate(mode.hub);}});}
   if(v==='finish'&&count===5&&!isClass){const texts=mode.id==='rabbit'?data.story.rabbit.hub.ending:[data.story.letter.hub.ending];return storyFlow(mode,{prefix:'에필로그',title:mode.id==='rabbit'?'모험의 마지막 책장':'마지막 편지',steps:texts.map((text,i)=>({text:text.replaceAll('{{carrotCount}}',totalScore(p)),image:art(mode.id==='rabbit'?RABBIT_HUB_ENDING[i]:'scene:library-emotion'),letter:mode.id==='letter'})),nextLabel:mode.id==='rabbit'?'친구 만나러 가기':'편지 코드 입력',onFinish:()=>mode.id==='rabbit'?navigate(mode.finalRoutes[0]):setView({v:'final'})});}
   if(v==='final'&&mode.id==='letter'&&count===5)return renderFinalMission(mode);
@@ -401,7 +420,7 @@ function renderHub(mode) {
   if($('#intro-again'))$('#intro-again').onclick=()=>setView({v:'intro'});
 }
 function renderQuestion(mode,q) {
-  const view=new URLSearchParams(location.search).get('v')||'intro', p=progress(mode), isClass=mode.kind==='classroom';
+  const view=new URLSearchParams(sceneURL().search).get('v')||'intro', p=progress(mode), isClass=mode.kind==='classroom';
   if(!isClass&&view==='intro'){
     const texts=mode.id==='rabbit'?q.introTexts:[q.introLetter];
     return storyFlow(mode,{title:q.title,steps:texts.filter(Boolean).map(text=>({text,image:qArt(mode,q),letter:mode.id==='letter',speaker:mode.id==='rabbit'?'보라토끼의 말':undefined})),nextLabel:'문제 만나기',prefix:'',onFinish:()=>setView({v:'mission'})});
@@ -458,7 +477,7 @@ function renderEnding(mode) {
 function renderOutro(mode) {
   if(completedCount(progress(mode))<5){navigate(mode.hub,{},true);return;}
   if(!meta(mode).endingDone){navigate(mode.finalRoutes[0],{},true);return;}
-  const score=totalScore(progress(mode)), isCredits=new URLSearchParams(location.search).get('v')==='credits';
+  const score=totalScore(progress(mode)), isCredits=new URLSearchParams(sceneURL().search).get('v')==='credits';
   if(isCredits)return renderCredits(mode);
   frame(`${header(mode,{back:mode.hub})}<main id="main" class="outro-main"><span class="success-seal">${icon('star')}</span>${subtitle('에필로그')}<h1>${mode.id==='rabbit'?'거울 너머에서,<br>우리 다시 만나':'여러분에게 보내는 편지'}</h1>${artFigure(art(mode.id==='rabbit'?'scene:tree-welcome':'scene:library-farewell'),'모험을 마친 이야기의 주인공')}<div class="story-paper">${paragraph(data.story[mode.id].outro.message)}</div><div class="final-score"><span>${mode.id==='rabbit'?'모험에서 모은 당근':'되찾은 마음의 기억'}</span><strong>${icon(mode.id==='rabbit'?'carrot':'mail')}${score}<small>${mode.id==='rabbit'?'개':'점'}</small></strong></div>${button('엔딩 크레딧 보기','show-credits')}<button class="button secondary" data-nav="ptb.html">다른 책장 만나기 ${icon('book')}</button><div class="outro-links"><button class="text-button" id="replay-ending">마지막 이야기 다시 보기</button></div></main>`,'outro-page');
   $('#show-credits').onclick=()=>setView({v:'credits'});$('#replay-ending').onclick=()=>navigate(mode.finalRoutes[0]);
@@ -773,4 +792,5 @@ function openAdminPdf(id, file, firstPage, backToList) {
     if (reader.isConnected) $('.pdf-status', reader).textContent = 'PDF를 불러오지 못했어요. 다운로드해서 열 수 있어요.';
   });
 }
+initializeScene();
 render();
