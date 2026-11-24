@@ -1,3 +1,4 @@
+import {connectTitleModes,showStartupError} from './opening.js?v250';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v243';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
 import {MemoryGame,MEMORY} from './memory-core.js?v224';
@@ -106,7 +107,6 @@ const publicGame=['/aquarium',publicGamePath,publicGamePath+'index.html'].includ
 if(publicGame&&(location.pathname!==publicGamePath||location.search||location.hash)){
  history.replaceState(history.state,'',publicGamePath);
 }
-if(publicGame)$('test-edition-label').hidden=false;
 const requestedEntry=new URLSearchParams(location.search).get('start');
 const requestedPlace=requestedEntry||location.hash.slice(1);
 const withdrawnEntry=isWithdrawnResearchPlace(requestedPlace);
@@ -183,6 +183,13 @@ const duration=()=>isField()?FIELD[activePlace].rules.duration:isMonastery()?MON
 const runRecord=()=>isCityHall()?journey.cityhall:isField()?journey[activePlace]:isMonastery()?journey.monastery:isDetective()?journey.detective:isDessert()?journey.dessert:isAI()?journey.ai:isZoo()?journey.zoo:isLiterature()?journey.literature:isDream()?journey.dream:isNewspaper()?journey.newspaper:isLanguage()?journey.language:isWriter()?journey.writer:isSpace()?journey.space:isRobot()?journey.robot:isTemple()?journey.temple:isExchange()?journey.exchange:isHistory()?journey.history:isMuseum()?journey.museum:journey;
 const currentPuzzle=()=>CLUE_PUZZLES[activePlace]||(isCityHall()?CITYHALL:isField()?FIELD[activePlace].rules:isMonastery()?MONASTERY:isDetective()?DETECTIVE:isDessert()?DESSERT:isAI()?AI:isZoo()?ZOO:isLiterature()?LITERATURE:isDream()?DREAM:isNewspaper()?NEWSPAPER:isLanguage()?LANGUAGE:isWriter()?WRITER:isSpace()?SPACE:isRobot()?ROBOT:isTemple()?TEMPLE:isExchange()?EXCHANGE:isHistory()?HISTORY:isMuseum()?MUSEUM:PUZZLE);
 let state = 'loading', game = null, renderer, images;
+let aquariumLoading;
+
+function loadAquarium(){
+ if(images)return Promise.resolve();
+ aquariumLoading ||= loadAssets().then(loaded=>{images=loaded;}).finally(()=>{aquariumLoading=null;});
+ return aquariumLoading;
+}
 let animationTime = 0, lastFrame = 0, countdownLeft = 3, lastCount = 0;
 let toastTimeout, endReason, audioContext, activeMotion=null, motionNext=null, answerBusy=false;
 let motionLoading=false;
@@ -268,7 +275,7 @@ function canOpenStatusMenu(screen) {
 function setState(next) {
   const arcadeScreen=ARCADE_SCREENS.has(next);
   $('arcade-screen').hidden=!arcadeScreen;
-  $('game-viewport').hidden=arcadeScreen;
+  $('game-viewport').hidden=arcadeScreen||['loading','title','select','naming','stage'].includes(next);
   $('app').classList.toggle('arcade-mode',!!arcadeMode);
   $('clue-label').textContent=arcadeMode?'모은 금화':'모은 단서';
   $('city-clue-label').textContent=arcadeMode?'예상 금화':'예상 단서';
@@ -290,6 +297,7 @@ function setState(next) {
   if(state==='tutorial'&&next!=='tutorial'){playLesson?.chrome?.destroy();playLesson=null;$('tutorial-finance').replaceChildren();}
   dessertFinish?.render(game,false);
   state=next;$('app').dataset.screen=next;clearInput();syncCurrentPlaceHeaders();
+  if(['title','loading','select','naming','stage'].includes(next)&&$('app').classList.contains('aligned-layout'))layout.measure(activePlace);
   cinemaUI?.render(game,isCinema()&&next==='playing');
   if(!isCinema())document.querySelector('#game-ui .timer .hud-label').textContent=isPursuit()?'남은 비행':'남은 시간';
   $('app').classList.toggle('configured-puzzle',!!CLUE_PUZZLES[activePlace]);
@@ -305,6 +313,7 @@ function setState(next) {
   $('loading').hidden=next!=='loading';
   $('title-screen').hidden=next!=='title';
   if(next==='title')refreshTitleModes();
+  if(next==='select'&&!$('character-grid').firstElementChild)createCharacterGrid();
   $('select-screen').hidden=!['select','naming','welcome'].includes(next);
   $('name-overlay').hidden=next!=='naming';
   $('exchange-ui').hidden=arcadeScreen||!isExchange()||['title','select','naming','welcome','loading','stage'].includes(next);
@@ -363,8 +372,16 @@ function createCharacterGrid() {
     const button=event.target.closest('[data-character]');if(!button||state!=='select')return;
     usePlayer({character:button.dataset.character,name:''});
     $('player-name').value='';$('name-error').textContent='';setState('naming');
-    const c=$('name-character').getContext('2d');c.clearRect(0,0,512,512);const img=images[character.asset];const h=420,w=img.width/img.height*h;c.drawImage(img,(512-w)/2,40,w,h);
+    const c=$('name-character').getContext('2d');c.clearRect(0,0,512,512);
     const token=++nameToken;nameMotion=null;$('player-name').focus({preventScroll:true});
+    const portrait=button.querySelector('img');
+    const drawPortrait=()=>{
+     if(token!==nameToken||state!=='naming'||nameMotion||!portrait.naturalHeight)return;
+     const h=420,w=portrait.naturalWidth/portrait.naturalHeight*h;
+     c.drawImage(portrait,(512-w)/2,40,w,h);
+    };
+    if(portrait.naturalHeight)drawPortrait();
+    else portrait.addEventListener('load',drawPortrait,{once:true});
     try{const img=await loadMotion(character,'start');if(token===nameToken&&state==='naming')nameMotion=new SpritePlayer($('name-character'),img);}catch{}
   });
 }
@@ -394,13 +411,6 @@ async function resumeEscape(adventure){
  Object.assign(progress,saved,{character:character.id,clues:[...saved.clues]});
  syncSound();
  try{await restoreAdventureScreen();}catch(error){console.error(error);showStage();}
-}
-for(const mode of Object.keys(modeNames)){
- $('title-'+mode).addEventListener('click',()=>{
-  if(state!=='title')return;
-  unlockAudio();
-  chooseMode(mode);
- });
 }
 $('select-back').addEventListener('click',()=>{if(state==='select')returnToArcadeTitle();});
 function cancelCharacterName(){
@@ -520,7 +530,7 @@ async function selectArcadePlace(place){
  showArcadeStatus(placeInfo(place).name+' 준비 중…');
  try{
   if(place==='aquarium'){
-   $('brief-sub').setAttribute('aria-label',character.name+', 잠수함에 탑승한 모습');
+   await loadAquarium();
    board();
   }else await openPlaceBriefing(place,true);
   if(state==='arcade-map'||state==='arcade-result')throw Error('게임 화면을 준비하지 못했어요.');
@@ -1291,6 +1301,7 @@ function showStage(){
  const place=placeInfo(journey?.stage||'aquarium');
  drawPlaceEntry($('stage-screen'),{place,character,enterButton:$('museum-enter')});
  setState('stage');$('stage-title').focus({preventScroll:true});
+ if(place.id==='aquarium')void loadAquarium().catch(()=>{});
 }
 
 function syncCurrentPlaceHeaders(){syncPlaceHeaders(document,activePlace);}
@@ -1426,10 +1437,10 @@ function frame(timestamp) {
   const dt=lastFrame?Math.min(65,Math.max(0,(timestamp-lastFrame)/1000)):0;
   lastFrame=isMonastery()?Math.max(lastFrame,timestamp):timestamp;
   if(!['help','paused','panel','closed','countdown','city-summary','result','failed','stopped'].includes(state))animationTime+=dt;
-  if(ARCADE_SCREENS.has(state)){requestAnimationFrame(frame);return;}
+  if(state==='naming'&&nameMotion)nameMotion.draw(dt);
+  if(!renderer||ARCADE_SCREENS.has(state)||['title','loading','select','naming','stage','closed'].includes(state)){requestAnimationFrame(frame);return;}
   layout.prepare(game,activePlace);
   if(state==='tutorial'&&playLesson){if(!document.hidden)renderPlayTutorial(Math.min(dt,.2));requestAnimationFrame(frame);return;}
-  if(state==='naming'&&nameMotion)nameMotion.draw(dt);
   if(state==='exchange'&&!homeConfirmOpen){
    exchangeUI?.update(dt);
    if(arcadeMode&&game.phase==='finished')settleArcadeExchange();
@@ -1481,13 +1492,16 @@ function frame(timestamp) {
 }
 
 async function boot(){
-  try {
-    images=await loadAssets();renderer=new Renderer(layout.world,images);createCharacterGrid();
-    const titleContext=$('title-art').getContext('2d');titleContext.setTransform(2,0,0,2,0,0);drawSubmarine(titleContext,images,null,130,115,2.7,3,0);
-    if(entry==='character'||entry==='title'||(!entry&&!trial))setState('title');
-    else await restoreAdventureScreen();
-    requestAnimationFrame(frame);
-  }catch(error){$('loading-note').textContent='그림을 불러오지 못했어요. 새로고침해 다시 시도해 주세요.';console.error(error);}
+ try {
+  if(entry==='character'||entry==='title'||(!entry&&!trial))setState('title');
+  else await restoreAdventureScreen();
+  connectTitleModes(mode=>{
+   if(state!=='title')return;
+   unlockAudio();
+   chooseMode(mode);
+  });
+  requestAnimationFrame(frame);
+ }catch(error){showStartupError();console.error(error);}
 }
 async function restoreAdventureScreen(){
   if(!entry&&journey?.stage==='cinema'&&journey.cinema?.phase==='result'&&!journey.memory&&scores.get('cinema').solved){
@@ -1520,6 +1534,8 @@ async function restoreAdventureScreen(){
     else showStage();
   }
   else if(journey?.phase==='result'){
+    await loadAquarium();
+    prepareAquarium();
     game=new AquariumGame({onEvent:handleGameEvent,collides:createSpriteCollider(images,character)});
     game.banked=new Set(progress.clues);game.found=new Set(progress.clues);game.elapsed=journey.elapsed;game.ended=true;
     showResult({survived:journey.survived,elapsed:journey.elapsed,found:progress.clues});
@@ -1565,7 +1581,22 @@ $('museum-enter').addEventListener('click',async()=>{
   if(journey.stage==='space'){await enterSpace();return;}
   if(journey.stage==='robot'){await enterRobot();return;}
   if(journey.stage==='temple'){await enterTemple();return;}
-  if(journey.stage==='aquarium'){board();return;}
+  if(journey.stage==='aquarium'){
+   const button=$('museum-enter'),pendingJourney=journey;
+   button.disabled=true;button.textContent='수족관을 준비하는 중…';
+   unlockAudio();
+   try{
+    await loadAquarium();
+    if(state==='stage'&&journey===pendingJourney)board();
+   }catch(error){
+    if(state==='stage'&&journey===pendingJourney){
+     button.textContent='다시 입장하기';
+     document.querySelector('.stage-placeholder').textContent='그림을 불러오지 못했어요. 다시 눌러 주세요.';
+    }
+    console.error(error);
+   }finally{button.disabled=false;}
+   return;
+  }
   if(journey.stage==='exchange'){await enterExchange();return;}
   if(journey.stage==='history'){await enterHistory();return;}
   $('museum-enter').disabled=true;$('museum-enter').textContent='미술관을 준비하는 중…';
@@ -1704,7 +1735,7 @@ function showExchangeBriefing(){
 }
 function startExchangePlay(){unlockAudio();trackRunScore();setState('exchange');}
 function prepareAquarium(){
- activePlace='aquarium';renderer=new Renderer(layout.world,images);progress.clues=[...aquariumClues];
+ activePlace='aquarium';renderer=images?new Renderer(layout.world,images):null;progress.clues=[...aquariumClues];
  $('app').classList.remove('monastery-mode','detective-mode','dessert-mode','ai-mode','zoo-mode','literature-mode','dream-mode','newspaper-mode','language-mode','writer-mode','space-mode','museum-mode','history-mode','exchange-mode','temple-mode','robot-mode');
  syncCurrentPlaceHeaders();
  document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 01';
@@ -1724,7 +1755,7 @@ async function openPlaceBriefing(place,fresh=false){
  journey.stage=place;persistJourney();
  if(place==='cityhall'){await enterCityHall(fresh);return;}
  if(place==='exchange'){await enterExchange(fresh);return;}
- if(FIELD[place])await prepareField(place);else if(place==='monastery')await prepareMonastery();else if(place==='detective')await prepareDetective();else if(place==='dessert')await prepareDessert();else if(place==='ai')await prepareAI();else if(place==='zoo')await prepareZoo();else if(place==='literature')await prepareLiterature();else if(place==='dream')await prepareDream();else if(place==='newspaper')await prepareNewspaper();else if(place==='language')await prepareLanguage();else if(place==='writer')await prepareWriter();else if(place==='space')await prepareSpace();else if(place==='robot')await prepareRobot();else if(place==='temple')await prepareTemple();else if(place==='history')await prepareHistory();else if(place==='art')await prepareMuseum();else prepareAquarium();
+ if(FIELD[place])await prepareField(place);else if(place==='monastery')await prepareMonastery();else if(place==='detective')await prepareDetective();else if(place==='dessert')await prepareDessert();else if(place==='ai')await prepareAI();else if(place==='zoo')await prepareZoo();else if(place==='literature')await prepareLiterature();else if(place==='dream')await prepareDream();else if(place==='newspaper')await prepareNewspaper();else if(place==='language')await prepareLanguage();else if(place==='writer')await prepareWriter();else if(place==='space')await prepareSpace();else if(place==='robot')await prepareRobot();else if(place==='temple')await prepareTemple();else if(place==='history')await prepareHistory();else if(place==='art')await prepareMuseum();else{await loadAquarium();prepareAquarium();}
  resetAdventure();setState('briefing');hud();
 }
 async function restoreCollection(place){
@@ -1747,7 +1778,7 @@ async function restoreCollection(place){
  else if(place==='temple'){await prepareTemple();game=new TempleGame({onEvent:handleGameEvent});game.player.z=TEMPLE.goal;game.cameraZ=TEMPLE.goal-80;game.mode='shore';game.phase='returned';game.reachedIthaca=journey.temple.reachedIthaca===true;game.delays=journey.temple.delays||0;}
  else if(place==='history'){await prepareHistory();game=new HistoryGame({onEvent:handleGameEvent});game.phase='returned';}
  else if(place==='art'){await prepareMuseum();game=new MuseumGame({onEvent:handleGameEvent});}
- else{prepareAquarium();game=new AquariumGame({onEvent:handleGameEvent,collides:createSpriteCollider(images,character)});}
+ else{await loadAquarium();prepareAquarium();game=new AquariumGame({onEvent:handleGameEvent,collides:createSpriteCollider(images,character)});}
  const rec=runRecord();if(!canSolveCollection(place,rec)){showStage();return;}
  endReason=null;
  game.banked=new Set(progress.clues);game.found=new Set(progress.clues);if(!isExchange())game.clueSources=restoreSources(activePlace==='aquarium'?progress:rec);game.elapsed=rec.elapsed;game.ended=true;

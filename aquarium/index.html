@@ -8,21 +8,22 @@
   <title>어서오세요, 이곳은 수족관입니다 · PLAY THE BOOK</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./js/opening.js?v250"></script>
 </head>
 <body>
   <aside class="desktop-note" aria-hidden="true"><div class="brand-mark">P<span>●</span>B</div><span>PLAY THE BOOK</span><p>책 너머의 세상으로<br>함께 떠나요.</p><div class="desktop-keys">방향키 이동 · SPACE 빛 발사</div></aside>
   <main id="viewport">
-    <div id="app" data-screen="loading">
-      <div id="game-viewport"><div id="game-surface"><canvas id="ocean" width="780" height="1688" aria-label="수족관 게임 화면"></canvas><div id="cinema-choices" class="cinema-choice-layer" hidden aria-label="영화 제목 보기"></div><div id="ai-tunes" hidden aria-label="생성 조건"><button type="button" data-ch="0" data-level="0"></button><button type="button" data-ch="0" data-level="1"></button><button type="button" data-ch="0" data-level="2"></button><button type="button" data-ch="1" data-level="0"></button><button type="button" data-ch="1" data-level="1"></button><button type="button" data-ch="1" data-level="2"></button></div></div></div>
+    <div id="app" data-screen="title">
+      <div id="game-viewport" hidden><div id="game-surface"><canvas id="ocean" width="780" height="1688" aria-label="수족관 게임 화면"></canvas><div id="cinema-choices" class="cinema-choice-layer" hidden aria-label="영화 제목 보기"></div><div id="ai-tunes" hidden aria-label="생성 조건"><button type="button" data-ch="0" data-level="0"></button><button type="button" data-ch="0" data-level="1"></button><button type="button" data-ch="0" data-level="2"></button><button type="button" data-ch="1" data-level="0"></button><button type="button" data-ch="1" data-level="1"></button><button type="button" data-ch="1" data-level="2"></button></div></div></div>
       <div class="frame-line" aria-hidden="true"></div>
-      <section id="loading" class="screen loading-screen">
-        <div class="loading-bubble">◌</div><h1>수족관을 준비하고 있어요</h1><p id="loading-note">캐릭터를 불러오는 중…</p>
+      <section id="loading" class="screen loading-screen" hidden>
+        <div class="loading-bubble">◌</div><h1>수족관을 준비하고 있어요</h1><p id="loading-note">게임을 불러오는 중…</p>
       </section>
 
-      <section id="title-screen" class="screen opening-screen" hidden aria-labelledby="opening-title">
+      <section id="title-screen" class="screen opening-screen" aria-labelledby="opening-title">
         <header class="opening-header"><span class="wordmark">PLAY THE BOOK</span><button class="icon-button sound-button" aria-label="소리 켜기"></button></header>
         <div class="opening-content"><p id="test-edition-label" hidden>테스트판</p><h1 id="opening-title"><span>어서오세요,</span><span>이곳은</span><em>수족관입니다.</em></h1>
-        <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><canvas id="title-art" width="520" height="460"></canvas><img class="opening-shark" src="./assets/aquarium-v8/shark-2.webp" alt=""></div>
+        <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><img id="title-art" width="520" height="460" src="./assets/aquarium-v8/title-submarine.webp" alt=""><img class="opening-shark" src="./assets/aquarium-v8/title-shark.webp" alt=""></div>
         <div class="title-actions">
           <button id="title-escape" type="button" class="primary-button">방탈출+미니게임 시작하기</button>
           <button id="title-arcade" type="button" class="primary-button">미니게임 챌린지 시작하기</button>
@@ -189,6 +190,12 @@
   <link rel="stylesheet" href="./arcade-map-v246.css?v249">
   <link rel="stylesheet" href="./place-entry-v246.css?v247">
   <link rel="stylesheet" href="./opening-v246.css?v249">
-  <script type="module" src="./js/app.js?v249"></script>
+  <script type="module" async>
+    import('./js/app.js?v250').catch(async error => {
+      const {showStartupError} = await import('./js/opening.js?v250');
+      showStartupError();
+      console.error(error);
+    });
+  </script>
 </body>
 </html>
