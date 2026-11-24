@@ -31,10 +31,11 @@
 .arcade-coin{display:inline-block;width:19px;height:19px;flex:none;border:1px solid #9b5b15;border-radius:50%;background:radial-gradient(ellipse at 39% 29%,#ffeb89,#ffc945 62%,#e8991e);box-shadow:inset 0 0 0 2px #fff2a885,inset -2px -1px 0 #b57921}
 .arcade-coin:after{content:"";height:48%;width:17%;display:block;margin:24% auto;background:#ad6716;border-radius:2px}
 .arcade-coin-effects{position:absolute;inset:0;z-index:30;overflow:hidden;pointer-events:none}
-.arcade-coin-pop{position:absolute;display:flex;gap:4px;align-items:center;font-size:.88rem;font-weight:900;white-space:nowrap;color:#ffe893;text-shadow:0 2px #603c20,0 0 5px #251608;opacity:0;animation:arcade-pop 1.05s ease-out both}
-.arcade-coin-pop small{font-size:inherit}.arcade-coin-pop .arcade-coin{width:15px;height:15px}
-@keyframes arcade-pop{0%{opacity:0;transform:translate(calc(-50% + var(--pop-shift)),0)}15%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--pop-shift)),-45px)}}
+.arcade-coin-pop{--pop-origin:-5px;position:absolute;display:flex;gap:3px;align-items:center;font-size:10px;font-weight:800;white-space:nowrap;color:#fff5bf;text-shadow:0 1px 2px #593715,0 0 3px #352211;opacity:0;animation:arcade-pop 1.05s ease-out both}
+.arcade-coin-pop-inward{--pop-origin:calc(-100% + 5px);flex-direction:row-reverse}
+.arcade-coin-pop small{font-size:inherit}.arcade-coin-pop .arcade-coin{width:10px;height:10px}
+@keyframes arcade-pop{0%{opacity:0;transform:translate(calc(var(--pop-origin) + var(--pop-shift)),-5px)}15%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translate(calc(var(--pop-origin) + var(--pop-shift)),-32px)}}
 .arcade-mode .clue-stat .hud-label::before{content:"";display:inline-block;width:9px;height:9px;margin-right:3px;border:1px solid #a86e21;border-radius:50%;background:#ffc54f;vertical-align:baseline}
-@media(prefers-reduced-motion:reduce){.arcade-coin-pop{animation-name:arcade-pop-reduced}@keyframes arcade-pop-reduced{0%,80%{opacity:1;transform:translate(calc(-50% + var(--pop-shift)),0)}100%{opacity:0;transform:translate(calc(-50% + var(--pop-shift)),0)}}}
+@media(prefers-reduced-motion:reduce){.arcade-coin-pop{animation-name:arcade-pop-reduced}@keyframes arcade-pop-reduced{0%,80%{opacity:1;transform:translate(calc(var(--pop-origin) + var(--pop-shift)),-5px)}100%{opacity:0;transform:translate(calc(var(--pop-origin) + var(--pop-shift)),-5px)}}}
 #app .arcade-pause{display:none}#app.arcade-mode .arcade-pause{display:inline-grid;place-items:center;width:36px;height:36px;padding:6px;flex:none}
 #app .arcade-pause[disabled]{opacity:.54}

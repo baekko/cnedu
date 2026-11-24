@@ -1,0 +1,86 @@
+#select-screen{
+ background:#f8f5e8;
+ color:#204f50;
+}
+#select-screen::before{
+ background:radial-gradient(ellipse at 90% 7%,#f0d79d70,transparent 35%),
+   radial-gradient(ellipse at 12% 85%,#9acfc18f,transparent 68%),
+   linear-gradient(148deg,#fffcf1,#e7f2e8);
+}
+#select-screen .opening-header{
+ margin-bottom:clamp(10px,3.5dvh,32px);
+}
+#select-screen .opening-header .wordmark{
+ color:#36635c;
+ font-weight:800;
+}
+.selection-content h1{
+ font-size:clamp(27px,7.6vw,42px);
+ margin:0 0 clamp(15px,3dvh,25px);
+ line-height:1.2;
+}
+.selection-content h1 em{
+ color:#296e66;
+}
+#character-grid{
+ gap:clamp(9px,3vw,16px);
+}
+#character-grid .character-card{
+ height:clamp(112px,25dvh,200px);
+ padding:8px;
+ border:1px solid #a6c7b9;
+ border-radius:20px;
+ background:#fffdf1;
+ box-shadow:0 3px 0 #91af9f47;
+}
+#character-grid .character-card::before{
+ width:72%;
+ height:auto;
+ aspect-ratio:1;
+ max-height:87%;
+ border-radius:48% 48% 44% 44%;
+ opacity:.48;
+}
+#character-grid .character-card img{
+ width:auto;
+ height:100%;
+ max-height:155px;
+ object-fit:contain;
+}
+#character-grid .character-card[aria-pressed="true"]{
+ border-color:#477f75;
+ box-shadow:0 0 0 2px #477f7560,0 4px 0 #91af9f47;
+}
+#character-grid .character-card:focus-visible{
+ outline:3px solid #386e65;
+ outline-offset:3px;
+}
+.opening-content .title-continue{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:11px;
+ width:min(100%,360px);
+ min-height:57px;
+ padding:6px 12px;
+ margin:0 auto 12px;
+ border:1px solid #a0c2af;
+ border-radius:16px;
+ color:#26554e;
+ background:#fffdf0;
+ box-shadow:0 3px 0 #92b5a255;
+ text-align:left;
+}
+.opening-content .title-continue[hidden]{display:none}
+.title-continue img{width:40px;height:40px;flex:none;object-fit:contain;border-radius:11px;background:#e2f0e2}
+.title-continue strong,.title-continue small{display:block;line-height:1.35}
+.title-continue strong{font-size:1rem}
+.title-continue small{margin-top:3px;font-size:.8rem;color:#456957;overflow-wrap:anywhere}
+.title-continue:focus-visible{outline:3px solid #386e65;outline-offset:3px}
+@media(max-height:700px){
+ .opening-content:has(.title-continue:not([hidden])) .opening-illustration{
+  height:clamp(172px,28dvh,228px);
+  margin-bottom:11px;
+ }
+ .opening-content:has(.title-continue:not([hidden])) #title-art{width:min(240px,83%)}
+}

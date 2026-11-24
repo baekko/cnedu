@@ -1,0 +1,254 @@
+#app[data-screen="mode"] #arcade-screen,
+#app[data-screen="resume-choice"] #arcade-screen,
+#app[data-screen="arcade-choice"] #arcade-screen {
+  display: block;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  color: #233c35;
+  background:
+    radial-gradient(ellipse at 104% 0%, #d9eee2 0, transparent 50%),
+    linear-gradient(167deg, #f8f7ea 43%, #e0efe2);
+}
+
+.mode-choice-shell {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: min(100%, 520px);
+  margin-inline: auto;
+  padding: calc(17px + var(--safe-top, 0px)) max(20px, var(--safe-right, 0px))
+    calc(22px + var(--safe-bottom, 0px)) max(20px, var(--safe-left, 0px));
+}
+
+.mode-choice-shell::before,
+.mode-choice-shell::after {
+  position: absolute;
+  z-index: -1;
+  width: 155px;
+  height: 155px;
+  border: 1px solid #68948627;
+  border-radius: 48% 52% 47% 53%;
+  box-shadow: 0 0 0 15px #f4f8ee66, 0 0 0 16px #68948620, 0 0 0 30px #f5f8ec55, 0 0 0 31px #6894861a;
+  pointer-events: none;
+  content: "";
+}
+
+.mode-choice-shell::before { top: 1%; right: -95px; transform: rotate(-24deg); }
+.mode-choice-shell::after { bottom: 9%; left: -115px; transform: rotate(24deg); }
+
+.mode-choice-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#arcade-screen .mode-choice-back {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  min-height: 46px;
+  padding: 0;
+  border: 1px solid #c9dacf;
+  border-radius: 50%;
+  color: #2b584c;
+  background: #fbfcf6;
+}
+
+.mode-choice-back span {
+  width: 9px;
+  height: 9px;
+  margin-left: 4px;
+  transform: rotate(45deg);
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+}
+
+.mode-choice-brand {
+  color: #2b6257;
+  font-size: .70rem;
+  font-weight: 850;
+  letter-spacing: .18em;
+  white-space: nowrap;
+}
+
+.mode-choice-header {
+  margin: clamp(21px, 4.5dvh, 55px) 0 clamp(20px, 3.4dvh, 33px);
+  width: max-content;
+  max-width: 100%;
+}
+
+#arcade-screen .mode-choice-header h1 {
+  position: relative;
+  margin: 0;
+  color: #234638;
+  font-size: clamp(2.05rem, 9vw, 3.1rem);
+  font-weight: 890;
+  letter-spacing: -.066em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.mode-choice-options {
+  display: grid;
+  gap: clamp(12px, 2.25dvh, 19px);
+}
+
+#arcade-screen .mode-option {
+  --mode-surface: #f3faf4;
+  --mode-line: #bed9c7;
+  --mode-shadow: #a4c9b44d;
+  --mode-art-fill: #ddede3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(105px, 34%, 165px);
+  align-items: center;
+  gap: 8px;
+  min-height: clamp(132px, 22dvh, 197px);
+  padding: 11px 11px 11px clamp(14px, 4.5vw, 23px);
+  border: 1px solid var(--mode-line);
+  border-radius: 22px;
+  color: #233d32;
+  background: var(--mode-surface);
+  box-shadow: 0 4px 0 var(--mode-shadow);
+  text-align: left;
+  touch-action: manipulation;
+  transition: box-shadow 130ms ease, transform 130ms ease, border-color 130ms ease;
+}
+
+#arcade-screen .mode-option--apricot {
+  --mode-surface: #fff7e8;
+  --mode-line: #e1cba6;
+  --mode-shadow: #d5ad7145;
+  --mode-art-fill: #f4deac;
+}
+
+#arcade-screen .mode-option--blue {
+  --mode-surface: #eef7f9;
+  --mode-line: #c0dce0;
+  --mode-shadow: #9ecbd44c;
+  --mode-art-fill: #d6eced;
+}
+
+#arcade-screen .mode-option:focus-visible,
+#arcade-screen .mode-choice-back:focus-visible {
+  outline: 2px solid #2b7465;
+  outline-offset: 3px;
+}
+
+#arcade-screen .mode-option:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--mode-shadow);
+}
+
+@media (hover: hover) {
+  #arcade-screen .mode-option:hover {
+    border-color: #598c78;
+    box-shadow: 0 5px 0 var(--mode-shadow), 0 7px 23px #194c4112;
+  }
+}
+
+.mode-option-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.mode-option-copy strong {
+  font-size: clamp(1.05rem, 5.05vw, 1.42rem);
+  font-weight: 850;
+  letter-spacing: -.055em;
+  line-height: 1.18;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.mode-option-description {
+  color: #3b5b53;
+  font-size: clamp(.76rem, 3.42vw, .96rem);
+  font-weight: 550;
+  line-height: 1.42;
+  letter-spacing: -.015em;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.mode-option-art {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 15px;
+  background-color: var(--mode-art-fill);
+  background-image: url("./assets/game-entry/mode-illustrations-v246.webp");
+  background-repeat: no-repeat;
+  background-size: 200% 200%;
+}
+
+.mode-option-art[data-art="door"] { background-position: left top; }
+.mode-option-art[data-art="coin"] { background-position: right top; }
+.mode-option-art[data-art="submarine"] { background-position: left bottom; }
+.mode-option-art[data-art="trophy"] { background-position: right bottom; }
+
+.mode-option-track {
+  display: block;
+  width: min(8rem, 100%);
+  height: 5px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #e5d2a9;
+}
+
+.mode-option-track span {
+  display: block;
+  width: var(--mode-progress);
+  height: 100%;
+  border-radius: inherit;
+  background: #42765d;
+}
+
+.mode-choice-note {
+  margin: 18px 0 0;
+  color: #425f56;
+  font-size: .75rem;
+  line-height: 1.45;
+  text-align: center;
+  word-break: keep-all;
+}
+
+@media (max-height: 680px) {
+  .mode-choice-shell {
+    padding-top: calc(12px + var(--safe-top, 0px));
+    padding-bottom: calc(14px + var(--safe-bottom, 0px));
+  }
+  .mode-choice-header { margin: 18px 0 19px; }
+  #arcade-screen .mode-choice-header h1 { font-size: clamp(1.95rem, 8vw, 2.6rem); }
+  .mode-choice-note { margin-top: 13px; }
+}
+
+@media (max-width: 365px) {
+  .mode-choice-shell { padding-right: max(14px, var(--safe-right, 0px)); padding-left: max(14px, var(--safe-left, 0px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #arcade-screen .mode-option { transition: none; }
+}
+
+.mode-resume-profile {
+ display:flex;
+ align-items:center;
+ gap:6px;
+}
+.mode-resume-profile img {
+ width:30px;
+ height:30px;
+ flex:none;
+ object-fit:contain;
+ border-radius:9px;
+ background:#fffdf2;
+}

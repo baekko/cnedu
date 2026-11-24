@@ -30,6 +30,10 @@ export class ArcadeRuns{
  get total(){return totalOf(this.run?.games||{});}
  get maximum(){return (this.run?.places.length??arcadePlaces().length)*COINS_PER_GAME;}
  get completed(){return Object.values(this.run?.games||{}).filter(game=>!game.abandoned).length;}
+ get canResume(){
+  const run=this.run;
+  return !!run?.player&&Array.isArray(run.places)&&run.places.some(place=>!run.games?.[place]);
+ }
  get canRecord(){return this.run&&this.completed===this.run.places.length;}
 
  save(){
