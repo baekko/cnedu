@@ -1,5 +1,4 @@
 #stage-screen.stage-entry {
- --entry-position:50% 50%;
  --entry-ink:#27615f;
  --entry-paper:#e7f4f0;
  --entry-tone:#a9d1c8;
@@ -43,97 +42,31 @@
  font-weight:800;
  font-variant-numeric:tabular-nums;
 }
+/* One object sits on the soft chapter color without a framed landscape. */
 .stage-entry-scene {
- margin:0;
  position:relative;
- isolation:isolate;
- width:100%;
- aspect-ratio:1.38;
- border:5px solid #fffdf5;
- border-radius:19px;
- background:var(--entry-paper);
- box-shadow:0 10px 21px #2143591f;
- box-shadow:0 10px 21px color-mix(in srgb,var(--entry-ink) 13%,transparent);
-}
-.stage-entry-picture {
- position:absolute;
- isolation:isolate;
- inset:0;
- overflow:hidden;
- border-radius:13px;
- background:
-  radial-gradient(ellipse at 27% 70%,#fff8da92,transparent 62%),
-  repeating-radial-gradient(ellipse at 84% 1%,transparent 0 25px,#ffffff66 26px 27px,transparent 28px 46px),
-  var(--entry-tone);
-}
-.stage-entry-picture:not(.no-object)::after {
- content:"";
- position:absolute;
- z-index:1;
- inset:0;
- background:radial-gradient(ellipse at 45% 52%,transparent 29%,color-mix(in srgb,var(--entry-paper) 25%,transparent) 100%);
- pointer-events:none;
-}
-.stage-entry-setting {
- position:absolute;
- inset:0;
- width:100%;
- height:100%;
- object-fit:cover;
- object-position:var(--entry-position);
-}
-.stage-entry-picture:not(.no-object) .stage-entry-setting {opacity:.72}
-.stage-entry-object {
- position:absolute;
- top:10%;
- left:10%;
- z-index:2;
- width:80%;
- height:76%;
- object-fit:contain;
- filter:drop-shadow(0 8px 7px #17293248);
-}
-.stage-entry[data-place="art"] .stage-entry-object,
-.stage-entry[data-place="newspaper"] .stage-entry-object {
- top:12%;
- left:35%;
- width:49%;
- height:74%;
- border-radius:6px;
- outline:2px solid #fffcdfbd;
- object-fit:cover;
- transform:rotate(-4deg);
-}
-.stage-entry[data-place="space"] .stage-entry-object {left:11%;width:78%}
-.stage-entry[data-place="dessert"] .stage-entry-object {left:8%;width:84%;top:35%;height:44%}
-.stage-entry[data-place="monastery"] .stage-entry-object,
-.stage-entry[data-place="datacenter"] .stage-entry-object,
-.stage-entry[data-place="garden"] .stage-entry-object {left:27%;width:46%;top:13%;height:72%}
-.stage-entry-icon {
  display:grid;
  place-items:center;
- position:absolute;
- z-index:3;
- bottom:-9px;
- right:11px;
- width:49px;
- height:49px;
- border:2px solid #fffdf3;
- border-radius:15px;
- color:var(--entry-ink);
- background:var(--entry-paper);
- box-shadow:0 3px 9px #182e3a22;
- transform:rotate(5deg);
+ width:min(100%,285px);
+ height:clamp(130px,29dvh,205px);
+ margin:0 auto;
+ background:radial-gradient(ellipse at center,color-mix(in srgb,var(--entry-tone) 58%,transparent),transparent 70%);
 }
-.stage-entry-icon svg {width:29px;height:29px}
+.stage-entry-object {
+ display:block;
+ width:88%;
+ height:90%;
+ object-fit:contain;
+ filter:drop-shadow(0 6px 7px #17293236);
+}
 .stage-entry-fallback {
  display:grid;
  place-items:center;
- position:absolute;
- inset:0;
+ width:100%;
+ height:100%;
  color:var(--entry-ink);
 }
-.stage-entry-fallback svg {width:34%;height:58%}
+.stage-entry-fallback svg {width:32%;height:50%}
 .stage-entry-heading {padding:0 3px}
 .stage-entry-greeting {
  display:block;
@@ -219,8 +152,6 @@
 #stage-screen.stage-entry #museum-enter:disabled {opacity:.68}
 @media (max-height:650px){
  .stage-entry .stage-entry-card {gap:11px;justify-content:flex-start}
- .stage-entry-scene {aspect-ratio:1.54}
- .stage-entry-icon {width:41px;height:41px;border-radius:12px}
- .stage-entry-icon svg {width:25px;height:25px}
+ .stage-entry-scene {height:clamp(115px,26dvh,162px)}
  .stage-entry-brief {padding:7px 10px}
 }

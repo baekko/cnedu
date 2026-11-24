@@ -1,16 +1,17 @@
 import {PLACES,placeIcon} from './places.js?v231';
-import {placeEntryArt} from './place-entry-art.js?v246';
+import {placeEntryArt} from './place-entry-art.js?v251';
 
-function addArtwork(container,source,style){
- if(!source)return;
+function showObject(figure, source, place){
+ const showFallback=()=>{figure.innerHTML=`<span class="stage-entry-fallback">${placeIcon(place.id)}</span>`;};
+ if(!source){showFallback();return;}
  const image=document.createElement('img');
  image.alt='';
  image.decoding='async';
  image.draggable=false;
- image.className=style;
+ image.className='stage-entry-object';
+ image.addEventListener('error',showFallback,{once:true});
  image.src=source;
- image.addEventListener('error',()=>image.hidden=true,{once:true});
- container.append(image);
+ figure.append(image);
 }
 
 export function drawPlaceEntry(screen,{place,character,enterButton}){
@@ -22,21 +23,14 @@ export function drawPlaceEntry(screen,{place,character,enterButton}){
    <span class="wordmark">PLAY THE BOOK</span>
    <span class="stage-entry-progress"></span>
   </header>
-  <figure class="stage-entry-scene" aria-hidden="true">
-   <div class="stage-entry-picture"></div>
-   <span class="stage-entry-icon">${placeIcon(place.id)}</span>
-  </figure>
+  <figure class="stage-entry-scene" aria-hidden="true"></figure>
   <h1 id="stage-title" class="stage-entry-heading" tabindex="-1"><span class="stage-entry-greeting">어서오세요, 이곳은</span> <span class="stage-entry-place"></span><span class="stage-entry-ending">입니다.</span></h1>
   <div class="stage-entry-brief">
    <span class="stage-entry-avatar"><img id="stage-character" alt="" draggable="false"></span>
    <div><strong id="stage-companion"></strong><p class="stage-placeholder" aria-live="polite"></p></div>
   </div>
   <footer class="stage-entry-actions"></footer>`;
- const figure=card.querySelector('.stage-entry-picture');
- figure.classList.toggle('no-object',!entry.object);
- addArtwork(figure,entry.image,'stage-entry-setting');
- addArtwork(figure,entry.object,'stage-entry-object');
- if(!entry.image&&!entry.object)figure.insertAdjacentHTML('beforeend',`<span class="stage-entry-fallback">${placeIcon(place.id)}</span>`);
+ showObject(card.querySelector('.stage-entry-scene'),entry.object,place);
  const stage=PLACES.findIndex(item=>item.id===place.id)+1;
  const progress=card.querySelector('.stage-entry-progress');
  progress.textContent=stage+' / '+PLACES.length;
@@ -52,7 +46,6 @@ export function drawPlaceEntry(screen,{place,character,enterButton}){
  enterButton.textContent=place.name+' 입장하기';
  card.querySelector('.stage-entry-actions').append(enterButton);
  screen.dataset.place=place.id;
- screen.style.setProperty('--entry-position',entry.position);
  screen.style.setProperty('--entry-ink',entry.ink);
  screen.style.setProperty('--entry-paper',entry.paper);
  screen.style.setProperty('--entry-tone',entry.tone);

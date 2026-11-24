@@ -90,7 +90,7 @@ import { loadMotion, SpritePlayer } from './motions.js';
 import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v246';
 import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,popArcadeCoins} from './arcade-view.js?v249';
 import {drawArcadeChoices} from './arcade-choice-view.js?v249';
-import {drawPlaceEntry} from './place-entry-view.js?v247';
+import {drawPlaceEntry} from './place-entry-view.js?v251';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
 import {getArcadeTicket,loadSharedArcadeRecords,shareArcadeRecord} from './arcade-share.js?v245';
 import {ModeCharacters} from './mode-characters.js';
