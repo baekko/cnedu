@@ -1,6 +1,6 @@
 import {PLACES} from './places.js?v231';
 import {CHARACTERS} from './config.js';
-import {arcadeCharacterSetupId,canResumeArcade} from './arcade-state.js';
+import {arcadeCharacterSetupId,canResumeArcade} from './arcade-state.js?v254';
 
 export const arcadePlaces=()=>PLACES.filter(place=>place.playable);
 export const COINS_PER_GAME=9;

@@ -4,9 +4,10 @@ export function arcadeCharacterSetupId(data){
  const games=run.games??{};
  if(Array.isArray(run.places)&&run.places.length&&run.places.every(place=>games[place]&&!games[place].abandoned))return run.id;
 
- // v252 started an empty rematch with the previous character.
+ // Recover rematches that v252 started with the previous character.
  const previous=data.records?.[0];
- if(previous?.id&&!run.active&&!Object.keys(games).length&&previous.player?.name===run.player.name
+ const attempts=Object.keys(games).length+Number(Boolean(run.active));
+ if(previous?.id&&previous.id!==run.id&&attempts<=1&&previous.player?.name===run.player.name
    &&previous.player.character===run.player.character)return previous.id;
  return null;
 }

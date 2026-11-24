@@ -1,4 +1,4 @@
-import {canResumeArcade} from './arcade-state.js';
+import {canResumeArcade} from './arcade-state.js?v254';
 
 // The title can receive a selection while the game modules are still loading.
 const title = document.getElementById('title-screen');

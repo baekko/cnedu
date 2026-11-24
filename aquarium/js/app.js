@@ -1,4 +1,4 @@
-import {connectTitleModes,showStartupError} from './opening.js?v253';
+import {connectTitleModes,showStartupError} from './opening.js?v254';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
 import {MemoryGame,MEMORY} from './memory-core.js?v224';
@@ -87,8 +87,8 @@ import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './ren
 import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v243';
 import { loadMotion, SpritePlayer } from './motions.js';
 
-import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v253';
-import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v253';
+import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v254';
+import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v254';
 import {drawArcadeChoices} from './arcade-choice-view.js?v252';
 import {drawPlaceEntry} from './place-entry-view.js?v251';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
