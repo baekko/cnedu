@@ -132,11 +132,15 @@ function registeredClasses() {
   }
   return names.sort((a,b) => a.name.localeCompare(b.name,'ko',{numeric:true}));
 }
+function selectClass(id) {
+  if (!write('bdd_active_group',id,sessionStorage)) return false;
+  activeClass = id;
+  transientReveal.clear();
+  return true;
+}
 function switchClass(name, mode) {
   if (name && !classLabel(name)) return adminClasses(mode.id,'이미 삭제된 반입니다.');
-  if (!write('bdd_active_group', name, sessionStorage)) return;
-  activeClass = name;
-  transientReveal.clear();
+  if (!selectClass(name)) return;
   if (!name) return navigate('ptb.html', {}, true);
   allow(mode);
   const visit = read(scopedKey('visit:' + mode.id), null);
@@ -297,7 +301,7 @@ function adminTrigger() { return `<button class="icon-button admin-trigger" data
 function header(mode, {back = 'ptb.html'} = {}) {
   return `<header class="topbar"><button class="icon-button" data-back="${back}" aria-label="이전 장면으로">${icon('back')}</button><img class="topbar-logo" src="${asset('assets/brand/bukdodeum-transparent.png')}" alt="북돋움" width="1370" height="702">${adminTrigger()}</header>`;
 }
-function footer() { return `<footer class="site-footer"><span>${icon('book')} 북돋움</span><button class="text-button" data-action="sound" aria-pressed="${soundOn}">${icon('volume')} 소리 ${soundOn?'켜짐':'꺼짐'}</button></footer>`; }
+function footer() { return `<footer class="site-footer"><span>${icon('book')} 북돋움</span>${currentRoute.type==='landing'?'':'<button class="text-button" data-nav="index.html">처음으로</button>'}<button class="text-button" data-action="sound" aria-pressed="${soundOn}">${icon('volume')} 소리 ${soundOn?'켜짐':'꺼짐'}</button></footer>`; }
 function frame(content, cls = '') {
   storyBack=null;
   activeCinema?.destroy(); activeCinema = null;
@@ -341,11 +345,64 @@ function render() {
   if(type==='ending') return renderEnding(currentMode);
   if(type==='outro') return renderOutro(currentMode);
 }
+function studentStart() {
+  showDialog('책장 열기', `<div class="admin-menu">${button('우리 반 등록하고 시작','register-class')}${button('등록 없이 시작','guest-start',true)}</div>`);
+  $('#register-class').onclick = studentRegister;
+  $('#guest-start').onclick = () => openStudentShelf('');
+}
+function openStudentShelf(id) {
+  if (!selectClass(id)) return;
+  navigate('ptb.html');
+}
+function studentRegister() {
+  showDialog('우리 반 등록', `<form class="admin-form" id="student-register">
+    <label for="student-name">반 이름</label><input id="student-name" maxlength="40" required placeholder="예: 2학년 3반">
+    <p class="form-status" role="status"></p><button class="button">등록하고 시작</button></form>`);
+  const input = $('#student-name');
+  input.focus();
+  $('#student-register').onsubmit = event => {
+    event.preventDefault();
+    const name = input.value.trim().normalize('NFC');
+    if (!name) { $('.form-status',DIALOG).textContent = '반 이름을 입력해 주세요.'; input.focus(); return; }
+    const existing = registeredClasses().find(row => row.name === name);
+    if (existing) return studentActivities(existing.id, '이미 등록된 반이에요. 활동을 선택해 주세요.');
+    const id = crypto.randomUUID();
+    if (write(scopedKey('name',id),name)) openStudentShelf(id);
+  };
+}
+function studentResume() {
+  const classes = registeredClasses();
+  const personal = read('bdd_last_visit',null);
+  showDialog('이어 하기', `<p class="dialog-lead">${classes.length?'이 기기에서 이어 할 반을 골라 주세요.':'이 기기에 등록된 반이 없어요.'}</p>
+    <div class="admin-menu">${classes.map(({name},i)=>button(esc(name),'resume-group-'+i)).join('')}
+    ${personal && data.modes[personal.mode]?button('개인 활동 이어 하기','resume-personal',true):''}
+    ${button('우리 반 등록하기','register-class',true)}</div>`);
+  classes.forEach(({id},i) => $('#resume-group-'+i).onclick = () => studentActivities(id));
+  $('#register-class').onclick = studentRegister;
+  if ($('#resume-personal')) $('#resume-personal').onclick = () => accessModal(data.modes[personal.mode],()=>{
+    if (selectClass('')) navigate(personal.path,Object.fromEntries(new URLSearchParams(personal.search)));
+  });
+}
+function studentActivities(id, message='이어 할 활동을 골라 주세요.') {
+  if (!classLabel(id)) return studentResume();
+  const modes = Object.values(data.modes);
+  showDialog(esc(classLabel(id)), `<p class="dialog-lead">${message}</p><div class="admin-menu">${modes.map(mode=>{
+    const done = completedCount(read(progressKey(mode,id),{}));
+    const visit = read(scopedKey('visit:'+mode.id,id),null);
+    return `<button class="admin-card" data-student-mode="${mode.id}"><span class="admin-card-text"><strong>${esc(ADMIN_MODE_LABELS[mode.id])}</strong><small>${done} / 5 완료 · ${visit?'이어 하기':'시작하기'}</small></span>${icon('arrow')}</button>`;
+  }).join('')}</div>`);
+  $$('[data-student-mode]',DIALOG).forEach(el => el.onclick = () => {
+    const mode = data.modes[el.dataset.studentMode];
+    const start = () => classLabel(id) ? switchClass(id,mode) : studentResume();
+    if (read(scopedKey('visit:'+mode.id,id),null)) start();
+    else accessModal(mode,start);
+  });
+}
+
 function renderLanding() {
-  const last=read(scopedKey('bdd_last_visit'),null);
-  frame(`<header class="landing-bar"><span class="landing-wordmark">PLAY THE BOOK</span>${adminTrigger()}</header><main id="main" class="landing"><div class="landing-heading">${subtitle('학생 맞춤형 독서교육 프로그램')}<h1 class="original-brand"><img src="${asset('assets/brand/bukdodeum-transparent.png')}" alt="북돋움" width="1370" height="702"></h1><p>작은 책 한 권에 숨어 있는<br>커다란 이야기를 만나러 갈까요?</p></div>${artFigure(art('hero-v14'),'책과 거울 앞에서 만난 보라토끼와 편지왔어요의 소녀','landing-art')}<div class="landing-actions"><span class="paper-label">오늘의 모험, 준비됐나요?</span>${button('책장 열기','start')}${last?button('이어서 만나기','resume',true):''}<div class="landing-facts"><span>${icon('rabbit')} 두 가지 이야기</span><span>${icon('book')} 함께 읽는 수업</span></div></div></main>`,'landing-page');
-  $('#start').onclick=()=>navigate('ptb.html');
-  if(last) $('#resume').onclick=()=>{const mode=data.modes[last.mode]; if(!mode)return navigate('ptb.html'); accessModal(mode,()=>navigate(last.path,Object.fromEntries(new URLSearchParams(last.search||''))));};
+  frame(`<header class="landing-bar"><span class="landing-wordmark">PLAY THE BOOK</span>${adminTrigger()}</header><main id="main" class="landing"><div class="landing-heading">${subtitle('학생 맞춤형 독서교육 프로그램')}<h1 class="original-brand"><img src="${asset('assets/brand/bukdodeum-transparent.png')}" alt="북돋움" width="1370" height="702"></h1><p>작은 책 한 권에 숨어 있는<br>커다란 이야기를 만나러 갈까요?</p></div>${artFigure(art('hero-v14'),'책과 거울 앞에서 만난 보라토끼와 편지왔어요의 소녀','landing-art')}<div class="landing-actions"><span class="paper-label">오늘의 모험, 준비됐나요?</span><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"><button class="button" id="start" style="margin:0;min-width:0">책장 열기</button><button class="button secondary" id="resume" style="margin:0;min-width:0">이어 하기</button></div><div class="landing-facts"><span>${icon('rabbit')} 두 가지 이야기</span><span>${icon('book')} 함께 읽는 수업</span></div></div></main>`,'landing-page');
+  $('#start').onclick=studentStart;
+  $('#resume').onclick=studentResume;
 }
 function renderSelection() {
   frame(`${header(null,{back:'index.html'})}<main id="main" class="selection-main"><div class="section-heading"><h1>활동에 맞는 책장을 골라주세요</h1></div><div class="section-label"><span>이야기를 따라가는 게임</span><i></i></div><div class="mode-list">${['rabbit','letter'].map(id=>{const m=data.modes[id];return `<button class="mode-card ${id}" data-mode="${id}"><div class="mode-art"><img src="${id==='rabbit'?art('rabbit-hub'):storyArtSource('library-emotion')}" alt="" loading="lazy"></div><div class="mode-copy"><small>${esc(m.audience)} · 게임</small><h2>${m.title}</h2><p>${id==='rabbit'?'보라토끼를 따라 거울 너머로':'책 속에 남겨진 기억과 편지'}</p><span class="mode-link">이야기 펼치기 ${icon('arrow')}</span></div></button>`}).join('')}</div><div class="section-label"><span>책과 함께하는 수업</span><i></i></div><div class="class-modes">${['eclass','mclass'].map(id=>`<button class="class-mode ${id}" data-mode="${id}"><span class="sticker-icon">${icon('book')}</span><small>독서 수업</small><h2>${id==='eclass'?'초등학생':'중·고등학생'}</h2><span>문제 책장 열기 ${icon('arrow')}</span></button>`).join('')}</div><p class="small-note">${icon('lock')} 선생님께 받은 접속 코드로 입장해요.</p></main>`,'selection-page');
@@ -391,7 +448,7 @@ function storyFlow(mode, {title, steps, onFinish, back=mode.hub, nextLabel='다�
     skip.textContent = 'SKIP';
     skip.setAttribute('aria-label', prefix + ' 건너뛰기');
     skip.onclick = onSkip;
-    $('.site-footer [data-action="sound"]', APP).before(skip);
+    $('.site-footer [data-nav="index.html"]', APP).before(skip);
   }
   $('#story-prev').onclick=storyBack;
   $('#story-next').onclick=()=>{chime();if(idx<steps.length-1)move(idx+1);else onFinish();};
