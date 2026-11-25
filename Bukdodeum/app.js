@@ -371,7 +371,7 @@ function accessModal(mode, after) {
 }
 
 function slideArt(slide, ending=false, index=0) { return art((ending ? LETTER_ENDING : LETTER_OPENING)[index]); }
-function storyFlow(mode, {title, steps, onFinish, back=mode.hub, nextLabel='다음 이야기', prefix='이야기', param='s', autoFinishCinema=false}) {
+function storyFlow(mode, {title, steps, onFinish, back=mode.hub, nextLabel='다음 이야기', prefix='이야기', param='s', onSkip, autoFinishCinema=false}) {
   steps = paginateStory(steps).map(s=>({...s,letter:s.letter||mode.id==='letter'}));
   const idx=Math.max(0,Math.min(steps.length-1,Number(new URLSearchParams(sceneURL().search).get(param))||0)), s=steps[idx];
   frame(`${header(mode,{back})}<main id="main" class="story-main"><div class="chapter-line"><span>${prefix}</span><span>${idx+1} <i>/ ${steps.length}</i></span></div><h1 class="story-title">${bookTitle(title)}</h1>${s.titleCard?letterTitleCard():s.portalStart?`<figure class="scene portal-scene" data-portal-start aria-busy="true"><canvas width="768" height="512" role="img" aria-label="돌다리에 들어선 주인공의 뒷모습과 앞서 있는 보라토끼" hidden></canvas><span class="scene-status" role="status">장면을 준비하고 있어요…</span></figure>`:s.mirrorPose!==undefined?`<figure class="scene mirror-dialogue" data-mirror-pose="${s.mirrorPose}" aria-busy="true"><canvas width="768" height="512" role="img" aria-label="고정된 거울 속에서 말하는 보라토끼" hidden></canvas><span class="scene-status" role="status">장면을 준비하고 있어요…</span></figure>`:s.cinema?'<div id="cinema" class="cinema-stage"></div>':(s.original?`<figure class="original-letter"><img src="${s.image}" alt="내일의 나에게 보내는 원본 편지"></figure><details class="letter-transcript"><summary>큰 글씨로 읽기</summary>${paragraph(s.text)}</details>`:artFigure(s.image||art(mode.track==='rabbit'?'rabbit-hub':'letter-desk'),s.alt||title))}${s.text&&!s.original?`<div class="story-paper ${s.letter?'letter-paper':''} ${s.compact?'compact-story':''}"><span class="speaker">${icon(s.letter?'mail':mode.track==='rabbit'?'rabbit':'book')}${esc(s.speaker||(s.letter?'책 속의 편지':mode.track==='rabbit'?'래빗홀의 이야기':'편지왔어요'))}</span>${paragraph(s.text)}</div>`:''}<div class="story-navigation"><button id="story-prev" class="icon-button" aria-label="이전 이야기" ${idx===0?'disabled':''}>${icon('back')}</button><div class="story-progress" aria-label="${steps.length}장 중 ${idx+1}장"><i style="width:${(idx+1)/steps.length*100}%"></i></div><button id="story-next" class="button">${esc(idx===steps.length-1?nextLabel:'다음')}${icon('arrow')}</button></div>${s.cinema&&!autoFinishCinema?'<p class="small-note">재생이 끝나면 다음 이야기로 넘어가 주세요.</p>':''}</main>`,'story-page');
@@ -385,10 +385,26 @@ function storyFlow(mode, {title, steps, onFinish, back=mode.hub, nextLabel='다�
     else move(idx-1,true);
   };
   $('#story-prev').disabled=idx===0&&!(history.state?.depth>0);
+  if (onSkip) {
+    const skip = document.createElement('button');
+    skip.className = 'text-button';
+    skip.textContent = 'SKIP';
+    skip.setAttribute('aria-label', prefix + ' 건너뛰기');
+    skip.onclick = onSkip;
+    $('.site-footer [data-action="sound"]', APP).before(skip);
+  }
   $('#story-prev').onclick=storyBack;
   $('#story-next').onclick=()=>{chime();if(idx<steps.length-1)move(idx+1);else onFinish();};
   if(s.cinema)activeCinema=mountCinema($('#cinema'),{kind:s.cinema,score:s.score??2,location:s.location??0,onComplete:()=>{if(autoFinishCinema&&idx===steps.length-1){onFinish();return;}$('#story-next')?.classList.add('ready');}});
   for(const next of steps.slice(idx+1,idx+3))if(next.image){const source=next.image.startsWith('scene:')?storyArtSource(next.image.slice(6)):next.image;preloadScene(source).catch(()=>{});}
+}
+function skipPrologue(mode) {
+  setMeta(mode,{openingDone:true,hubIntroDone:true});
+  navigate(mode.hub);
+}
+function finishEpilogue(mode) {
+  setMeta(mode,{endingDone:true});
+  navigate(mode.finalRoutes[1]);
 }
 function renderOpening(mode) {
   const steps=[mode.id==='letter'?{titleCard:true,image:art('scene:letter-title')}:{cinema:`${mode.track}-opening`}];
@@ -405,12 +421,12 @@ function renderOpening(mode) {
     pages.splice(19,0,{...light,image:art('scene:classroom-light'),text:light.text.trimEnd()+'\n'+continuation.text.trimStart(),keepTogether:true});
     steps.splice(0,steps.length,...pages,{cinema:'rabbit-portal'});
   }
-  storyFlow(mode,{title:mode.title,steps,prefix:'프롤로그',back:'ptb.html',nextLabel:'모험 시작하기',onFinish:()=>{setMeta(mode,{openingDone:true});navigate(mode.hub,mode.id==='rabbit'?{v:'intro'}:{});}});
+  storyFlow(mode,{title:mode.title,steps,prefix:'프롤로그',onSkip:()=>skipPrologue(mode),back:'ptb.html',nextLabel:'모험 시작하기',onFinish:()=>{setMeta(mode,{openingDone:true});navigate(mode.hub,mode.id==='rabbit'?{v:'intro'}:{});}});
 }
 function renderHub(mode) {
   setMeta(mode,{lastHub:true});const p=progress(mode), count=completedCount(p), isClass=mode.kind==='classroom', params=new URLSearchParams(sceneURL().search), v=params.get('v');
-  if(v==='intro'&&!isClass){const texts=mode.id==='rabbit'?data.story.rabbit.hub.intro:[data.story.letter.hub.intro];return storyFlow(mode,{prefix:mode.id==='rabbit'?'프롤로그':'이야기',title:mode.id==='rabbit'?'래빗홀에 온 걸 환영해!':'다섯 권에 남겨진 기억',steps:texts.map((text,i)=>({text:mode.id==='rabbit'&&i===3?text.replace(/\n{2,}/g,'\n'):text,image:art(mode.id==='rabbit'?RABBIT_HUB_INTRO[i]:'scene:library-emotion'),letter:mode.id==='letter',keepTogether:mode.id==='rabbit'&&i===3,compact:mode.id==='rabbit'&&i===3})),nextLabel:'책 고르기',back:'ptb.html',onFinish:()=>{setMeta(mode,{hubIntroDone:true});navigate(mode.hub);}});}
-  if(v==='finish'&&count===5&&!isClass){const texts=mode.id==='rabbit'?data.story.rabbit.hub.ending:[data.story.letter.hub.ending];return storyFlow(mode,{prefix:'에필로그',title:mode.id==='rabbit'?'모험의 마지막 책장':'마지막 편지',steps:texts.map((text,i)=>({text:text.replaceAll('{{carrotCount}}',totalScore(p)),image:art(mode.id==='rabbit'?RABBIT_HUB_ENDING[i]:'scene:library-emotion'),letter:mode.id==='letter'})),nextLabel:mode.id==='rabbit'?'친구 만나러 가기':'편지 코드 입력',onFinish:()=>mode.id==='rabbit'?navigate(mode.finalRoutes[0]):setView({v:'final'})});}
+  if(v==='intro'&&!isClass){const texts=mode.id==='rabbit'?data.story.rabbit.hub.intro:[data.story.letter.hub.intro];return storyFlow(mode,{prefix:'프롤로그',onSkip:()=>skipPrologue(mode),title:mode.id==='rabbit'?'래빗홀에 온 걸 환영해!':'다섯 권에 남겨진 기억',steps:texts.map((text,i)=>({text:mode.id==='rabbit'&&i===3?text.replace(/\n{2,}/g,'\n'):text,image:art(mode.id==='rabbit'?RABBIT_HUB_INTRO[i]:'scene:library-emotion'),letter:mode.id==='letter',keepTogether:mode.id==='rabbit'&&i===3,compact:mode.id==='rabbit'&&i===3})),nextLabel:'책 고르기',back:'ptb.html',onFinish:()=>{setMeta(mode,{hubIntroDone:true});navigate(mode.hub);}});}
+  if(v==='finish'&&count===5&&!isClass){const texts=mode.id==='rabbit'?data.story.rabbit.hub.ending:[data.story.letter.hub.ending];return storyFlow(mode,{prefix:'에필로그',onSkip:mode.id==='rabbit'?()=>finishEpilogue(mode):undefined,title:mode.id==='rabbit'?'모험의 마지막 책장':'마지막 편지',steps:texts.map((text,i)=>({text:text.replaceAll('{{carrotCount}}',totalScore(p)),image:art(mode.id==='rabbit'?RABBIT_HUB_ENDING[i]:'scene:library-emotion'),letter:mode.id==='letter'})),nextLabel:mode.id==='rabbit'?'친구 만나러 가기':'편지 코드 입력',onFinish:()=>mode.id==='rabbit'?navigate(mode.finalRoutes[0]):setView({v:'final'})});}
   if(v==='final'&&mode.id==='letter'&&count===5)return renderFinalMission(mode);
   if(!isClass&&!meta(mode).hubIntroDone){navigate(mode.hub,{v:'intro'},true);return;}
   const heading=isClass?'오늘의 독서 책장':mode.id==='rabbit'?'다섯 장소의 모험':'기억이 머무는 책장';
@@ -472,7 +488,7 @@ function renderEnding(mode) {
   let steps;
   if(mode.id==='rabbit')steps=[...data.story.rabbit.ending.talks.map((text,i)=>({text,image:art(RABBIT_ENDING[i])})),{cinema:'rabbit-ending'}];
   else steps=[{text:data.story.letter.finalLetter.text,letter:true,image:asset(data.story.letter.finalLetter.originalImage),original:true,speaker:'내일의 나에게'},...data.story.letter.ending.slides.map((s,i)=>({text:plain(s.text),image:slideArt(s,true,i),speaker:s.img==='ptbin222.png'?'사서 선생님':'편지왔어요'}))];
-  storyFlow(mode,{title:mode.id==='rabbit'?'우리의 같은 꿈':'내일의 나에게',steps,nextLabel:'마지막 책장 넘기기',prefix:'에필로그',onFinish:()=>{setMeta(mode,{endingDone:true});navigate(mode.finalRoutes[1]);}});
+  storyFlow(mode,{title:mode.id==='rabbit'?'우리의 같은 꿈':'내일의 나에게',steps,nextLabel:'마지막 책장 넘기기',prefix:'에필로그',onSkip:()=>finishEpilogue(mode),onFinish:()=>finishEpilogue(mode)});
 }
 function renderOutro(mode) {
   if(completedCount(progress(mode))<5){navigate(mode.hub,{},true);return;}
