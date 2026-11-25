@@ -372,16 +372,10 @@ function studentRegister() {
 }
 function studentResume() {
   const classes = registeredClasses();
-  const personal = read('bdd_last_visit',null);
-  showDialog('이어 하기', `<p class="dialog-lead">${classes.length?'이 기기에서 이어 할 반을 골라 주세요.':'이 기기에 등록된 반이 없어요.'}</p>
-    <div class="admin-menu">${classes.map(({name},i)=>button(esc(name),'resume-group-'+i)).join('')}
-    ${personal && data.modes[personal.mode]?button('개인 활동 이어 하기','resume-personal',true):''}
-    ${button('우리 반 등록하기','register-class',true)}</div>`);
+  const prompt = classes.length ? '이 기기에서 이어 할 반을 골라 주세요.' : '이 기기에 등록된 반이 없어요. 처음 시작할 때는 ‘책장 열기’를 눌러 주세요.';
+  showDialog('이어 하기', `<p class="dialog-lead">${prompt}</p>
+    <div class="admin-menu">${classes.map(({name},i)=>button(esc(name),'resume-group-'+i)).join('')}</div>`);
   classes.forEach(({id},i) => $('#resume-group-'+i).onclick = () => studentActivities(id));
-  $('#register-class').onclick = studentRegister;
-  if ($('#resume-personal')) $('#resume-personal').onclick = () => accessModal(data.modes[personal.mode],()=>{
-    if (selectClass('')) navigate(personal.path,Object.fromEntries(new URLSearchParams(personal.search)));
-  });
 }
 function studentActivities(id, message='이어 할 활동을 골라 주세요.') {
   if (!classLabel(id)) return studentResume();
