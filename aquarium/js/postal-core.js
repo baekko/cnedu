@@ -25,6 +25,12 @@ export const POSTAL_MAIL_SLOT_Y = -18.4;
 // Standing foot anchor relative to the bicycle. The atlas uses these same
 // offsets in the first boarding frame and the last dismount frame.
 export const POSTAL_BIKE_STANDS = {down: [20.7, -3.7], up: [-21.2, -3.7], right: [-10, 3], left: [10, 3]};
+// Grounded feet in the first vertical pose of each courier.
+const COURIER_AXIS_STANDS = {
+  doyun: {down: [18.0, -4.23], up: [-21.0, -4.23]},
+  narin: {down: [23.73, -4.74], up: [-23.6, -5.78]},
+  soi: {down: [21.12, -3.7], up: [-21.78, -4.74]},
+};
 // Player action hand positions registered to the mailbox slot at the normal avatar size.
 const MAIL_STANDS = {
   haru: {up: [-12.1, -1.1], down: [-8.8, -4]},
@@ -33,8 +39,8 @@ const MAIL_STANDS = {
   soi: {up: [-12.2, 0], down: [-10.5, -3.3]},
 };
 
-export function postalDepartureMountTime(direction) {
-  return direction === 'left' || direction === 'right'
+export function postalDepartureMountTime(direction, characterId) {
+  return characterId && (direction === 'left' || direction === 'right')
     ? POSTAL_SIDE_MOUNT_FRAME_ENDS.at(-1) / 100
     : POSTAL_POSE_TIME.mount;
 }
@@ -44,8 +50,8 @@ const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 const deliveryPhases = new Set(['park', 'dismount', 'approach', 'mail', 'return', 'remount']);
 const walkingPhases = new Set(['walkout', 'approach', 'return']);
-function besideBike(bike) {
-  const [x, y] = POSTAL_BIKE_STANDS[bike.dir];
+function besideBike(bike, characterId) {
+  const [x, y] = COURIER_AXIS_STANDS[characterId]?.[bike.dir] ?? POSTAL_BIKE_STANDS[bike.dir];
   return {x: bike.x + x, y: bike.y + y};
 }
 
@@ -153,7 +159,7 @@ export class PostalGame {
     this.player = {...this.village.office.door, dir: 'down', moving: false, walk: 0, pedal: 0, hammerAge: 99};
     this.camera = {x: 0, y: 0};
     this.followCamera(1);
-    const stand = besideBike(this.bike);
+    const stand = besideBike(this.bike, this.characterId);
     this.walkTo('walkout', stand, 'down');
   }
 
@@ -212,14 +218,14 @@ export class PostalGame {
         const phase = this.phase === 'walkout' ? 'mount' : 'remount';
         Object.assign(this.player, this.bike);
         const duration = phase === 'mount'
-          ? postalDepartureMountTime(this.bike.dir)
+          ? postalDepartureMountTime(this.bike.dir, this.characterId)
           : POSTAL_POSE_TIME.mount;
         this.animate(phase, duration);
         break;
       }
       case 'park': this.animate('dismount', POSTAL_POSE_TIME.dismount); break;
       case 'dismount':
-        Object.assign(this.player, besideBike(this.bike));
+        Object.assign(this.player, besideBike(this.bike, this.characterId));
         this.walkTo('approach', post.stand, post.side);
         break;
       case 'approach': this.animate('mail', POSTAL_POSE_TIME.mail, post.stand, post.side); break;
@@ -229,7 +235,7 @@ export class PostalGame {
         this.noticeLeft = 1.28;
         this.noticeWrong = !correct;
         this.onEvent({type: 'postalDelivery', correct});
-        const stand = besideBike(this.bike);
+        const stand = besideBike(this.bike, this.characterId);
         this.walkTo('return', stand, post.side === 'up' ? 'down' : 'up');
         break;
       }

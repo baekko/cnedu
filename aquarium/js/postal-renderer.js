@@ -1,11 +1,12 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {drawPlayerAction,loadPlayerActions} from './player-actions.js';
-import {POSTAL_BIKE_STANDS,POSTAL_SIDE_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v271';
+import {POSTAL_BIKE_STANDS,POSTAL_SIDE_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v275';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
 
 const BICYCLE_CELL = 160;
+const COURIER_CELL = 224;
 const BICYCLE_DRAW_SIZE = 192 / 1.8;
 const SIDE_FRAMES = 16;
 const AXIS_FRAMES = 8;
@@ -31,8 +32,8 @@ function image(url) {
   });
 }
 
-function bicycleRegion(image, columns, first = 0) {
-  return {image, columns, first};
+function bicycleRegion(image, columns, first = 0, cell = BICYCLE_CELL) {
+  return {image, columns, first, cell};
 }
 
 async function loadBicyclePoses(characterId) {
@@ -50,12 +51,12 @@ async function loadBicyclePoses(characterId) {
       axisRide: bicycleRegion(axisRide, 8),
     };
   }
-  const atlas = await image(`./assets/postal/${characterId}-v271-bicycle.webp`);
+  const atlas = await image(`./assets/postal/${characterId}-v275-bicycle.webp`);
   return {
-    sideMount: bicycleRegion(atlas, 8),
-    sideRide: bicycleRegion(atlas, 8, 16),
-    axisMount: bicycleRegion(atlas, 8, 32),
-    axisRide: bicycleRegion(atlas, 8, 48),
+    sideMount: bicycleRegion(atlas, 8, 0, COURIER_CELL),
+    sideRide: bicycleRegion(atlas, 8, 16, COURIER_CELL),
+    axisMount: bicycleRegion(atlas, 8, 32, COURIER_CELL),
+    axisRide: bicycleRegion(atlas, 8, 48, COURIER_CELL),
   };
 }
 
@@ -195,14 +196,17 @@ export function paintPostalTerrain(c, village) {
 }
 
 function drawBicycleCell(c, region, frame, direction, x, y, scale) {
-  const {image, columns, first} = region;
+  const {image, columns, first, cell} = region;
   const tile = first + frame;
-  const size = BICYCLE_DRAW_SIZE * scale;
+  const unit = BICYCLE_DRAW_SIZE * scale / BICYCLE_CELL;
+  const padding = (cell - BICYCLE_CELL) / 2;
+  const size = cell * unit;
   c.save();
   c.translate(x, y);
   if (direction === 'left') c.scale(-1, 1);
-  c.drawImage(image, (tile % columns) * BICYCLE_CELL, Math.floor(tile / columns) * BICYCLE_CELL,
-    BICYCLE_CELL, BICYCLE_CELL, -BICYCLE_ANCHOR[0] * size, -BICYCLE_ANCHOR[1] * size, size, size);
+  c.drawImage(image, (tile % columns) * cell, Math.floor(tile / columns) * cell, cell, cell,
+    -(padding + BICYCLE_ANCHOR[0] * BICYCLE_CELL) * unit,
+    -(padding + BICYCLE_ANCHOR[1] * BICYCLE_CELL) * unit, size, size);
   c.restore();
 }
 
@@ -235,7 +239,7 @@ function insertLetter(c, box, progress) {
 function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCALE) {
   const frameAt = count => Math.min(count - 1, Math.max(0, Math.floor(progress * count)));
   const up = Number(direction === 'up');
-    const poses = assets.bikePoses;
+  const poses = assets.bikePoses;
   const side = direction === 'left' || direction === 'right';
   const dismount = mode === 'dismount';
   let region, frame;
@@ -401,7 +405,7 @@ export class PostalRenderer {
     const preview = scale / SPRITE_SCALE;
     const distanceToBike = 46;
     const walkTime = distanceToBike / POSTAL_WALK_SPEED;
-    const mountTime = postalDepartureMountTime('left');
+    const mountTime = postalDepartureMountTime('left', character.id);
     const departure = walkTime + mountTime;
     const t = time % (departure + 1.6);
     panel(c, 19, 77, 142, 27, '#e7dac1', 12);
