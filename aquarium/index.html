@@ -217,7 +217,7 @@
       <div id="hint-overlay" class="overlay" hidden><section class="modal hint-modal" role="dialog" aria-modal="true" aria-labelledby="hint-title"><div class="modal-kicker">조금만 도와줄게요</div><h2 id="hint-title">문제 힌트</h2><ol id="hint-list" class="hint-list" aria-live="polite"></ol><button id="hint-back" class="primary-button">다시 문제 풀기</button><button id="hint-next" class="primary-button">다음 힌트 보기</button></section></div>
       <section id="stage-screen" class="screen stage-screen stage-entry" hidden aria-labelledby="stage-title"><button id="museum-enter" type="button" class="primary-button">입장하기</button><p class="stage-placeholder" hidden></p></section>
       <div id="utility-overlay" class="overlay" hidden><section class="modal utility-modal" role="dialog" aria-modal="true" aria-labelledby="utility-title"><div id="utility-icon" class="panel-icon" aria-hidden="true"></div><h2 id="utility-title"></h2><div id="utility-content"></div><button id="utility-close" type="button" class="primary-button">돌아가기</button></section></div>
-      <div id="quit-overlay" class="overlay" hidden><section class="modal quit-modal" role="dialog" aria-modal="true" aria-labelledby="quit-title"><div class="panel-icon" aria-hidden="true"><span data-game-icon="pocket"></span></div><h2 id="quit-title">정말로 게임을 마칠까요?</h2><p class="modal-lead">다시 찾아오면 보관한 점수와 힌트 기록을 확인할 수 있어요.</p><div class="return-actions"><button id="quit-yes" type="button" class="return-button">예, 마칠게요</button><button id="quit-no" type="button" class="return-button">아니요, 계속할게요</button></div></section></div>
+      <div id="quit-overlay" class="overlay" hidden><section class="modal quit-modal" role="dialog" aria-modal="true" aria-labelledby="quit-title"><div class="panel-icon" aria-hidden="true"><span data-game-icon="pocket"></span></div><h2 id="quit-title">정말로 게임을 마칠까요?</h2><p class="modal-lead">게임을 마치면 타이틀 화면으로 돌아가요.</p><div class="return-actions"><button id="quit-yes" type="button" class="return-button">예, 마칠게요</button><button id="quit-no" type="button" class="return-button">아니요, 계속할게요</button></div></section></div>
       <div id="storage-warning" class="storage-warning" hidden>이 브라우저에서는 기록을 저장할 수 없어요. 창을 닫으면 기록이 사라져요.</div>
     </div>
   </main>
@@ -239,7 +239,7 @@
   <link rel="stylesheet" href="./opening-v246.css?v249">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v273').catch(async error => {
+    import('./js/app.js?v274').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

@@ -1612,16 +1612,15 @@ function cancelQuit(){
 }
 function quitExpedition(){
  if(!quitOpen)return;
- trackRunScore();persistJourney();clearInput();cinemaImages?.movies?.pause();
+ trackRunScore();persistJourney();
  if(arcadeMode==='challenge')recordArcadeResult(true);
- if(publicGame&&!arcadeMode){
-  cancelQuit();prepareAquarium();game=null;setState('title');
-  return;
+ quitOpen=false;quitScreen=null;
+ closeExtra('quit-overlay');
+ if(trial){
+  trial=false;storage=normalStorage;
+  history.replaceState(history.state,'',location.pathname);
  }
- setState('closed');document.title='게임 종료';
- // A directly opened browser tab may reject close(); leave no game page behind.
- try{window.close();}catch{}
- setTimeout(()=>{if(!window.closed)location.replace('about:blank');},100);
+ returnToArcadeTitle();
 }
 $('utility-close').addEventListener('click',closeUtilityFromControl);
 $('quit-no').addEventListener('click',cancelQuit);
@@ -1665,9 +1664,9 @@ function trapModalFocus(event){
 function frame(timestamp) {
   const dt=lastFrame?Math.min(65,Math.max(0,(timestamp-lastFrame)/1000)):0;
   lastFrame=isMonastery()?Math.max(lastFrame,timestamp):timestamp;
-  if(!['help','paused','panel','closed','countdown','city-summary','result','failed','stopped'].includes(state))animationTime+=dt;
+  if(!['help','paused','panel','countdown','city-summary','result','failed','stopped'].includes(state))animationTime+=dt;
   if(state==='naming'&&nameMotion)nameMotion.draw(dt);
-  if(!renderer||ARCADE_SCREENS.has(state)||['title','loading','select','naming','stage','closed'].includes(state)){requestAnimationFrame(frame);return;}
+  if(!renderer||ARCADE_SCREENS.has(state)||['title','loading','select','naming','stage'].includes(state)){requestAnimationFrame(frame);return;}
   layout.prepare(game,activePlace);
   if(state==='tutorial'&&playLesson){if(!document.hidden)renderPlayTutorial(Math.min(dt,.2));requestAnimationFrame(frame);return;}
   if(state==='exchange'&&!homeConfirmOpen){
@@ -1683,7 +1682,7 @@ function frame(timestamp) {
   }else if(state==='playing'&&!homeConfirmOpen){
     updatePlay(dt);if(arcadeMode)syncArcadeCoins();hud();
   }
-  renderer.draw(game,character,animationTime,['help','paused','panel','closed','countdown'].includes(state)||(['failed','stopped'].includes(state)&&!isMuseum())?0:dt,isCinema()?state==='playing'&&!homeConfirmOpen&&!document.hidden:state==='playing');
+  renderer.draw(game,character,animationTime,['help','paused','panel','countdown'].includes(state)||(['failed','stopped'].includes(state)&&!isMuseum())?0:dt,isCinema()?state==='playing'&&!homeConfirmOpen&&!document.hidden:state==='playing');
   layout.present(game,activePlace,dt);
   if(isPursuit())renderer.presentZoom(game);
   const status=$('camera-status');status.hidden=!(isMuseum()&&game?.freezeLeft>0&&!game.ended);if(!status.hidden)status.textContent=`Ⅱ 몬스터만 정지 ${game.freezeLeft.toFixed(1)}초`;
