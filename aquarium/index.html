@@ -14,7 +14,7 @@
   <aside class="desktop-note" aria-hidden="true"><div class="brand-mark">P<span>●</span>B</div><span>PLAY THE BOOK</span><p>책 너머의 세상으로<br>함께 떠나요.</p><div class="desktop-keys">방향키 이동 · SPACE 빛 발사</div></aside>
   <main id="viewport">
     <div id="app" data-screen="title">
-      <div id="game-viewport" hidden><div id="game-surface"><canvas id="ocean" width="780" height="1688" aria-label="수족관 게임 화면"></canvas><div id="cinema-choices" class="cinema-choice-layer" hidden aria-label="영화 제목 보기"></div><div id="ai-tunes" hidden aria-label="생성 조건"><button type="button" data-ch="0" data-level="0"></button><button type="button" data-ch="0" data-level="1"></button><button type="button" data-ch="0" data-level="2"></button><button type="button" data-ch="1" data-level="0"></button><button type="button" data-ch="1" data-level="1"></button><button type="button" data-ch="1" data-level="2"></button></div></div></div>
+      <div id="game-viewport" hidden><div id="hospital-overlay"></div><div id="game-surface"><canvas id="ocean" width="780" height="1688" aria-label="수족관 게임 화면"></canvas><div id="cinema-choices" class="cinema-choice-layer" hidden aria-label="영화 제목 보기"></div><div id="ai-tunes" hidden aria-label="생성 조건"><button type="button" data-ch="0" data-level="0"></button><button type="button" data-ch="0" data-level="1"></button><button type="button" data-ch="0" data-level="2"></button><button type="button" data-ch="1" data-level="0"></button><button type="button" data-ch="1" data-level="1"></button><button type="button" data-ch="1" data-level="2"></button></div></div></div>
       <div class="frame-line" aria-hidden="true"></div>
       <section id="loading" class="screen loading-screen" hidden>
         <div class="loading-bubble">◌</div><h1>수족관을 준비하고 있어요</h1><p id="loading-note">게임을 불러오는 중…</p>
@@ -237,9 +237,10 @@
   <link rel="stylesheet" href="./css/arcade-rules.css?v268">
   <link rel="stylesheet" href="./place-entry-v246.css?v268">
   <link rel="stylesheet" href="./opening-v246.css?v249">
+  <link rel="stylesheet" href="./css/hospital.css?v295">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v294').catch(async error => {
+    import('./js/app.js?v295').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

@@ -1,3 +1,4 @@
+import {HospitalGame} from './hospital-core.js?v295';
 import {PursuitGame} from './pursuit-game.js?v252';
 import {PostalGame,postalDepartureMountTime} from './postal-core.js?v294';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
@@ -5,12 +6,12 @@ import {CinemaGame} from './cinema-core.js?v268';
 import {GymGame} from './gym-core.js?v268';
 import {DataCenterGame} from './datacenter-core.js?v268';
 import {ConservationGame,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js?v268';
-import {observeTutorial} from './tutorial-input.js?v268';
+import {observeTutorial} from './tutorial-input.js?v295';
 import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
 import {GardenGame} from './garden-core.js?v268';
 import {DONORS,gardenBugPose} from './garden-care.js';
 import {extendExamples} from './tutorial-examples.js?v=156';
-import {groupTutorial} from './tutorial-pages.js?v270';
+import {groupTutorial} from './tutorial-pages.js?v295';
 // Isolated demonstrations. Inputs call the production game rules; no journey or storage access.
 import {AquariumGame} from './core.js';
 import {MuseumGame} from './museum-core.js';
@@ -34,7 +35,7 @@ import {AITutorial} from './ai-tutorial.js';
 import {MonasteryGame,LANTERN_ROUTE,TEMPLE_BELLS,bellPassage} from './monastery-core.js?v228';
 import {awardClue} from './clue-order.js';
 
-export const TUTORIAL_PLACES=['aquarium','museum','history','exchange','temple','robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit','postal'];
+export const TUTORIAL_PLACES=['aquarium','museum','history','exchange','temple','robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit','postal','hospital'];
 export class PlayTutorial{
  constructor(game,titles){this.game=game;this.titles=titles;this.total=titles.length;this.seq=[];this.i=0;this.age=0;this.ageHere=0;this.step=0;this.caption='';this.control='';this.done=false;this.fade=0;this.events=[];game.onEvent=e=>{this.events.push(e);this.onEvent?.(e);};}
  get title(){return this.titles[this.step];}
@@ -519,5 +520,26 @@ function postal(characterId){
   .hold(3,'두 번째 마을에서도 배달지를 찾아가요.',.7);
  return t;
 }
-const factories={postal,pursuit,memory,cinema,gym,cityhall,datacenter,conservation,photo,garden,monastery,detective,aquarium,museum,history,exchange,temple,robot,space,writer,language,newspaper,dream,literature,zoo,dessert};
+function hospital(characterId){
+ const runPlan=[14,38,52].map(seed=>({counts:[3,3,3],seed}));
+ const g=new HospitalGame({runPlan,characterId});
+ const t=new PlayTutorial(g,['병원을 돌며 동물 세기','숫자 입력과 결과 확인']);
+ t.input(0,'방향키로 복도를 따라 걸으며 동물을 살펴봐요.',1.3,{x:-1},'←')
+  .input(0,'방과 복도에 있는 세 종류의 동물을 따로 세어요.',.9,{x:1},'→')
+  .hold(0,'강아지·고양이·토끼의 수를 기억해요.',1.4);
+ t.cut(1,'시간이 끝나면 답을 입력해요.',()=>{
+   for(let tick=0;g.phase==='explore'&&tick<=150;tick++)g.update(.2,{});
+  })
+  .still(1,'각 숫자는 0에서 시작해요.',.8)
+  .act(1,'위 화살표로 강아지의 수를 올려요.',()=>g.adjustCount(0,1),'')
+  .still(1,'종류마다 센 수를 맞춰요.',.35)
+  .act(1,'종류마다 센 수를 맞춰요.',()=>g.adjustCount(0,2),'')
+  .still(1,'고양이와 토끼의 수를 맞춰요.',.35)
+  .act(1,'고양이와 토끼의 수를 맞춰요.',()=>{g.adjustCount(1,3);g.adjustCount(2,3);},'')
+  .still(1,'세 종류의 수를 입력하고 제출해요.',.75)
+  .act(1,'제출하면 각 종류의 결과가 나와요.',()=>g.submitCounts(),'')
+  .still(1,'맞힌 종류마다 단서를 한 장 받아요.',1.6);
+ return t;
+}
+const factories={hospital,postal,pursuit,memory,cinema,gym,cityhall,datacenter,conservation,photo,garden,monastery,detective,aquarium,museum,history,exchange,temple,robot,space,writer,language,newspaper,dream,literature,zoo,dessert};
 export function createTutorial(place,character='haru'){if(place==='ai')return observeTutorial(groupTutorial(new AITutorial(),place),place);const f=factories[place];if(!f)throw Error('No tutorial for '+place);return observeTutorial(groupTutorial(extendExamples(f(character),place),place),place);}

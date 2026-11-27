@@ -27,7 +27,8 @@ export const PLACES=Object.freeze([
  {id:'cinema',name:'영화관',playable:true,icon:'cinema',description:'픽셀 영화의 제목을 맞히며 아홉 단서를 모아요.'},
  {id:'memory',name:'기억연구소',playable:true,icon:'memory',description:'그림을 기억해 달라진 곳을 찾고 단서를 모아요.'},
  {id:'pursuit',name:'국제수사본부',playable:true,icon:'pursuit',description:'그림 단서를 보고 세계의 도시를 찾아 범인을 추적해요.'},
- {id:'postal',name:'우체국',playable:true,icon:'postal',description:'마을지도를 기억하고 자전거로 편지를 배달해요.'}
+ {id:'postal',name:'우체국',playable:true,icon:'postal',description:'마을지도를 기억하고 자전거로 편지를 배달해요.'},
+ {id:'hospital',name:'동물병원',playable:true,icon:'hospital',description:'동물병원을 둘러보며 강아지, 고양이, 토끼를 세어요.'},
 ].map(Object.freeze));
 export const placeId=id=>id==='museum'?'art':id;
 export const placeInfo=id=>PLACES.find(p=>p.id===placeId(id))||PLACES[0];
@@ -43,6 +44,7 @@ export function unlockedPlace(journey={}){
 }
 export const replayPlaces=journey=>PLACES.slice(0,PLACES.findIndex(p=>p.id===unlockedPlace(journey))+1).filter(p=>p.playable);
 const shapes={
+ hospital:'<path d="M8 17V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12M8 14H5v18h26V14h-3M15 32v-8h6v8M14 10h8m-4-4v8"/>',
  postal:'<rect x="4" y="9" width="32" height="22" rx="3"/><path d="m5 11 15 11 15-11M5 29l10-9m20 9-10-9"/>',
  pursuit:'<circle cx="18" cy="21" r="13"/><path d="M6 17h24M6 25h24M18 8c-8 5-8 21 0 26 8-5 8-21 0-26M29 11l6-7m0 0v7m0-7h-7"/>',
  memory:'<rect x="5" y="6" width="27" height="26" rx="3"/><path d="m10 25 6-7 5 5m-11-12h13"/><circle cx="27" cy="26" r="6"/><path d="m31 31 5 5"/>',

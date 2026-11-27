@@ -1,0 +1,201 @@
+.hospital-mode #game-ui .flash-control,
+.hospital-mode #game-ui #field-actions {
+  display: none;
+}
+
+.hospital-mode:has(.vet-interface:not([hidden])) #dpad {
+  visibility: hidden;
+}
+
+.vet-interface {
+  position: absolute;
+  z-index: 14;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px 18px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #355953;
+  color: #254742;
+  touch-action: pan-y;
+}
+
+.vet-interface[hidden],
+.vet-panel[hidden] {
+  display: none;
+}
+
+.vet-panel {
+  width: min(100%, 332px);
+  padding: 18px 20px;
+  border: 1px solid #c8ddd4;
+  border-radius: 18px;
+  background: #fcfffc;
+  box-shadow: 0 14px 34px #153b3d46;
+}
+
+.vet-panel h2 {
+  margin: 0 0 12px;
+  font-size: 21px;
+  line-height: 1.45;
+  font-weight: 850;
+  letter-spacing: -.06em;
+}
+
+.vet-count-fields {
+  display: grid;
+  gap: 7px;
+}
+
+.vet-count-row {
+  min-height: 91px;
+  padding: 1px 7px 1px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  border: 1px solid #d9e7e1;
+  border-radius: 12px;
+  background: #f5faf7;
+}
+
+.vet-count-row.is-selected {
+  border-color: #458c80;
+  background: #eaf7f1;
+}
+
+.vet-species-name {
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.vet-stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vet-count-value {
+  width: 63px;
+  min-height: 57px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #c7ded4;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 31px;
+  font-weight: 850;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.vet-step-buttons {
+  display: grid;
+  gap: 3px;
+}
+
+.vet-step-buttons button {
+  width: 54px;
+  height: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #b7d6cb;
+  border-radius: 8px;
+  background: #e6f4eb;
+  color: #245f55;
+  touch-action: manipulation;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.vet-step-buttons button:active:not(:disabled) {
+  transform: none;
+  background: #cbeadd;
+}
+
+.vet-key-tip {
+  display: none;
+  margin: 9px 0 0;
+  text-align: center;
+  color: #49685e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .vet-key-tip {
+    display: block;
+  }
+}
+
+.vet-primary {
+  width: 100%;
+  min-height: 47px;
+  margin: 13px 0 0;
+  padding: 8px 14px;
+  border-radius: 11px;
+  background: #286d61;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  touch-action: manipulation;
+}
+
+.vet-interface :where(button, [role="spinbutton"]):focus-visible {
+  outline: 3px solid #257c79;
+  outline-offset: 2px;
+}
+
+.vet-report-list {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.vet-report-row {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 54px 1fr 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid #e5eae5;
+  border-radius: 10px;
+  background: #f7f9f6;
+}
+
+.vet-report-answer {
+  color: #45645c;
+  font-size: 13px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.vet-report-mark {
+  justify-self: end;
+  padding: 3px 5px;
+  border-radius: 6px;
+  background: #f6e7e2;
+  color: #914434;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.vet-report-row.is-correct .vet-report-mark {
+  background: #dff2e8;
+  color: #24644f;
+}
+
+.vet-rewards {
+  margin: 13px 0 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+}

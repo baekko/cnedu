@@ -1,4 +1,4 @@
-import {PLACES,placeInfo,placeIcon} from './places.js?v268';
+import {PLACES,placeInfo,placeIcon} from './places.js?v295';
 import {icon} from './icons.js?v245';
 
 export const HEADER_ACTIONS=Object.freeze([

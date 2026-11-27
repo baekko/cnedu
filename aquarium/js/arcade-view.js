@@ -1,8 +1,8 @@
 import {CHARACTERS} from './config.js';
 import {icon} from './icons.js?v245';
-import {placeIcon,placeInfo} from './places.js?v268';
-import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v268';
-import {arcadeMenuButton} from './expedition-shell.js?v268';
+import {placeIcon,placeInfo} from './places.js?v295';
+import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v295';
+import {arcadeMenuButton} from './expedition-shell.js?v295';
 
 export const ARCADE_SCREENS=new Set(['arcade-choice','arcade-map','arcade-records','arcade-result']);
 const root=()=>document.getElementById('arcade-screen');

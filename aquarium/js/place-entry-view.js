@@ -1,5 +1,5 @@
-import {PLACES,placeIcon} from './places.js?v268';
-import {placeEntryArt} from './place-entry-art.js?v268';
+import {PLACES,placeIcon} from './places.js?v295';
+import {placeEntryArt} from './place-entry-art.js?v295';
 
 function showObject(figure, source, place){
  const showFallback=()=>{figure.innerHTML=`<span class="stage-entry-fallback">${placeIcon(place.id)}</span>`;};
