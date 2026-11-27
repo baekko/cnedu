@@ -41,8 +41,8 @@ function bicycleRegion(image, columns, first = 0, cell = BICYCLE_CELL) {
 async function loadBicyclePoses(characterId) {
   if (characterId === 'haru') {
     const [sideMount, sideRide, axisMount, axisRide] = await Promise.all([
-      image('./assets/postal/haru-v278-side-mount.webp'),
-      image('./assets/postal/haru-v278-side-ride.webp'),
+      image('./assets/postal/haru-v279-side-mount.webp'),
+      image('./assets/postal/haru-v279-side-ride.webp'),
       image('./assets/postal/haru-axis-mount.webp?v263'),
       image('./assets/postal/haru-v277-axis-ride.webp'),
     ]);
@@ -53,7 +53,7 @@ async function loadBicyclePoses(characterId) {
       axisRide: bicycleRegion(axisRide, 8),
     };
   }
-  const atlas = await image(`./assets/postal/${characterId}-v278-bicycle.webp`);
+  const atlas = await image(`./assets/postal/${characterId}-v279-bicycle.webp`);
   return {
     sideMount: bicycleRegion(atlas, 8, 0, COURIER_CELL),
     sideRide: bicycleRegion(atlas, 8, 16, COURIER_CELL),
