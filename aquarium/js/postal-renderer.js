@@ -13,6 +13,8 @@ const BICYCLE_DRAW_SIZE = 192 / 1.8;
 const SIDE_FRAMES = 16;
 const AXIS_MOUNT_FRAMES = 8;
 const AXIS_RIDE_FRAMES = 16;
+const DISMOUNT_FRAMES = 8;
+const DISMOUNT_TILE = 88;
 // All bicycle poses and the parked bicycle register to the same source point.
 const BICYCLE_ANCHOR = [155 / 256, 205 / 256];
 const SPRITE_SCALE = .78;
@@ -36,9 +38,11 @@ function image(url) {
 }
 
 async function loadBicyclePoses(characterId) {
-  const imageAtlas = await image(`./assets/postal/${characterId}-v281-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v283-bicycle.webp`);
   const region = first => ({image: imageAtlas, first});
   return {
+    sideDismount: region(DISMOUNT_TILE),
+    axisDismount: region(DISMOUNT_TILE + DISMOUNT_FRAMES),
     sideMount: region(0),
     sideRide: region(SIDE_FRAMES),
     axisMount: region(2 * SIDE_FRAMES),
@@ -235,24 +239,25 @@ function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCA
   const up = Number(direction === 'up');
   const poses = assets.bikePoses;
   const side = direction === 'left' || direction === 'right';
-  const dismount = mode === 'dismount';
   let region, frame;
   if (mode === 'bike') {
     region = side ? poses.sideBike : poses.axisBike;
     frame = up;
+  } else if (mode === 'dismount') {
+    region = side ? poses.sideDismount : poses.axisDismount;
+    frame = (side ? 0 : up * DISMOUNT_FRAMES) + frameAt(DISMOUNT_FRAMES);
   } else if (mode === 'ride') {
     region = side ? poses.sideRide : poses.axisRide;
     frame = side ? frameAt(SIDE_FRAMES) : up * AXIS_RIDE_FRAMES + frameAt(AXIS_RIDE_FRAMES);
   } else if (side) {
     const ends = POSTAL_SIDE_MOUNT_FRAME_ENDS;
-    const time = (dismount ? 1 - progress : progress) * ends.at(-1);
+    const time = progress * ends.at(-1);
     const next = ends.findIndex(end => time < end);
     region = poses.sideMount;
     frame = next < 0 ? ends.length - 1 : next;
   } else {
-    const step = frameAt(AXIS_MOUNT_FRAMES);
     region = poses.axisMount;
-    frame = up * AXIS_MOUNT_FRAMES + (dismount ? AXIS_MOUNT_FRAMES - 1 - step : step);
+    frame = up * AXIS_MOUNT_FRAMES + frameAt(AXIS_MOUNT_FRAMES);
   }
   drawBicycleCell(c, region, frame, direction, x, y, scale);
 }

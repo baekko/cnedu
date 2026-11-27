@@ -1,6 +1,6 @@
 import {connectTitleModes,showStartupError} from './opening.js?v254';
 import {PostalGame,POSTAL} from './postal-core.js?v281';
-import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v281';
+import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v283';
 import {PostalUI,syncPostalStats} from './postal-ui.js?v268';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
