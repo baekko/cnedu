@@ -1,17 +1,18 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {spriteAnchor} from './layout.js';
-import {drawPlayerAction,loadPlayerActions} from './player-actions.js';
-import {POSTAL_BIKE_STANDS,POSTAL_SIDE_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v276';
+import {POSTAL_BIKE_STANDS,POSTAL_SIDE_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v281';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
 
 const BICYCLE_CELL = 160;
-const COURIER_CELL = 224;
+const BICYCLE_TILE = 224;
+const BICYCLE_COLUMNS = 8;
 const BICYCLE_DRAW_SIZE = 192 / 1.8;
 const SIDE_FRAMES = 16;
-const AXIS_FRAMES = 8;
+const AXIS_MOUNT_FRAMES = 8;
+const AXIS_RIDE_FRAMES = 16;
 // All bicycle poses and the parked bicycle register to the same source point.
 const BICYCLE_ANCHOR = [155 / 256, 205 / 256];
 const SPRITE_SCALE = .78;
@@ -34,31 +35,16 @@ function image(url) {
   });
 }
 
-function bicycleRegion(image, columns, first = 0, cell = BICYCLE_CELL) {
-  return {image, columns, first, cell};
-}
-
 async function loadBicyclePoses(characterId) {
-  if (characterId === 'haru') {
-    const [sideMount, sideRide, axisMount, axisRide] = await Promise.all([
-      image('./assets/postal/haru-v280-side-mount.webp'),
-      image('./assets/postal/haru-v280-side-ride.webp'),
-      image('./assets/postal/haru-axis-mount.webp?v263'),
-      image('./assets/postal/haru-v277-axis-ride.webp'),
-    ]);
-    return {
-      sideMount: bicycleRegion(sideMount, 4),
-      sideRide: bicycleRegion(sideRide, 4),
-      axisMount: bicycleRegion(axisMount, 8),
-      axisRide: bicycleRegion(axisRide, 8),
-    };
-  }
-  const atlas = await image(`./assets/postal/${characterId}-v280-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v281-bicycle.webp`);
+  const region = first => ({image: imageAtlas, first});
   return {
-    sideMount: bicycleRegion(atlas, 8, 0, COURIER_CELL),
-    sideRide: bicycleRegion(atlas, 8, 16, COURIER_CELL),
-    axisMount: bicycleRegion(atlas, 8, 32, COURIER_CELL),
-    axisRide: bicycleRegion(atlas, 8, 48, COURIER_CELL),
+    sideMount: region(0),
+    sideRide: region(SIDE_FRAMES),
+    axisMount: region(2 * SIDE_FRAMES),
+    axisRide: region(2 * SIDE_FRAMES + 2 * AXIS_MOUNT_FRAMES),
+    sideBike: region(2 * SIDE_FRAMES + 2 * AXIS_MOUNT_FRAMES + 2 * AXIS_RIDE_FRAMES),
+    axisBike: region(2 * SIDE_FRAMES + 2 * AXIS_MOUNT_FRAMES + 2 * AXIS_RIDE_FRAMES + 1),
   };
 }
 
@@ -66,19 +52,15 @@ let scenery;
 export async function loadPostalAssets(character) {
   scenery ||= Promise.all(STREET_ART.map(async key => [key, await image(`./assets/postal/${key}.webp?v265`)]))
     .then(Object.fromEntries).catch(error => { scenery = null; throw error; });
-  const [objects, bikePoses, sideBike, axisBike, idle, walk, actions, mailFrames] = await Promise.all([
+  const [objects, bikePoses, idle, walk, mailFrames] = await Promise.all([
     scenery,
     loadBicyclePoses(character.id),
-    image('./assets/postal/haru-parked-grips.webp'),
-    image('./assets/postal/haru-axis-bike.webp'),
     image(`./assets/hero-v153/${character.id}-idle.webp`),
     image(`./assets/hero-v153/${character.id}-walk.webp`),
-    character.id === 'haru' ? loadPlayerActions({}, character) : null,
-    character.id === 'haru' ? null : image(`./assets/postal/${character.id}-v276-mail.webp`),
+    image(`./assets/postal/${character.id}-v281-mail.webp`),
   ]);
   return {
-    ...objects, ...actions, mailFrames,
-    bikePoses: {...bikePoses, sideBike: bicycleRegion(sideBike, 1), axisBike: bicycleRegion(axisBike, 1)},
+    ...objects, bikePoses, mailFrames,
     [`${character.id}-idle.webp`]: idle, [`${character.id}-walk.webp`]: walk,
   };
 }
@@ -199,43 +181,39 @@ export function paintPostalTerrain(c, village) {
 }
 
 function drawBicycleCell(c, region, frame, direction, x, y, scale) {
-  const {image, columns, first, cell} = region;
+  const {image, first} = region;
   const tile = first + frame;
   const unit = BICYCLE_DRAW_SIZE * scale / BICYCLE_CELL;
-  const padding = (cell - BICYCLE_CELL) / 2;
-  const size = cell * unit;
+  const padding = (BICYCLE_TILE - BICYCLE_CELL) / 2;
+  const size = BICYCLE_TILE * unit;
   c.save();
   c.translate(x, y);
   if (direction === 'left') c.scale(-1, 1);
-  c.drawImage(image, (tile % columns) * cell, Math.floor(tile / columns) * cell, cell, cell,
+  c.drawImage(image, (tile % BICYCLE_COLUMNS) * BICYCLE_TILE,
+    Math.floor(tile / BICYCLE_COLUMNS) * BICYCLE_TILE, BICYCLE_TILE, BICYCLE_TILE,
     -(padding + BICYCLE_ANCHOR[0] * BICYCLE_CELL) * unit,
     -(padding + BICYCLE_ANCHOR[1] * BICYCLE_CELL) * unit, size, size);
   c.restore();
 }
 
+function drawBicycleShadow(c, x, y, direction) {
+  const side = direction === 'left' || direction === 'right';
+  ellipse(c, x, y - 1, side ? 24 : 10, 5, '#47463845');
+}
+
 const LETTER_INSERT_START = .50;
 const LETTER_INSERT_END = .73;
-function drawMail(c, art, character, player, progress) {
-  if (art.mailFrames) {
-    const cell = 256;
-    const frame = progress < .11 || progress >= .88 ? 0 :
-      progress < LETTER_INSERT_START ? 1 : progress < LETTER_INSERT_END ? 2 : 3;
-    const row = Number(player.dir === 'up');
-    const size = ROOM_HERO_SIZE;
-    c.save();
-    spriteAnchor(c, player.x, player.y);
-    c.drawImage(art.mailFrames, frame * cell, row * cell, cell, cell,
-      -size / 2, -size * 53.4 / 56, size, size);
-    c.restore();
-    return;
-  }
-  if (progress < .11 || progress >= .88) {
-    drawExplorer(c, art, character, player);
-    return;
-  }
-  const action = player.dir === 'up' ? 'investigateUp' : 'investigateDown';
-  const frame = progress < .25 ? 0 : progress < LETTER_INSERT_START ? 2 : progress < LETTER_INSERT_END ? 3 : 1;
-  drawPlayerAction(c, art, character, player, action, frame);
+function drawMail(c, art, player, progress) {
+  const cell = 256;
+  const frame = progress < .11 || progress >= .88 ? 0 :
+    progress < LETTER_INSERT_START ? 1 : progress < LETTER_INSERT_END ? 2 : 3;
+  const row = Number(player.dir === 'up');
+  const size = ROOM_HERO_SIZE;
+  c.save();
+  spriteAnchor(c, player.x, player.y);
+  c.drawImage(art.mailFrames, frame * cell, row * cell, cell, cell,
+    -size / 2, -size * 53.4 / 56, size, size);
+  c.restore();
 }
 
 function insertLetter(c, box, progress) {
@@ -264,7 +242,7 @@ function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCA
     frame = up;
   } else if (mode === 'ride') {
     region = side ? poses.sideRide : poses.axisRide;
-    frame = side ? frameAt(SIDE_FRAMES) : up * AXIS_FRAMES + frameAt(AXIS_FRAMES);
+    frame = side ? frameAt(SIDE_FRAMES) : up * AXIS_RIDE_FRAMES + frameAt(AXIS_RIDE_FRAMES);
   } else if (side) {
     const ends = POSTAL_SIDE_MOUNT_FRAME_ENDS;
     const time = (dismount ? 1 - progress : progress) * ends.at(-1);
@@ -272,9 +250,9 @@ function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCA
     region = poses.sideMount;
     frame = next < 0 ? ends.length - 1 : next;
   } else {
-    const step = frameAt(AXIS_FRAMES);
+    const step = frameAt(AXIS_MOUNT_FRAMES);
     region = poses.axisMount;
-    frame = up * AXIS_FRAMES + (dismount ? AXIS_FRAMES - 1 - step : step);
+    frame = up * AXIS_MOUNT_FRAMES + (dismount ? AXIS_MOUNT_FRAMES - 1 - step : step);
   }
   drawBicycleCell(c, region, frame, direction, x, y, scale);
 }
@@ -402,10 +380,17 @@ export class PostalRenderer {
     }
 
     const separateBike = ['walkout', 'approach', 'mail', 'return'].includes(phase);
-    if (separateBike) add(game.bike.x, game.bike.y, () => drawPose(c, art, 'bike', game.bike.dir, 0, game.bike.x, game.bike.y));
+    if (separateBike) {
+      const {x, y, dir} = game.bike;
+      add(x, y, () => {
+        drawBicycleShadow(c, x, y, dir);
+        drawPose(c, art, 'bike', dir, 0, x, y);
+      });
+    }
     add(p.x, p.y + .1, () => {
-      ellipse(c, p.x, p.y - 1, separateBike ? 12 : 24, 5, '#47463845');
-      if (phase === 'mail') drawMail(c, art, character, p, game.poseProgress);
+      if (separateBike) ellipse(c, p.x, p.y - 1, 12, 5, '#47463845');
+      else drawBicycleShadow(c, p.x, p.y, p.dir);
+      if (phase === 'mail') drawMail(c, art, p, game.poseProgress);
       else if (separateBike) drawExplorer(c, art, character, p);
       else if (phase === 'mount' || phase === 'remount') drawPose(c, art, 'mount', p.dir, game.poseProgress, p.x, p.y);
       else if (phase === 'dismount') drawPose(c, art, 'dismount', p.dir, game.poseProgress, p.x, p.y);
