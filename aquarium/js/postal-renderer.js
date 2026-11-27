@@ -1,7 +1,7 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {spriteAnchor} from './layout.js';
-import {POSTAL_BIKE_STANDS,POSTAL_SIDE_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v281';
+import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v281';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
@@ -38,7 +38,7 @@ function image(url) {
 }
 
 async function loadBicyclePoses(characterId) {
-  const imageAtlas = await image(`./assets/postal/${characterId}-v284-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v285-bicycle.webp`);
   const region = first => ({image: imageAtlas, first});
   return {
     sideDismount: region(DISMOUNT_TILE),
@@ -250,11 +250,8 @@ function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCA
     region = side ? poses.sideRide : poses.axisRide;
     frame = side ? frameAt(SIDE_FRAMES) : up * AXIS_RIDE_FRAMES + frameAt(AXIS_RIDE_FRAMES);
   } else if (side) {
-    const ends = POSTAL_SIDE_MOUNT_FRAME_ENDS;
-    const time = progress * ends.at(-1);
-    const next = ends.findIndex(end => time < end);
     region = poses.sideMount;
-    frame = next < 0 ? ends.length - 1 : next;
+    frame = frameAt(SIDE_FRAMES);
   } else {
     region = poses.axisMount;
     frame = up * AXIS_MOUNT_FRAMES + frameAt(AXIS_MOUNT_FRAMES);
