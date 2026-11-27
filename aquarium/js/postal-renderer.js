@@ -1,7 +1,7 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {spriteAnchor} from './layout.js';
-import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v293';
+import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v294';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
@@ -36,7 +36,7 @@ function image(url) {
 }
 
 async function loadBicyclePoses(characterId) {
-  const imageAtlas = await image(`./assets/postal/${characterId}-v293-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v294-bicycle.webp`);
   const region = first => ({image: imageAtlas, first});
   const axisRide = 2 * SIDE_FRAMES + 2 * AXIS_TRANSFER_FRAMES;
   const parked = axisRide + 2 * AXIS_RIDE_FRAMES;
@@ -59,7 +59,7 @@ export async function loadPostalAssets(character) {
     loadBicyclePoses(character.id),
     image(`./assets/hero-v153/${character.id}-idle.webp`),
     image(`./assets/hero-v153/${character.id}-walk.webp`),
-    image(`./assets/postal/${character.id}-v${['haru', 'soi'].includes(character.id) ? 292 : 281}-mail.webp`),
+    image(`./assets/postal/${character.id}-v294-mail.webp`),
   ]);
   return {
     ...objects, bikePoses, mailFrames,
@@ -207,8 +207,7 @@ const LETTER_INSERT_START = .50;
 const LETTER_INSERT_END = .73;
 function drawMail(c, art, player, progress) {
   const cell = 256;
-  const frame = progress < .11 || progress >= .88 ? 0 :
-    progress < LETTER_INSERT_START ? 1 : progress < LETTER_INSERT_END ? 2 : 3;
+  const frame = Math.min(11, Math.max(0, Math.floor(progress * 12)));
   const row = Number(player.dir === 'up');
   const size = ROOM_HERO_SIZE;
   c.save();
