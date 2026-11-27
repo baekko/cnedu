@@ -1,6 +1,6 @@
 import {connectTitleModes,showStartupError} from './opening.js?v254';
-import {PostalGame,POSTAL} from './postal-core.js?v268';
-import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v268';
+import {PostalGame,POSTAL} from './postal-core.js?v271';
+import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v271';
 import {PostalUI,syncPostalStats} from './postal-ui.js?v268';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
@@ -38,7 +38,7 @@ import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
 import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
-import {createTutorial} from './play-tutorials.js?v270';
+import {createTutorial} from './play-tutorials.js?v271';
 import {TutorialFinance} from './tutorial-finance.js?v268';
 import {TutorialChrome} from './tutorial-chrome.js?v268';
 import {TutorialPlayback} from './tutorial-playback.js';

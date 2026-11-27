@@ -1,23 +1,21 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {drawPlayerAction,loadPlayerActions} from './player-actions.js';
-import {POSTAL_BIKE_STANDS,POSTAL_HARU_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v268';
+import {POSTAL_BIKE_STANDS,POSTAL_SIDE_MOUNT_FRAME_ENDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v271';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
 
-const DIRS = ['down', 'up', 'right', 'left'];
-const ACTION_CELL = 144;
-const RIDER_CELL = 192;
-const RIDER_OVERSAMPLE = 1.8;
-const RIDE_FRAMES = 16;
-const MOUNT_FRAMES = 12;
-// The approved sheet and its parked bicycle use the same planted-foot anchor.
-const HARU_MOUNT_ANCHOR = [155 / 256, 205 / 256];
+const BICYCLE_CELL = 160;
+const BICYCLE_DRAW_SIZE = 192 / 1.8;
+const SIDE_FRAMES = 16;
+const AXIS_FRAMES = 8;
+// All bicycle poses and the parked bicycle register to the same source point.
+const BICYCLE_ANCHOR = [155 / 256, 205 / 256];
 const SPRITE_SCALE = .78;
 const LOCKED_CAMERA = {x: 0, y: 0};
 const HOUSE_STYLES = 8;
 const HOUSES = Array.from({length: HOUSE_STYLES * 2}, (_, i) => `house-${i}`);
-const STREET_ART = [...HOUSES, 'office', 'tree', 'recycling', 'mailbox', 'bench', 'parked-bike',
+const STREET_ART = [...HOUSES, 'office', 'tree', 'recycling', 'mailbox', 'bench',
   'village-cats', 'flowers', 'shrubs', 'lamppost'];
 const STREET_SIZES = {
   tree: [77, 78], recycling: [72, 41], bench: [60, 32], cat: [36, 28],
@@ -33,29 +31,52 @@ function image(url) {
   });
 }
 
+function bicycleRegion(image, columns, first = 0) {
+  return {image, columns, first};
+}
+
+async function loadBicyclePoses(characterId) {
+  if (characterId === 'haru') {
+    const [sideMount, sideRide, axisMount, axisRide] = await Promise.all([
+      image('./assets/postal/haru-approved-mount.webp'),
+      image('./assets/postal/haru-side-ride.webp'),
+      image('./assets/postal/haru-axis-mount.webp?v263'),
+      image('./assets/postal/haru-axis-ride.webp?v263'),
+    ]);
+    return {
+      sideMount: bicycleRegion(sideMount, 4),
+      sideRide: bicycleRegion(sideRide, 4),
+      axisMount: bicycleRegion(axisMount, 8),
+      axisRide: bicycleRegion(axisRide, 8),
+    };
+  }
+  const atlas = await image(`./assets/postal/${characterId}-v271-bicycle.webp`);
+  return {
+    sideMount: bicycleRegion(atlas, 8),
+    sideRide: bicycleRegion(atlas, 8, 16),
+    axisMount: bicycleRegion(atlas, 8, 32),
+    axisRide: bicycleRegion(atlas, 8, 48),
+  };
+}
+
 let scenery;
 export async function loadPostalAssets(character) {
   scenery ||= Promise.all(STREET_ART.map(async key => [key, await image(`./assets/postal/${key}.webp?v265`)]))
     .then(Object.fromEntries).catch(error => { scenery = null; throw error; });
-  const isHaru = character.id === 'haru';
-  const [objects, rider, mail, idle, walk, haruMount, haruMountBike, haruSideRide, haruAxisRide,
-    haruAxisMount, haruAxisBike, haruActions] = await Promise.all([
+  const [objects, bikePoses, sideBike, axisBike, idle, walk, actions] = await Promise.all([
     scenery,
-    isHaru ? null : image(`./assets/postal/${character.id}-courier.webp?v258`),
-    isHaru ? null : image(`./assets/postal/${character.id}-mail.webp?v258`),
+    loadBicyclePoses(character.id),
+    image('./assets/postal/haru-parked-grips.webp'),
+    image('./assets/postal/haru-axis-bike.webp'),
     image(`./assets/hero-v153/${character.id}-idle.webp`),
     image(`./assets/hero-v153/${character.id}-walk.webp`),
-    isHaru ? image('./assets/postal/haru-approved-mount.webp') : null,
-    isHaru ? image('./assets/postal/haru-parked-grips.webp') : null,
-    isHaru ? image('./assets/postal/haru-side-ride.webp') : null,
-    isHaru ? image('./assets/postal/haru-axis-ride.webp?v263') : null,
-    isHaru ? image('./assets/postal/haru-axis-mount.webp?v263') : null,
-    isHaru ? image('./assets/postal/haru-axis-bike.webp') : null,
-    isHaru ? loadPlayerActions({}, character) : null,
+    loadPlayerActions({}, character),
   ]);
-  return {...objects, rider, mail, haruMount, haruMountBike, haruSideRide, haruAxisRide,
-    haruAxisMount, haruAxisBike, ...haruActions,
-    [`${character.id}-idle.webp`]: idle, [`${character.id}-walk.webp`]: walk};
+  return {
+    ...objects, ...actions,
+    bikePoses: {...bikePoses, sideBike: bicycleRegion(sideBike, 1), axisBike: bicycleRegion(axisBike, 1)},
+    [`${character.id}-idle.webp`]: idle, [`${character.id}-walk.webp`]: walk,
+  };
 }
 
 function panel(c, x, y, width, height, fill, radius = 7) {
@@ -173,20 +194,21 @@ export function paintPostalTerrain(c, village) {
   }
 }
 
-function drawHaruCell(c, asset, columns, frame, direction, x, y, scale) {
-  const cell = asset.width / columns;
-  const size = RIDER_CELL * scale / RIDER_OVERSAMPLE;
+function drawBicycleCell(c, region, frame, direction, x, y, scale) {
+  const {image, columns, first} = region;
+  const tile = first + frame;
+  const size = BICYCLE_DRAW_SIZE * scale;
   c.save();
   c.translate(x, y);
   if (direction === 'left') c.scale(-1, 1);
-  c.drawImage(asset, (frame % columns) * cell, Math.floor(frame / columns) * cell, cell, cell,
-    -HARU_MOUNT_ANCHOR[0] * size, -HARU_MOUNT_ANCHOR[1] * size, size, size);
+  c.drawImage(image, (tile % columns) * BICYCLE_CELL, Math.floor(tile / columns) * BICYCLE_CELL,
+    BICYCLE_CELL, BICYCLE_CELL, -BICYCLE_ANCHOR[0] * size, -BICYCLE_ANCHOR[1] * size, size, size);
   c.restore();
 }
 
 const LETTER_INSERT_START = .50;
 const LETTER_INSERT_END = .73;
-function drawHaruMail(c, art, character, player, progress) {
+function drawMail(c, art, character, player, progress) {
   if (progress < .11 || progress >= .88) {
     drawExplorer(c, art, character, player);
     return;
@@ -211,56 +233,30 @@ function insertLetter(c, box, progress) {
 }
 
 function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCALE) {
-  const facing = DIRS.indexOf(direction);
   const frameAt = count => Math.min(count - 1, Math.max(0, Math.floor(progress * count)));
-  if (assets.haruMount && facing >= 2 && mode !== 'mail') {
-    if (mode === 'bike') {
-      drawHaruCell(c, assets.haruMountBike, 1, 0, direction, x, y, scale);
-    } else if (mode === 'ride') {
-      drawHaruCell(c, assets.haruSideRide, 4, frameAt(RIDE_FRAMES), direction, x, y, scale);
-    } else {
-      const ends = POSTAL_HARU_MOUNT_FRAME_ENDS;
-      const time = (mode === 'dismount' ? 1 - progress : progress) * ends.at(-1);
-      const next = ends.findIndex(end => time < end);
-      drawHaruCell(c, assets.haruMount, 4, next < 0 ? ends.length - 1 : next, direction, x, y, scale);
-    }
-    return;
+  const up = Number(direction === 'up');
+    const poses = assets.bikePoses;
+  const side = direction === 'left' || direction === 'right';
+  const dismount = mode === 'dismount';
+  let region, frame;
+  if (mode === 'bike') {
+    region = side ? poses.sideBike : poses.axisBike;
+    frame = up;
+  } else if (mode === 'ride') {
+    region = side ? poses.sideRide : poses.axisRide;
+    frame = side ? frameAt(SIDE_FRAMES) : up * AXIS_FRAMES + frameAt(AXIS_FRAMES);
+  } else if (side) {
+    const ends = POSTAL_SIDE_MOUNT_FRAME_ENDS;
+    const time = (dismount ? 1 - progress : progress) * ends.at(-1);
+    const next = ends.findIndex(end => time < end);
+    region = poses.sideMount;
+    frame = next < 0 ? ends.length - 1 : next;
+  } else {
+    const step = frameAt(AXIS_FRAMES);
+    region = poses.axisMount;
+    frame = up * AXIS_FRAMES + (dismount ? AXIS_FRAMES - 1 - step : step);
   }
-  if (assets.haruAxisRide && facing < 2 && mode !== 'mail') {
-    if (mode === 'bike') {
-      drawHaruCell(c, assets.haruAxisBike, 1, facing, direction, x, y, scale);
-    } else if (mode === 'ride') {
-      drawHaruCell(c, assets.haruAxisRide, 8, facing * 8 + frameAt(8), direction, x, y, scale);
-    } else {
-      const frame = frameAt(8);
-      drawHaruCell(c, assets.haruAxisMount, 8, facing * 8 + (mode === 'dismount' ? 7 - frame : frame),
-        direction, x, y, scale);
-    }
-    return;
-  }
-  if (mode === 'bike' || mode === 'mail') {
-    const parked = mode === 'bike';
-    const asset = parked ? assets['parked-bike'] : assets.mail;
-    const row = parked ? facing : Number(direction === 'up');
-    const column = parked ? 0 : frameAt(RIDE_FRAMES);
-    const size = ACTION_CELL * scale;
-    c.drawImage(asset, column * ACTION_CELL, row * ACTION_CELL, ACTION_CELL, ACTION_CELL,
-      x - 72 * scale, y - 120 * scale, size, size);
-    return;
-  }
-
-  const riding = mode === 'ride';
-  const row = Math.min(facing, 2) + (riding ? 0 : 3);
-  const frame = frameAt(riding ? RIDE_FRAMES : MOUNT_FRAMES);
-  const column = mode === 'dismount' ? MOUNT_FRAMES - 1 - frame : frame;
-  const pixelScale = scale / RIDER_OVERSAMPLE;
-  const size = RIDER_CELL * pixelScale;
-  c.save();
-  c.translate(x, y);
-  if (direction === 'left') c.scale(-1, 1);
-  c.drawImage(assets.rider, column * RIDER_CELL, row * RIDER_CELL, RIDER_CELL, RIDER_CELL,
-    -96 * pixelScale, -164 * pixelScale, size, size);
-  c.restore();
+  drawBicycleCell(c, region, frame, direction, x, y, scale);
 }
 
 function boundsInView({x, y}, camera) {
@@ -356,7 +352,7 @@ export class PostalRenderer {
           ellipse(c, x, y, 10, 3.9, '#ccb985');
         }
         sprite(c, art.mailbox, x, y + 1, 18, 26);
-        if (art.playerActions && phase === 'mail' && game.delivery?.house.id === house.id) {
+        if (phase === 'mail' && game.delivery?.house.id === house.id) {
           insertLetter(c, house.box, game.poseProgress);
         }
       });
@@ -389,8 +385,7 @@ export class PostalRenderer {
     if (separateBike) add(game.bike.x, game.bike.y, () => drawPose(c, art, 'bike', game.bike.dir, 0, game.bike.x, game.bike.y));
     add(p.x, p.y + .1, () => {
       ellipse(c, p.x, p.y - 1, separateBike ? 12 : 24, 5, '#47463845');
-      if (phase === 'mail' && art.playerActions) drawHaruMail(c, art, character, p, game.poseProgress);
-      else if (phase === 'mail') drawPose(c, art, 'mail', p.dir, game.poseProgress, p.x, p.y);
+      if (phase === 'mail') drawMail(c, art, character, p, game.poseProgress);
       else if (separateBike) drawExplorer(c, art, character, p);
       else if (phase === 'mount' || phase === 'remount') drawPose(c, art, 'mount', p.dir, game.poseProgress, p.x, p.y);
       else if (phase === 'dismount') drawPose(c, art, 'dismount', p.dir, game.poseProgress, p.x, p.y);
@@ -406,7 +401,7 @@ export class PostalRenderer {
     const preview = scale / SPRITE_SCALE;
     const distanceToBike = 46;
     const walkTime = distanceToBike / POSTAL_WALK_SPEED;
-    const mountTime = postalDepartureMountTime(character.id, 'left');
+    const mountTime = postalDepartureMountTime('left');
     const departure = walkTime + mountTime;
     const t = time % (departure + 1.6);
     panel(c, 19, 77, 142, 27, '#e7dac1', 12);

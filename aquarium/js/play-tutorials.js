@@ -1,5 +1,5 @@
 import {PursuitGame} from './pursuit-game.js?v252';
-import {PostalGame,postalDepartureMountTime} from './postal-core.js?v268';
+import {PostalGame,postalDepartureMountTime} from './postal-core.js?v271';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
 import {CinemaGame} from './cinema-core.js?v268';
 import {GymGame} from './gym-core.js?v268';
@@ -492,7 +492,7 @@ function postal(characterId){
  const main=g.village.roads[0];
  const alley=g.village.roads.filter(road=>road.x1===road.x2&&road.y1===main.y1&&road.y2===house.stop.y)
   .sort((a,b)=>Math.abs(a.x1-house.stop.x)-Math.abs(b.x1-house.stop.x))[0];
- const departureTime=g.motion.duration+postalDepartureMountTime(characterId,g.bike.dir);
+ const departureTime=g.motion.duration+postalDepartureMountTime(g.bike.dir);
  t.until(0,'자전거에 타면 마을지도를 확인할 수 있어요.',()=>g.canMove,{},Math.max(2,departureTime+.2))
   .act(0,'마을지도를 펴요.',()=>g.showMap(),'마을지도')
   .hold(0,'빨간 핀을 보고 골목과 집의 순서를 기억해요.',2.5)

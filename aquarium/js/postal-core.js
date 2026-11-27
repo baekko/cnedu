@@ -18,20 +18,24 @@ export const POSTAL = Object.freeze({
 
 export const POSTAL_VIEW = Object.freeze({width: 390, height: 500, top: 170});
 export const POSTAL_POSE_TIME = Object.freeze({mount: .82, dismount: .74, mail: .7});
-export const POSTAL_HARU_MOUNT_FRAME_ENDS = Object.freeze([12, 21, 30, 40, 49, 58, 68, 78, 87, 96, 106, 115, 124, 135, 147, 181]);
+export const POSTAL_SIDE_MOUNT_FRAME_ENDS = Object.freeze([12, 21, 30, 40, 49, 58, 68, 78, 87, 96, 106, 115, 124, 135, 147, 181]);
 export const POSTAL_WALK_SPEED = 118;
 export const POSTAL_PEDAL_DISTANCE = 171;
 export const POSTAL_MAIL_SLOT_Y = -18.4;
 // Standing foot anchor relative to the bicycle. The atlas uses these same
 // offsets in the first boarding frame and the last dismount frame.
-export const POSTAL_BIKE_STANDS = {down: [8, -9], up: [-8, -6], right: [-10, 3], left: [10, 3]};
-const HARU_AXIS_STANDS = {down: [20.7, -3.7], up: [-21.2, -3.7]};
-// The canonical reaching pose places Haru's hand on the mailbox slot.
-const HARU_MAIL_STANDS = {up: [-12.1, -1.1], down: [-8.8, -4]};
+export const POSTAL_BIKE_STANDS = {down: [20.7, -3.7], up: [-21.2, -3.7], right: [-10, 3], left: [10, 3]};
+// Player action hand positions registered to the mailbox slot at the normal avatar size.
+const MAIL_STANDS = {
+  haru: {up: [-12.1, -1.1], down: [-8.8, -4]},
+  doyun: {up: [-11.1, 2], down: [-6.2, -4.5]},
+  narin: {up: [-10.9, .5], down: [-8.4, -4.8]},
+  soi: {up: [-12.2, 0], down: [-10.5, -3.3]},
+};
 
-export function postalDepartureMountTime(characterId, direction) {
-  return characterId === 'haru' && (direction === 'left' || direction === 'right')
-    ? POSTAL_HARU_MOUNT_FRAME_ENDS.at(-1) / 100
+export function postalDepartureMountTime(direction) {
+  return direction === 'left' || direction === 'right'
+    ? POSTAL_SIDE_MOUNT_FRAME_ENDS.at(-1) / 100
     : POSTAL_POSE_TIME.mount;
 }
 
@@ -40,9 +44,8 @@ const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 const deliveryPhases = new Set(['park', 'dismount', 'approach', 'mail', 'return', 'remount']);
 const walkingPhases = new Set(['walkout', 'approach', 'return']);
-function besideBike(bike, characterId) {
-  const stand = characterId === 'haru' ? HARU_AXIS_STANDS[bike.dir] : null;
-  const [x, y] = stand || POSTAL_BIKE_STANDS[bike.dir];
+function besideBike(bike) {
+  const [x, y] = POSTAL_BIKE_STANDS[bike.dir];
   return {x: bike.x + x, y: bike.y + y};
 }
 
@@ -150,7 +153,7 @@ export class PostalGame {
     this.player = {...this.village.office.door, dir: 'down', moving: false, walk: 0, pedal: 0, hammerAge: 99};
     this.camera = {x: 0, y: 0};
     this.followCamera(1);
-    const stand = besideBike(this.bike, this.characterId);
+    const stand = besideBike(this.bike);
     this.walkTo('walkout', stand, 'down');
   }
 
@@ -175,7 +178,7 @@ export class PostalGame {
     if (!this.canAct) return false;
     const house = this.nearHouse;
     const side = house.side === 'north' ? 'up' : 'down';
-    const [dx, dy] = this.characterId === 'haru' ? HARU_MAIL_STANDS[side] : [0, side === 'up' ? 11 : -5];
+    const [dx, dy] = MAIL_STANDS[this.characterId]?.[side] ?? [0, side === 'up' ? 11 : -5];
     this.delivery = {house, side, stand: {x: house.box.x + dx, y: house.box.y + dy}};
     this.bike = {x: this.player.x, y: this.player.y, dir: this.player.dir};
     this.queuedMove = null;
@@ -209,14 +212,14 @@ export class PostalGame {
         const phase = this.phase === 'walkout' ? 'mount' : 'remount';
         Object.assign(this.player, this.bike);
         const duration = phase === 'mount'
-          ? postalDepartureMountTime(this.characterId, this.bike.dir)
+          ? postalDepartureMountTime(this.bike.dir)
           : POSTAL_POSE_TIME.mount;
         this.animate(phase, duration);
         break;
       }
       case 'park': this.animate('dismount', POSTAL_POSE_TIME.dismount); break;
       case 'dismount':
-        Object.assign(this.player, besideBike(this.bike, this.characterId));
+        Object.assign(this.player, besideBike(this.bike));
         this.walkTo('approach', post.stand, post.side);
         break;
       case 'approach': this.animate('mail', POSTAL_POSE_TIME.mail, post.stand, post.side); break;
@@ -226,7 +229,7 @@ export class PostalGame {
         this.noticeLeft = 1.28;
         this.noticeWrong = !correct;
         this.onEvent({type: 'postalDelivery', correct});
-        const stand = besideBike(this.bike, this.characterId);
+        const stand = besideBike(this.bike);
         this.walkTo('return', stand, post.side === 'up' ? 'down' : 'up');
         break;
       }
