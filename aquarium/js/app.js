@@ -445,7 +445,7 @@ function arcadeRewardText(text){
  if(!arcadeMode||isPursuit())return text;
  if(isGym())text=text.replace(/카드(?=\s*(?:줍기|를 주우세요))/g,'금화');
  return text.replace(/단서\s*카드|단서/g,'금화')
-  .replace(/(금화\s*(?:\d+|아홉|세|두|한)\s*)장/g,'$1개');
+  .replace(/(금화\s*(?:\d+|아홉|세|두|한)\s*)장(을)?/g,(_,amount,objectParticle)=>amount+(objectParticle?'개를':'개'));
 }
 function focusArcade(){
  document.getElementById('arcade-title')?.focus({preventScroll:true});
