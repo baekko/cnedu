@@ -1,7 +1,9 @@
+import {HOSPITAL} from './hospital-core.js?v298';
+
 // Button-first help shared by the opening explanation and in-game help.
 export const BUTTON_INSTRUCTIONS=Object.freeze({
  hospital:[
-  ['move','30초 동안 동물 세기','방향키로 방과 복도를 오가며 강아지, 고양이, 토끼를 따로 세어요.'],
+  ['move',`${HOSPITAL.roundTime}초 동안 동물 세기`,'방향키로 방과 복도를 오가며 강아지, 고양이, 토끼를 따로 세어요.'],
   ['@↑↓','세 종류의 수 입력','시간이 끝나면 숫자 옆 화살표를 눌러 수를 맞추고 제출해요. 방향키로도 조절할 수 있어요.'],
   ['@3회','세 번 세고 결과 확인','회차마다 동물이 달라져요. 맞힌 종류 하나당 단서 한 장을 받아요.'],
  ],

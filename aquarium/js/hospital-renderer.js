@@ -1,6 +1,6 @@
 import {beginScene, spriteAnchor} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {HOSPITAL_PET_SIZES} from './hospital-core.js?v297';
+import {HOSPITAL_PET_SIZES} from './hospital-core.js?v298';
 import {HOSPITAL_FLOOR, HOSPITAL_VIEW, HOSPITAL_WALL_HEIGHT} from './hospital-layout.js?v297';
 
 const FURNITURE = ['desk','sofa','table','exam','cabinet','sink','treadmill','ramp','markers','bed','tree','plant'];

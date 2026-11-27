@@ -1,10 +1,13 @@
 import {awardClue,normalizeClueRewards,restoreSources} from './clue-order.js';
 import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v297';
 
+const roundTime = 40;
+const roundCount = 3;
+
 export const HOSPITAL = Object.freeze({
-  duration: 90,
-  roundCount: 3,
-  roundTime: 30,
+  duration: roundTime * roundCount,
+  roundCount,
+  roundTime,
   speed: 172,
   flashes: 0,
   answer: '청진기',

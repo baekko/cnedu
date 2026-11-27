@@ -26,7 +26,7 @@ import {SPACE} from './space-core.js';
 import {ROBOT} from './robot-core.js';
 import {PURSUIT,getPursuitCity,normalizePursuitRunPlan} from './pursuit-game.js?v243';
 import {POSTAL,normalizePostalPlan} from './postal-core.js?v268';
-import {HOSPITAL,normalizeHospitalPlan,normalizeHospitalReports} from './hospital-core.js?v295';
+import {HOSPITAL,normalizeHospitalPlan,normalizeHospitalReports} from './hospital-core.js?v298';
 import {unlockedPlace,placeInfo,PLACES} from './places.js?v295';
 export const JOURNEY_KEY='ptb_journey_v1';
 const journeyPrefixes=['', 'museum_trial_', 'exchange_trial_', 'temple_trial_', 'robot_trial_', 'space_trial_', 'writer_trial_', 'language_trial_', 'newspaper_trial_', 'dream_trial_', 'zoo_trial_', 'literature_trial_', 'ai_trial_', 'dessert_trial_', 'detective_trial_', 'monastery_trial_', 'photo_trial_', 'garden_trial_', 'datacenter_trial_', 'conservation_trial_', 'cityhall_trial_', 'science_trial_', 'gym_trial_', 'cinema_trial_', 'memory_trial_', 'travel_trial_', 'pursuit_trial_', 'postal_trial_', 'hospital_trial_'];

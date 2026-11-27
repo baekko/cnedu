@@ -1,4 +1,4 @@
-import {HospitalGame} from './hospital-core.js?v297';
+import {HospitalGame} from './hospital-core.js?v298';
 import {PursuitGame} from './pursuit-game.js?v252';
 import {PostalGame,postalDepartureMountTime} from './postal-core.js?v294';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
@@ -11,7 +11,7 @@ import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
 import {GardenGame} from './garden-core.js?v268';
 import {DONORS,gardenBugPose} from './garden-care.js';
 import {extendExamples} from './tutorial-examples.js?v=156';
-import {groupTutorial} from './tutorial-pages.js?v295';
+import {groupTutorial} from './tutorial-pages.js?v298';
 // Isolated demonstrations. Inputs call the production game rules; no journey or storage access.
 import {AquariumGame} from './core.js';
 import {MuseumGame} from './museum-core.js';
@@ -527,9 +527,7 @@ function hospital(characterId){
  t.input(0,'방향키로 복도를 따라 걸으며 동물을 살펴봐요.',1.3,{x:-1},'←')
   .input(0,'방과 복도에 있는 세 종류의 동물을 따로 세어요.',.9,{x:1},'→')
   .hold(0,'강아지·고양이·토끼의 수를 기억해요.',1.4);
- t.cut(1,'시간이 끝나면 답을 입력해요.',()=>{
-   for(let tick=0;g.phase==='explore'&&tick<=150;tick++)g.update(.2,{});
-  })
+ t.cut(1,'시간이 끝나면 답을 입력해요.',()=>g.update(g.remaining))
   .still(1,'각 숫자는 0에서 시작해요.',.8)
   .act(1,'위 화살표로 강아지의 수를 올려요.',()=>g.adjustCount(0,1),'')
   .still(1,'종류마다 센 수를 맞춰요.',.35)
