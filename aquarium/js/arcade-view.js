@@ -46,7 +46,7 @@ export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  }).join('')}
  </ol></div>
  <footer class="arcade-map-actions">
- ${challenge?(runs.canResume?mapButton('reset','다시 도전하기'):mapButton('challenge','새 챌린지 시작하기'))+mapButton('records','기록보기'):''}
+ ${challenge?(!finished?mapButton('reset','다시 도전하기'):mapButton('challenge','새 챌린지 시작하기'))+mapButton('records','기록보기'):''}
  ${mapButton('title','처음으로 돌아가기')}${mapButton('quit','게임 마치기')}
  </footer>`;
  const scroll=root().querySelector('.arcade-map-scroll');

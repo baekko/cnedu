@@ -49,7 +49,7 @@
       <div id="arcade-reset-overlay" class="overlay" hidden>
         <section class="modal arcade-reset-modal" role="alertdialog" aria-modal="true" aria-labelledby="arcade-reset-title" aria-describedby="arcade-reset-description">
           <h2 id="arcade-reset-title">다시 도전할까요?</h2>
-          <p id="arcade-reset-description">이번 도전의 진행 상황과 점수가 초기화돼요. 이전 완주 기록은 기록실에 남아요.</p>
+          <p id="arcade-reset-description">캐릭터와 이름을 정하면 새 도전이 시작돼요. 이전 완주 기록은 기록실에 남아요.</p>
           <div class="return-actions">
             <button id="arcade-reset-no" type="button" class="return-button">계속 도전하기</button>
             <button id="arcade-reset-yes" type="button" class="return-button">다시 도전하기</button>
@@ -239,7 +239,7 @@
   <link rel="stylesheet" href="./opening-v246.css?v249">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v271').catch(async error => {
+    import('./js/app.js?v272').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

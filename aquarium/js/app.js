@@ -91,7 +91,7 @@ import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPla
 import { loadMotion, SpritePlayer } from './motions.js';
 
 import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v268';
-import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v268';
+import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v272';
 import {drawArcadeChoices} from './arcade-choice-view.js?v268';
 import {drawPlaceEntry} from './place-entry-view.js?v268';
 import {arcadeCoinPosition} from './arcade-coin-position.js?v246';
@@ -125,7 +125,7 @@ const arcadeRuns=new ArcadeRuns(normalStorage);
 const modeCharacters=new ModeCharacters(normalStorage,()=>{$('storage-warning').hidden=false;});
 const modeNames={escape:'이곳은 수족관입니다',arcade:'미니게임 챌린지'};
 const suspendedModes=new Map();
-let characterMode=null,characterChallengeId=null;
+let characterMode=null,characterChallenge=null;
 let arcadeMode=null,arcadePlace=null,arcadeCoins=0,arcadeLoading=false,arcadeSettled=false;
 let arcadeRecordRequest=0,arcadeRecordScope='mine';
 const postingArcadeRuns=new Map(),arcadeShareErrors=new Map();
@@ -434,7 +434,7 @@ async function resumeEscape(adventure){
  syncSound();
  try{await restoreAdventureScreen();}catch(error){console.error(error);showStage();}
 }
-$('select-back').addEventListener('click',()=>{if(state==='select')returnToArcadeTitle();});
+$('select-back').addEventListener('click',()=>{if(state==='select')backFromCharacterPicker();});
 function cancelCharacterName(){
  if(state!=='naming'||registeringCharacter)return;
  ++nameToken;nameMotion=null;setState('select');
@@ -458,20 +458,20 @@ function chooseMode(mode){
  if(player){openMode(mode,player);return;}
  showCharacterPicker(mode);
 }
-function showCharacterPicker(mode,challengeId=null){
- characterMode=mode;characterChallengeId=challengeId;
- if(challengeId){
+function showCharacterPicker(mode,challenge=null){
+ characterMode=mode;characterChallenge=challenge;
+ if(challenge){
   showArcadeSurface();arcadeMode=null;arcadePlace=null;game=null;setCoinRewards(false);
   void sharePendingArcadeRecords();
  }
- $('select-mode-label').textContent=challengeId?'새 미니게임 챌린지':modeNames[mode];
+ $('select-mode-label').textContent=challenge?'새 미니게임 챌린지':modeNames[mode];
  $('select-mode-label').hidden=false;
  $('select-back').hidden=false;
  $('character-grid').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed','false'));
  setState('select');$('select-title').focus({preventScroll:true});
 }
 function openMode(mode,player){
- characterMode=null;characterChallengeId=null;
+ characterMode=null;characterChallenge=null;
  if(mode==='escape'){
   arcadeMode=null;arcadePlace=null;setCoinRewards(false);
   if(suspendedModes.has('escape')){void resumeSuspendedMode('escape',player);return;}
@@ -509,6 +509,7 @@ function switchGameMode(mode){
   const key=arcadeMode==='practice'?'practice':arcade?'arcade':'escape';
   suspendedModes.set(key,{screen:state,place:placeId(activePlace),game,renderer,journey,clues:[...progress.clues],
    endReason,arcadePlace,arcadeCoins,arcadeSettled,runId:arcadeRuns.run?.id,
+   player:arcadeMode==='practice'?{character:character.id,name:character.name}:null,
    cinema:isCinema()?cinemaImages:null});
  }
  showArcadeSurface();game=null;arcadeMode=null;arcadePlace=null;setCoinRewards(false);
@@ -522,7 +523,7 @@ async function resumeSuspendedMode(mode,player){
  const arcade=mode!=='escape';
  arcadeMode=arcade?(mode==='practice'?'practice':'challenge'):null;
  setCoinRewards(arcade);
- usePlayer(player);syncSound();
+ usePlayer(saved.player??player);syncSound();
  journey=saved.journey;
  if(saved.cinema)cinemaImages=saved.cinema;
  setState('loading');
@@ -558,9 +559,18 @@ function enterArcadeMap(mode,{resumeCompleted=false}={}){
   (!arcadeRuns.run?.active||arcadeRuns.run.active.place===suspended.arcadePlace))){
   void resumeSuspendedMode(key,player);return;
  }
- if(mode==='challenge'&&arcadeRuns.characterSetupId&&!resumeCompleted){
-  showCharacterPicker('arcade',arcadeRuns.characterSetupId);
-  return;
+ if(mode==='challenge'){
+  const run=arcadeRuns.run;
+  const setupId=arcadeRuns.characterSetupId;
+  const fromMap=state==='arcade-map'?arcadeMode:null;
+  if(setupId&&!(resumeCompleted&&arcadeRuns.canRecord)){
+   showCharacterPicker('arcade',{id:setupId,runId:run.id,fromMap});
+   return;
+  }
+  if(run&&!arcadeRuns.canResume&&!arcadeRuns.canRecord){
+   showCharacterPicker('arcade',{id:run.id,runId:run.id,fromMap,restart:true});
+   return;
+  }
  }
  arcadeMode=mode;setCoinRewards(true);
  let notice='';
@@ -591,13 +601,25 @@ function leaveArcadeMap(){
  journey=readJourney(storage);showArcadeChoices();
 }
 function returnToArcadeTitle(){
- showArcadeSurface();arcadeMode=null;arcadePlace=null;characterMode=null;characterChallengeId=null;game=null;
+ showArcadeSurface();arcadeMode=null;arcadePlace=null;characterMode=null;characterChallenge=null;game=null;
  journey=readJourney(storage);replayOrigin=null;replayTarget=null;setCoinRewards(false);
  prepareAquarium();setState('title');
  $('title-escape').focus({preventScroll:true});
 }
+function backFromCharacterPicker(){
+ const mode=characterChallenge?.fromMap;
+ if(!mode){returnToArcadeTitle();return;}
+ characterMode=null;characterChallenge=null;
+ arcadeRuns.refresh();
+ if(!arcadeRuns.run){returnToArcadeTitle();return;}
+ usePlayer(arcadeRuns.run.player);
+ arcadeMode=mode;setCoinRewards(true);
+ showArcadeMap();
+}
 function askArcadeReset(){
- if(state!=='arcade-map'||arcadeMode!=='challenge'||!arcadeRuns.canResume)return;
+ if(state!=='arcade-map'||arcadeMode!=='challenge')return;
+ arcadeRuns.refresh();
+ if(!arcadeRuns.run||arcadeRuns.canRecord)return;
  $('arcade-screen').inert=true;
  openExtra('arcade-reset-overlay','arcade-reset-no');
 }
@@ -607,10 +629,11 @@ function closeArcadeReset(){
 }
 $('arcade-reset-no').addEventListener('click',closeArcadeReset);
 $('arcade-reset-yes').addEventListener('click',()=>{
- const player=savedModeCharacter('arcade');
- closeArcadeReset();if(!player)return;
- arcadeRuns.start(player);
- usePlayer(arcadeRuns.run.player);prepareArcadeTicket();showArcadeMap({reset:true});
+ closeArcadeReset();
+ arcadeRuns.refresh();
+ const run=arcadeRuns.run;
+ if(!run||arcadeRuns.canRecord){showArcadeMap();return;}
+ showCharacterPicker('arcade',{id:run.id,runId:run.id,fromMap:'challenge',restart:true});
 });
 async function selectArcadePlace(place){
  if(arcadeLoading||!arcadeMode||!arcadePlaces().some(p=>p.id===place))return;
@@ -729,23 +752,29 @@ $('name-form').addEventListener('submit',async event=>{
   if(state!=='naming'||registeringCharacter)return;
   const name=normalizePlayerName($('player-name').value);
   if(!name){$('name-error').textContent='이름을 입력해 주세요.';return;}
-  const mode=characterMode,challengeId=characterChallengeId,token=nameToken,draft={character:character.id,name};
+  const mode=characterMode,challenge=characterChallenge,token=nameToken,draft={character:character.id,name};
   unlockAudio();
   const register=async()=>{
    if(state!=='naming'||nameToken!==token)return null;
    if(!mode)return draft;
-   const existing=savedModeCharacter(mode);
-   if(challengeId){
-    if(arcadeRuns.characterSetupId!==challengeId)return existing;
+   if(challenge){
+    const checkRun=()=>{
+     arcadeRuns.refresh();
+     if(arcadeRuns.run?.id!==challenge.runId||
+      (!challenge.restart&&arcadeRuns.characterSetupId!==challenge.id)){
+      throw Object.assign(new Error('도전이 바뀌었어요.'),{code:'challenge_changed'});
+     }
+    };
+    checkRun();
     const nameKey=value=>value.normalize('NFKC').replace(/[\s\p{Cf}]+/gu,'').toLowerCase();
     if(arcadeRuns.records.some(record=>record.player?.name&&nameKey(record.player.name)===nameKey(draft.name))){
      throw Object.assign(new Error('이미 사용 중인 이름이에요.'),{code:'name_taken'});
     }
-    const profile=await registerArcadePlayer(normalStorage,draft,challengeId);
-    arcadeRuns.refresh();
-    if(arcadeRuns.characterSetupId!==challengeId)return savedModeCharacter(mode);
+    const profile=await registerArcadePlayer(normalStorage,draft,challenge.id);
+    checkRun();
     return arcadeRuns.start(profile).player;
    }
+   const existing=savedModeCharacter(mode);
    if(existing)return existing;
    const profile=mode==='arcade'?await registerArcadePlayer(normalStorage,draft):draft;
    return modeCharacters.register(mode,profile);
@@ -763,6 +792,7 @@ $('name-form').addEventListener('submit',async event=>{
   }catch(error){
    $('name-error').textContent=error.code==='name_taken'?'이미 사용 중인 이름이에요. 다른 이름을 입력해 주세요.':
     error.code==='already_registered'?`이 도전에는 ‘${error.registeredName}’ 이름이 등록되어 있어요. 그 이름을 입력해 주세요.`:
+    error.code==='challenge_changed'?'도전이 바뀌었어요. 게임맵으로 돌아간 뒤 다시 시도해 주세요.':
     error.code==='invalid player'?'이름에 사용할 수 있는 글자를 입력해 주세요.':
     error.code==='storage_unavailable'?'이 브라우저에서 캐릭터를 저장할 수 없어요.':
     '공유 기록실에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.';
@@ -773,7 +803,11 @@ $('name-form').addEventListener('submit',async event=>{
   }
   if(!player||state!=='naming'||nameToken!==token)return;
   $('name-error').textContent='';nameMotion=null;++nameToken;document.activeElement?.blur();
-  if(mode)openMode(mode,player);
+  if(challenge?.fromMap||challenge?.restart){
+   characterMode=null;characterChallenge=null;
+   suspendedModes.delete('arcade');
+   enterArcadeMap('challenge');
+  }else if(mode)openMode(mode,player);
   else if(trial)startEscapeMode(player);
   Promise.all(['correct','wrong'].map(action=>loadMotion(character,action))).catch(()=>{});
 });
@@ -1132,7 +1166,7 @@ window.addEventListener('keydown',event=>{
   if(event.code==='Escape'){
     if(!$('arcade-reset-overlay').hidden){event.preventDefault();closeArcadeReset();return;}
     if(state==='naming'){event.preventDefault();cancelCharacterName();return;}
-    if(state==='select'&&characterMode){event.preventDefault();returnToArcadeTitle();return;}
+    if(state==='select'&&characterMode){event.preventDefault();backFromCharacterPicker();return;}
     if(state==='tutorial'){event.preventDefault();if(!returnFromHowTo())setState('briefing');return;}
     if(state==='help'){event.preventDefault();resumeFromHelp();return;}
     if(!$('hint-overlay').hidden){closeExtra('hint-overlay');return;}
@@ -1992,7 +2026,8 @@ async function goBackScene(){
  if(quitOpen){cancelQuit();return true;}
  if(arcadeLoading)return true;
  if(utilityOrigin){closeUtilityFromControl();return true;}
- if(state==='arcade-choice'||(state==='select'&&characterMode)){returnToArcadeTitle();return true;}
+ if(state==='select'&&characterMode){backFromCharacterPicker();return true;}
+ if(state==='arcade-choice'){returnToArcadeTitle();return true;}
  if(state==='naming'){cancelCharacterName();return true;}
  if(state==='arcade-records'||state==='arcade-result'){showArcadeMap();return true;}
  if(state==='arcade-map'){leaveArcadeMap();return true;}
