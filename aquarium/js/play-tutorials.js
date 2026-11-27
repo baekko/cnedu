@@ -1,5 +1,5 @@
 import {PursuitGame} from './pursuit-game.js?v252';
-import {PostalGame,postalDepartureMountTime} from './postal-core.js?v276';
+import {PostalGame,postalDepartureMountTime} from './postal-core.js?v281';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
 import {CinemaGame} from './cinema-core.js?v268';
 import {GymGame} from './gym-core.js?v268';
@@ -508,7 +508,12 @@ function postal(characterId){
    g.villageTime=g.round.seconds-1.2;
   })
   .until(3,'첫 배달 시간이 끝나요.',()=>g.phase==='report',{},1.5)
-  .act(3,'다음 마을에서 출발을 준비해요.',()=>{g.nextVillage();g.tutorialCountdownUntil=t.age+3;},'')
+  .act(3,'다음 마을에서 출발을 준비해요.',()=>{
+   g.nextVillage();
+   // Adding to an accumulated timestamp can round the displayed interval above three.
+   const finish=t.age+3;
+   g.tutorialCountdownUntil=finish-finish*Number.EPSILON;
+  },'')
   .still(3,'3초를 세고 출발해요.',3)
   .until(3,'두 번째 마을에서 다섯 통을 배달해요.',()=>g.canMove,{},Math.max(2,departureTime+.2))
   .hold(3,'두 번째 마을에서도 배달지를 찾아가요.',.7);

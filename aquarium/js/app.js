@@ -38,7 +38,7 @@ import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
 import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
-import {createTutorial} from './play-tutorials.js?v276';
+import {createTutorial} from './play-tutorials.js?v282';
 import {TutorialFinance} from './tutorial-finance.js?v268';
 import {TutorialChrome} from './tutorial-chrome.js?v268';
 import {TutorialPlayback} from './tutorial-playback.js';
