@@ -49,6 +49,7 @@ const villagesById = new Map(POSTAL_VILLAGES.map(village => [village.id, village
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 const deliveryPhases = new Set(['park', 'dismount', 'approach', 'mail', 'return', 'remount']);
+const WALKOUT_TURN_TIME = .14;
 const walkingPhases = new Set(['walkout', 'approach', 'return']);
 function besideBike(bike, characterId) {
   const [x, y] = COURIER_AXIS_STANDS[characterId]?.[bike.dir] ?? POSTAL_BIKE_STANDS[bike.dir];
@@ -161,6 +162,8 @@ export class PostalGame {
     this.followCamera(1);
     const stand = besideBike(this.bike, this.characterId);
     this.walkTo('walkout', stand, 'down');
+    this.motion.walkTime = this.motion.duration;
+    this.motion.duration += WALKOUT_TURN_TIME;
   }
 
   showMap() {
@@ -313,9 +316,16 @@ export class PostalGame {
       if (this.phase === 'ride' || deliveryPhases.has(this.phase)) this.spendTime(step);
       if (this.motion) {
         this.phaseAge += step;
-        const {from, target} = this.motion;
+        const {from, target, walkTime} = this.motion;
         const progress = this.poseProgress;
-        const k = this.phase === 'park' ? progress * (2 - progress) : progress;
+        let k = this.phase === 'park' ? progress * (2 - progress) : progress;
+        if (walkTime !== undefined) {
+          k = Math.min(1, this.phaseAge / walkTime);
+          if (k === 1) {
+            this.player.moving = false;
+            this.player.dir = this.bike.dir;
+          }
+        }
         this.player.x = from.x + (target.x - from.x) * k;
         this.player.y = from.y + (target.y - from.y) * k;
         if (this.player.moving) this.player.walk += step;

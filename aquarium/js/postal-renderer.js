@@ -1,7 +1,7 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {spriteAnchor} from './layout.js';
-import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v292';
+import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v293';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
@@ -36,7 +36,7 @@ function image(url) {
 }
 
 async function loadBicyclePoses(characterId) {
-  const imageAtlas = await image(`./assets/postal/${characterId}-v292-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v293-bicycle.webp`);
   const region = first => ({image: imageAtlas, first});
   const axisRide = 2 * SIDE_FRAMES + 2 * AXIS_TRANSFER_FRAMES;
   const parked = axisRide + 2 * AXIS_RIDE_FRAMES;
