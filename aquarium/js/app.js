@@ -523,7 +523,7 @@ async function resumeSuspendedMode(mode,player){
  const arcade=mode!=='escape';
  arcadeMode=arcade?(mode==='practice'?'practice':'challenge'):null;
  setCoinRewards(arcade);
- usePlayer(saved.player??player);syncSound();
+ usePlayer(player);syncSound();
  journey=saved.journey;
  if(saved.cinema)cinemaImages=saved.cinema;
  setState('loading');
@@ -551,13 +551,25 @@ function startEscapeMode(player){
  if(!saveJourney(storage,journey))$('storage-warning').hidden=false;
  showStage();
 }
+function startNewArcadeRun(player){
+ const run=arcadeRuns.start(player);
+ suspendedModes.delete('arcade');
+ suspendedModes.delete('practice');
+ return run;
+}
 function enterArcadeMap(mode,{resumeCompleted=false}={}){
  const player=savedModeCharacter('arcade');
  if(!player)return;
  const key=mode==='challenge'?'arcade':'practice',suspended=suspendedModes.get(key);
- if(suspended&&(mode==='practice'||suspended.runId===arcadeRuns.run?.id&&
-  (!arcadeRuns.run?.active||arcadeRuns.run.active.place===suspended.arcadePlace))){
-  void resumeSuspendedMode(key,player);return;
+ if(suspended){
+  const run=arcadeRuns.run;
+  const matchingPlayer=mode==='practice'?
+   suspended.player?.character===player.character&&suspended.player?.name===player.name:
+   !run?.active||run.active.place===suspended.arcadePlace;
+  if(suspended.runId===run?.id&&matchingPlayer){
+   void resumeSuspendedMode(key,player);return;
+  }
+  suspendedModes.delete(key);
  }
  if(mode==='challenge'){
   const run=arcadeRuns.run;
@@ -576,7 +588,7 @@ function enterArcadeMap(mode,{resumeCompleted=false}={}){
  let notice='';
  if(mode==='challenge'){
   arcadeRuns.refresh();
-  if(!arcadeRuns.canResume&&!(resumeCompleted&&arcadeRuns.canRecord))arcadeRuns.start(player);
+  if(!arcadeRuns.canResume&&!(resumeCompleted&&arcadeRuns.canRecord))startNewArcadeRun(player);
   if(arcadeRuns.run.active){
    arcadeRuns.finish(arcadeRuns.run.active.place,{abandoned:true});
    notice='창을 닫을 때 플레이 중이던 게임은 중단으로 표시했어요. 남은 게임은 이어서 할 수 있어요.';
@@ -772,7 +784,7 @@ $('name-form').addEventListener('submit',async event=>{
     }
     const profile=await registerArcadePlayer(normalStorage,draft,challenge.id);
     checkRun();
-    return arcadeRuns.start(profile).player;
+    return startNewArcadeRun(profile).player;
    }
    const existing=savedModeCharacter(mode);
    if(existing)return existing;
@@ -805,7 +817,6 @@ $('name-form').addEventListener('submit',async event=>{
   $('name-error').textContent='';nameMotion=null;++nameToken;document.activeElement?.blur();
   if(challenge?.fromMap||challenge?.restart){
    characterMode=null;characterChallenge=null;
-   suspendedModes.delete('arcade');
    enterArcadeMap('challenge');
   }else if(mode)openMode(mode,player);
   else if(trial)startEscapeMode(player);
@@ -2378,9 +2389,11 @@ $('monastery-balance').addEventListener('click',e=>{if(e.detail===0&&isMonastery
 
 async function fieldAssets(place){
  if(place==='postal'){
-  if(postalImages?.characterId!==character.id)
-   postalImages={...await loadPostalAssets(character),characterId:character.id};
-  return postalImages;
+  const player=character;
+  if(postalImages?.characterId===player.id)return postalImages;
+  const assets={...await loadPostalAssets(player),characterId:player.id};
+  if(character.id===player.id)postalImages=assets;
+  return assets;
  }
  if(place==='pursuit'){
   if(pursuitImages?.characterId!==character.id)
