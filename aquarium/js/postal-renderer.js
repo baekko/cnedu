@@ -11,10 +11,8 @@ const BICYCLE_TILE = 224;
 const BICYCLE_COLUMNS = 8;
 const BICYCLE_DRAW_SIZE = 192 / 1.8;
 const SIDE_FRAMES = 16;
-const AXIS_MOUNT_FRAMES = 8;
+const AXIS_TRANSFER_FRAMES = 8;
 const AXIS_RIDE_FRAMES = 16;
-const DISMOUNT_FRAMES = 8;
-const DISMOUNT_TILE = 88;
 // All bicycle poses and the parked bicycle register to the same source point.
 const BICYCLE_ANCHOR = [155 / 256, 205 / 256];
 const SPRITE_SCALE = .78;
@@ -38,17 +36,17 @@ function image(url) {
 }
 
 async function loadBicyclePoses(characterId) {
-  const imageAtlas = await image(`./assets/postal/${characterId}-v285-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v286-bicycle.webp`);
   const region = first => ({image: imageAtlas, first});
+  const axisRide = 2 * SIDE_FRAMES + 2 * AXIS_TRANSFER_FRAMES;
+  const parked = axisRide + 2 * AXIS_RIDE_FRAMES;
   return {
-    sideDismount: region(DISMOUNT_TILE),
-    axisDismount: region(DISMOUNT_TILE + DISMOUNT_FRAMES),
-    sideMount: region(0),
+    sideTransfer: region(0),
+    axisTransfer: region(96),
     sideRide: region(SIDE_FRAMES),
-    axisMount: region(2 * SIDE_FRAMES),
-    axisRide: region(2 * SIDE_FRAMES + 2 * AXIS_MOUNT_FRAMES),
-    sideBike: region(2 * SIDE_FRAMES + 2 * AXIS_MOUNT_FRAMES + 2 * AXIS_RIDE_FRAMES),
-    axisBike: region(2 * SIDE_FRAMES + 2 * AXIS_MOUNT_FRAMES + 2 * AXIS_RIDE_FRAMES + 1),
+    axisRide: region(axisRide),
+    sideBike: region(parked),
+    axisBike: region(parked + 1),
   };
 }
 
@@ -243,18 +241,17 @@ function drawPose(c, assets, mode, direction, progress, x, y, scale = SPRITE_SCA
   if (mode === 'bike') {
     region = side ? poses.sideBike : poses.axisBike;
     frame = up;
-  } else if (mode === 'dismount') {
-    region = side ? poses.sideDismount : poses.axisDismount;
-    frame = (side ? 0 : up * DISMOUNT_FRAMES) + frameAt(DISMOUNT_FRAMES);
   } else if (mode === 'ride') {
     region = side ? poses.sideRide : poses.axisRide;
     frame = side ? frameAt(SIDE_FRAMES) : up * AXIS_RIDE_FRAMES + frameAt(AXIS_RIDE_FRAMES);
-  } else if (side) {
-    region = poses.sideMount;
-    frame = frameAt(SIDE_FRAMES);
   } else {
-    region = poses.axisMount;
-    frame = up * AXIS_MOUNT_FRAMES + frameAt(AXIS_MOUNT_FRAMES);
+    // Boarding and leaving retrace one set of poses. Parked and seated
+    // endpoints line up with the corresponding separate bike and ride poses.
+    region = side ? poses.sideTransfer : poses.axisTransfer;
+    const count = side ? SIDE_FRAMES : AXIS_TRANSFER_FRAMES;
+    const reverse = side ? mode === 'dismount' : mode === 'mount';
+    const index = frameAt(count);
+    frame = (side ? 0 : up * count) + (reverse ? count - 1 - index : index);
   }
   drawBicycleCell(c, region, frame, direction, x, y, scale);
 }
