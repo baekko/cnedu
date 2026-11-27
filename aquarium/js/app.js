@@ -1,6 +1,6 @@
 import {connectTitleModes,showStartupError} from './opening.js?v254';
 import {PostalGame,POSTAL} from './postal-core.js?v281';
-import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v283';
+import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v284';
 import {PostalUI,syncPostalStats} from './postal-ui.js?v268';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
@@ -109,7 +109,9 @@ let storage;
 try { storage = window.localStorage; } catch { storage = { getItem: () => null, setItem: () => { throw new Error('storage unavailable'); } }; }
 const publicGamePath='/aquarium/';
 const publicGame=['/aquarium',publicGamePath,publicGamePath+'index.html'].includes(location.pathname);
-if(publicGame&&(location.pathname!==publicGamePath||location.search||location.hash)){
+const incomingStart=new URLSearchParams(location.search).get('start');
+const postalTrialLink=incomingStart==='postal'||(incomingStart===null&&location.hash==='#postal');
+if(publicGame&&!postalTrialLink&&(location.pathname!==publicGamePath||location.search||location.hash)){
  history.replaceState(history.state,'',publicGamePath);
 }
 const entryParams=new URLSearchParams(location.search);

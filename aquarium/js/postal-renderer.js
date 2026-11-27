@@ -38,7 +38,7 @@ function image(url) {
 }
 
 async function loadBicyclePoses(characterId) {
-  const imageAtlas = await image(`./assets/postal/${characterId}-v283-bicycle.webp`);
+  const imageAtlas = await image(`./assets/postal/${characterId}-v284-bicycle.webp`);
   const region = first => ({image: imageAtlas, first});
   return {
     sideDismount: region(DISMOUNT_TILE),
