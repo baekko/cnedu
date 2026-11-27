@@ -1,23 +1,23 @@
 import {MEMORY,normalizeMemoryPlan,normalizeMemorySources} from './memory-core.js?v224';
-import {CINEMA} from './cinema-core.js?v204-final40';
+import {CINEMA} from './cinema-core.js?v268';
 import {normalizeCinemaPlan} from './cinema-films.js?v204-final40';
-import {GYM} from './gym-core.js?v=161';
+import {GYM} from './gym-core.js?v268';
 import {withoutRetiredPlaces} from './retired-places.js?v227';
-import {DATACENTER} from './datacenter-core.js';
+import {DATACENTER} from './datacenter-core.js?v268';
 import {CITYHALL,normalizeCityPlan} from './cityhall-core.js';
 import {normalizeCityPlan as normalizeLegacyCityPlan} from './cityhall-legacy.js';
-import {CONSERVATION} from './conservation-core.js';
+import {CONSERVATION} from './conservation-core.js?v268';
 import {legacySources,normalizeClueRewards,restoreSources} from './clue-order.js';
 import {PHOTO} from './photo-core.js';
-import {GARDEN} from './garden-core.js';
+import {GARDEN} from './garden-core.js?v268';
 import {DETECTIVE} from './detective-core.js';
 import {MONASTERY} from './monastery-core.js';
 import {DESSERT,PASTRIES} from './dessert-core.js';
 import {AI,BODIES,POWERS,INKS} from './ai-core.js';
-import {TEMPLE} from './temple-core.js?v=157';
+import {TEMPLE} from './temple-core.js?v268';
 import {ZOO} from './zoo-core.js?v=155';
 import {LITERATURE} from './literature-core.js';
-import {DREAM} from './dream-core.js';
+import {DREAM} from './dream-core.js?v268';
 import {NEWSPAPER} from './newspaper-core.js';
 import {LANGUAGE} from './language-core.js';
 import {WRITER} from './writer-core.js?v=155';
@@ -25,9 +25,10 @@ import { CHARACTERS, PUZZLE, GAME } from './config.js';
 import {SPACE} from './space-core.js';
 import {ROBOT} from './robot-core.js';
 import {PURSUIT,getPursuitCity,normalizePursuitRunPlan} from './pursuit-game.js?v243';
-import {unlockedPlace,placeInfo,PLACES} from './places.js?v231';
+import {POSTAL,normalizePostalPlan} from './postal-core.js?v268';
+import {unlockedPlace,placeInfo,PLACES} from './places.js?v268';
 export const JOURNEY_KEY='ptb_journey_v1';
-const journeyPrefixes=['', 'museum_trial_', 'exchange_trial_', 'temple_trial_', 'robot_trial_', 'space_trial_', 'writer_trial_', 'language_trial_', 'newspaper_trial_', 'dream_trial_', 'zoo_trial_', 'literature_trial_', 'ai_trial_', 'dessert_trial_', 'detective_trial_', 'monastery_trial_', 'photo_trial_', 'garden_trial_', 'datacenter_trial_', 'conservation_trial_', 'cityhall_trial_', 'science_trial_', 'gym_trial_', 'cinema_trial_', 'memory_trial_', 'travel_trial_', 'pursuit_trial_'];
+const journeyPrefixes=['', 'museum_trial_', 'exchange_trial_', 'temple_trial_', 'robot_trial_', 'space_trial_', 'writer_trial_', 'language_trial_', 'newspaper_trial_', 'dream_trial_', 'zoo_trial_', 'literature_trial_', 'ai_trial_', 'dessert_trial_', 'detective_trial_', 'monastery_trial_', 'photo_trial_', 'garden_trial_', 'datacenter_trial_', 'conservation_trial_', 'cityhall_trial_', 'science_trial_', 'gym_trial_', 'cinema_trial_', 'memory_trial_', 'travel_trial_', 'pursuit_trial_', 'postal_trial_'];
 export function resetJourney(storage){
   // A new opening starts a new adventure, including separately saved demo links.
   try{for(const prefix of journeyPrefixes){
@@ -59,7 +60,7 @@ export function readJourney(storage){
     // Keep past travel records while using a fresh pursuit record for the same stop.
     if(data.stage==='travel')data.stage='pursuit';
     if(data.unlockedThrough==='travel'||['title','briefing','result'].includes(data.travel?.phase))data.unlockedThrough='pursuit';
-    const journey={character:data.character,clueSources:[...restoreSources(data)],clueRule:'count-v1',...(data.aquariumBoarded===true?{aquariumBoarded:true}:{}),...(normalizePlayerName(data.playerName)?{playerName:normalizePlayerName(data.playerName)}:{}),...(data.museum?{museum:readMuseumRecord(data.museum)}:{}),...(data.history?{history:readHistoryRecord(data.history)}:{}),...(data.memory?{memory:readMemoryRecord(data.memory)}:{}),...(data.travel?{travel:readTravelRecord(data.travel)}:{}),...(data.pursuit?{pursuit:readPursuitRecord(data.pursuit)}:{}),...(data.cinema?{cinema:{...readFieldRecord(data.cinema,CINEMA.duration,CINEMA.flashes),edition:'moviequiz',runPlan:normalizeCinemaPlan(data.cinema.runPlan),answered:Math.max(0,Math.min(9,Number(data.cinema.answered)||0))}}:{}),...(data.gym?{gym:{...readFieldRecord(data.gym,GYM.duration,GYM.flashes),edition:'dodgeball'}}:{}),...(data.photo?{photo:readFieldRecord(data.photo,PHOTO.duration,PHOTO.flashes)}:{}),...(data.datacenter?{datacenter:readFieldRecord(data.datacenter,DATACENTER.duration,DATACENTER.flashes)}:{}),...(data.conservation?{conservation:readFieldRecord(data.conservation,CONSERVATION.duration,CONSERVATION.flashes)}:{}),...(data.cityhall?{cityhall:readCityHallRecord(data.cityhall)}:{}),...(data.garden?{garden:readFieldRecord(data.garden,GARDEN.duration,GARDEN.flashes)}:{}),...(data.monastery?{monastery:readMonasteryRecord(data.monastery)}:{}),...(data.detective?{detective:readDetectiveRecord(data.detective)}:{}),...(data.dessert?{dessert:readDessertRecord(data.dessert)}:{}),...(data.ai?{ai:readAIRecord(data.ai)}:{}),...(data.literature?{literature:readLiteratureRecord(data.literature)}:{}),...(data.zoo?{zoo:readZooRecord(data.zoo)}:{}),...(data.dream?{dream:readDreamRecord(data.dream)}:{}),...(data.newspaper?{newspaper:readNewspaperRecord(data.newspaper)}:{}),...(data.language?{language:readLanguageRecord(data.language)}:{}),...(data.writer?{writer:readWriterRecord(data.writer)}:{}),...(data.space?{space:readSpaceRecord(data.space)}:{}),...(data.robot?{robot:readRobotRecord(data.robot)}:{}),...(data.temple?{temple:readTempleRecord(data.temple)}:{}),...(data.exchange?{exchange:readExchangeRecord(data.exchange)}:{}),stage:data.stage==='robot'?(data.robot||data.temple?.survived===true||['robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit'].includes(data.unlockedThrough)?'robot':'temple'):data.stage==='observatory'?'history':['art','history','exchange','temple','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit'].includes(data.stage)?data.stage:'aquarium',phase:data.phase==='result'?'result':'briefing',elapsed:Math.min(GAME.duration,Math.max(0,Number(data.elapsed)||0)),survived:data.survived===true,hintsSeen:Math.min(3,Math.max(0,Math.floor(Number(data.hintsSeen)||0)))};
+    const journey={character:data.character,clueSources:[...restoreSources(data)],clueRule:'count-v1',...(data.aquariumBoarded===true?{aquariumBoarded:true}:{}),...(normalizePlayerName(data.playerName)?{playerName:normalizePlayerName(data.playerName)}:{}),...(data.museum?{museum:readMuseumRecord(data.museum)}:{}),...(data.history?{history:readHistoryRecord(data.history)}:{}),...(data.memory?{memory:readMemoryRecord(data.memory)}:{}),...(data.travel?{travel:readTravelRecord(data.travel)}:{}),...(data.pursuit?{pursuit:readPursuitRecord(data.pursuit)}:{}),...(data.postal?{postal:readPostalRecord(data.postal)}:{}),...(data.cinema?{cinema:{...readFieldRecord(data.cinema,CINEMA.duration,CINEMA.flashes),edition:'moviequiz',runPlan:normalizeCinemaPlan(data.cinema.runPlan),answered:Math.max(0,Math.min(9,Number(data.cinema.answered)||0))}}:{}),...(data.gym?{gym:{...readFieldRecord(data.gym,GYM.duration,GYM.flashes),edition:'dodgeball'}}:{}),...(data.photo?{photo:readFieldRecord(data.photo,PHOTO.duration,PHOTO.flashes)}:{}),...(data.datacenter?{datacenter:readFieldRecord(data.datacenter,DATACENTER.duration,DATACENTER.flashes)}:{}),...(data.conservation?{conservation:readFieldRecord(data.conservation,CONSERVATION.duration,CONSERVATION.flashes)}:{}),...(data.cityhall?{cityhall:readCityHallRecord(data.cityhall)}:{}),...(data.garden?{garden:readFieldRecord(data.garden,GARDEN.duration,GARDEN.flashes)}:{}),...(data.monastery?{monastery:readMonasteryRecord(data.monastery)}:{}),...(data.detective?{detective:readDetectiveRecord(data.detective)}:{}),...(data.dessert?{dessert:readDessertRecord(data.dessert)}:{}),...(data.ai?{ai:readAIRecord(data.ai)}:{}),...(data.literature?{literature:readLiteratureRecord(data.literature)}:{}),...(data.zoo?{zoo:readZooRecord(data.zoo)}:{}),...(data.dream?{dream:readDreamRecord(data.dream)}:{}),...(data.newspaper?{newspaper:readNewspaperRecord(data.newspaper)}:{}),...(data.language?{language:readLanguageRecord(data.language)}:{}),...(data.writer?{writer:readWriterRecord(data.writer)}:{}),...(data.space?{space:readSpaceRecord(data.space)}:{}),...(data.robot?{robot:readRobotRecord(data.robot)}:{}),...(data.temple?{temple:readTempleRecord(data.temple)}:{}),...(data.exchange?{exchange:readExchangeRecord(data.exchange)}:{}),stage:data.stage==='robot'?(data.robot||data.temple?.survived===true||['robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit','postal'].includes(data.unlockedThrough)?'robot':'temple'):data.stage==='observatory'?'history':['art','history','exchange','temple','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit','postal'].includes(data.stage)?data.stage:'aquarium',phase:data.phase==='result'?'result':'briefing',elapsed:Math.min(GAME.duration,Math.max(0,Number(data.elapsed)||0)),survived:data.survived===true,hintsSeen:Math.min(3,Math.max(0,Math.floor(Number(data.hintsSeen)||0)))};
     journey.unlockedThrough=unlockedPlace({...journey,unlockedThrough:data.unlockedThrough});
     return journey;
   }catch{return null;}
@@ -121,6 +122,17 @@ export function readDetectiveRecord(data={}){return {...readMuseumRecord(data),c
 export function readMonasteryRecord(data={}){return {...readMuseumRecord(data),clueSources:Array.isArray(data.clueSources)?[...restoreSources(data)]:Array.isArray(data.lit)&&data.lit.length?[...new Set(data.lit.filter(n=>Number.isInteger(n)&&n>=1&&n<=9))]:[...restoreSources(data)],elapsed:Math.max(0,Math.min(MONASTERY.duration,Number(data.elapsed)||0)),mistakes:Math.max(0,Math.floor(Number(data.mistakes)||0)),flashes:Math.max(0,Math.min(MONASTERY.flashes,Number.isInteger(data.flashes)?data.flashes:MONASTERY.flashes)),lit:[...new Set((Array.isArray(data.lit)?data.lit:[]).filter(n=>Number.isInteger(n)&&n>=1&&n<=9))]};}
 
 export function readFieldRecord(data={},duration=100,maxFlashes=2){return {...readMuseumRecord(data),elapsed:Math.max(0,Math.min(duration,Number(data.elapsed)||0)),room:Math.max(0,Math.min(2,Math.floor(Number(data.room)||0))),flashes:Number.isFinite(Number(data.flashes))?Math.max(0,Math.min(maxFlashes,Math.floor(Number(data.flashes)))):maxFlashes};}
+
+function readPostalRecord(data){
+ const runPlan=normalizePostalPlan(data.runPlan);
+ const lettersByRound=runPlan?POSTAL.rounds.map(round=>round.letters):[3,3,3];
+ const reports=Array.isArray(data.reports)?data.reports.slice(0,lettersByRound.length).filter((report,index)=>{
+  const letters=lettersByRound[index];
+  return typeof report?.village==='string'&&['correct','wrong','unmailed'].every(key=>Number.isInteger(report[key])&&report[key]>=0&&report[key]<=letters)
+   &&report.correct+report.wrong+report.unmailed===letters;
+ }):[];
+ return {...readFieldRecord(data,POSTAL.duration,POSTAL.flashes),...(runPlan?{runPlan}:{}),reports};
+}
 
 export function readTravelRecord(data={}){
  const {winner,scores,visits}=data.result||{};

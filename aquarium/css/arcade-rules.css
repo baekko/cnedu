@@ -1,0 +1,36 @@
+#arcade-rules-overlay {
+  z-index: 92;
+}
+
+#arcade-rules-overlay .arcade-rules-modal {
+  width: min(100%, 360px);
+  max-height: 100%;
+  padding: 20px 18px 23px;
+}
+
+#arcade-rules-overlay .instruction-list {
+  margin-top: 13px;
+}
+
+#arcade-rules-overlay .instruction-list > div {
+  min-height: 0;
+  padding-block: 8px;
+}
+
+#arcade-rules-overlay .instruction-list small {
+  color: #536e61;
+}
+
+#arcade-rules-overlay .brief-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 14px;
+}
+
+#arcade-rules-confirm {
+  grid-column: 1 / -1;
+}
+
+#arcade-rules-overlay .brief-actions > button {
+  font-size: 14px;
+}

@@ -8,7 +8,7 @@ export const routeZ=z=>z*TEMPLE_ROUTE_SCALE;
 export const TEMPLE_DOCK=Object.freeze({x:195,left:140,right:250,approach:routeZ(1830),boardFrom:routeZ(1855),walkEnd:routeZ(1880),boatZ:routeZ(1910)});
 export const TEMPLE_TEMPO=1.2;
 export const CIRCE_ORB_SPEED=147.84*TEMPLE_TEMPO;
-export const TEMPLE=Object.freeze({duration:110,speed:168*TEMPLE_TEMPO,boatSpeed:192*TEMPLE_TEMPO,forwardSpeed:routeZ(46.8)*TEMPLE_TEMPO,stunSeconds:0,pigSeconds:3,shieldSeconds:4,recoveries:3,recoveryGrace:1,goal:routeZ(5110),answer:'올빼미',hints:['주로 밤에 활동하는 새입니다.','큰 눈과 둥근 얼굴이 특징입니다.']});
+export const TEMPLE=Object.freeze({duration:110,speed:168*TEMPLE_TEMPO,boatSpeed:192*TEMPLE_TEMPO,forwardSpeed:routeZ(46.8)*TEMPLE_TEMPO,stunSeconds:0,pigSeconds:3,shieldSeconds:4,recoveries:1,recoveryGrace:1,goal:routeZ(5110),answer:'올빼미',hints:['주로 밤에 활동하는 새입니다.','큰 눈과 둥근 얼굴이 특징입니다.']});
 export const TEMPLE_ZONES=[
  {id:'temple',name:'제우스의 신전',from:0,to:850,tip:'앞길의 번개 표시를 보고 옆으로 피해요',color:'#b89957'},
  {id:'circe',name:'키르케의 숲',from:850,to:1460,tip:'마법 구슬을 피하고 단서를 주워요',color:'#9377b4'},

@@ -26,6 +26,7 @@ const places={
  cinema:['cinema/projector.webp','#655175','#f0e8f3','#cfb4db'],
  memory:['memory-lab/album.webp','#766046','#fbf0db','#e3cca5'],
  pursuit:['pursuit/handcuffs.webp','#2c6170','#e2f2f4','#a6cdd6'],
+ postal:['postal/office.webp','#8b493f','#fbefe1','#d9a492'],
 };
 
 export function placeEntryArt(place){

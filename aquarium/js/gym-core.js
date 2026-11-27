@@ -40,7 +40,7 @@ export class GymGame extends FieldGame{
  }
  get itemLabel(){return '타임아웃 휘슬';}
  get itemKind(){return 'whistle';}
- get itemTip(){return '공과 상대를 3초 멈춰요 · 2회';}
+ get itemTip(){return '공과 상대를 3초 멈춰요 · 2회 사용 가능';}
  get actionLabel(){return '';}
  get canAct(){return false;}
  get prompt(){return this.messageLeft>0?this.message:this.freezeLeft>0?'휘슬이 울리는 동안 단서를 모아요':'';}

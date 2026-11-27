@@ -1,3 +1,5 @@
+import {arcadeMenuButton} from './expedition-shell.js?v268';
+
 function optionCard({action,title,description,art,tone,status=''}) {
  return `<button type="button" class="mode-option mode-option--${tone}" data-arcade-action="${action}"
   aria-labelledby="mode-option-${action}" aria-describedby="mode-info-${action}">
@@ -23,6 +25,7 @@ export function drawArcadeChoices(runs) {
   <nav class="mode-choice-nav" aria-label="화면 이동">
    <button type="button" class="mode-choice-back" data-arcade-action="title" aria-label="처음으로 돌아가기"><span aria-hidden="true"></span></button>
    <span class="mode-choice-brand">PLAY THE BOOK</span>
+   ${arcadeMenuButton()}
   </nav>
   <header class="mode-choice-header">
    <h1 class="arcade-title" id="arcade-title" tabindex="-1">미니게임<br>챌린지</h1>

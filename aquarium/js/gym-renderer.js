@@ -5,7 +5,7 @@ import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {heroWalkFrame} from './walk-cycle.js';
 import {sideWalkFrame} from './side-walk.js?v=155';
 import {drawClueCard} from './clue-card-art.js?v245';
-import {GYM,gymThrowPose} from './gym-core.js?v212';
+import {GYM,gymThrowPose} from './gym-core.js?v268';
 import {gymCourtPoint} from './gym-court.js?v=163';
 
 export async function loadGymAssets(character){

@@ -2,7 +2,7 @@ import {dataBriefing} from './briefing-scenes.js?v=155';
 import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {workshopAssets,artMetadata,loadWorkshopEntrance} from './workshop-art.js?v=155';
 import {drawPlayerAction,loadPlayerActions,leverStandpoint} from './player-actions.js?v=155';
-import {DATA_FILES,DATA_NODES,DATA_RECEIVERS,DATA_VIRUSES,dataVirusPose} from './datacenter-core.js';
+import {DATA_FILES,DATA_NODES,DATA_RECEIVERS,DATA_VIRUSES,dataVirusPose} from './datacenter-core.js?v268';
 export async function loadDataCenterAssets(character){const images=await workshopAssets('datacenter-v128',character,['room','props','entrance']);Object.assign(images,await workshopAssets('datacenter-v130',null,['records']),await workshopAssets('datacenter-v181',null,['room']));images.room0=images.room;images.propsAtlas=await artMetadata('datacenter-v128','props');await loadPlayerActions(images,character);await loadWorkshopEntrance(images,'datacenter');return images;}
 export class DataCenterRenderer extends FieldRenderer{
  briefing(c,character,t){dataBriefing(this,c,character,t);}

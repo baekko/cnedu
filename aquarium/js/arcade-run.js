@@ -1,4 +1,4 @@
-import {PLACES} from './places.js?v231';
+import {PLACES} from './places.js?v268';
 import {CHARACTERS} from './config.js';
 import {arcadeCharacterSetupId,canResumeArcade} from './arcade-state.js?v254';
 

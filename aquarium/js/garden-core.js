@@ -31,7 +31,7 @@ export class GardenGame extends FieldGame{
  get canAct(){return !this.ended&&(this.room===0?this.actionWait:this.careWait)<=0&&!!this.target;}
  get itemKind(){return 'gardenerBell';}
  get itemLabel(){return '정원사 호출벨';}
- get itemTip(){return '가까운 식물 한 곳의 남은 작업 완료 · 전체 1회';}
+ get itemTip(){return '가까운 식물 한 곳의 남은 작업 완료 · 1회 사용 가능';}
  get helperTarget(){return gardenerTarget(this);}
  get canCallGardener(){return !!this.helperTarget;}
  get actionLabel(){if(this.room!==0)return careLabel(this);const t=this.target;if(!t)return '조작';return t.part==='seed'?'심기':t.part==='cover'?(this.beds[t.id-1].cover?'열기':'덮기'):t.part==='heater'?(this.climate.heater?'끄기':'켜기'):(this.climate.vent?'닫기':'열기');}

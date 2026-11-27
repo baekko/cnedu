@@ -1,4 +1,4 @@
-import {PLACES,placeId} from './places.js?v231';
+import {PLACES,placeId} from './places.js?v268';
 
 export const SCORE_KEY='ptb_expedition_scores_v1';
 export const STAGE_MAX=15;

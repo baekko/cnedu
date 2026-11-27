@@ -1,5 +1,5 @@
 // Reuse the actual trading panels without binding them to the player's live account.
-import {ExchangeUI} from './exchange-ui.js?v249';
+import {ExchangeUI} from './exchange-ui.js?v268';
 export class TutorialFinance{
  constructor(game,character,target,coinMode=false){this.game=game;this.target=target;this.root=document.createElement('div');const noop=()=>{};this.ui=new ExchangeUI({root:this.root,game,character,onChange:noop,onComplete:noop,onFailure:noop,onHome:noop,onPause:noop,onHelp:noop,coinMode});this.signature='';}
  render(){const g=this.game,sign=[g.phase,g.dialogue,g.selected,g.budget,g.specialUsed,g.doubleArmed,g.cash].join('/');

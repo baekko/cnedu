@@ -1,0 +1,94 @@
+.postal-mode #game-ui #field-actions,
+.postal-mode #game-ui .flash-control { display: none; }
+.postal-mode .postal-actions {
+  position: absolute;
+  right: 13px;
+  bottom: 24px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.postal-mode .controls-panel .control-label { display: none; }
+.postal-mode #history-era { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.postal-control.interact-action {
+  position: relative;
+  inset: auto;
+  width: 66px;
+  min-height: 44px;
+  font-size: 13px;
+  color: #30564d;
+  border: 1px solid #b5c9bc;
+  background: #f1eee2;
+  border-radius: 10px;
+  box-shadow: 0 2px 0 #264d445e;
+}
+.postal-control.interact-action:not(:focus-visible) { outline: none; }
+.postal-control.interact-action.action-ready {
+  background: #ddeee1;
+  border-color: #729888;
+  box-shadow: 0 0 0 2px #7abea134;
+}
+.postal-control.interact-action:disabled { opacity: .56; }
+#app.postal-mode button:focus-visible {
+  outline: 2px solid #367c72;
+  outline-offset: 2px;
+}
+#app.postal-mode #game-ui button:focus-visible { outline-color: #9ee4d3; }
+.postal-mode #history-message:not([hidden]) { color: #356454; background: #f8f4e8f5; }
+.postal-mode #history-message.postal-wrong:not([hidden]) {
+  color: #8f352f;
+  background: #fff0eb;
+  border-color: #d8a298;
+  font-size: 13px;
+}
+.postal-mode[data-screen="countdown"] #history-message.postal-wrong { z-index: 23; }
+.postal-overlay { z-index: 47; }
+.postal-map-dialog.modal, .postal-report.modal {
+  width: min(94%, 372px);
+  max-height: 90%;
+  padding: 20px 16px;
+  overflow-y: auto;
+}
+.postal-map-dialog h2, .postal-report h2 { margin: 3px 0 9px; }
+.postal-map-note { margin: 8px 0; color: #4a655a; font-size: 14px; }
+.postal-map-viewport {
+  width: 100%;
+  max-height: min(48vh, 375px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+  border-radius: 10px;
+  border: 1px solid #9baa8e;
+  background: #d2dfbc;
+  scrollbar-color: #789883 #e3e9d7;
+}
+.postal-map-viewport canvas { display: block; width: 100%; max-width: none; height: auto; }
+.postal-map-viewport.expanded canvas { width: 235%; }
+.postal-map-buttons { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+.postal-map-buttons > button { flex: 1; min-height: 44px; font-size: 14px; }
+.postal-report .postal-miss { color: #963e37; margin: 3px 0 0; font-weight: 700; font-size: 15px; }
+.postal-report .postal-reward { margin: 12px 0 15px; color: #2d6150; font-size: 15px; font-weight: 800; }
+#app.postal-mode .tutorial-device .demo-actions > .postal-control {
+  border-color: #b5c9bc;
+  background: #f1eee2;
+  color: #30564d;
+  box-shadow: 0 2px 0 #264d445e;
+}
+#app.postal-mode .tutorial-device button.demo-pressed {
+  outline: 2px solid #70c0ac !important;
+  box-shadow: inset 0 3px 0 #278e8266 !important;
+}
+#app.postal-mode .tutorial-device button.demo-pressed::after {
+  background: #438d7c;
+  box-shadow: none;
+}
+#app.postal-mode .tutorial-arrow:not(:disabled) {
+  color: #30564d;
+  border-color: #8eb2a5;
+  background: #d8ebe2;
+  box-shadow: 0 3px 0 #83a99c;
+}
+#app.postal-mode .tutorial-arrow:active:not(:disabled) { box-shadow: 0 1px 0 #83a99c; }
+@media (prefers-reduced-motion: reduce) {
+  #app.postal-mode #tutorial-next.is-ready { outline-color: #367c72; }
+}

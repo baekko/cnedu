@@ -46,10 +46,13 @@
 .stage-entry-scene {
  position:relative;
  display:grid;
+ grid-template:minmax(0,1fr) / minmax(0,1fr);
  place-items:center;
+ flex:none;
  width:min(100%,285px);
  height:clamp(130px,29dvh,205px);
  margin:0 auto;
+ overflow:hidden;
  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--entry-tone) 58%,transparent),transparent 70%);
 }
 .stage-entry-object {

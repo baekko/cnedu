@@ -1,7 +1,8 @@
 import {CHARACTERS} from './config.js';
 import {icon} from './icons.js?v245';
-import {placeIcon,placeInfo} from './places.js?v231';
-import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v254';
+import {placeIcon,placeInfo} from './places.js?v268';
+import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v268';
+import {arcadeMenuButton} from './expedition-shell.js?v268';
 
 export const ARCADE_SCREENS=new Set(['arcade-choice','arcade-map','arcade-records','arcade-result']);
 const root=()=>document.getElementById('arcade-screen');
@@ -12,7 +13,7 @@ function button(action,label,{symbol='',primary=false}={}){
  return `<button type="button" class="atlas-button${primary?' atlas-button-primary':''}" data-arcade-action="${action}">${symbol?icon(symbol):''}<span>${label}</span></button>`;
 }
 function heading(title,note='',emblem=''){
- return `<header class="atlas-heading"><div><h1 id="arcade-title" tabindex="-1">${title}</h1>${note?'<p>'+note+'</p>':''}</div>${emblem?'<span class="atlas-emblem" aria-hidden="true">'+emblem+'</span>':''}</header>`;
+ return `<header class="atlas-heading"><div><h1 id="arcade-title" tabindex="-1">${title}</h1>${note?'<p>'+note+'</p>':''}</div><div class="arcade-toolbar">${emblem?'<span class="atlas-emblem" aria-hidden="true">'+emblem+'</span>':''}${arcadeMenuButton()}</div></header>`;
 }
 function tally(runs,total){
  return `<div class="atlas-tally">
@@ -33,7 +34,7 @@ export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  const instructions=finished?'모든 게임을 완주했어요.':challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.';
  const stats=challenge?`<div class="arcade-tally"><span>완료 <b>${runs.completed} / ${places.length}</b></span><span>${coin} <b>${runs.total} / ${runs.maximum}점</b></span></div>`:'';
  root().innerHTML=`<header class="arcade-map-header"><div><h1 id="arcade-title" tabindex="-1">${title}</h1><p>${instructions}</p></div>
- <button type="button" class="arcade-map-switch" data-arcade-action="${challenge?'practice':'challenge'}">${challenge?'연습하기':'챌린지'}</button></header>
+ <div class="arcade-toolbar">${arcadeMenuButton()}<button type="button" class="arcade-map-switch" data-arcade-action="${challenge?'practice':'challenge'}">${challenge?'연습하기':'챌린지'}</button></div></header>
  ${stats}<p class="arcade-status" role="status" hidden></p>${finished?shareStatus():''}
  <div class="arcade-map-scroll" aria-label="미니게임 지도"><ol class="arcade-map">
  ${places.map((place,index)=>{
@@ -86,10 +87,16 @@ export function fillArcadeRecords(records,message){
   const player=arcadePlayer(row.player);
   const character=CHARACTERS.find(c=>c.id===player.character);
   const article=document.createElement('article');article.className='arcade-record atlas-record';
-  article.innerHTML=`<div class="arcade-avatar"><img src="./assets/${character.asset}" alt=""></div><div><h2></h2><time></time></div><strong></strong>`;
+  article.innerHTML=`<div class="arcade-avatar"><img src="./assets/${character.asset}" alt=""></div><div><h2></h2><div class="arcade-record-meta"><time></time><small class="arcade-record-count" hidden></small></div></div><strong></strong>`;
   article.querySelector('h2').textContent=player.name;
   const time=article.querySelector('time'),when=new Date(row.finishedAt);
   if(!Number.isNaN(+when)){time.dateTime=when.toISOString();time.textContent=dateFormat.format(when);}
+  const count=row.games?.length||row.maximum/COINS_PER_GAME;
+  if(Number.isInteger(count)&&count>0){
+   const countLabel=article.querySelector('.arcade-record-count');
+   countLabel.textContent=`${count}개 게임`;
+   countLabel.hidden=false;
+  }
   article.querySelector('strong').textContent=`${row.score} / ${row.maximum}점`;
   return article;
  });

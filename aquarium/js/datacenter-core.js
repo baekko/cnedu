@@ -44,7 +44,7 @@ export class DataCenterGame extends FieldGame{
  get connectedRoute(){const side=this.levers[0].state?'right':'left';return [['source','fork'],['fork',side],[side,'out'+this.connectedServer]];}
  isVirusCleared(v){return this.clearedEdges.has(v.edge.join(':'));}
  get canCleanVirus(){return !this.ended&&this.flashes>0&&this.connectedRoute.some(edge=>DATA_VIRUSES.some(v=>v.edge.join(':')===edge.join(':')&&!this.isVirusCleared(v)));}
- get itemKind(){return'virusClear';}get itemLabel(){return'바이러스 제거';}get itemTip(){return'현재 연결된 경로의 바이러스를 없애요 · 2회';}
+ get itemKind(){return'virusClear';}get itemLabel(){return'바이러스 제거';}get itemTip(){return'현재 연결된 경로의 바이러스를 없애요 · 2회 사용 가능';}
  get statusDescription(){return this.file.name+' · '+this.file.received.length+'/'+this.file.targets.length+' 도착 · 전송 중 '+this.packets.length;}
  get prompt(){
   if(this.messageLeft>0)return this.message;if(this.work)return'손잡이를 바꿔 데이터의 다음 길을 정해요';

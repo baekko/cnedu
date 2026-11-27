@@ -1,22 +1,23 @@
 import {PursuitGame} from './pursuit-game.js?v252';
+import {PostalGame,postalDepartureMountTime} from './postal-core.js?v268';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
-import {CinemaGame} from './cinema-core.js?v204-final40';
-import {GymGame} from './gym-core.js?v212';
-import {DataCenterGame} from './datacenter-core.js';
-import {ConservationGame,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js';
-import {observeTutorial} from './tutorial-input.js?v232';
+import {CinemaGame} from './cinema-core.js?v268';
+import {GymGame} from './gym-core.js?v268';
+import {DataCenterGame} from './datacenter-core.js?v268';
+import {ConservationGame,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js?v268';
+import {observeTutorial} from './tutorial-input.js?v268';
 import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
-import {GardenGame} from './garden-core.js';
+import {GardenGame} from './garden-core.js?v268';
 import {DONORS,gardenBugPose} from './garden-care.js';
 import {extendExamples} from './tutorial-examples.js?v=156';
-import {groupTutorial} from './tutorial-pages.js?v249';
+import {groupTutorial} from './tutorial-pages.js?v268';
 // Isolated demonstrations. Inputs call the production game rules; no journey or storage access.
 import {AquariumGame} from './core.js';
 import {MuseumGame} from './museum-core.js';
 import {HistoryGame} from './history-core.js';
 import {ExchangeGame} from './exchange-core.js';
 import {CityHallGame,CITY_DEMO_PLAN} from './cityhall-core.js';
-import {TempleGame,routeZ,templeZoneAt} from './temple-core.js?v=157';
+import {TempleGame,routeZ,templeZoneAt} from './temple-core.js?v268';
 import {RobotGame} from './robot-core.js';
 import {SpaceGame,spaceCamera} from './space-core.js';
 import {WriterGame,ALICE_GATE,CASTLE} from './writer-core.js?v214';
@@ -24,7 +25,7 @@ import {LanguageGame} from './language-core.js';
 import {NewspaperGame} from './newspaper-core.js';
 import {DessertGame} from './dessert-core.js';
 import {stampTarget} from './dessert-finishing.js';
-import {DreamGame} from './dream-core.js';
+import {DreamGame} from './dream-core.js?v268';
 import {LiteratureGame,roomBase,lockAt} from './literature-core.js?v249';
 import {SEWING,seamX} from './literature-rules.js';
 import {ZooGame} from './zoo-core.js?v=155';
@@ -33,7 +34,7 @@ import {AITutorial} from './ai-tutorial.js';
 import {MonasteryGame,LANTERN_ROUTE,TEMPLE_BELLS,bellPassage} from './monastery-core.js?v228';
 import {awardClue} from './clue-order.js';
 
-export const TUTORIAL_PLACES=['aquarium','museum','history','exchange','temple','robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit'];
+export const TUTORIAL_PLACES=['aquarium','museum','history','exchange','temple','robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit','postal'];
 export class PlayTutorial{
  constructor(game,titles){this.game=game;this.titles=titles;this.total=titles.length;this.seq=[];this.i=0;this.age=0;this.ageHere=0;this.step=0;this.caption='';this.control='';this.done=false;this.fade=0;this.events=[];game.onEvent=e=>{this.events.push(e);this.onEvent?.(e);};}
  get title(){return this.titles[this.step];}
@@ -67,7 +68,7 @@ function aquarium(){
  t.act(1,'상어가 오는 길을 보고 비켜요.',()=>{g.spawnEnemy('basic');g.enemies.at(-1).y=g.enemies.at(-1).baseY=340;},'↓');
  t.walk(1,'아래쪽 빈 공간으로 피했어요.',170,480).hold(1,'상어가 지나간 뒤 단서를 찾아요.',2.5);
  t.act(2,'위험할 때 빛을 쓰면 가까운 상어가 피해요.',()=>{g.spawnEnemy('hammer');Object.assign(g.enemies.at(-1),{x:450,y:g.player.y,baseY:g.player.y});},'빛');
- t.hold(2,'빛 버튼은 세 번 사용할 수 있어요.',1.9,'빛').act(2,'빛을 발사해 상어를 밀어내요.',()=>g.flash(),'빛').hold(2,'지금처럼 가까운 상어에게 사용해요.',3.2,'빛');
+ t.hold(2,'빛 발사 · 3회 사용 가능',1.9,'빛').act(2,'빛을 발사해 상어를 밀어내요.',()=>g.flash(),'빛').hold(2,'지금처럼 가까운 상어에게 사용해요.',3.2,'빛');
  t.act(3,'이번에는 피하지 않고 상어에 부딪히는 모습을 볼게요.',()=>{g.spawnEnemy('basic');Object.assign(g.enemies.at(-1),{x:440,y:g.player.y,baseY:g.player.y});},'');
  t.until(3,'상어와 닿는 순간 내구도가 세 칸에서 두 칸으로 줄어요.',()=>g.health===2,{},6).hold(3,'잠수함에 생긴 금과 위쪽 내구도를 확인해요.',2.5);
  t.act(3,'금이 간 상태에서 수리해파리를 먹어 봐요.',()=>g.pickups.push({type:'heal',x:365,y:g.player.y,phase:0}),'');
@@ -97,7 +98,7 @@ function exchange(){
  for(let i=0;i<3;i++)t.act(0,'다음 버튼으로 대화를 넘겨요.',()=>g.next(),'다음').hold(0,'설명을 다 읽으면 투자를 시작해요.',.8);
  t.add(1,'투자 시작하기를 눌러 정보를 읽어요.',{sec:.3,press:'panel:start'}).act(1,'투자 시작하기를 눌러 정보를 읽어요.',()=>g.startRound(),'시작').hold(1,'네 줄의 정보에서 유리한 업종을 찾아보세요.',4.5);
  t.act(1,'종목을 고른 뒤 최대 버튼으로 살 수 있는 수량을 정해요.',()=>{g.select(g.stocks.reduce((a,s,i)=>s.end/s.start>g.stocks[a].end/g.stocks[a].start?i:a,0));g.maxBudget();},'최대').hold(1,'주가의 배수만 투자하고 남은 금액은 현금으로 남아요.',3);
- t.act(2,'특급정보는 가장 유리한 종목을 찾는 도움말이에요.',()=>g.useSpecial(),'특급정보').hold(2,'아이템은 이번 모험에서 한 번씩 쓸 수 있어요.',3);
+ t.act(2,'특급정보는 가장 유리한 종목을 찾는 도움말이에요.',()=>g.useSpecial(),'특급정보').hold(2,'특급정보와 더블업 · 각 1회 사용 가능',3);
  t.act(2,'더블업은 이번 투자의 이익과 손실을 모두 두 배로 해요.',()=>g.toggleDouble(),'×2').hold(2,'손실도 커지므로 신중하게 사용해요.',2.5);
  t.act(3,'투자하기를 누르면 5년 뒤 결과가 나와요.',()=>g.commit(),'투자').hold(3,'시간이 흘러 주식을 팔고 결과를 확인해요.',2.7).hold(3,'다섯 번 투자한 최종 자본으로 단서를 사요. 한 장에 300만원이에요.',4);return t;
 }
@@ -261,7 +262,7 @@ function monastery(){
  .input(1,'안정되지만 걸음이 느려져요.',1,{x:1},'→')
  .act(1,'바람막이를 쓰면 연등이 바로 안정돼요.',()=>{g.releaseBalance();g.flash();},'바람막이')
  .input(1,'5초 동안 바람을 막아 빠르게 건널 수 있어요.',1.25,{x:1},'→')
- .hold(1,'균형은 필요할 때만 · 바람막이는 두 번 쓸 수 있어요.',.5);
+ .hold(1,'바람막이 · 2회 사용 가능',.5);
  t.cut(1,'물보라가 예고되면 위아래로 길을 바꿔요.',()=>{g.held=LANTERN_ROUTE[4];at(g,3040,430);g.lane=g.laneTarget=0;g.angle=g.angularVelocity=0;g.windAges[4]=4;g.splashAges[1]=.3;g.releaseBalance();})
  .input(1,'아래쪽을 눌러 바깥 길로 피해요.',.55,{y:1},'↓')
  .input(1,'물이 튀는 안쪽 길을 비켜 걸어요.',1.1,{x:1},'→');
@@ -289,7 +290,7 @@ function photo(){
  .hold(2,'빛이 꺼지거나 빛이 비치는 위치를 피해 찍어요.',.5)
  .act(2,'어려울 때 자동 촬영 아이템을 써요.',()=>g.flash(),'자동 촬영')
  .until(2,'피사체를 따라가 초점을 맞추고 한 장을 찍어요.',()=>g.clueSources.has(7)&&!g.autoShot,{},15)
- .hold(2,'자동 촬영은 한 게임에서 한 번 사용할 수 있어요.',.6);return t;
+ .hold(2,'자동 촬영 · 1회 사용 가능',.6);return t;
 }
 function garden(characterId='haru'){
  const g=new GardenGame({characterId}),t=new PlayTutorial(g,['히터로 온도 맞추기','꽃가루 세 번 옮기기','벌레 쪽으로 분무하기','정원사 호출벨']);
@@ -311,7 +312,7 @@ function garden(characterId='haru'){
  t.act(3,'정원사에게 맡길 식물이 있는 공간을 골라요.',()=>g.goRoom(1),'공간 2').walk(3,'아직 작업하지 않은 왼쪽 식물 앞으로 가요.',72,382)
  .act(3,'호출벨을 누르면 가까운 식물 한 곳을 맡아요.',()=>g.flash(),'정원사 호출벨')
  .until(3,'정원사가 남은 작업을 마치면 단서 한 장을 받아요.',()=>g.clueSources.has(4),{},4)
- .hold(3,'호출벨은 세 공간을 합쳐 한 번 사용할 수 있어요.',.7);return t;
+ .hold(3,'정원사 호출벨 · 1회 사용 가능',.7);return t;
 }
 
 function datacenter(){
@@ -330,7 +331,7 @@ function datacenter(){
  .until(1,'두 서버에 모두 도착하면 다음 자료가 준비돼요.',()=>g.clueSources.has(3),{},9).hold(1,'실패하면 아래 단말기에서 빠진 것만 다시 보내요.',.6);
  t.cut(2,'주황 점선은 바이러스가 들어올 회로예요.',()=>{g.selected=2;g.levers[0].state=1;g.levers[2].state=1;g.elapsed=8.8;g.messageLeft=0;at(g,195,445);})
  .act(2,'바이러스 제거를 누르면 현재 길의 바이러스가 사라져요.',()=>g.flash(),'바이러스 제거').act(2,'바이러스를 없앤 길로 데이터를 보내요.',()=>g.send(),'전송')
- .hold(2,'위험한 회로를 지날 때 사용하세요. 전체 두 번이에요.',4).hold(2,'체크 표시가 있는 길에는 바이러스가 다시 나오지 않아요.',1.3);return t;
+ .hold(2,'바이러스 제거 · 2회 사용 가능',4).hold(2,'체크 표시가 있는 길에는 바이러스가 다시 나오지 않아요.',1.3);return t;
 }
 
 function conservation(){
@@ -349,7 +350,7 @@ function conservation(){
  .act(2,'양쪽 표시가 초록에 함께 머물러야 해요.',()=>g.beginAction(),'압착').until(2,'오른쪽 표시도 초록 안에 맞춰요.',()=>g.book.pressure[1]>=.56,{},3).act(2,'초록 구간에서는 손을 떼어 유지해요.',()=>g.releaseAction(),'압착')
  .until(2,'양쪽 힘이 안정되면 책장이 펴져요.',()=>g.books[6].done,{},4).hold(2,'너무 세게 누르지 않도록 표시를 봐요.',.5);
  t.cut(3,'작업 중인 책에 보호 받침을 써요.',()=>{g.selected=1;g.resetTool();g.elapsed=3;})
- .act(3,'보호 받침은 이 책의 실수 한 번을 막아요.',()=>g.flash(),'보호 받침').hold(3,'실수 한 번을 막고 사라져요. 전체 두 번 쓸 수 있어요.',2);return t;
+ .act(3,'보호 받침은 이 책의 실수 한 번을 막아요.',()=>g.flash(),'보호 받침').hold(3,'보호 받침은 첫 실수를 막으면 사라져요. 2회 사용 가능.',2);return t;
 }
 function cityhall(){
  const g=new CityHallGame({plan:CITY_DEMO_PLAN}),t=new PlayTutorial(g,['비서의 보고와 정책 선택','전문가 조언과 결재']);
@@ -358,7 +359,7 @@ function cityhall(){
  .act(0,'다음을 눌러 설명을 읽어요.',()=>g.act(),'다음').hold(0,'52%에 첫 단서, 64%부터는 4%p마다 한 장을 더 받아요.',2)
  .act(0,'보고를 눌러 첫 안건을 받아요.',()=>g.act(),'보고').hold(0,'큰비까지 일주일, 배수로 정비는 사흘 걸려요.',1)
  .act(0,'방향키로 배수로 정비를 골라요.',()=>g.selectByOffset(1),'방향키').hold(0,'선택한 정책의 테두리가 바뀌어요.',.7);
- t.act(1,'정책 전문가 조언을 한 번 쓸 수 있어요.',()=>g.flash(),'전문가 조언')
+ t.act(1,'정책 전문가 조언 · 1회 사용 가능',()=>g.flash(),'전문가 조언')
  .hold(1,'언제 비가 오고 시설이 완성되는지 비교해요.',2)
  .act(1,'결재로 지지율 변화를 확인해요.',()=>g.act(),'결재').hold(1,'배수로를 미리 정비해 지지율이 8%p 올랐어요.',1.65)
  .act(1,'다음 안건으로 이동해요.',()=>g.act(),'다음').hold(1,'여섯 번째 결재 뒤 단서를 받습니다.',.7);
@@ -376,16 +377,16 @@ function gym(){
  .hold(1,'공이 날아오는 것을 확인해요.',1.5)
  .act(1,'휘슬은 공과 상대만 3초 멈춰요.',()=>g.flash(),'휘슬')
  .walk(1,'제한시간은 계속 흘러요. 움직여 단서를 주워요.',277,328)
- .hold(1,'휘슬은 두 번 사용할 수 있어요.',1.4);
+ .hold(1,'타임아웃 휘슬 · 2회 사용 가능',1.4);
  return t;
 }
 
 function cinema(){
- const g=new CinemaGame({plan:['matrix','titanic','jurassic','backfuture','indiana','jaws','leon','forrest','gravity'],random:()=>.4}),t=new PlayTutorial(g,['영화 보기 · 제목 선택','영화 정보 · 2회']);
+ const g=new CinemaGame({plan:['matrix','titanic','jurassic','backfuture','indiana','jaws','leon','forrest','gravity'],random:()=>.4}),t=new PlayTutorial(g,['영화 보기 · 제목 선택','영화 정보 · 2회 사용 가능']);
  t.until(0,'영화가 시작되면 장면을 살펴요.',()=>g.choicesVisible,{},30)
  .act(0,'방향키로 제목을 골라요.',()=>{g.selectByOffset(1);for(let tries=0;tries<4&&g.options[g.selected]!==g.film.id;tries++)g.selectByOffset(1);},'방향키')
  .hold(0,'선택한 제목을 결정해요.',.7).act(0,'맞히면 단서 한 장을 얻어요.',()=>g.act(),'결정').hold(0,'정답이면 다음 영화가 시작돼요.',1);
- t.until(1,'다음 영화도 3초 뒤에 보기가 나와요.',()=>g.choicesVisible,{},30).act(1,'영화 정보는 두 번 쓸 수 있어요.',()=>g.flash(),'영화 정보').hold(1,'이야기 힌트로 제목을 찾아요.',2)
+ t.until(1,'다음 영화도 3초 뒤에 보기가 나와요.',()=>g.choicesVisible,{},30).act(1,'영화 정보 · 2회 사용 가능',()=>g.flash(),'영화 정보').hold(1,'이야기 힌트로 제목을 찾아요.',2)
  .act(1,'힌트와 맞는 영화를 골라요.',()=>{g.selectByOffset(1);for(let tries=0;tries<4&&g.options[g.selected]!==g.film.id;tries++)g.selectByOffset(1);},'방향키')
  .act(1,'결정하면 다음 영화로 넘어가요.',()=>g.act(),'결정').hold(1,'남은 힌트는 다른 영화에 쓸 수 있어요.',1)
  .until(1,'다른 영화에서도 정보를 확인해요.',()=>g.choicesVisible,{},30).act(1,'두 번째 힌트를 사용해요.',()=>g.flash(),'영화 정보').hold(1,'아홉 영화에서 단서를 모아요.',1.3);return t;
@@ -437,8 +438,8 @@ function memory(){
  .act(2,'시간이나 기회를 다 쓰면 정답을 공개해요.',()=>{g.phaseLeft=.4;},'')
  .until(2,'놓친 곳의 동그라미가 세 번 깜빡여요.',()=>g.revealing&&g.phaseLeft<=MEMORY.revealCycle-MEMORY.revealOn,{},3.1);
 
- t.cut(3,'두 아이템은 한 판에 한 번씩 쓸 수 있어요.',()=>resetSample())
- .still(3,'두 아이템은 한 판에 한 번씩 쓸 수 있어요.',1.4)
+ t.cut(3,'원본 더보기와 범위 힌트 · 각 1회 사용 가능',()=>resetSample())
+ .still(3,'원본 더보기와 범위 힌트 · 각 1회 사용 가능',1.4)
  .act(3,'원본을 외우는 중에 원본 10초 더보기를 눌러요.',()=>g.revisitOriginal(),'원본 10초')
  .still(3,'같은 원본을 보면서 남은 관찰 시간이 10초 늘어나요.',1.7);
  flipToSearch(3)
@@ -479,5 +480,39 @@ function pursuit(){
   .still(2,'원래 세 장에 네 번째 그림이 더해져요.',2);
  return t;
 }
-const factories={pursuit,memory,cinema,gym,cityhall,datacenter,conservation,photo,garden,monastery,detective,aquarium,museum,history,exchange,temple,robot,space,writer,language,newspaper,dream,literature,zoo,dessert};
+function postal(characterId){
+ const runPlan=[
+  {villageId:'willow',destinations:[12,26,36,47]},
+  {villageId:'stonewall',destinations:[8,11,21,35,44]},
+ ];
+ const g=new PostalGame({runPlan,characterId});
+ const t=new PlayTutorial(g,['마을지도','골목길 이동','우편함에 배달','두 번째 마을']);
+ g.tutorialDemo=true;
+ const house=g.village.houses.find(home=>home.id===26);
+ const main=g.village.roads[0];
+ const alley=g.village.roads.filter(road=>road.x1===road.x2&&road.y1===main.y1&&road.y2===house.stop.y)
+  .sort((a,b)=>Math.abs(a.x1-house.stop.x)-Math.abs(b.x1-house.stop.x))[0];
+ const departureTime=g.motion.duration+postalDepartureMountTime(characterId,g.bike.dir);
+ t.until(0,'자전거에 타면 마을지도를 확인할 수 있어요.',()=>g.canMove,{},Math.max(2,departureTime+.2))
+  .act(0,'마을지도를 펴요.',()=>g.showMap(),'마을지도')
+  .hold(0,'빨간 핀을 보고 골목과 집의 순서를 기억해요.',2.5)
+  .act(0,'마을지도를 닫아요.',()=>g.closeMap(),'마을지도');
+ t.walk(1,'방향키를 눌러 골목 입구까지 달려요.',alley.x1,main.y1)
+  .walk(1,'골목으로 내려가요.',alley.x1,house.stop.y)
+  .walk(1,'집 앞 우편함에 가까이 가요.',house.stop.x,house.stop.y);
+ t.act(2,'집 앞에서 배달을 눌러요.',()=>g.act(),'배달')
+  .until(2,'우편함에 넣고 자전거에 다시 타요.',()=>g.canMove,{},4)
+  .hold(2,'배달을 마치면 다음 집으로 이동해요.',1.1);
+ t.cut(3,'첫 마을의 시간이 거의 다 됐어요.',()=>{
+   g.elapsed+=g.remaining-1.2;
+   g.villageTime=g.round.seconds-1.2;
+  })
+  .until(3,'첫 배달 시간이 끝나요.',()=>g.phase==='report',{},1.5)
+  .act(3,'다음 마을에서 출발을 준비해요.',()=>{g.nextVillage();g.tutorialCountdownUntil=t.age+3;},'')
+  .still(3,'3초를 세고 출발해요.',3)
+  .until(3,'두 번째 마을에서 다섯 통을 배달해요.',()=>g.canMove,{},Math.max(2,departureTime+.2))
+  .hold(3,'두 번째 마을에서도 배달지를 찾아가요.',.7);
+ return t;
+}
+const factories={postal,pursuit,memory,cinema,gym,cityhall,datacenter,conservation,photo,garden,monastery,detective,aquarium,museum,history,exchange,temple,robot,space,writer,language,newspaper,dream,literature,zoo,dessert};
 export function createTutorial(place,character='haru'){if(place==='ai')return observeTutorial(groupTutorial(new AITutorial(),place),place);const f=factories[place];if(!f)throw Error('No tutorial for '+place);return observeTutorial(groupTutorial(extendExamples(f(character),place),place),place);}

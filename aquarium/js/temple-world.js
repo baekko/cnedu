@@ -1,4 +1,4 @@
-import {routeZ} from './temple-core.js?v=157';
+import {routeZ} from './temple-core.js?v268';
 // All terrain is anchored to the same world coordinate. Borders are joined by
 // illustrated terrain, not by a scene fade or a camera reset.
 function feather(image,top=0,bottom=0){

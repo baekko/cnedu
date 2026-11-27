@@ -11,7 +11,7 @@ export class CinemaGame extends FieldGame{
  get canMove(){return false;}
  get canAct(){return !this.ended&&this.phase==='choose'&&this.selected>=0;}
  get choicesVisible(){return ['choose','feedback'].includes(this.phase);}
- get itemKind(){return 'filmInfo';}get itemLabel(){return '영화 정보';}get itemTip(){return '지금 영화의 이야기 힌트 · 2회';}
+ get itemKind(){return 'filmInfo';}get itemLabel(){return '영화 정보';}get itemTip(){return '지금 영화의 이야기 힌트 · 2회 사용 가능';}
  get actionLabel(){return '결정';}get prompt(){return '';}
  get statusDescription(){return `${Math.min(9,this.round+1)} / 9 · ${this.phase==='watch'?'상영 중':this.phase==='choose'?'제목 고르기':'정답 확인'}`;}
  move(){} goRoom(){return false;} cancelAction(){} releaseAction(){return false;}

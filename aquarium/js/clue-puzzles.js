@@ -2,9 +2,11 @@
 import {PURSUIT} from './pursuit-game.js?v243';
 import {CITYHALL} from './cityhall-core.js';
 import {MEMORY} from './memory-core.js?v211';
-import {CINEMA} from './cinema-core.js?v204-final40';
-import {GYM} from './gym-core.js?v=161';
+import {CINEMA} from './cinema-core.js?v268';
+import {GYM} from './gym-core.js?v268';
+import {POSTAL} from './postal-core.js?v268';
 export const CLUE_PUZZLES=Object.freeze({
+ postal:{...POSTAL,image:'postal/mailbox.webp',prompt:'배달원이 집 앞에서 편지를 넣는 이 물건의 이름은 무엇일까요?'},
  pursuit:{...PURSUIT,image:'pursuit/handcuffs.webp',prompt:'경찰이 체포할 때 두 손목에 채우는 이 도구의 이름은 무엇일까요?'},
  memory:{...MEMORY,image:'memory-lab/album.webp',prompt:'찍은 사진을 붙여 모아 두는 이 물건은 무엇일까요?'},
  cinema:{...CINEMA,image:'cinema/projector.webp',prompt:'스크린에 영화를 비추는 이 기계의 이름은 무엇일까요?'},

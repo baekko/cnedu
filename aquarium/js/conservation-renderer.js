@@ -2,7 +2,7 @@ import {paperPattern} from './conservation-patterns.js';
 import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {workshopAssets,artMetadata,loadWorkshopEntrance} from './workshop-art.js?v=155';
 import {beginScene,drawRoom} from './layout.js';
-import {bookWorm,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js';
+import {bookWorm,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js?v268';
 export async function loadConservationAssets(){const images=await workshopAssets('conservation-v128',null,['room','books','hands','worm','entrance']);images.room0=images.room;[images.booksAtlas,images.handsAtlas,images.wormAtlas]=await Promise.all(['books','hands','worm'].map(k=>artMetadata('conservation-v128',k)));await loadWorkshopEntrance(images,'conservation');images.helpBrush=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(Error('책 복원 동작 그림 오류'));im.src=new URL('../assets/conservation-v132/help-brush.webp',import.meta.url).href;});images.helpBrushAtlas=await artMetadata('conservation-v132','help-brush');return images;}
 function patchPath(c,book,x,y,rotation=0){const points=paperPattern(book).points;c.save();c.translate(x,y);c.rotate(rotation*Math.PI/2);c.beginPath();for(const[i,p]of points.entries())i?c.lineTo(...p):c.moveTo(...p);c.closePath();c.restore();}
 export class ConservationRenderer extends FieldRenderer{

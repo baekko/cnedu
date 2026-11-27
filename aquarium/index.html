@@ -25,11 +25,27 @@
         <div class="opening-content"><p id="test-edition-label" hidden>테스트판</p><h1 id="opening-title"><span>어서오세요,</span><span>이곳은</span><em>수족관입니다.</em></h1>
         <div class="opening-illustration" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="bubble bubble-one"></span><span class="bubble bubble-two"></span><span class="bubble bubble-three"></span><img id="title-art" width="520" height="460" src="./assets/aquarium-v8/title-submarine.webp" alt=""><img class="opening-shark" src="./assets/aquarium-v8/title-shark.webp" alt=""></div>
         <div class="title-actions">
-          <button id="title-escape" type="button" class="primary-button">방탈출+미니게임 시작하기</button>
+          <button id="title-escape" type="button" class="primary-button">이곳은 수족관입니다 시작하기</button>
           <button id="title-arcade" type="button" class="primary-button">미니게임 챌린지 시작하기</button>
         </div></div>
       </section>
       <section id="arcade-screen" class="screen arcade-screen" hidden aria-labelledby="arcade-title"></section>
+      <div id="arcade-rules-overlay" class="overlay" hidden>
+        <section class="modal briefing arcade-rules-modal" role="dialog" aria-modal="true" aria-labelledby="arcade-rules-title">
+          <h2 id="arcade-rules-title" tabindex="-1">미니게임 챌린지 방법</h2>
+          <div class="instruction-list">
+            <div><p><b>게임맵에서 장소 고르기</b><small>원하는 순서로 도전하세요. 챌린지에서는 각 장소에 한 번씩 도전할 수 있어요.</small></p></div>
+            <div><p><b>금화 1개당 1점</b><small>게임마다 최대 9점을 얻어요. 게임 메뉴의 ‘나의 점수’에서 모은 점수를 확인할 수 있어요.</small></p></div>
+            <div><p><b>완주하면 기록 저장</b><small>모든 게임을 끝까지 마치면 캐릭터 이름과 점수가 기록실에 저장되고 공유돼요. 창을 닫을 때 진행 중인 게임은 중단으로 남아요.</small></p></div>
+            <div><p><b>연습은 원하는 만큼</b><small>‘연습하기’를 누른 뒤 연습할 장소를 고르세요. 챌린지 점수에는 도전에서 모은 금화만 들어가요.</small></p></div>
+          </div>
+          <div class="brief-actions">
+            <button id="arcade-rules-confirm" type="button" class="primary-button">챌린지 시작하기</button>
+            <button id="arcade-rules-practice" type="button" class="secondary-button">연습하기</button>
+            <button id="arcade-rules-back" type="button" class="secondary-button">돌아가기</button>
+          </div>
+        </section>
+      </div>
       <div id="arcade-reset-overlay" class="overlay" hidden>
         <section class="modal arcade-reset-modal" role="alertdialog" aria-modal="true" aria-labelledby="arcade-reset-title" aria-describedby="arcade-reset-description">
           <h2 id="arcade-reset-title">다시 도전할까요?</h2>
@@ -71,12 +87,41 @@
           </div>
           <div id="cityhall-actions"><button id="cityhall-prev" type="button" class="interact-action" hidden disabled aria-label="대화 이전">이전</button><button id="cityhall-act" type="button" class="interact-action" disabled aria-label="대화 다음">다음</button></div>
           <div id="workshop-actions" hidden><button id="workshop-rotate" class="interact-action" type="button" hidden>회전</button></div><div id="field-actions"><button id="field-act" class="interact-action field-act" aria-label="촬영 또는 물길 조작">촬영</button></div><div id="ai-actions"><button id="ai-original" hidden class="interact-action ai-original" aria-label="스캐너로 돌아가기">다시</button><button id="ai-act" class="interact-action ai-act" aria-label="작업실 행동">스캔</button></div><div id="zoo-actions"><button id="zoo-act" class="museum-action zoo-act" aria-label="누르고 힘을 모아 먹이 던지기" data-game-icon="feed"></button></div><div id="literature-actions"><button id="literature-act" class="interact-action literature-act" aria-label="장면에 맞는 행동">행동</button></div><div id="dream-actions"><button id="dream-jump" class="museum-action dream-jump" aria-label="점프" data-game-icon="jump"></button><button id="dream-act" class="interact-action dream-act" aria-label="중력 반전">반전</button></div><div id="monastery-actions"><button id="monastery-balance" class="interact-action monastery-balance" aria-label="누르고 균형 잡기" aria-pressed="false"><b>균형</b><small>누르고 있기</small></button></div><div id="detective-actions"><button id="detective-hide" class="interact-action detective-hide" aria-label="가구 뒤에 숨기">숨기</button><button id="detective-act" class="interact-action detective-act" aria-label="누르고 조사하기">조사</button></div><div id="dessert-actions"><button id="dessert-act" class="interact-action dessert-act" aria-label="오븐에서 꺼내기">꺼내기</button></div><div id="newspaper-actions"><button id="newspaper-act" class="interact-action newspaper-act" aria-label="사진·제목 집기 또는 배치">작업</button></div><div id="language-actions"><button id="language-jump" class="museum-action language-jump" aria-label="점프" data-game-icon="jump"></button><button id="language-act" class="interact-action language-act" aria-label="글자 집기">집기</button></div><div id="writer-actions"><button id="writer-jump" class="museum-action writer-jump" aria-label="점프" data-game-icon="jump"></button><button id="writer-act" class="interact-action writer-act" aria-label="이야기 행동">행동</button></div><div id="space-actions"><button id="brake-button" class="interact-action space-brake" aria-label="제동">제동</button></div><div id="robot-actions"><button id="work-button" class="interact-action robot-work" aria-label="부품 집기 또는 로봇 수리">작업</button></div><div id="history-actions" hidden><button id="hammer-button" class="museum-action hammer-action" aria-label="망치로 내려치기"><span>⚒</span><b>망치</b></button><button id="interact-button" class="interact-action" disabled>탑승</button></div><div id="museum-actions" hidden><button id="jump-button" class="museum-action jump-action" aria-label="점프"><span>↥</span><b>점프</b></button><button id="shoot-button" class="museum-action shoot-action" aria-label="새총 발사"><span>Y</span><b>새총</b></button></div>
+          <div id="postal-actions" class="postal-actions" hidden>
+            <button id="postal-map-button" class="interact-action postal-control" type="button" aria-haspopup="dialog">마을지도</button>
+            <button id="postal-deliver" class="interact-action postal-control" type="button" disabled>배달</button>
+          </div>
           <button id="memory-revisit" class="flash-button memory-revisit" type="button" aria-label="원본 10초 더보기, 1회 남음" title="원본 10초 더보기" hidden disabled><span class="memory-item-name">원본<br>10초</span><span class="flash-count">×<strong id="memory-revisit-value">1</strong></span></button>
           <div class="flash-control"><button id="flash-button" class="flash-button" aria-label="빛 발사, 3회 남음"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m9 25 9-9 9 9-9 9Z"/><path d="m15 14 5-5 13 13-5 5Z"/><path d="m26 7 3-4M32 12l5-2M35 18h4" class="rays"/></svg><b>빛 발사</b><span class="flash-count">×<strong id="flash-value">3</strong></span></button><span class="flash-tip">위험할 때 눌러요</span></div>
         </div>
       </section>
 
       <section id="exchange-ui" class="screen" hidden aria-label="증권거래소 모의투자"></section>
+      <div id="postal-map-overlay" class="overlay postal-overlay" hidden>
+        <section class="modal postal-map-dialog" role="dialog" aria-modal="true" aria-labelledby="postal-map-title">
+          <h2 id="postal-map-title">마을지도</h2>
+          <p class="postal-map-note">빨간 핀이 배달할 집이에요.</p>
+          <div id="postal-map-viewport" class="postal-map-viewport" tabindex="0" aria-label="마을지도 보기">
+            <canvas id="postal-map-canvas" width="980" height="345" role="img"></canvas>
+          </div>
+          <p class="postal-map-note">남은 시간 <strong id="postal-map-time" role="timer" aria-label="남은 시간">01:00</strong></p>
+          <div class="postal-map-buttons">
+            <button id="postal-map-zoom" class="secondary-button" type="button" aria-pressed="false">지도 확대</button>
+            <button id="postal-map-close" class="secondary-button" type="button">지도 닫기</button>
+          </div>
+        </section>
+      </div>
+      <div id="postal-report-overlay" class="overlay postal-overlay" hidden>
+        <section class="modal postal-report" role="dialog" aria-modal="true" aria-labelledby="postal-report-title">
+          <p class="modal-kicker">우체국</p>
+          <h2 id="postal-report-title">배달 결과</h2>
+          <p id="postal-report-good" class="modal-lead"></p>
+          <p id="postal-report-wrong" class="postal-miss" hidden></p>
+          <p id="postal-report-late" class="postal-miss" hidden></p>
+          <p id="postal-report-reward" class="postal-reward"></p>
+          <button id="postal-report-next" class="primary-button" type="button">모은 단서 보기</button>
+        </section>
+      </div>
       <div id="pursuit-report-overlay" class="overlay" hidden>
         <section class="modal pursuit-report" role="dialog" aria-labelledby="pursuit-report-title">
           <header>
@@ -188,10 +233,13 @@
   <link rel="stylesheet" href="./common-ui.css?v249"><link rel="stylesheet" href="./css/pursuit.css?v241"><link rel="stylesheet" href="./arcade.css?v249">
   <link rel="stylesheet" href="./arcade-choice-v246.css?v249">
   <link rel="stylesheet" href="./arcade-map-v246.css?v249">
-  <link rel="stylesheet" href="./place-entry-v246.css?v251">
+  <link rel="stylesheet" href="./css/arcade-navigation.css?v268">
+  <link rel="stylesheet" href="./css/arcade-rules.css?v268">
+  <link rel="stylesheet" href="./place-entry-v246.css?v268">
   <link rel="stylesheet" href="./opening-v246.css?v249">
+  <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v254').catch(async error => {
+    import('./js/app.js?v268').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

@@ -9,8 +9,8 @@ import {makeTempleEffects,drawWindField} from './temple-fx.js';
 import {makeCombatEffects,drawBoltWarning} from './temple-combat-fx.js';
 import {beginScene} from './layout.js';
 import {drawTempleHero as drawExplorer} from './temple-hero.js?v=155';
-import {TEMPLE,routeZ} from './temple-core.js?v=157';
-import {TempleWorld} from './temple-world.js?v=157';
+import {TEMPLE,routeZ} from './temple-core.js?v268';
+import {TempleWorld} from './temple-world.js?v268';
 import {makeSeaEffects} from './temple-water.js';
 export async function loadTempleAssets(character){
  await loadRecoveryArt();

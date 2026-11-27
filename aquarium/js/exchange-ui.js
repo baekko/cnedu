@@ -1,4 +1,4 @@
-import {headerActionsHTML,placeHeadingHTML} from './expedition-shell.js?v249';
+import {headerActionsHTML,placeHeadingHTML} from './expedition-shell.js?v268';
 import {CLUE_CARD_URL,cardPositionLabel} from './clue-card-art.js?v245';
 import {icon} from './icons.js?v245';
 import {EXCHANGE_ROUNDS,EXCHANGE_SOURCES} from './exchange-data.js';
@@ -50,7 +50,7 @@ export class ExchangeUI{
  this.root.querySelector('#ex-walk-note').hidden=g.phase!=='walk';p.hidden=g.phase==='walk';this.root.querySelector('#ex-year-overlay').hidden=g.phase!=='travel';
  const next=this.root.querySelector('#ex-next');next.disabled=!['dialogue','select','settled'].includes(g.phase);next.textContent=g.phase==='settled'?(g.round===EXCHANGE_ROUNDS.length-1?'결과':'다음'):g.phase==='dialogue'&&g.dialogue===3?'시작':'다음';
  this.root.querySelector('#ex-guide').textContent=g.phase==='walk'?'안내 창구의 금빛 원으로 이동하세요':g.phase==='dialogue'?'대화를 읽고 방향키 옆 다음 버튼을 눌러 주세요':g.phase==='select'?(g.focus==='stock'?'↑↓ 종목 선택 · 다음 → 금액 설정':g.focus==='amount'?'↑↓ 10만원씩 조절 · 다음 → 투자 확정':'다음을 누르면 투자합니다 · ← 종목으로'):g.phase==='settled'?'결과를 확인한 뒤 다음 버튼을 눌러 주세요':'화면의 버튼을 눌러 진행하세요';
- const db=this.root.querySelector('#ex-double'),sp=this.root.querySelector('#ex-special');db.disabled=g.doubleUsed||g.phase!=='select'||!g.canAfford;db.classList.toggle('armed',g.doubleArmed);db.setAttribute('aria-label','더블업 '+(g.doubleUsed?'사용 완료':'1회'));db.innerHTML=`${icon('double')}<small>${g.doubleUsed?'0':'1'}</small>`;sp.disabled=g.specialUsed||!['information','select'].includes(g.phase);sp.setAttribute('aria-label','특급정보 '+(g.specialUsed?'사용 완료':'1회'));sp.innerHTML=`${icon('special')}<small>${g.specialUsed?'0':'1'}</small>`;
+ const db=this.root.querySelector('#ex-double'),sp=this.root.querySelector('#ex-special');db.disabled=g.doubleUsed||g.phase!=='select'||!g.canAfford;db.classList.toggle('armed',g.doubleArmed);db.setAttribute('aria-label','더블업 '+(g.doubleUsed?'사용 완료':'1회 사용 가능'));db.innerHTML=`${icon('double')}<small>${g.doubleUsed?'0':'1'}</small>`;sp.disabled=g.specialUsed||!['information','select'].includes(g.phase);sp.setAttribute('aria-label','특급정보 '+(g.specialUsed?'사용 완료':'1회 사용 가능'));sp.innerHTML=`${icon('special')}<small>${g.specialUsed?'0':'1'}</small>`;
  if(g.phase==='dialogue'){
   let speech=esc(dialogues[g.dialogue]).replace(/\.\s+/g,'.<br>');
   if(g.dialogue===1)speech=speech.replace('다섯 번 투자합니다.','<br>다섯 번 투자합니다.');

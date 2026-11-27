@@ -1,7 +1,7 @@
 import {FLAT_WALK_SPEED,movedDuringStep} from './walk-cycle.js';
 import {awardClue,hasSource} from './clue-order.js';
 import {damage,collectRecovery,tickVitality} from './vitality.js';
-export const DREAM=Object.freeze({duration:90,speed:FLAT_WALK_SPEED,width:9600,height:500,roomWidth:3200,ceiling:80,floor:424,gravity:1000,jumpSpeed:460,halfHeight:21,halfWidth:11,flashes:3,eraseSeconds:4,stunSeconds:0,answer:'카멜레온',hints:['파충류입니다.','몸의 색을 바꿀 수 있습니다.']});
+export const DREAM=Object.freeze({duration:90,speed:FLAT_WALK_SPEED,width:9600,height:500,roomWidth:3200,ceiling:80,floor:424,gravity:1000,jumpSpeed:460,halfHeight:21,halfWidth:11,flashes:1,eraseSeconds:4,stunSeconds:0,answer:'카멜레온',hints:['파충류입니다.','몸의 색을 바꿀 수 있습니다.']});
 export const DREAM_ROOMS=Object.freeze(['거꾸로 된 침실','하늘에 떠 있는 거리','거대한 시계탑']);
 export const DREAM_GAPS=Object.freeze([
  {side:1,x:2240,w:170},{side:-1,x:1970,w:105},
@@ -97,7 +97,7 @@ export function touchingHazard(player,h){
 export function hasSurface(x,side,margin=0){return x>=0&&x<=DREAM.width&&!DREAM_GAPS.some(g=>g.side===side&&x>g.x-margin&&x<g.x+g.w+margin);}
 export class DreamGame{
  constructor({onEvent=()=>{}}={}){
-  this.onEvent=onEvent;this.elapsed=0;this.phase='entering';this.phaseAge=0;this.ended=false;this.health=3;this.flashes=3;this.banked=new Set();this.clueSources=new Set();this.found=new Set();this.effects=[];this.erasedUntil=new Map();this.gateUntil=new Map();this.switchesUsed=new Set();this.platformRides=new Set();this.jumpCards=new Set();
+  this.onEvent=onEvent;this.elapsed=0;this.phase='entering';this.phaseAge=0;this.ended=false;this.health=3;this.flashes=DREAM.flashes;this.banked=new Set();this.clueSources=new Set();this.found=new Set();this.effects=[];this.erasedUntil=new Map();this.gateUntil=new Map();this.switchesUsed=new Set();this.platformRides=new Set();this.jumpCards=new Set();
   this.player={x:72,y:403,vx:0,vy:0,gravity:1,onGround:true,support:'floor',dir:'right',moving:false,walk:0,angle:0,landAge:99};
   this.camera={x:0,y:0};this.lastSafe={x:72,y:403,gravity:1,support:'floor'};this.stunLeft=0;this.invincibleLeft=0;this.springLeft=0;this.recoveryItems=[{kind:'moonCandy',x:4580,y:403}];this.hits=0;this.flipCount=0;this.jumpCount=0;this.queuedMove=null;this.reachedExit=false;this.visited=new Set([0]);this.notice='';this.noticeLeft=0;
  }

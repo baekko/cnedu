@@ -4,7 +4,8 @@ import {syncCinemaStats} from './cinema-ui.js?v204-final40';
 import {DessertFinishUI} from './dessert-finish-ui.js';
 import {icon} from './icons.js?v245';
 import {syncCityStats,syncCityAction} from './cityhall-ui.js?v252';
-import {DEMO_ACTIONS} from './tutorial-input.js?v232';
+import {DEMO_ACTIONS} from './tutorial-input.js?v268';
+import {syncPostalStats} from './postal-ui.js?v268';
 const ITEMS={cinema:'filmInfo',gym:'whistle',cityhall:'special',datacenter:'virusClear',conservation:'bookSupport',photo:'autoCamera',garden:'gardenerBell',monastery:'shield',detective:'decoy',aquarium:'light',museum:'time',history:'run',temple:'shield',robot:'magnet',space:'booster',writer:'bookmark',language:'magnet',newspaper:'satchel',dream:'eraser',literature:'bookmark',zoo:'whistle',ai:'autoChip',dessert:'remote'};
 function copy(source){const el=source.cloneNode(true);for(const node of [el,...el.querySelectorAll('[id]')])if(node.id){node.dataset.sourceId=node.id;node.removeAttribute('id');}for(const b of el.querySelectorAll('button')){b.tabIndex=-1;b.disabled=false;}return el;}
 export class TutorialChrome{
@@ -14,7 +15,7 @@ export class TutorialChrome{
   this.hud=copy(source.querySelector(this.exchange?'.ex-hud':'.hud'));this.hud.classList.add('demo-hud');
   this.dock=document.createElement('div');this.dock.className='demo-dock';this.dock.append(copy(source.querySelector(this.exchange?'.ex-pad':'.dpad')));
   const actions=document.createElement('div');actions.className='demo-actions';
-  const items=this.exchange?['ex-double','ex-special']:place==='memory'?['memory-revisit','flash-button']:['flash-button'];
+  const items=this.exchange?['ex-double','ex-special']:place==='postal'?[]:place==='memory'?['memory-revisit','flash-button']:['flash-button'];
   for(const id of [...DEMO_ACTIONS[place],...items]){const b=copy(source.querySelector('#'+id));b.dataset.demoControl=id;b.disabled=false;b.tabIndex=-1;b.hidden=id==='ai-original';actions.append(b);}
   this.dock.append(actions);this.nodes=[this.header,this.hud,this.dock];root.append(...this.nodes);root.style.setProperty('--demo-scene-height',place==='aquarium'?'536px':'500px');this.height=70+(place==='aquarium'?536:500)+138;
   if(place==='dessert')this.finishing=new DessertFinishUI(root,{demo:true});
@@ -25,6 +26,12 @@ export class TutorialChrome{
  fit(){const host=this.root.parentElement;const scale=Math.min(Math.max(1,host.clientWidth-88)/390,host.clientHeight/this.height);this.root.style.transform=`translate(-50%,-50%) scale(${scale})`;}
  render(){const {lesson:t,place,source}=this,g=t.game;this.finishing?.render(g);
   if(this.exchange){for(const id of ['ex-year','ex-capital','ex-round','ex-next','ex-previous','ex-double','ex-special']){const src=source.querySelector('#'+id),dst=this.find(id);dst.innerHTML=src.innerHTML;dst.disabled=src.disabled;}}
+  else if(place==='postal'){
+   syncPostalStats(g,id=>this.find(id));
+   this.find('postal-deliver').disabled=!g.canAct;
+   this.find('postal-map-button').disabled=!g.canViewMap;
+   for(const b of this.dock.querySelectorAll('.dir'))b.disabled=!g.canMove;
+  }
   else if(place==='pursuit'){
    syncPursuitStats(g,id=>this.find(id));
    const action=this.find('field-act'),item=this.find('flash-button');

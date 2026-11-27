@@ -5,7 +5,7 @@ import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js'
 import {hasSource} from './clue-order.js';
 import {beginScene} from './layout.js';
 import {DreamLaboratoryArt} from './dream-lab-art.js';
-import {DREAM_GAPS,DREAM_SOLIDS,DREAM_SWITCHES,DREAM_SPRINGS,DREAM_CARDS,DREAM_HAZARDS,DREAM_EXIT} from './dream-core.js';
+import {DREAM_GAPS,DREAM_SOLIDS,DREAM_SWITCHES,DREAM_SPRINGS,DREAM_CARDS,DREAM_HAZARDS,DREAM_EXIT} from './dream-core.js?v268';
 const TAU=Math.PI*2,clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 const box=(c,x,y,w,h,fill,r=3)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const line=(c,x,y,xx,yy,color,w=1)=>{c.strokeStyle=color;c.lineWidth=w;c.lineCap='round';c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.stroke();};

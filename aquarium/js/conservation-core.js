@@ -25,7 +25,7 @@ export class ConservationGame extends FieldGame{
  get book(){return this.books[this.selected];}get cursor(){return this.player;}
  get canAct(){return !this.ended&&!this.book.done&&this.pauseWork<=0;}
  get actionLabel(){return this.book.mode===0?'붓질':this.book.mode===1?(this.book.pinned?'붙이기':'고정'):'압착';}
- get itemKind(){return'bookSupport';}get itemLabel(){return'보호 받침';}get itemTip(){return'지금 펼친 책의 작업 실수 한 번 보호 · 2회';}
+ get itemKind(){return'bookSupport';}get itemLabel(){return'보호 받침';}get itemTip(){return'지금 펼친 책에서 첫 실수를 막아요 · 2회 사용 가능';}
  get statusDescription(){const b=this.book;return b.name+' · '+['먼지 털기','찢어진 종이 붙이기','들뜬 책장 펴기'][b.mode]+(b.done?' · 복원 완료':'');}
  get progress(){const b=this.book;if(b.done)return 1;if(b.mode===0)return b.dust.reduce((s,d)=>s+1-d.left,0)/b.dust.length;if(b.mode===1)return(b.pinned?1:0)/4+b.seams.reduce((s,x)=>s+x,0)/b.seams.length*.75;return Math.min(1,b.stable/1.15);}
  get prompt(){

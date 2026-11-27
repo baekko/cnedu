@@ -1,0 +1,39 @@
+.arcade-toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+}
+
+#arcade-screen .arcade-menu-button {
+  min-width: 46px;
+  min-height: 44px;
+  padding-inline: 8px;
+  font-size: .78rem;
+}
+
+#arcade-screen .arcade-menu-button:focus-visible {
+  outline: 2px solid #1a7060;
+  outline-offset: 2px;
+}
+
+.atlas-result .atlas-heading > div:first-child {
+  min-width: 0;
+  flex: 1;
+}
+
+.arcade-record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 7px;
+}
+
+.arcade-record-count {
+  color: #425e54;
+  font-size: .77rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 375px) {
+  .arcade-map-header .arcade-toolbar { flex-direction: column; align-items: stretch; }
+}
