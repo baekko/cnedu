@@ -1,5 +1,5 @@
 import {awardClue,normalizeClueRewards,restoreSources} from './clue-order.js';
-import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js';
+import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v296';
 
 export const HOSPITAL = Object.freeze({
   duration: 90,
@@ -34,6 +34,7 @@ const DURATIONS = {idle: 2, sit: 3, sleep: 6, curl: 6, groom: 3, stretch: 1.9, s
 const GRID = 24;
 const MARGIN = 8;
 const MAX_STEP = 1 / 30;
+const LEAP_ARC = 25;
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const pick = (list, random) => list[Math.min(list.length - 1, Math.floor(random() * list.length))];
@@ -161,6 +162,16 @@ function facing(dx, dy, old) {
   return Math.abs(dx) >= Math.abs(dy) ? horizontal : vertical;
 }
 
+// Pick an authored profile or 3/4 view from movement. A near-vertical path
+// keeps the animal on its previous side of the camera axis.
+function faceAnimal(animal, dx, dy) {
+  if (Math.hypot(dx, dy) < .00001) return;
+  if (Math.abs(dx) > Math.abs(dy) * .12) animal.dir = dx < 0 ? 'left' : 'right';
+  const sideBefore = animal.facing === 'left' || animal.facing === 'right';
+  animal.facing = Math.abs(dy) < Math.abs(dx) * (sideBefore ? .27 : .22) ? animal.dir
+    : (dy < 0 ? 'b' : 'f') + (animal.dir === 'left' ? 'l' : 'r');
+}
+
 function pose(animal, action, seconds) {
   animal.action = action;
   animal.age = 0;
@@ -243,25 +254,30 @@ export class HospitalGame {
         const partner = species === 'cat' && index === 2 ? animals.at(-1) : null;
         const neighboring = partner ? separated.filter(point => point.room === partner.home.room && this.canFace(partner, point)) : [];
         const perching = species === 'cat' && index === 1;
-        const nearPerches = perching ? separated.filter(point => (this.floor.perches || []).some(perch =>
-          distance(point, perch.approach) < 115 && clearLine(point, perch.approach, this.floor))) : [];
-        const choices = [neighboring, nearPerches, separated, unoccupied].find(pool => pool.length) || [];
+        const highPerches = perching ? (this.floor.perches || []).filter(perch => this.validPerch(perch)) : [];
+        const perches = highPerches.filter(perch => perch.kind === (this.room === 1 ? 'table' : 'desk'));
+        const near = features => separated.filter(point => features.some(perch =>
+          distance(point, perch.approach) < 115 && clearLine(point, perch.approach, this.floor)));
+        const nearPerches = perches.length ? near(perches) : [];
+        const choices = [neighboring, nearPerches, near(highPerches), separated, unoccupied].find(pool => pool.length) || [];
         const occupancy = point => (roomPopulation.get(point.room) || 0) / (point.room === 'hall' ? .70 : 1);
         const point = choices.reduce((best, candidate) => !best || occupancy(candidate) < occupancy(best) ? candidate : best, null);
         if (!point) throw new Error('Hospital floor has fewer stations than animals');
         roomPopulation.set(point.room, 1 + (roomPopulation.get(point.room) || 0));
+        const side = this.random() < .5 ? 'l' : 'r';
+        const view = (index + group + this.room) % 2 ? 'b' : 'f';
         const animal = {
           id: `${species}-${this.room + 1}-${index + 1}`, species, breed, width, scale,
-          x: point.x, y: point.y, dir: this.random() < .5 ? 'left' : 'right',
+          x: point.x, y: point.y, dir: side === 'l' ? 'left' : 'right', facing: view + side,
           stationId: point.id, home: point, elevation: 0, jump: 0, age: 0, walk: 0,
           moving: false, route: null, stuck: 0,
           roaming: index === 0 || (index % 4 === 3),
           venturesome: index === 0 && (species === 'dog' || species === 'cat'),
-          perching,
+          perching, preferredPerches: perches,
           speed: species === 'dog' ? 53 + this.random() * 22 : species === 'cat' ? 55 + this.random() * 28 : 43 + this.random() * 17,
         };
         const action = STILL_ACTIONS[species][index % STILL_ACTIONS[species].length];
-        const actionTime = animal.perching ? 4 + this.random() * 2 : animal.roaming ? 1 + this.random() * 3 : 2 + this.random() * 5;
+        const actionTime = animal.perching ? 1.9 + this.random() * 1.6 : animal.roaming ? 1 + this.random() * 3 : 2 + this.random() * 5;
         pose(animal, action, actionTime);
         animal.age = this.random() * .8;
         animals.push(animal);
@@ -385,7 +401,7 @@ export class HospitalGame {
     if (blocked && animal.stuck < .5) return;
     if (blocked) { animal.upcomingPerch = null; this.restAnimal(animal); return; }
     Object.assign(animal, next);
-    if (step) animal.dir = facing(dx, dy, animal.dir);
+    if (step) faceAnimal(animal, dx, dy);
     animal.walk += step / 60;
     if (animal.action === 'binky') animal.jump = Math.max(0, Math.sin(animal.age * 9)) * 9;
     if (step + .001 < gap) return;
@@ -400,9 +416,15 @@ export class HospitalGame {
   }
 
   planPerch(animal) {
-    const perches = (this.floor.perches || []).filter(perch => this.animals.every(other =>
-      other === animal || (other.upcomingPerch !== perch && other.perch !== perch && other.leap?.perch !== perch)));
-    for (const perch of shuffled(perches, this.random)) {
+    const perches = (this.floor.perches || []).filter(perch => this.validPerch(perch) && this.animals.every(other =>
+      other === animal || (other.upcomingPerch !== perch && other.perch !== perch && other.leap?.perch !== perch
+        && distance(other, perch.approach) > 15)));
+    perches.sort((first, second) => {
+      const a = animal.preferredPerches.includes(first) ? 0 : 100;
+      const b = animal.preferredPerches.includes(second) ? 0 : 100;
+      return a - b + distance(animal, first.approach) - distance(animal, second.approach);
+    });
+    for (const perch of perches) {
       const route = routeFor(animal, perch.approach, this.nav, this.floor);
       if (!route.length) continue;
       pose(animal, 'walk', 0);
@@ -413,26 +435,37 @@ export class HospitalGame {
     return false;
   }
 
+  validPerch(perch) {
+    return perch.height > 0 && distance(perch, perch.approach) <= 70
+      && hospitalFloorAt(perch.approach.x, perch.approach.y, MARGIN, this.floor)
+      && this.floor.fixtures.some(fixture => fixture.kind === perch.kind
+        && Math.abs(fixture.y - perch.y) < 1 && Math.abs(fixture.x - perch.x) <= fixture.width * .36);
+  }
+
   beginLeap(animal, perch, up) {
     animal.route = null;
     const destination = up ? perch : perch.approach;
-    animal.leap = {from: {x: animal.x,y: animal.y,elevation: animal.elevation}, destination, up, perch};
-    animal.dir = facing(destination.x - animal.x, destination.y - animal.y, animal.dir);
-    pose(animal, 'jump', .52);
+    const seconds = .45 + perch.height / 340;
+    animal.leap = {from: {x: animal.x,y: animal.y,elevation: animal.elevation}, destination, up, perch, seconds};
+    faceAnimal(animal, destination.x - animal.x, destination.y - animal.y);
+    pose(animal, 'jump', seconds);
   }
 
   performLeap(animal) {
-    const {from,destination,up,perch} = animal.leap;
-    const ratio = Math.min(1, animal.age / .52);
+    const {from,destination,up,perch,seconds} = animal.leap;
+    const ratio = Math.min(1, animal.age / seconds);
     animal.x = from.x + (destination.x - from.x) * ratio;
     animal.y = from.y + (destination.y - from.y) * ratio;
     animal.elevation = from.elevation + ((up ? perch.height : 0) - from.elevation) * ratio;
-    animal.jump = 22 * Math.sin(ratio * Math.PI);
-    animal.depth = (up ? ratio > .5 : ratio < .5) ? perch.depth : undefined;
+    animal.jump = LEAP_ARC * 4 * ratio * (1 - ratio);
+    animal.depth = ratio > 0 && animal.elevation + animal.jump > 4 ? perch.depth : undefined;
     if (ratio < 1) return;
     animal.leap = null;
     animal.perch = up ? perch : null;
-    if (up) pose(animal, 'perch', 3.5 + this.random() * 2);
+    if (up) {
+      faceAnimal(animal, perch.approach.x - animal.x, perch.approach.y - animal.y);
+      pose(animal, 'perch', 4.6 + this.random() * 2.4);
+    }
     else {
       animal.perching = false;
       this.restAnimal(animal);
@@ -445,8 +478,8 @@ export class HospitalGame {
     for (const first of cats) {
       const second = cats.find(other => other !== first && this.canFace(first, other));
       if (!second) continue;
-      first.dir = first.x < second.x ? 'right' : 'left';
-      second.dir = first.dir === 'right' ? 'left' : 'right';
+      faceAnimal(first, second.x - first.x, second.y - first.y);
+      faceAnimal(second, first.x - second.x, first.y - second.y);
       pose(first, 'fight', 1.1);
       pose(second, 'fight', 1.1);
       second.age = .15;

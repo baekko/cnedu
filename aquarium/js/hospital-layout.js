@@ -1,78 +1,89 @@
-export const HOSPITAL_VIEW = Object.freeze({width: 390, height: 500, top: 170});
+export const HOSPITAL_VIEW = Object.freeze({width:390,height:500,top:170});
 
-// Coordinates are floor-plane units. Wall art rises above these footprints.
+// X and Y refer to foot positions on the floor, with facing walls at each room's far edge.
 const rooms = [
-  {id:'lobby',name:'접수·대기실',x:20,y:54,w:328,h:359,wall:'#d8e6df',floor:'#e9e2cd',accent:'#5c9086'},
-  {id:'exam',name:'진료실',x:432,y:54,w:328,h:359,wall:'#d4e6eb',floor:'#dce9e6',accent:'#568594'},
-  {id:'therapy',name:'재활실',x:20,y:574,w:328,h:372,wall:'#efe1ce',floor:'#ece3cf',accent:'#ab785f'},
-  {id:'rest',name:'회복실',x:432,y:574,w:328,h:372,wall:'#e7dfea',floor:'#e9e1e8',accent:'#8d7896'},
+  {id:'lobby',name:'접수·대기실',x:24,y:616,w:395,h:333,row:0,column:0,wall:'#e6ddd0',floor:'#ddc5a8',accent:'#789387'},
+  {id:'exam',name:'진료실',x:35,y:157,w:280,h:315,row:0,column:1,wall:'#dbe4dd',floor:'#d5dad0',accent:'#78978e'},
+  {id:'therapy',name:'재활실',x:432,y:142,w:320,h:379,row:1,column:0,wall:'#ebdec9',floor:'#ddcbbb',accent:'#af9478'},
+  {id:'rest',name:'회복실',x:493,y:667,w:260,h:282,row:1,column:1,wall:'#e9e0dc',floor:'#dcd2ca',accent:'#ae9193'},
 ];
+
+const horizontal = (y,left,right,kind,room) => ({x:left,y:y-7,w:right-left,h:8,kind,room});
+const vertical = (x,top,bottom,kind,room) => ({x:x-5,y:top,w:9,h:bottom-top,kind,room});
 
 const walls = [
-  {x:20,y:53,w:740,h:9,type:'back'},
-  {x:20,y:53,w:13,h:897,type:'edge'},
-  {x:747,y:53,w:13,h:897,type:'edge'},
-  {x:20,y:946,w:740,h:10,type:'south'},
-  {x:336,y:62,w:12,h:137,type:'partition'}, {x:336,y:281,w:12,h:132,type:'partition'},
-  {x:432,y:62,w:12,h:137,type:'partition'}, {x:432,y:281,w:12,h:132,type:'partition'},
-  {x:336,y:574,w:12,h:135,type:'partition'}, {x:336,y:791,w:12,h:155,type:'partition'},
-  {x:432,y:574,w:12,h:135,type:'partition'}, {x:432,y:791,w:12,h:155,type:'partition'},
-  {x:32,y:410,w:106,h:10,type:'front'}, {x:225,y:410,w:122,h:10,type:'front'},
-  {x:432,y:410,w:116,h:10,type:'front'}, {x:635,y:410,w:113,h:10,type:'front'},
-  {x:32,y:522,w:106,h:56,type:'interior'}, {x:225,y:522,w:122,h:56,type:'interior'},
-  {x:432,y:522,w:116,h:56,type:'interior'}, {x:635,y:522,w:113,h:56,type:'interior'},
+  horizontal(142,24,432,'edge'), horizontal(142,432,753,'face','therapy'),
+  horizontal(157,35,315,'face','exam'),
+  vertical(28,142,949,'side'), vertical(751,142,949,'side'), horizontal(950,24,753,'rim'),
+  vertical(315,157,302,'side','exam'), vertical(315,389,471,'side','exam'),
+  horizontal(472,35,95,'rim','exam'), horizontal(472,176,315,'rim','exam'),
+  vertical(432,142,255,'side','therapy'), vertical(432,337,521,'side','therapy'),
+  horizontal(521,432,548,'rim','therapy'), horizontal(521,636,752,'rim','therapy'),
+  horizontal(616,24,160,'face','lobby'), horizontal(616,246,419,'face','lobby'),
+  vertical(419,616,744,'side','lobby'), vertical(419,831,949,'side','lobby'),
+  horizontal(667,493,574,'face','rest'), horizontal(667,654,753,'face','rest'),
+  vertical(493,667,795,'side','rest'), vertical(493,875,949,'side','rest'),
 ];
 
-const fixture = (kind, x, y, width, depth, room, extra={}) => ({
-  kind,x,y,width,depth,room,...extra,
-  footprint: {x:x-width*.40,y:y-depth,w:width*.80,h:depth},
+const doors = [
+  {x:160,y:616,w:86,room:'lobby',face:true}, {x:574,y:667,w:80,room:'rest',face:true},
+  {x:95,y:472,w:81,room:'exam'}, {x:548,y:521,w:88,room:'therapy'},
+  {x:315,y:302,h:87,room:'exam'}, {x:432,y:255,h:82,room:'therapy'},
+  {x:419,y:744,h:87,room:'lobby'}, {x:493,y:795,h:80,room:'rest'},
+];
+
+const fixture = (kind,x,y,width,depth,room,extra={}) => ({kind,x,y,width,depth,room,...extra,
+  footprint:{x:x-width*.38,y:y-depth,w:width*.76,h:depth},
 });
+
 const fixtures = [
-  fixture('desk', 229, 133, 142, 40, 'lobby'),
-  fixture('sofa', 90, 151, 95, 30, 'lobby'),
-  fixture('table', 112, 308, 57, 23, 'lobby'),
-  fixture('plant', 303, 396, 38, 18, 'lobby'),
-  fixture('exam', 586, 239, 114, 41, 'exam'),
-  fixture('cabinet', 533, 127, 101, 26, 'exam'),
-  fixture('sink', 683, 132, 90, 26, 'exam'),
-  fixture('plant', 710, 386, 32, 17, 'exam'),
-  fixture('treadmill', 101, 670, 112, 35, 'therapy'),
-  fixture('ramp', 255, 678, 109, 38, 'therapy'),
-  fixture('markers', 177, 823, 110, 40, 'therapy', {passable:true}),
-  fixture('plant', 81, 905, 40, 18, 'therapy'),
-  fixture('sofa', 303, 941, 79, 27, 'therapy'),
-  fixture('tree', 694, 675, 76, 32, 'rest'),
-  fixture('bed', 516, 684, 71, 24, 'rest', {passable:true}),
-  fixture('bed', 523, 898, 82, 29, 'rest', {passable:true}),
-  fixture('bed', 689, 875, 72, 29, 'rest', {passable:true}),
-  fixture('table', 602, 763, 64, 23, 'rest'),
-  fixture('plant', 701, 934, 37, 17, 'rest'),
-  fixture('plant', 50, 504, 30, 16, 'hall'),
-  fixture('plant', 729, 504, 30, 16, 'hall'),
+  fixture('desk', 319, 688, 137, 43, 'lobby'),
+  fixture('sofa', 80, 696, 102, 33, 'lobby'),
+  fixture('sofa', 95, 880, 106, 33, 'lobby'),
+  fixture('plant', 380, 932, 36, 18, 'lobby'),
+  fixture('plant', 62, 928, 36, 17, 'lobby'),
+  fixture('sink', 104, 229, 84, 23, 'exam'),
+  fixture('exam', 174, 320, 111, 37, 'exam'),
+  fixture('table', 250, 438, 62, 22, 'exam'),
+  fixture('treadmill', 507, 259, 103, 32, 'therapy'),
+  fixture('ramp', 667, 229, 100, 36, 'therapy'),
+  fixture('markers', 593, 344, 104, 43, 'therapy',{passable:true}),
+  fixture('plant', 704, 483, 35, 18, 'therapy'),
+  fixture('bed', 535, 741, 67, 25, 'rest',{passable:true}),
+  fixture('bed', 682, 854, 81, 29, 'rest',{passable:true}),
+  fixture('bed', 556, 912, 73, 28, 'rest',{passable:true}),
+  fixture('tree', 703, 769, 70, 32, 'rest'),
+  fixture('plant', 714, 918, 38, 20, 'rest'),
+  fixture('plant', 372, 213, 34, 16, 'hall'),
+  fixture('plant', 71, 551, 36, 17, 'hall'),
 ];
 
 const roomStations = {
-  lobby:[[58,197],[110,222],[158,178],[221,185],[290,183],[287,239],[228,267],[173,267],
-    [68,305],[51,363],[116,373],[182,367],[248,359]],
-  exam:[[475,136],[465,202],[484,260],[534,170],[603,171],[680,185],[713,232],[633,274],
-    [567,295],[482,323],[535,376],[596,374],[659,351],[718,322]],
-  therapy:[[54,726],[105,748],[157,715],[202,754],[268,731],[292,782],[247,821],[191,846],
-    [105,816],[53,857],[130,894],[200,906],[252,886],[311,846]],
-  rest:[[475,633],[521,671,'bed'],[582,674],[649,644],[688,690,'tree'],[725,734],[641,729],
-    [566,742],[481,770],[527,826],[590,834],[650,810],[702,849],[687,864,'bed'],[606,903],[523,884,'bed']],
-  hall:[[77,469],[219,476],[299,498],[482,474],[555,519],[688,473],[382,339],[382,649]],
+  lobby:[[61,744],[119,742],[177,705],[234,712],[298,726],[366,750],[343,798],[276,786],
+    [179,824],[68,817],[212,884],[279,881],[338,901],[147,930],[232,927]],
+  exam:[[57,260],[105,262],[160,250],[212,257],[278,266],[290,319],[230,346],[179,359],
+    [52,352],[92,398],[145,405],[188,441],[288,405],[79,422]],
+  therapy:[[459,280],[497,286],[545,271],[608,252],[676,274],[731,299],[679,342],[500,331],
+    [546,386],[618,405],[697,388],[648,440],[491,455],[568,471],[712,449]],
+  rest:[[535,729,'bed'],[589,730],[646,737],[726,799],[687,840,'bed'],[595,807],[539,802],
+    [634,878],[555,894,'bed'],[610,933],[741,881],[523,921]],
+  hall:[[370,270],[360,323],[384,397],[369,467],[119,531],[212,529],[287,558],
+    [402,548],[486,558],[558,581],[632,567],[703,571],[460,709],[454,839]],
 };
 
-const stations = Object.entries(roomStations).flatMap(([room, points]) =>
-  points.map(([x,y,feature],index) => ({id:`${room}-${index+1}`,x,y,room,feature})),
-);
+function stationPoints() {
+  return Object.entries(roomStations).flatMap(([room,points])=>
+    points.map(([x,y,feature],index)=>({id:`${room}-${index+1}`,x,y,room,feature})),
+  );
+}
 
 export const HOSPITAL_FLOOR = Object.freeze({
-  width:780,height:1000,start:{x:390,y:479},
-  rooms,walls,fixtures,stations,
+  width:780,height:1000,start:{x:201,y:783},bounds:{left:33,right:746,top:143,bottom:949},
+  rooms,walls,doors,fixtures,stations:stationPoints(),
   solids:[...walls,...fixtures.filter(f=>!f.passable).map(f=>f.footprint)],
   perches:[
-    {x:90,y:151,height:19,depth:152,approach:{x:111,y:181}},
-    {x:685,y:675,height:58,depth:676,approach:{x:670,y:710}},
+    {kind:'desk',x:345,y:688,height:58,depth:689,approach:{x:337,y:721}},
+    {kind:'table',x:258,y:438,height:32,depth:439,approach:{x:273,y:457}},
+    {kind:'tree',x:694,y:769,height:52,depth:770,approach:{x:675,y:810}},
   ],
 });

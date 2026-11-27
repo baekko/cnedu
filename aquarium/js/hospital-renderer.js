@@ -1,13 +1,13 @@
 import {beginScene, spriteAnchor} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {HOSPITAL_PET_SIZES} from './hospital-core.js';
-import {HOSPITAL_FLOOR, HOSPITAL_VIEW} from './hospital-layout.js';
+import {HOSPITAL_PET_SIZES} from './hospital-core.js?v296';
+import {HOSPITAL_FLOOR, HOSPITAL_VIEW} from './hospital-layout.js?v296';
 
 const FURNITURE = ['desk','sofa','table','exam','cabinet','sink','treadmill','ramp','markers','bed','tree','plant'];
+const VETERINARY_FIXTURES = ['desk','sofa','exam','sink','treadmill','ramp','cabinet','bed'];
 const FURNITURE_TILE = 200;
 const FURNITURE_COLUMNS = 4;
 const FURNITURE_GROUND = 192 / FURNITURE_TILE;
-const ARCHITECTURE_DENSITY = 2;
 const PET_BEDS = HOSPITAL_FLOOR.fixtures.filter(fixture=>fixture.kind==='bed');
 const ORIGINAL_COATS = {tabby:1,tuxedo:2};
 const CAT_ACTION_ROWS = {tabby:0,tuxedo:1,korean:2,russian:3};
@@ -27,17 +27,20 @@ function loadImage(path) {
 
 let sharedAssets;
 async function loadRoomArt() {
-  const [animals,furniture,postalCats,catActions,manifest] = await Promise.all([
+  const [animals,furniture,postalCats,catActions,walls,diagonal,vet,manifest] = await Promise.all([
     loadImage('hospital/animals.webp'),
     loadImage('hospital/furniture.webp'),
     loadImage('postal/village-cats.webp?v265'),
     loadImage('hospital/cat-actions.webp').catch(()=>null),
+    loadImage('hospital/walls-facing-v296.webp'),
+    loadImage('hospital/animals-diagonal-v296.webp'),
+    loadImage('hospital/fixtures-perspective-v296.webp'),
     fetch(asset('hospital/animals.json')).then(response => {
       if (!response.ok) throw new Error('동물 그림 목록을 불러오지 못했어요.');
       return response.json();
     }),
   ]);
-  return {animals,furniture,postalCats,catActions,manifest};
+  return {animals,furniture,postalCats,catActions,walls,diagonal,vet,manifest};
 }
 
 export async function loadHospitalAssets(character) {
@@ -64,167 +67,263 @@ function oval(c,x,y,rx,ry,color) {
   c.fill();
 }
 
-function paintFloor(c,room) {
+// A single camera-space homography governs the whole connected building. Its
+// width grows from 80% to 133% with distance along the viewing axis.
+function project(camera,x,y,elevation=0) {
+  const dy = y-camera.y;
+  const factor = .8 / (1-.0008*dy);
+  return {x:195+(x-camera.x-195)*factor,y:16+(dy*.75-elevation)*factor,factor};
+}
+
+function cameraWithClearance(camera,player,width) {
+  const p=project(camera,player.x,player.y);
+  const margin=31;
+  const correction=Math.min(width-margin,Math.max(margin,p.x))-p.x;
+  return correction?{x:camera.x-correction/p.factor,y:camera.y}:camera;
+}
+
+function polygon(c,points,fill) {
+  c.beginPath();
+  c.moveTo(points[0].x,points[0].y);
+  for(const p of points.slice(1)) c.lineTo(p.x,p.y);
+  c.closePath();
+  c.fillStyle=fill;
+  c.fill();
+}
+
+function tint(c,room) {
   const {x,y,w,h,floor,id} = room;
   c.save();
   c.beginPath();
   c.rect(x,y,w,h);
   c.clip();
-  c.fillStyle = floor;
+  const mineral = id==='exam' || id==='rest';
+  const spread = c.createLinearGradient(x,y,x+w,y+h);
+  spread.addColorStop(0,floor);
+  spread.addColorStop(.45,mineral?'#e8ded1':'#ecdbc4');
+  spread.addColorStop(1,floor);
+  c.fillStyle=spread;
   c.fillRect(x,y,w,h);
-  const tile = id === 'exam' || id === 'rest';
-  const step = tile ? 32 : 18;
-  c.lineWidth = .7;
-  c.strokeStyle = tile ? '#5472841b' : '#82724b22';
-  c.beginPath();
-  for (let xx=x;xx<=x+w;xx+=step) {
+  c.strokeStyle=mineral?'#776c5b39':'#7258403b';
+  c.lineWidth=.64;
+  const tileX=mineral?49:36;
+  for(let xx=x;xx<x+w;xx+=tileX) {
+    c.beginPath();
     c.moveTo(xx,y);
     c.lineTo(xx,y+h);
-    if (tile) continue;
-    const offset = (Math.round((xx-x)/step)%2)*27;
-    for (let yy=y+offset;yy<=y+h;yy+=55) {
-      c.moveTo(xx,yy);
-      c.lineTo(xx+step,yy);
+    if(!mineral) for(let yy=y+((xx-x)/tileX%2)*29;yy<y+h;yy+=58) {
+      c.moveTo(xx,yy);c.lineTo(xx+tileX,yy);
     }
+    c.stroke();
   }
-  if (tile) for (let yy=y;yy<=y+h;yy+=step) {
-    c.moveTo(x,yy);
-    c.lineTo(x+w,yy);
+  if(mineral) for(let yy=y;yy<y+h;yy+=52) {
+    c.beginPath();c.moveTo(x,yy);c.lineTo(x+w,yy);c.stroke();
   }
-  c.stroke();
-  const light = c.createLinearGradient(x,y,x+w,y+h);
-  light.addColorStop(0,'#fffffb42');
-  light.addColorStop(1,'#756e5c12');
-  c.fillStyle = light;
-  c.fillRect(x,y,w,h);
+  c.fillStyle='#67635426';
+  c.fillRect(x,y,w,11);
+  c.transform(1,0,mineral?-.27:.44,1,(mineral?.27:-.44)*y,0);
+  const spacing=mineral?96:72;
+  for(let beamX=x-100;beamX<x+w+100;beamX+=spacing) {
+    const beam=c.createLinearGradient(beamX-28,y,beamX+28,y);
+    beam.addColorStop(0,'#fff9e500');beam.addColorStop(.5,mineral?'#fff9e532':'#fff5d04e');beam.addColorStop(1,'#fff9e500');
+    c.fillStyle=beam;c.fillRect(beamX-28,y,56,h);
+  }
   c.restore();
 }
 
-function insetWindow(c,x,y,w) {
-  rounded(c,x-3,y-4,w+6,39,'#9fb9b3',3);
-  rounded(c,x,y,w,33,'#f8faf0',3);
-  const glass = c.createLinearGradient(x,y,x,y+29);
-  glass.addColorStop(0,'#abd7e2');
-  glass.addColorStop(1,'#dfedea');
-  rounded(c,x+3,y+3,w-6,26,glass,2);
-  c.fillStyle = '#f8faf0';
-  c.fillRect(x+w/2-1,y+2,2,29);
-  c.fillRect(x+1,y+15,w-2,1.5);
-  c.fillStyle = '#ffffff77';
-  c.beginPath();
-  c.moveTo(x+8,y+5);
-  c.lineTo(x+20,y+5);
-  c.lineTo(x+12,y+14);
-  c.lineTo(x+4,y+14);
-  c.fill();
-  rounded(c,x-5,y+29,w+10,5,'#f8f7ec',1.5);
+function floorTexture(c) {
+  const {width,height,rooms,doors}=HOSPITAL_FLOOR;
+  c.fillStyle='#b9b9a7';c.fillRect(0,0,width,height);
+  c.fillStyle='#c6cec3';c.fillRect(24,132,width-47,height-132);
+  c.strokeStyle='#54676037';c.lineWidth=1;
+  for(let x=27;x<width-22;x+=61) {c.beginPath();c.moveTo(x,134);c.lineTo(x,height);c.stroke();}
+  for(let y=135;y<=height;y+=52) {c.beginPath();c.moveTo(24,y);c.lineTo(width-23,y);c.stroke();}
+  for(const room of rooms) tint(c,room.id==='lobby'||room.id==='rest'?{...room,h:height-room.y}:room);
+  rounded(c,33,666,105,49,'#758f829c',7);
+  rounded(c,46,842,107,47,'#829c8897',7);
+  rounded(c,551,308,82,50,'#abb5a083',7);
+  rounded(c,648,823,73,32,'#bba3ab99',7);
+  rounded(c,501,708,69,34,'#bba3ab99',7);
+  rounded(c,521,878,71,34,'#bba3ab99',7);
+  for(const {x,y,w,h} of doors) {
+    if(w) {c.fillStyle='#96846e85';c.fillRect(x,y-5,w,10);c.fillStyle='#efddbc9e';c.fillRect(x,y-1,w,2);}
+    if(h) {c.fillStyle='#96846e85';c.fillRect(x-5,y,10,h);c.fillStyle='#efddbc9e';c.fillRect(x-1,y,2,h);}
+  }
+  const paint=c.getImageData(0,0,width,height);
+  let noise=0x432fe9;
+  for(let i=0;i<paint.data.length;i+=4) {
+    noise=(Math.imul(noise,1664525)+1013904223)>>>0;
+    const shade=((noise>>>24)-127)*.032;
+    paint.data[i]+=shade;
+    paint.data[i+1]+=shade;
+    paint.data[i+2]+=shade;
+  }
+  c.putImageData(paint,0,0);
 }
 
-function wall(c,object,room) {
-  const {x,y,w,h,type} = object;
-  const tone = room?.wall || '#dce7e2';
-  const rise = {back:43,interior:0,partition:8,edge:7,front:6,south:6}[type];
-  const fullFace = type === 'back' || type === 'interior';
-  c.fillStyle = '#304d4520';
-  c.fillRect(x+3,y+h,w+2,fullFace?10:5);
-  c.fillStyle = tone;
-  c.fillRect(x,y-rise,w,h+rise);
-  c.fillStyle = '#89a59c';
-  c.fillRect(x,y+h-3,w,3);
-  c.fillStyle = '#f8faf2';
-  c.fillRect(x,y-rise,w,4);
-  if (fullFace) {
-    c.fillStyle = '#ffffff7d';
-    c.fillRect(x,y+h-22,w,3);
-  } else if (type==='edge' || type==='partition') {
-    c.fillStyle = '#c3d5ce';
-    c.fillRect(x+w-3,y-rise,3,h+rise);
+function paintGround(c,cache,camera) {
+  const {width,height}=HOSPITAL_FLOOR;
+  for(let sy=Math.max(0,Math.floor(camera.y-28));sy<Math.min(height,Math.ceil(camera.y+HOSPITAL_VIEW.height));sy+=4) {
+    const end=Math.min(sy+4,height);
+    const a=project(camera,0,sy),b=project(camera,width,end);
+    const middle=project(camera,0,(sy+end)/2);
+    c.drawImage(cache,0,sy,width,end-sy,middle.x,a.y,width*middle.factor,b.y-a.y+.18);
   }
 }
 
-function sign(c,room,x,y) {
-  const w = room.id==='lobby'?76:59;
-  rounded(c,x-w/2,y,w,21,'#faf8ef',3);
-  rounded(c,x-w/2+4,y+4,3,13,room.accent,1.5);
-  c.fillStyle = '#354f49';
-  c.textAlign = 'center';
-  c.font = '600 10px "Noto Sans KR", "Noto Sans CJK KR", "Malgun Gothic", system-ui, sans-serif';
-  c.fillText(room.name,x+2,y+14);
+function roomSign(c,label,x,y,size) {
+  const width=Math.max(45,label.length*size*.90+20);
+  rounded(c,x-width/2,y-3,width,size*1.5,'#e7eaddf0',4);
+  c.fillStyle='#373e3a';c.font=`700 ${size}px "Noto Sans KR", "Noto Sans CJK KR", "Malgun Gothic", sans-serif`;
+  c.textAlign='center';c.fillText(label,x,y+size*.81);
 }
 
-function doorway(c,x,y,w,h,vertical=false) {
-  c.fillStyle = '#a6b4a9';
-  c.fillRect(x,y,w,h);
-  c.fillStyle = '#f4f2e8';
-  if (vertical) {
-    c.fillRect(x+2,y,w-4,5);
-    c.fillRect(x+2,y+h-5,w-4,5);
-  } else {
-    c.fillRect(x,y+2,5,h-2);
-    c.fillRect(x+w-5,y+2,5,h-2);
-  }
+const roomFor = id => HOSPITAL_FLOOR.rooms.find(room=>room.id===id);
+const WALL_FACE_TILE_WIDTH=384;
+const WALL_FACE_TILE_HEIGHT=128;
+const PANEL_SPLITS={lobby:.43,rest:.49};
+
+function viewingThrough(camera,player,wall) {
+  if(player.y>wall.y+wall.h+16 || player.y<wall.y-135) return false;
+  const near=project(camera,player.x,player.y,22);
+  const left=project(camera,wall.x,wall.y+wall.h);
+  const right=project(camera,wall.x+wall.w,wall.y+wall.h);
+  return near.x>left.x-19 && near.x<right.x+19 && near.y>left.y-115*left.factor;
 }
 
-function paintArchitecture(c) {
-  const {width,height,rooms,walls} = HOSPITAL_FLOOR;
-  c.fillStyle = '#d8e3de';
-  c.fillRect(0,0,width,height);
-  rounded(c,11,36,width-22,height-66,'#b8cec5',13);
-  c.fillStyle = '#e4e9df';
-  c.fillRect(33,58,width-66,890);
-  c.strokeStyle = '#617e741e';
-  c.lineWidth = .7;
-  for (let y=66;y<945;y+=34) {
-    c.beginPath();
-    c.moveTo(33,y);
-    c.lineTo(width-33,y);
-    c.stroke();
+function facingWall(c,art,camera,wall,player,pets) {
+  const room=roomFor(wall.room);
+  const H=room?.id==='lobby'?113:121;
+  const y=wall.y+wall.h-1;
+  const base=project(camera,wall.x,y);
+  const end=project(camera,wall.x+wall.w,y);
+  const cap=project(camera,wall.x,y,H);
+  const top=cap.y;
+  if(base.y<-5 || top>505 || end.x<-10 || base.x>400) return;
+  c.save();
+  if(viewingThrough(camera,player,wall)) c.globalAlpha=.19;
+  else if(pets.some(pet=>Math.abs(pet.x-player.x)<160 && Math.abs(pet.y-player.y)<150
+    && pet.y<y && viewingThrough(camera,pet,wall))) c.globalAlpha=.36;
+  const slab=c.createLinearGradient(base.x,top,base.x,base.y);
+  slab.addColorStop(0,'#fff4e3');slab.addColorStop(.36,room?.wall||'#d9ded0');slab.addColorStop(1,'#a49780');
+  c.fillStyle=slab;c.fillRect(base.x,top,end.x-base.x,base.y-top);
+  if(art.walls && room) {
+    const sw=WALL_FACE_TILE_WIDTH,sh=WALL_FACE_TILE_HEIGHT;
+    const split=PANEL_SPLITS[room.id];
+    const first=wall.x===room.x;
+    const start=split && !first?split:0;
+    const coverage=split?(first?split:1-split):1;
+    c.drawImage(art.walls,(room.column+start)*sw,room.row*sh,coverage*sw,sh,
+      base.x,top,end.x-base.x,base.y-top);
   }
-  c.fillStyle = '#d5e0d5';
-  c.fillRect(357,85,3,855);
-  c.fillRect(420,85,3,855);
-  c.fillRect(42,443,width-84,3);
-  c.fillRect(42,544,width-84,3);
-  for (const room of rooms) paintFloor(c,room);
-
-  rounded(c,45,120,95,45,'#b5cec087',7);
-  rounded(c,73,278,82,52,'#bed2ba63',10);
-  rounded(c,117,780,118,71,'#bdd2c787',9);
-  rounded(c,210,640,94,48,'#e0b9a184',5);
-  rounded(c,467,649,103,46,'#d2bfdc7e',8);
-  rounded(c,465,864,103,51,'#d2bfdc72',8);
-  rounded(c,642,844,92,50,'#d2bfdc72',8);
-
-  for (const obstacle of walls) {
-    const bottom = obstacle.y+obstacle.h;
-    const room = rooms.find(r=>obstacle.x>=r.x && obstacle.x<r.x+r.w && bottom>=r.y-12 && bottom<r.y+r.h+12);
-    wall(c,obstacle,room);
+  const stride=H*.065*base.factor;
+  const shadow=c.createLinearGradient(0,base.y,0,base.y+stride*2.4);
+  shadow.addColorStop(0,'#3f34276b');shadow.addColorStop(1,'#3f342700');
+  c.fillStyle=shadow;c.fillRect(base.x,base.y,end.x-base.x,stride*2.4);
+  c.fillStyle='#cab39b';c.fillRect(base.x,base.y-stride,end.x-base.x,stride);
+  c.fillStyle='#e9d7c1';c.fillRect(base.x,base.y-stride,end.x-base.x,Math.max(1,stride*.21));
+  const atEdge = !room || wall.x!==room.x ? 1 : 2;
+  const profile=6*base.factor;
+  for(let i=0;i<atEdge;i++) {
+    const x = i===0?end.x-profile:base.x;
+    c.fillStyle='#896e568a';c.fillRect(x,top,profile,base.y-top);
+    c.fillStyle='#f5dfbf92';c.fillRect(x+.75,top,Math.max(1,profile*.19),base.y-top);
   }
-  insetWindow(c,47,16,83);
-  insetWindow(c,243,16,66);
-  insetWindow(c,505,16,76);
-  insetWindow(c,646,16,72);
-  insetWindow(c,51,528,68);
-  insetWindow(c,664,528,58);
-  for (const [x,y] of [[138,410],[548,410],[138,565],[548,565]]) doorway(c,x,y,87,10);
-  for (const [x,y] of [[336,199],[432,199],[336,709],[432,709]]) doorway(c,x,y,12,82,true);
-  sign(c,rooms[0],181,23);
-  sign(c,rooms[1],613,23);
-  sign(c,rooms[2],285,533);
-  sign(c,rooms[3],491,533);
-  for (const [x,y] of [[139,422],[549,422],[139,577],[549,577]]) {
-    c.fillStyle = '#7a948659';
-    c.fillRect(x,y,85,2);
-  }
+  if(room && wall.w>=room.w*.95) roomSign(c,room.name,base.x+(end.x-base.x)*.5,Math.max(8,top+26*base.factor),12*base.factor);
+  c.restore();
 }
 
-function furniture(c,art,object) {
-  const tile = FURNITURE.indexOf(object.kind);
-  const unit = object.width / FURNITURE_TILE;
-  const size = unit * FURNITURE_TILE;
-  oval(c,object.x+2,object.y-1,object.width*.34,object.depth*.20,'#314c3a22');
-  c.drawImage(art,tile%FURNITURE_COLUMNS*FURNITURE_TILE,Math.floor(tile/FURNITURE_COLUMNS)*FURNITURE_TILE,
-    FURNITURE_TILE,FURNITURE_TILE,object.x-size/2,object.y-size*FURNITURE_GROUND,size,size);
+function entryTrim(c,camera,door,player) {
+  const height=82;
+  const left=project(camera,door.x,door.y),right=project(camera,door.x+door.w,door.y);
+  const highLeft=project(camera,door.x,door.y,height),highRight=project(camera,door.x+door.w,door.y,height);
+  if(left.y<0 || highLeft.y>505) return;
+  const fade=Math.abs(player.y-door.y)<54 && Math.abs(player.x-door.x-door.w/2)<door.w*.72;
+  c.save();
+  if(fade) c.globalAlpha=.22;
+  const room=roomFor(door.room);
+  if(room) {
+    const wallHeight=room.id==='lobby'?113:121;
+    const wallTop=project(camera,door.x,door.y,wallHeight);
+    const panelHeight=highLeft.y-wallTop.y;
+    const head=c.createLinearGradient(0,wallTop.y,0,highLeft.y);
+    head.addColorStop(0,'#c2a78a');head.addColorStop(1,'#e2c7a4');
+    c.fillStyle=head;c.fillRect(left.x,wallTop.y,right.x-left.x,panelHeight);
+  }
+  const thickness=6*left.factor;
+  c.fillStyle='#a48f78';c.fillRect(left.x-thickness*.65,highLeft.y,thickness,left.y-highLeft.y);
+  c.fillRect(right.x-thickness*.35,highRight.y,thickness,right.y-highRight.y);
+  c.fillStyle='#dcc6aa';c.fillRect(left.x-thickness*.42,highLeft.y,right.x-left.x+thickness*.86,thickness);
+  c.fillStyle='#f2dfc6';c.fillRect(left.x-thickness*.42,highLeft.y,right.x-left.x+thickness*.86,1.5);
+  if(room) roomSign(c,room.name,(left.x+right.x)/2,Math.max(4,highLeft.y-18*left.factor),11*left.factor);
+  c.restore();
+}
+
+function sidePieces(camera,w) {
+  const sideLength=28;
+  const chunks=[];
+  for(let y=w.y;y<w.y+w.h;y+=sideLength) {
+    const end=Math.min(y+sideLength,w.y+w.h);
+    const L1=project(camera,w.x,y),R1=project(camera,w.x+w.w,y),L2=project(camera,w.x,end),R2=project(camera,w.x+w.w,end);
+    if(Math.max(R1.x,R2.x)<-18 || Math.min(L1.x,L2.x)>409 || L2.y<-30 || L1.y>545) continue;
+    chunks.push({left1:L1,right1:R1,left2:L2,right2:R2,y,end,wall:w});
+  }
+  return chunks;
+}
+
+function sideWalls(c,camera,piece,player) {
+  const {left1:L1,right1:R1,left2:L2,right2:R2,y,end,wall}=piece;
+  const edge=!wall.room;
+  const height=edge?66:58;
+  const inward=wall.x+wall.w*.5<camera.x+195;
+  const p1=inward?R1:L1,p2=inward?R2:L2;
+  const b1={x:p1.x,y:p1.y-height*p1.factor},b2={x:p2.x,y:p2.y-height*p2.factor};
+  const outer1=inward?L1:R1,outer2=inward?L2:R2;
+  const u1={x:outer1.x,y:outer1.y-height*outer1.factor},u2={x:outer2.x,y:outer2.y-height*outer2.factor};
+  const room=roomFor(wall.room);
+  c.save();
+  if(!edge && Math.abs(player.x-wall.x)<45 && player.y>=y-24 && player.y<=end+51) c.globalAlpha=.15;
+  const shade=c.createLinearGradient(b1.x,b1.y,p2.x,p2.y);
+  shade.addColorStop(0,room?.wall||'#dfddcc');shade.addColorStop(.57,edge?'#c5c4b5':'#d8c9b5');shade.addColorStop(1,edge?'#8c8b79':'#9a8872');
+  const lean=inward?1:-1;
+  polygon(c,[p1,p2,{x:p2.x+lean*12*p2.factor,y:p2.y+3},{x:p1.x+lean*12*p1.factor,y:p1.y+3}],'#54433324');
+  polygon(c,[b1,b2,p2,p1],shade);
+  polygon(c,[b1,b2,u2,u1],'#f5e6d2');
+  const rail=.17;
+  polygon(c,[{x:p1.x,y:p1.y-height*rail*p1.factor},{x:p2.x,y:p2.y-height*rail*p2.factor},p2,p1],room?.accent||'#779084');
+  c.strokeStyle='#f8e9cdca';c.lineWidth=1.3;
+  c.beginPath();c.moveTo(p1.x,p1.y-height*.39*p1.factor);c.lineTo(p2.x,p2.y-height*.39*p2.factor);c.stroke();
+  c.restore();
+}
+
+function floorEdge(c,camera,wall) {
+  const p1=project(camera,wall.x,wall.y),p2=project(camera,wall.x+wall.w,wall.y);
+  const p3=project(camera,wall.x+wall.w,wall.y+wall.h),p4=project(camera,wall.x,wall.y+wall.h);
+  if(p1.y>520 || p4.y<-5) return;
+  polygon(c,[p1,p2,p3,p4],'#bba791');
+  c.strokeStyle='#ede4d4';c.lineWidth=1.5;c.beginPath();c.moveTo(p1.x,p1.y);c.lineTo(p2.x,p2.y);c.stroke();
+}
+
+function furniture(c,art,object,camera,residents) {
+  const alternative=art.vet?VETERINARY_FIXTURES.indexOf(object.kind):-1;
+  const tile=alternative>=0?alternative:FURNITURE.indexOf(object.kind);
+  const image=alternative>=0?art.vet:art.furniture;
+  const p=project(camera,object.x,object.y);
+  const size=object.width*p.factor;
+  oval(c,p.x+2,p.y-1,size*.36,object.depth*p.factor*.13,'#47372a31');
+  const height={desk:.71,sofa:.57,table:.60,exam:.56,cabinet:.76,sink:.78,
+    treadmill:.83,ramp:.7,markers:.30,bed:.46,tree:.86,plant:.9}[object.kind];
+  const pox=p.x-size*.37,poy=p.y-size*height;
+  const overlaps=residents.some(actor=>{
+    if(animalDepth(actor)>=object.y || object.y-actor.y>object.width*.68) return false;
+    const a=project(camera,actor.x,actor.y,actor.elevation||0);
+    return a.x>pox-8 && a.x<p.x+size*.37+8 && a.y>poy+8;
+  });
+  c.save();
+  if(overlaps) c.globalAlpha=.39;
+  c.drawImage(image,tile%FURNITURE_COLUMNS*FURNITURE_TILE,Math.floor(tile/FURNITURE_COLUMNS)*FURNITURE_TILE,
+    FURNITURE_TILE,FURNITURE_TILE,p.x-size/2,p.y-size*FURNITURE_GROUND,size,size);
+  c.restore();
 }
 
 function originalCatFrame(action,age) {
@@ -265,21 +364,36 @@ function bark(c,w,age) {
   }
 }
 
-function animal(c,art,pet) {
+function animal(c,art,pet,camera) {
   const {species,breed,x,y,dir,action,age=0,jump=0,elevation=0} = pet;
-  const petWidth = pet.width ?? HOSPITAL_PET_SIZES[breed] ?? 37;
+  const groundPoint=project(camera,x,y);
+  const petPoint=project(camera,x,y,elevation+jump);
+  const scale=Math.min(1.12,Math.max(.88,groundPoint.factor));
+  const petWidth = (pet.width ?? HOSPITAL_PET_SIZES[breed] ?? 37)*scale;
   const coat = species==='cat'?ORIGINAL_COATS[breed]:undefined;
   const lifted = elevation+jump;
-  if (elevation===0) oval(c,x,y+1,petWidth*(lifted>5?.26:.33),petWidth*.085,'#394d382a');
+  if (elevation===0 || action==='jump') {
+    const spread=Math.max(.52,1-lifted/155);
+    oval(c,groundPoint.x,groundPoint.y+1,petWidth*.33*spread,petWidth*.085*spread,'#394d382e');
+  } else {
+    oval(c,petPoint.x,petPoint.y+.4,petWidth*.28,petWidth*.046,'#42372624');
+  }
   c.save();
-  spriteAnchor(c,x,y-lifted);
-  if (dir==='left') c.scale(-1,1);
+  spriteAnchor(c,petPoint.x,petPoint.y);
 
   const {cellWidth,cellHeight,ground,breeds} = art.manifest;
   const h = petWidth*cellHeight/cellWidth;
+  const diagonal = art.diagonal && WALK.has(action) && ['fr','fl','br','bl'].includes(pet.facing);
+  const left = diagonal ? pet.facing.endsWith('l') : dir==='left';
+  if (left) c.scale(-1,1);
   const specialRow = species==='cat'?CAT_ACTION_ROWS[breed]:undefined;
   const specialColumn = specialRow===undefined?null:catActionColumn(action,age);
-  if (art.catActions && specialColumn!==null) {
+  if (diagonal) {
+    const row=breeds[species][breed];
+    const column=(pet.facing[0]==='b'?2:0)+Math.floor(age*(action==='run'?14:8))%2;
+    c.drawImage(art.diagonal,column*cellWidth,row*cellHeight,cellWidth,cellHeight,
+      -petWidth/2,-h*ground/cellHeight,petWidth,h);
+  } else if (art.catActions && specialColumn!==null) {
     c.drawImage(art.catActions,specialColumn*cellWidth,specialRow*cellHeight,cellWidth,cellHeight,
       -petWidth/2,-h*ground/cellHeight,petWidth,h);
   } else if (coat!==undefined) {
@@ -300,8 +414,8 @@ function animal(c,art,pet) {
 }
 
 function visible(x,y,camera,padding) {
-  return x>camera.x-padding && x<camera.x+HOSPITAL_VIEW.width+padding
-    && y>camera.y-padding && y<camera.y+HOSPITAL_VIEW.height+padding;
+  const p=project(camera,x,y);
+  return p.x>-padding && p.x<HOSPITAL_VIEW.width+padding && p.y>-padding && p.y<HOSPITAL_VIEW.height+padding;
 }
 
 function animalDepth(pet) {
@@ -317,11 +431,9 @@ export class HospitalRenderer {
     this.c = canvas.getContext('2d');
     this.images = images;
     this.architecture = document.createElement('canvas');
-    this.architecture.width = HOSPITAL_FLOOR.width*ARCHITECTURE_DENSITY;
-    this.architecture.height = HOSPITAL_FLOOR.height*ARCHITECTURE_DENSITY;
-    const floor = this.architecture.getContext('2d');
-    floor.scale(ARCHITECTURE_DENSITY,ARCHITECTURE_DENSITY);
-    paintArchitecture(floor);
+    this.architecture.width = HOSPITAL_FLOOR.width;
+    this.architecture.height = HOSPITAL_FLOOR.height;
+    floorTexture(this.architecture.getContext('2d'));
   }
 
   effect() {}
@@ -342,44 +454,59 @@ export class HospitalRenderer {
   }
 
   paintWorld(c,game,character) {
-    const {camera,player,animals} = game;
+    const {player,animals} = game;
     const {width,height} = HOSPITAL_VIEW;
-    c.drawImage(this.architecture,camera.x*ARCHITECTURE_DENSITY,camera.y*ARCHITECTURE_DENSITY,
-      width*ARCHITECTURE_DENSITY,height*ARCHITECTURE_DENSITY,0,0,width,height);
+    const camera=cameraWithClearance(game.camera,player,width);
+    const pets=game.phase==='explore'?animals:[];
+    const residents=[player,...pets.filter(pet=>Math.abs(pet.x-player.x)<185 && Math.abs(pet.y-player.y)<170)];
     c.save();
-    c.translate(-camera.x,-camera.y);
+    c.fillStyle='#b5aa95';c.fillRect(0,0,width,height);
+    paintGround(c,this.architecture,camera);
     const layers = [];
-    for (const object of HOSPITAL_FLOOR.fixtures) if (visible(object.x,object.y,camera,150)) {
-      layers.push({y:object.y,draw:()=>furniture(c,this.images.furniture,object)});
+    for (const obstacle of HOSPITAL_FLOOR.walls) {
+      if(obstacle.kind==='side') {
+        for(const part of sidePieces(camera,obstacle)) layers.push({y:part.end,draw:()=>sideWalls(c,camera,part,player)});
+      } else if(obstacle.kind==='face' || obstacle.kind==='edge') {
+        layers.push({y:obstacle.y+obstacle.h,draw:()=>facingWall(c,this.images,camera,obstacle,player,pets)});
+      } else if(obstacle.room) {
+        floorEdge(c,camera,obstacle);
+      }
     }
-    for (const pet of game.phase==='explore'?animals:[]) if (visible(pet.x,pet.y,camera,95)) {
-      layers.push({y:animalDepth(pet),draw:()=>animal(c,this.images,pet)});
+    for(const door of HOSPITAL_FLOOR.doors) if(door.face) {
+      layers.push({y:door.y,draw:()=>entryTrim(c,camera,door,player)});
+    }
+    for (const object of HOSPITAL_FLOOR.fixtures) if (visible(object.x,object.y,camera,150)) {
+      layers.push({y:object.y,draw:()=>furniture(c,this.images,object,camera,residents)});
+    }
+    for (const pet of pets) if (visible(pet.x,pet.y,camera,95)) {
+      layers.push({y:animalDepth(pet),draw:()=>animal(c,this.images,pet,camera)});
     }
     layers.push({y:player.y,draw:()=>{
-      oval(c,player.x,player.y,12.5,4.3,'#2c48432c');
-      drawExplorer(c,this.images,character,{...player,hammerAge:99});
+      const p=project(camera,player.x,player.y);
+      oval(c,p.x,p.y,12.5,4.3,'#44362533');
+      drawExplorer(c,this.images,character,{...player,x:p.x,y:p.y,hammerAge:99});
     }});
     layers.sort((a,b)=>a.y-b.y).forEach(layer=>layer.draw());
     c.restore();
   }
 
   drawPreview(c,character,time) {
-    const x = 194+Math.sin(time*1.45)*48;
+    const x = 206+Math.sin(time*1.45)*45;
     const game = {
-      phase:'explore',camera:{x:12,y:84},
-      player:{x,y:255,dir:Math.cos(time*1.45)>0?'right':'left',moving:true,walk:time},
+      phase:'explore',camera:{x:18,y:522},
+      player:{x,y:780,dir:Math.cos(time*1.45)>0?'right':'left',moving:true,walk:time},
       animals:[
-        {species:'cat',breed:'tabby',x:108,y:162,dir:'right',action:'groom',age:time},
-        {species:'dog',breed:'golden',x:99+Math.sin(time*1.8)*13,y:251,dir:Math.cos(time*1.8)>0?'right':'left',action:'walk',age:time},
-        {species:'rabbit',breed:'lop',x:261,y:185,dir:'left',action:'ear',age:time},
-        {species:'cat',breed:'tuxedo',x:281,y:263,dir:'left',action:'sleep',age:time},
+        {species:'cat',breed:'tabby',x:110,y:733,dir:'right',action:'groom',age:time},
+        {species:'dog',breed:'golden',x:95+Math.sin(time*1.8)*13,y:801,dir:Math.cos(time*1.8)>0?'right':'left',action:'walk',age:time},
+        {species:'rabbit',breed:'lop',x:274,y:747,dir:'left',action:'ear',age:time},
+        {species:'cat',breed:'tuxedo',x:345,y:688,elevation:58,depth:689,dir:'left',action:'sleep',age:time},
       ],
     };
     c.save();
     c.beginPath();
     c.roundRect(2,2,176,111,9);
     c.clip();
-    c.scale(.6,.6);
+    c.scale(.47,.47);
     this.paintWorld(c,game,character);
     c.restore();
   }
