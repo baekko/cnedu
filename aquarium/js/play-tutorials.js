@@ -1,4 +1,4 @@
-import {HospitalGame} from './hospital-core.js?v296';
+import {HospitalGame} from './hospital-core.js?v297';
 import {PursuitGame} from './pursuit-game.js?v252';
 import {PostalGame,postalDepartureMountTime} from './postal-core.js?v294';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';

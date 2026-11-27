@@ -1,5 +1,5 @@
 import {awardClue,normalizeClueRewards,restoreSources} from './clue-order.js';
-import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v296';
+import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v297';
 
 export const HOSPITAL = Object.freeze({
   duration: 90,
@@ -33,6 +33,8 @@ const STILL_ACTIONS = {
 const DURATIONS = {idle: 2, sit: 3, sleep: 6, curl: 6, groom: 3, stretch: 1.9, sniff: 2.6, bark: 1.25, ear: 2.7, nose: 3.1};
 const GRID = 24;
 const MARGIN = 8;
+const PLAYER_MARGIN = 10;
+const CONTACT_GAP = .001;
 const MAX_STEP = 1 / 30;
 const LEAP_ARC = 25;
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
@@ -73,20 +75,109 @@ function shuffled(list, random) {
   return values;
 }
 
-export function hospitalFloorAt(x, y, margin = MARGIN, floor = HOSPITAL_FLOOR) {
+const geometry = new WeakMap();
+
+function outsideRooms(rooms, {left,right,top,bottom}) {
+  if (!rooms?.length) return [];
+  const cuts = (min, max, coordinates) => [...new Set([min,max,...coordinates.filter(value => value > min && value < max)])].sort((a,b)=>a-b);
+  const columns = cuts(left, right, rooms.flatMap(({x,w}) => [x,x+w]));
+  const rows = cuts(top, bottom, rooms.flatMap(({y,h}) => [y,y+h]));
+  const voids = [];
+  for (let column = 0; column < columns.length - 1; column++) {
+    const x = columns[column], rightEdge = columns[column + 1];
+    const across = (x + rightEdge) / 2;
+    const coverage = rooms.filter(room => across >= room.x && across <= room.x + room.w);
+    for (let row = 0; row < rows.length - 1; row++) {
+      const y = rows[row], bottomEdge = rows[row + 1];
+      const down = (y + bottomEdge) / 2;
+      if (!coverage.some(room => down >= room.y && down <= room.y + room.h)) {
+        const previous = voids.at(-1);
+        if (previous?.x === x && previous.y + previous.h === y) previous.h += bottomEdge - y;
+        else voids.push({x,y,w:rightEdge - x,h:bottomEdge - y});
+      }
+    }
+  }
+  return voids;
+}
+
+function collisionGeometry(floor) {
+  if (geometry.has(floor)) return geometry.get(floor);
   const {left = 33,right = floor.width - 33,top = 62,bottom = floor.height - 54} = floor.bounds || {};
+  const bounds = {left,right,top,bottom};
+  const voids = outsideRooms(floor.walkable, bounds);
+  const pets = [...floor.solids,...voids];
+  const player = [...(floor.playerSolids || floor.solids),...voids];
+  const result = {bounds,pets,player};
+  geometry.set(floor, result);
+  return result;
+}
+
+function occupiesFloor(x, y, margin, solids, bounds) {
+  const {left,right,top,bottom} = bounds;
   return x >= left + margin && x <= right - margin && y >= top + margin && y <= bottom - margin
-    && !floor.solids.some(solid => x >= solid.x - margin && x <= solid.x + solid.w + margin
+    && !solids.some(solid => x >= solid.x - margin && x <= solid.x + solid.w + margin
       && y >= solid.y - margin && y <= solid.y + solid.h + margin);
+}
+
+export function hospitalFloorAt(x, y, margin = MARGIN, floor = HOSPITAL_FLOOR) {
+  const {bounds,pets} = collisionGeometry(floor);
+  return occupiesFloor(x, y, margin, pets, bounds);
+}
+
+export function hospitalPlayerFloorAt(x, y, floor = HOSPITAL_FLOOR) {
+  const {bounds,player} = collisionGeometry(floor);
+  return occupiesFloor(x, y, PLAYER_MARGIN, player, bounds);
 }
 
 function clearLine(a, b, floor) {
   if (!hospitalFloorAt(b.x, b.y, MARGIN, floor)) return false;
-  return !floor.solids.some(rect => {
+  return !collisionGeometry(floor).pets.some(rect => {
     const x = segmentInterval(a.x, b.x, rect.x - MARGIN, rect.x + rect.w + MARGIN);
     const y = segmentInterval(a.y, b.y, rect.y - MARGIN, rect.y + rect.h + MARGIN);
     return Math.max(0, x[0], y[0]) <= Math.min(1, x[1], y[1]);
   });
+}
+
+function playerContact(position, dx, dy, collision) {
+  const {x,y} = position;
+  const {left,right,top,bottom} = collision.bounds;
+  const xEdge = dx > 0 ? (right - PLAYER_MARGIN - x) / dx : dx < 0 ? (left + PLAYER_MARGIN - x) / dx : Infinity;
+  const yEdge = dy > 0 ? (bottom - PLAYER_MARGIN - y) / dy : dy < 0 ? (top + PLAYER_MARGIN - y) / dy : Infinity;
+  let time = Math.min(xEdge, yEdge);
+  let blockX = xEdge === time;
+  let blockY = yEdge === time;
+  for (const rect of collision.player) {
+    const tx = segmentInterval(x, x + dx, rect.x - PLAYER_MARGIN, rect.x + rect.w + PLAYER_MARGIN);
+    const ty = segmentInterval(y, y + dy, rect.y - PLAYER_MARGIN, rect.y + rect.h + PLAYER_MARGIN);
+    const enter = Math.max(tx[0], ty[0]);
+    if (enter < 0 || enter > 1 || enter > time || enter > Math.min(tx[1], ty[1])) continue;
+    if (enter < time) {
+      time = enter;
+      blockX = false;
+      blockY = false;
+    }
+    const entersHorizontally = tx[0] >= ty[0];
+    blockX ||= entersHorizontally;
+    blockY ||= !entersHorizontally;
+  }
+  return time <= 1 ? {time,blockX,blockY} : null;
+}
+
+function sweepPlayer(player, dx, dy, collision) {
+  while (dx || dy) {
+    const contact = playerContact(player, dx, dy, collision);
+    if (!contact) {
+      player.x += dx;
+      player.y += dy;
+      return;
+    }
+    const approach = Math.max(0, contact.time - CONTACT_GAP / Math.max(Math.abs(dx), Math.abs(dy)));
+    player.x += dx * approach;
+    player.y += dy * approach;
+    const remaining = 1 - approach;
+    dx = contact.blockX ? 0 : dx * remaining;
+    dy = contact.blockY ? 0 : dy * remaining;
+  }
 }
 
 function segmentInterval(start, end, low, high) {
@@ -303,17 +394,13 @@ export class HospitalGame {
     let dy = clamp(input.y || 0, -1, 1);
     const length = Math.hypot(dx, dy);
     if (!length) return false;
-    player.dir = facing(dx, dy, player.dir);
     dx *= HOSPITAL.speed * dt / length;
     dy *= HOSPITAL.speed * dt / length;
-    const substeps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 7));
     const {x, y} = player;
-    for (let step = 0; step < substeps; step++) {
-      if (hospitalFloorAt(player.x + dx / substeps, player.y, 10, this.floor)) player.x += dx / substeps;
-      if (hospitalFloorAt(player.x, player.y + dy / substeps, 10, this.floor)) player.y += dy / substeps;
-    }
+    sweepPlayer(player, dx, dy, collisionGeometry(this.floor));
     const traveled = Math.hypot(player.x - x, player.y - y);
     player.moving = traveled > .0001;
+    if (player.moving) player.dir = facing(player.x - x, player.y - y, player.dir);
     player.walk += traveled / HOSPITAL.speed;
     this.updateCamera();
     return player.moving;

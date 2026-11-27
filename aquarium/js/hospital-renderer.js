@@ -1,7 +1,7 @@
 import {beginScene, spriteAnchor} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {HOSPITAL_PET_SIZES} from './hospital-core.js?v296';
-import {HOSPITAL_FLOOR, HOSPITAL_VIEW} from './hospital-layout.js?v296';
+import {HOSPITAL_PET_SIZES} from './hospital-core.js?v297';
+import {HOSPITAL_FLOOR, HOSPITAL_VIEW, HOSPITAL_WALL_HEIGHT} from './hospital-layout.js?v297';
 
 const FURNITURE = ['desk','sofa','table','exam','cabinet','sink','treadmill','ramp','markers','bed','tree','plant'];
 const VETERINARY_FIXTURES = ['desk','sofa','exam','sink','treadmill','ramp','cabinet','bed'];
@@ -132,22 +132,26 @@ function tint(c,room) {
 }
 
 function floorTexture(c) {
-  const {width,height,rooms,doors}=HOSPITAL_FLOOR;
+  const {width,height,rooms,doors,fixtures,hall}=HOSPITAL_FLOOR;
   c.fillStyle='#b9b9a7';c.fillRect(0,0,width,height);
-  c.fillStyle='#c6cec3';c.fillRect(24,132,width-47,height-132);
-  c.strokeStyle='#54676037';c.lineWidth=1;
-  for(let x=27;x<width-22;x+=61) {c.beginPath();c.moveTo(x,134);c.lineTo(x,height);c.stroke();}
-  for(let y=135;y<=height;y+=52) {c.beginPath();c.moveTo(24,y);c.lineTo(width-23,y);c.stroke();}
   for(const room of rooms) tint(c,room.id==='lobby'||room.id==='rest'?{...room,h:height-room.y}:room);
-  rounded(c,33,666,105,49,'#758f829c',7);
-  rounded(c,46,842,107,47,'#829c8897',7);
+  const hallLight=c.createLinearGradient(0,hall.y,0,hall.bottom);
+  hallLight.addColorStop(0,'#afbbac');hallLight.addColorStop(.37,'#d1d9c8');hallLight.addColorStop(1,'#bac6b5');
+  c.fillStyle=hallLight;c.fillRect(hall.x,hall.y,hall.w,hall.h);
+  c.strokeStyle='#586d5547';c.lineWidth=.75;
+  for(let x=hall.x+10;x<hall.x+hall.w;x+=48) {c.beginPath();c.moveTo(x,hall.y);c.lineTo(x,hall.bottom);c.stroke();}
+  for(let y=hall.y+12;y<hall.bottom;y+=42) {c.beginPath();c.moveTo(hall.x,y);c.lineTo(hall.x+hall.w,y);c.stroke();}
+  c.fillStyle='#808b6c45';
+  c.fillRect(hall.x,hall.y,hall.w,4);c.fillRect(hall.x,hall.bottom-4,hall.w,4);
+  for(const bench of fixtures.filter(fixture=>fixture.kind==='sofa')) {
+    rounded(c,bench.x-bench.width*.58,bench.y-bench.depth*.97,bench.width*1.16,bench.depth*1.45,'#829c8895',7);
+  }
   rounded(c,551,308,82,50,'#abb5a083',7);
-  rounded(c,648,823,73,32,'#bba3ab99',7);
-  rounded(c,501,708,69,34,'#bba3ab99',7);
-  rounded(c,521,878,71,34,'#bba3ab99',7);
-  for(const {x,y,w,h} of doors) {
-    if(w) {c.fillStyle='#96846e85';c.fillRect(x,y-5,w,10);c.fillStyle='#efddbc9e';c.fillRect(x,y-1,w,2);}
-    if(h) {c.fillStyle='#96846e85';c.fillRect(x-5,y,10,h);c.fillStyle='#efddbc9e';c.fillRect(x-1,y,2,h);}
+  for(const bed of PET_BEDS) {
+    rounded(c,bed.x-bed.width*.53,bed.y-bed.depth*.98,bed.width*1.06,bed.depth*1.32,'#bba3ab89',7);
+  }
+  for(const {x,y,w} of doors) {
+    c.fillStyle='#96846e85';c.fillRect(x,y-5,w,10);c.fillStyle='#efddbc9e';c.fillRect(x,y-1,w,2);
   }
   const paint=c.getImageData(0,0,width,height);
   let noise=0x432fe9;
@@ -182,126 +186,258 @@ const roomFor = id => HOSPITAL_FLOOR.rooms.find(room=>room.id===id);
 const WALL_FACE_TILE_WIDTH=384;
 const WALL_FACE_TILE_HEIGHT=128;
 const PANEL_SPLITS={lobby:.43,rest:.49};
+const DOOR_HEIGHT=84;
 
-function viewingThrough(camera,player,wall) {
-  if(player.y>wall.y+wall.h+16 || player.y<wall.y-135) return false;
-  const near=project(camera,player.x,player.y,22);
-  const left=project(camera,wall.x,wall.y+wall.h);
-  const right=project(camera,wall.x+wall.w,wall.y+wall.h);
-  return near.x>left.x-19 && near.x<right.x+19 && near.y>left.y-115*left.factor;
+// These are sampled from the neutral points of the painted rear panels. The
+// same rail elevation follows each panel onto the adjoining plaster walls.
+const WALL_FINISH={
+  lobby:{plaster:'#cfa176',shadow:'#9d784f',wood:'#555640',rail:'#8d7955',base:'#686b53',railAt:35,cap:'#e6c6a1'},
+  exam:{plaster:'#999269',shadow:'#767251',wood:'#935526',rail:'#b18249',base:'#825020',railAt:38,cap:'#d5c098'},
+  therapy:{plaster:'#d6a777',shadow:'#aa7e55',wood:'#8c511f',rail:'#b07b45',base:'#7e461b',railAt:40,cap:'#e0c29d'},
+  rest:{plaster:'#d5ab7a',shadow:'#a38460',wood:'#82867a',rail:'#a29e8a',base:'#73766b',railAt:44,cap:'#dec4a7'},
+  hall:{plaster:'#bdbda0',shadow:'#91917c',wood:'#7a8475',rail:'#a4a491',base:'#6f796f',railAt:37,cap:'#d9d4b9'},
+};
+
+function smooth01(value) {
+  const x=Math.max(0,Math.min(1,value));
+  return x*x*(3-2*x);
 }
 
-function facingWall(c,art,camera,wall,player,pets) {
-  const room=roomFor(wall.room);
-  const H=room?.id==='lobby'?113:121;
-  const y=wall.y+wall.h-1;
-  const base=project(camera,wall.x,y);
-  const end=project(camera,wall.x+wall.w,y);
-  const cap=project(camera,wall.x,y,H);
-  const top=cap.y;
-  if(base.y<-5 || top>505 || end.x<-10 || base.x>400) return;
+function boundedOpacity(points,revealActors,camera,depth,baseline=1) {
+  const left=Math.min(...points.map(point=>point.x));
+  const right=Math.max(...points.map(point=>point.x));
+  const top=Math.min(...points.map(point=>point.y));
+  const bottom=Math.max(...points.map(point=>point.y));
+  let reveal=0;
+  for(const actor of revealActors) {
+    if(actor.y>depth+6 || actor.y<depth-185) continue;
+    const p=project(camera,actor.x,actor.y,(actor.elevation||0)+(actor.jump||0));
+    const width=actor.species?Math.max(8,(actor.width||34)*.25):18;
+    const height=actor.species?Math.max(13,(actor.width||34)*.48):43;
+    const xInset=Math.min(p.x-left,right-p.x)+width;
+    const yInset=Math.min(p.y-top,bottom-p.y+height);
+    const across=smooth01((xInset+6)/17);
+    const above=smooth01((yInset+6)/22);
+    const behind=smooth01((depth-actor.y+6)/17);
+    const weight=actor.species?.59:.80;
+    reveal=Math.max(reveal,weight*across*above*behind);
+  }
+  return Math.min(baseline,1-reveal);
+}
+
+function cutaways(points,actors,camera,depth) {
+  const left=Math.min(points[0].x,points[3].x);
+  const right=Math.max(points[1].x,points[2].x);
+  const top=Math.min(points[2].y,points[3].y);
+  const bottom=Math.max(points[0].y,points[1].y);
+  const spots=[];
+  for(const actor of actors) {
+    if(actor.y>depth+6 || actor.y<depth-179) continue;
+    const p=project(camera,actor.x,actor.y,(actor.elevation||0)+(actor.jump||0));
+    const species=actor.species;
+    const width=species?(actor.width||34)*.42:24;
+    const height=species?(actor.width||34)*.48:49;
+    const y=p.y-height*.47;
+    const rx=width+10,ry=height*.57+9;
+    if(p.x+rx<left || p.x-rx>right || y+ry<top || y-ry>bottom) continue;
+    const depthFade=smooth01((depth-actor.y+6)/24);
+    if(depthFade>0) spots.push({x:p.x,y,rx,ry,strength:(species?.77:.90)*depthFade});
+  }
+  return {left,right,top,bottom,spots};
+}
+
+function drawWallSection(c,buffer,points,actors,camera,depth,alpha,draw) {
+  const {left,right,top,bottom,spots}=cutaways(points,actors,camera,depth);
   c.save();
-  if(viewingThrough(camera,player,wall)) c.globalAlpha=.19;
-  else if(pets.some(pet=>Math.abs(pet.x-player.x)<160 && Math.abs(pet.y-player.y)<150
-    && pet.y<y && viewingThrough(camera,pet,wall))) c.globalAlpha=.36;
-  const slab=c.createLinearGradient(base.x,top,base.x,base.y);
-  slab.addColorStop(0,'#fff4e3');slab.addColorStop(.36,room?.wall||'#d9ded0');slab.addColorStop(1,'#a49780');
-  c.fillStyle=slab;c.fillRect(base.x,top,end.x-base.x,base.y-top);
-  if(art.walls && room) {
-    const sw=WALL_FACE_TILE_WIDTH,sh=WALL_FACE_TILE_HEIGHT;
-    const split=PANEL_SPLITS[room.id];
-    const first=wall.x===room.x;
-    const start=split && !first?split:0;
-    const coverage=split?(first?split:1-split):1;
-    c.drawImage(art.walls,(room.column+start)*sw,room.row*sh,coverage*sw,sh,
-      base.x,top,end.x-base.x,base.y-top);
+  c.globalAlpha=alpha;
+  if(!spots.length) {
+    draw(c);
+  } else {
+    const x=Math.max(0,Math.floor(left)-10);
+    const y=Math.max(0,Math.floor(top)-10);
+    const w=Math.min(HOSPITAL_VIEW.width,Math.ceil(right)+10)-x;
+    const h=Math.min(HOSPITAL_VIEW.height,Math.ceil(bottom)+20)-y;
+    if(w>0 && h>0) {
+      buffer.clearRect(x,y,w,h);
+      buffer.save();
+      buffer.beginPath();buffer.rect(x,y,w,h);buffer.clip();
+      draw(buffer);
+      buffer.globalCompositeOperation='destination-out';
+      for(const spot of spots) {
+        buffer.save();
+        buffer.translate(spot.x,spot.y);buffer.scale(spot.rx,spot.ry);
+        const reveal=buffer.createRadialGradient(0,0,0,0,0,1);
+        reveal.addColorStop(0,`rgba(0 0 0 / ${spot.strength})`);
+        reveal.addColorStop(.43,`rgba(0 0 0 / ${spot.strength})`);
+        reveal.addColorStop(1,'transparent');
+        buffer.fillStyle=reveal;buffer.fillRect(-1,-1,2,2);
+        buffer.restore();
+      }
+      buffer.restore();
+      c.drawImage(buffer.canvas,x*2,y*2,w*2,h*2,x,y,w,h);
+    }
   }
-  const stride=H*.065*base.factor;
-  const shadow=c.createLinearGradient(0,base.y,0,base.y+stride*2.4);
-  shadow.addColorStop(0,'#3f34276b');shadow.addColorStop(1,'#3f342700');
-  c.fillStyle=shadow;c.fillRect(base.x,base.y,end.x-base.x,stride*2.4);
-  c.fillStyle='#cab39b';c.fillRect(base.x,base.y-stride,end.x-base.x,stride);
-  c.fillStyle='#e9d7c1';c.fillRect(base.x,base.y-stride,end.x-base.x,Math.max(1,stride*.21));
-  const atEdge = !room || wall.x!==room.x ? 1 : 2;
-  const profile=6*base.factor;
-  for(let i=0;i<atEdge;i++) {
-    const x = i===0?end.x-profile:base.x;
-    c.fillStyle='#896e568a';c.fillRect(x,top,profile,base.y-top);
-    c.fillStyle='#f5dfbf92';c.fillRect(x+.75,top,Math.max(1,profile*.19),base.y-top);
-  }
-  if(room && wall.w>=room.w*.95) roomSign(c,room.name,base.x+(end.x-base.x)*.5,Math.max(8,top+26*base.factor),12*base.factor);
   c.restore();
 }
 
-function entryTrim(c,camera,door,player) {
-  const height=82;
-  const left=project(camera,door.x,door.y),right=project(camera,door.x+door.w,door.y);
-  const highLeft=project(camera,door.x,door.y,height),highRight=project(camera,door.x+door.w,door.y,height);
-  if(left.y<0 || highLeft.y>505) return;
-  const fade=Math.abs(player.y-door.y)<54 && Math.abs(player.x-door.x-door.w/2)<door.w*.72;
+function pointsFor(camera,start,end,bottom,top) {
+  return [project(camera,start.x,start.y,bottom),project(camera,end.x,end.y,bottom),
+    project(camera,end.x,end.y,top),project(camera,start.x,start.y,top)];
+}
+
+function band(c,camera,start,end,bottom,top,color) {
+  polygon(c,pointsFor(camera,start,end,bottom,top),color);
+}
+
+function paintPlaster(c,camera,start,end,material,paneled=true) {
+  const height=HOSPITAL_WALL_HEIGHT;
+  const base=project(camera,start.x,start.y);
+  const top=project(camera,end.x,end.y,height);
+  const upper=c.createLinearGradient(top.x,top.y,base.x,base.y);
+  upper.addColorStop(0,material.plaster);upper.addColorStop(.74,material.plaster);
+  upper.addColorStop(1,material.shadow);
+  band(c,camera,start,end,material.railAt,height,upper);
+  band(c,camera,start,end,0,material.railAt,material.wood);
+  if(paneled) {
+    const length=Math.hypot(end.x-start.x,end.y-start.y);
+    for(let step=13;step<length;step+=13) {
+      const n=step/length;
+      const point=project(camera,start.x+(end.x-start.x)*n,start.y+(end.y-start.y)*n,5);
+      c.strokeStyle='#251a1140';c.lineWidth=Math.max(.48,point.factor*.65);
+      c.beginPath();c.moveTo(point.x,point.y);c.lineTo(point.x,point.y-(material.railAt-8)*point.factor);c.stroke();
+      c.strokeStyle='#ffe5bd20';c.beginPath();c.moveTo(point.x+.6,point.y);c.lineTo(point.x+.6,point.y-(material.railAt-8)*point.factor);c.stroke();
+    }
+  }
+  band(c,camera,start,end,material.railAt-2,material.railAt+1.5,material.rail);
+  band(c,camera,start,end,material.railAt+1.5,material.railAt+2.9,'#fff0c94f');
+  band(c,camera,start,end,0,5,material.base);
+  band(c,camera,start,end,4.3,5.3,'#ffe7bf49');
+  band(c,camera,start,end,height-2.5,height,material.cap);
+}
+
+function viewFloorOpacity(camera,player,room,line) {
+  if(!room) return 1;
+  const inWidth=smooth01((Math.min(player.x-room.x,room.x+room.w-player.x)+20)/48);
+  const distance=line-player.y;
+  const indoors=smooth01((distance+7)/59);
+  const atBottom=project(camera,room.x,line).y;
+  const inFrame=1-smooth01((atBottom-515)/75);
+  return 1-.13*inWidth*indoors*inFrame;
+}
+
+function paintedRear(c,art,camera,wall,room,points) {
+  const [base,end,top]=points;
+  const sw=WALL_FACE_TILE_WIDTH,sh=WALL_FACE_TILE_HEIGHT;
+  const split=PANEL_SPLITS[room.id];
+  const first=wall.segment==='left';
+  const start=split && !first?split:0;
+  const coverage=split?(first?split:1-split):1;
+  c.drawImage(art.walls,(room.column+start)*sw,room.row*sh,coverage*sw,sh,
+    base.x,top.y,end.x-base.x,base.y-top.y);
+  if(!wall.segment && top.y>-2) {
+    roomSign(c,room.name,base.x+(end.x-base.x)*.5,Math.max(6,top.y+10*base.factor),10*base.factor);
+  }
+}
+
+function facingWall(c,buffer,art,camera,wall,player,revealActors) {
+  const room=roomFor(wall.room);
+  const material=WALL_FINISH[wall.room]||WALL_FINISH.hall;
+  const y=wall.lineY;
+  const start={x:wall.x,y},end={x:wall.x+wall.w,y};
+  const points=pointsFor(camera,start,end,0,HOSPITAL_WALL_HEIGHT);
+  const [base,right,top,highLeft]=points;
+  if(base.y<-6 || top.y>506 || right.x<-10 || base.x>400) return;
+  const baseAlpha=wall.edge==='front'?viewFloorOpacity(camera,player,room,y):1;
+  drawWallSection(c,buffer,points,revealActors,camera,y,baseAlpha,wallCanvas=>{
+    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,camera,wall,room,points);
+    else paintPlaster(wallCanvas,camera,start,end,material);
+    const cap=pointsFor(camera,{x:start.x,y:y-3.7},{x:end.x,y:y-3.7},HOSPITAL_WALL_HEIGHT,HOSPITAL_WALL_HEIGHT);
+    polygon(wallCanvas,[highLeft,top,cap[1],cap[0]],material.cap);
+    const shadow=wallCanvas.createLinearGradient(0,base.y,0,base.y+10*base.factor);
+    shadow.addColorStop(0,'#3f34275c');shadow.addColorStop(1,'#3f342700');
+    wallCanvas.fillStyle=shadow;wallCanvas.fillRect(base.x,base.y,right.x-base.x,10*base.factor);
+  });
+}
+
+function entryTrim(c,camera,door,player,revealActors) {
+  const material=WALL_FINISH[door.room];
+  const start={x:door.x,y:door.y},end={x:door.x+door.w,y:door.y};
+  const points=pointsFor(camera,start,end,DOOR_HEIGHT,HOSPITAL_WALL_HEIGHT);
+  const [left,right,cap,otherCap]=points;
+  const floorLeft=project(camera,start.x,start.y);
+  const floorRight=project(camera,end.x,end.y);
+  if(floorLeft.y<0 || cap.y>505) return;
+  const inside=door.edge==='front'?viewFloorOpacity(camera,player,roomFor(door.room),door.y):1;
+  const nearX=project(camera,player.x,player.y).x;
+  const through=(1-smooth01((Math.abs(nearX-(left.x+right.x)/2)-11)/32))*(1-smooth01((Math.abs(player.y-door.y)-18)/40));
   c.save();
-  if(fade) c.globalAlpha=.22;
+  c.globalAlpha=boundedOpacity(points,revealActors,camera,door.y,Math.min(inside,1-.64*through));
+  const head=c.createLinearGradient(0,cap.y,0,left.y);
+  head.addColorStop(0,material.plaster);head.addColorStop(1,material.shadow);
+  polygon(c,[left,right,cap,otherCap],head);
+  const recessed=pointsFor(camera,{x:start.x,y:door.y-4},{x:end.x,y:door.y-4},DOOR_HEIGHT,DOOR_HEIGHT);
+  polygon(c,[left,right,recessed[1],recessed[0]],material.shadow);
+  const width=5.2*left.factor;
+  c.fillStyle=material.rail;
+  c.fillRect(left.x-width*.85,left.y,width,floorLeft.y-left.y);
+  c.fillRect(right.x-width*.13,right.y,width,floorRight.y-right.y);
+  c.fillStyle=material.cap;
+  c.fillRect(left.x-width*.20,left.y,width*.31,floorLeft.y-left.y);
+  c.fillRect(right.x-width*.20,right.y,width*.31,floorRight.y-right.y);
+  c.fillRect(left.x-width*.85,left.y,right.x-left.x+width*1.70,width*.47);
+  c.fillRect(otherCap.x,otherCap.y,right.x-left.x,1.25);
   const room=roomFor(door.room);
-  if(room) {
-    const wallHeight=room.id==='lobby'?113:121;
-    const wallTop=project(camera,door.x,door.y,wallHeight);
-    const panelHeight=highLeft.y-wallTop.y;
-    const head=c.createLinearGradient(0,wallTop.y,0,highLeft.y);
-    head.addColorStop(0,'#c2a78a');head.addColorStop(1,'#e2c7a4');
-    c.fillStyle=head;c.fillRect(left.x,wallTop.y,right.x-left.x,panelHeight);
-  }
-  const thickness=6*left.factor;
-  c.fillStyle='#a48f78';c.fillRect(left.x-thickness*.65,highLeft.y,thickness,left.y-highLeft.y);
-  c.fillRect(right.x-thickness*.35,highRight.y,thickness,right.y-highRight.y);
-  c.fillStyle='#dcc6aa';c.fillRect(left.x-thickness*.42,highLeft.y,right.x-left.x+thickness*.86,thickness);
-  c.fillStyle='#f2dfc6';c.fillRect(left.x-thickness*.42,highLeft.y,right.x-left.x+thickness*.86,1.5);
-  if(room) roomSign(c,room.name,(left.x+right.x)/2,Math.max(4,highLeft.y-18*left.factor),11*left.factor);
+  if(room) roomSign(c,room.name,(left.x+right.x)*.5,(cap.y+left.y)*.5-6*left.factor,10*left.factor);
   c.restore();
 }
 
-function sidePieces(camera,w) {
-  const sideLength=28;
-  const chunks=[];
-  for(let y=w.y;y<w.y+w.h;y+=sideLength) {
-    const end=Math.min(y+sideLength,w.y+w.h);
-    const L1=project(camera,w.x,y),R1=project(camera,w.x+w.w,y),L2=project(camera,w.x,end),R2=project(camera,w.x+w.w,end);
-    if(Math.max(R1.x,R2.x)<-18 || Math.min(L1.x,L2.x)>409 || L2.y<-30 || L1.y>545) continue;
-    chunks.push({left1:L1,right1:R1,left2:L2,right2:R2,y,end,wall:w});
+function sidePieces(camera,wall,sides) {
+  const line=wall.lineX;
+  const opposite=sides.find(other=>other!==wall && other.lineX===line && other.side!==wall.side
+    && other.y<wall.y+wall.h && other.y+other.h>wall.y);
+  const wanted=(camera.x+HOSPITAL_VIEW.width*.5>=line?'left':'right');
+  const cuts=[wall.y,wall.y+wall.h];
+  if(opposite) {
+    if(opposite.y>wall.y && opposite.y<wall.y+wall.h) cuts.push(opposite.y);
+    if(opposite.y+opposite.h<wall.y+wall.h && opposite.y+opposite.h>wall.y) cuts.push(opposite.y+opposite.h);
   }
-  return chunks;
+  cuts.sort((a,b)=>a-b);
+  const parts=[];
+  for(let i=0;i<cuts.length-1;i++) {
+    if(opposite && wanted!==wall.side && cuts[i]>=opposite.y && cuts[i+1]<=opposite.y+opposite.h) continue;
+    for(let y=cuts[i];y<cuts[i+1];y+=28) {
+      const end=Math.min(y+28,cuts[i+1]);
+      const a=project(camera,line,y);
+      const b=project(camera,line,end,HOSPITAL_WALL_HEIGHT);
+      if(Math.max(a.x,b.x)<-16 || Math.min(a.x,b.x)>406 || project(camera,line,end).y<-5 || Math.min(a.y,b.y)>540) continue;
+      parts.push({wall,y,end});
+    }
+  }
+  return parts;
 }
 
-function sideWalls(c,camera,piece,player) {
-  const {left1:L1,right1:R1,left2:L2,right2:R2,y,end,wall}=piece;
-  const edge=!wall.room;
-  const height=edge?66:58;
-  const inward=wall.x+wall.w*.5<camera.x+195;
-  const p1=inward?R1:L1,p2=inward?R2:L2;
-  const b1={x:p1.x,y:p1.y-height*p1.factor},b2={x:p2.x,y:p2.y-height*p2.factor};
-  const outer1=inward?L1:R1,outer2=inward?L2:R2;
-  const u1={x:outer1.x,y:outer1.y-height*outer1.factor},u2={x:outer2.x,y:outer2.y-height*outer2.factor};
-  const room=roomFor(wall.room);
+function sideWall(c,camera,part,revealActors) {
+  const {wall,y,end}=part;
+  const material=WALL_FINISH[wall.room]||WALL_FINISH.hall;
+  const line=wall.lineX;
+  const start={x:line,y},finish={x:line,y:end};
+  const points=pointsFor(camera,start,finish,0,HOSPITAL_WALL_HEIGHT);
+  const [base,near,high,far]=points;
+  const thickness=(wall.side==='right'?1:-1)*3.7;
+  const cap=pointsFor(camera,{x:line+thickness,y},{x:line+thickness,y:end},HOSPITAL_WALL_HEIGHT,HOSPITAL_WALL_HEIGHT);
   c.save();
-  if(!edge && Math.abs(player.x-wall.x)<45 && player.y>=y-24 && player.y<=end+51) c.globalAlpha=.15;
-  const shade=c.createLinearGradient(b1.x,b1.y,p2.x,p2.y);
-  shade.addColorStop(0,room?.wall||'#dfddcc');shade.addColorStop(.57,edge?'#c5c4b5':'#d8c9b5');shade.addColorStop(1,edge?'#8c8b79':'#9a8872');
-  const lean=inward?1:-1;
-  polygon(c,[p1,p2,{x:p2.x+lean*12*p2.factor,y:p2.y+3},{x:p1.x+lean*12*p1.factor,y:p1.y+3}],'#54433324');
-  polygon(c,[b1,b2,p2,p1],shade);
-  polygon(c,[b1,b2,u2,u1],'#f5e6d2');
-  const rail=.17;
-  polygon(c,[{x:p1.x,y:p1.y-height*rail*p1.factor},{x:p2.x,y:p2.y-height*rail*p2.factor},p2,p1],room?.accent||'#779084');
-  c.strokeStyle='#f8e9cdca';c.lineWidth=1.3;
-  c.beginPath();c.moveTo(p1.x,p1.y-height*.39*p1.factor);c.lineTo(p2.x,p2.y-height*.39*p2.factor);c.stroke();
+  c.globalAlpha=boundedOpacity(points,revealActors,camera,end);
+  const side=wall.side==='right'?-1:1;
+  polygon(c,[base,near,{x:near.x+side*8*near.factor,y:near.y+1},{x:base.x+side*8*base.factor,y:base.y+1}],'#54433332');
+  paintPlaster(c,camera,start,finish,material,false);
+  // Narrow groove seams keep the same board orientation all along a wall.
+  for(let mark=Math.ceil(y/15)*15;mark<end;mark+=15) {
+    const p=project(camera,line,mark,6);
+    c.strokeStyle='#2d211840';c.lineWidth=.7;
+    c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x,p.y-(material.railAt-9)*p.factor);c.stroke();
+  }
+  polygon(c,[far,high,cap[1],cap[0]],material.cap);
   c.restore();
-}
-
-function floorEdge(c,camera,wall) {
-  const p1=project(camera,wall.x,wall.y),p2=project(camera,wall.x+wall.w,wall.y);
-  const p3=project(camera,wall.x+wall.w,wall.y+wall.h),p4=project(camera,wall.x,wall.y+wall.h);
-  if(p1.y>520 || p4.y<-5) return;
-  polygon(c,[p1,p2,p3,p4],'#bba791');
-  c.strokeStyle='#ede4d4';c.lineWidth=1.5;c.beginPath();c.moveTo(p1.x,p1.y);c.lineTo(p2.x,p2.y);c.stroke();
 }
 
 function furniture(c,art,object,camera,residents) {
@@ -317,10 +453,11 @@ function furniture(c,art,object,camera,residents) {
   const overlaps=residents.some(actor=>{
     if(animalDepth(actor)>=object.y || object.y-actor.y>object.width*.68) return false;
     const a=project(camera,actor.x,actor.y,actor.elevation||0);
-    return a.x>pox-8 && a.x<p.x+size*.37+8 && a.y>poy+8;
+    const actorHeight=actor.species?(actor.width||34)*.56:49;
+    return a.x>pox && a.x<p.x+size*.37 && a.y-actorHeight*.65>poy;
   });
   c.save();
-  if(overlaps) c.globalAlpha=.39;
+  if(overlaps) c.globalAlpha=.82;
   c.drawImage(image,tile%FURNITURE_COLUMNS*FURNITURE_TILE,Math.floor(tile/FURNITURE_COLUMNS)*FURNITURE_TILE,
     FURNITURE_TILE,FURNITURE_TILE,p.x-size/2,p.y-size*FURNITURE_GROUND,size,size);
   c.restore();
@@ -434,6 +571,11 @@ export class HospitalRenderer {
     this.architecture.width = HOSPITAL_FLOOR.width;
     this.architecture.height = HOSPITAL_FLOOR.height;
     floorTexture(this.architecture.getContext('2d'));
+    const wallMask=document.createElement('canvas');
+    wallMask.width=HOSPITAL_VIEW.width*2;
+    wallMask.height=HOSPITAL_VIEW.height*2;
+    this.wallMask=wallMask.getContext('2d');
+    this.wallMask.scale(2,2);
   }
 
   effect() {}
@@ -463,17 +605,18 @@ export class HospitalRenderer {
     c.fillStyle='#b5aa95';c.fillRect(0,0,width,height);
     paintGround(c,this.architecture,camera);
     const layers = [];
+    const sides=HOSPITAL_FLOOR.walls.filter(wall=>wall.kind==='side');
     for (const obstacle of HOSPITAL_FLOOR.walls) {
       if(obstacle.kind==='side') {
-        for(const part of sidePieces(camera,obstacle)) layers.push({y:part.end,draw:()=>sideWalls(c,camera,part,player)});
-      } else if(obstacle.kind==='face' || obstacle.kind==='edge') {
-        layers.push({y:obstacle.y+obstacle.h,draw:()=>facingWall(c,this.images,camera,obstacle,player,pets)});
-      } else if(obstacle.room) {
-        floorEdge(c,camera,obstacle);
+        for(const part of sidePieces(camera,obstacle,sides)) {
+          layers.push({y:part.end,draw:()=>sideWall(c,camera,part,residents)});
+        }
+      } else if(obstacle.kind==='face') {
+        layers.push({y:obstacle.lineY,draw:()=>facingWall(c,this.wallMask,this.images,camera,obstacle,player,residents)});
       }
     }
-    for(const door of HOSPITAL_FLOOR.doors) if(door.face) {
-      layers.push({y:door.y,draw:()=>entryTrim(c,camera,door,player)});
+    for(const door of HOSPITAL_FLOOR.doors) {
+      layers.push({y:door.y,draw:()=>entryTrim(c,camera,door,player,residents)});
     }
     for (const object of HOSPITAL_FLOOR.fixtures) if (visible(object.x,object.y,camera,150)) {
       layers.push({y:object.y,draw:()=>furniture(c,this.images,object,camera,residents)});
@@ -499,7 +642,7 @@ export class HospitalRenderer {
         {species:'cat',breed:'tabby',x:110,y:733,dir:'right',action:'groom',age:time},
         {species:'dog',breed:'golden',x:95+Math.sin(time*1.8)*13,y:801,dir:Math.cos(time*1.8)>0?'right':'left',action:'walk',age:time},
         {species:'rabbit',breed:'lop',x:274,y:747,dir:'left',action:'ear',age:time},
-        {species:'cat',breed:'tuxedo',x:345,y:688,elevation:58,depth:689,dir:'left',action:'sleep',age:time},
+        {species:'cat',breed:'tuxedo',x:345,y:826,elevation:58,depth:827,dir:'left',action:'sleep',age:time},
       ],
     };
     c.save();
