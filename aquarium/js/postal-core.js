@@ -34,9 +34,9 @@ const COURIER_AXIS_STANDS = {
 // Player action hand positions registered to the mailbox slot at the normal avatar size.
 const MAIL_STANDS = {
   haru: {up: [-12.1, -1.1], down: [-8.8, -4]},
-  doyun: {up: [-11.1, 2], down: [-6.2, -4.5]},
-  narin: {up: [-10.9, .5], down: [-8.4, -4.8]},
-  soi: {up: [-12.2, 0], down: [-10.5, -3.3]},
+  doyun: {up: [-13.8, .9], down: [-14, 0]},
+  narin: {up: [-13.8, 2.2], down: [-14.7, 1.1]},
+  soi: {up: [-12, 2.8], down: [-1.5, -2.2]},
 };
 
 export function postalDepartureMountTime(direction, characterId) {
