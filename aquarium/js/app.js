@@ -1,6 +1,6 @@
 import {connectTitleModes,showStartupError} from './opening.js?v254';
-import {HospitalGame,HOSPITAL} from './hospital-core.js?v298';
-import {HospitalRenderer,loadHospitalAssets} from './hospital-renderer.js?v298';
+import {HospitalGame,HOSPITAL} from './hospital-core.js?v299';
+import {HospitalRenderer,loadHospitalAssets} from './hospital-renderer.js?v299';
 import {HospitalUI} from './hospital-ui.js?v295';
 import {PostalGame,POSTAL} from './postal-core.js?v294';
 import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v294';
@@ -41,7 +41,7 @@ import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
 import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
-import {createTutorial} from './play-tutorials.js?v298';
+import {createTutorial} from './play-tutorials.js?v299';
 import {TutorialFinance} from './tutorial-finance.js?v268';
 import {TutorialChrome} from './tutorial-chrome.js?v295';
 import {TutorialPlayback} from './tutorial-playback.js';

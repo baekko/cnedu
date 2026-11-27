@@ -60,24 +60,22 @@ const fixture = (kind,x,y,width,depth,room,extra={}) => ({kind,x,y,width,depth,r
 });
 
 const fixtures = [
-  fixture('desk',333,826,137,43,'lobby'),
-  fixture('sofa',88,715,106,33,'lobby'),
-  fixture('sofa',319,715,106,33,'lobby'),
-  fixture('plant',377,920,36,18,'lobby'),
-  fixture('plant',52,932,36,17,'lobby'),
+  fixture('desk',315,716,137,43,'lobby'),
+  fixture('sofa',88,837,106,33,'lobby'),
+  fixture('sofa',319,837,106,33,'lobby'),
   fixture('sink',104,229,84,23,'exam'),
+  fixture('silverCabinet',267,232,84,34,'exam'),
   fixture('exam',174,320,111,37,'exam'),
   fixture('table',265,438,62,22,'exam'),
-  fixture('plant',303,190,34,16,'exam'),
-  fixture('treadmill',447,252,103,32,'therapy'),
+  fixture('storageCabinet',434,215,91,34,'therapy'),
+  fixture('treadmill',532,272,103,32,'therapy'),
   fixture('ramp',660,231,100,36,'therapy'),
   fixture('markers',593,344,104,43,'therapy',{passable:true}),
-  fixture('plant',710,475,35,18,'therapy'),
+  fixture('linenCabinet',703,708,81,31,'rest'),
   fixture('bed',485,731,67,25,'rest',{passable:true}),
   fixture('bed',682,853,81,29,'rest',{passable:true}),
   fixture('bed',556,912,73,28,'rest',{passable:true}),
-  fixture('tree',703,769,70,32,'rest'),
-  fixture('plant',714,918,38,20,'rest'),
+  fixture('tree',703,787,70,32,'rest'),
 ];
 
 const roomStations = {
@@ -85,7 +83,7 @@ const roomStations = {
     [179,824],[64,804],[212,884],[279,879],[338,901],[147,927],[228,922]],
   exam:[[57,263],[105,264],[154,243],[212,239],[280,260],[298,320],[230,347],[178,360],
     [52,352],[92,399],[145,414],[187,451],[306,397],[78,463]],
-  therapy:[[380,271],[438,279],[504,278],[564,256],[648,267],[721,288],[675,341],[500,327],
+  therapy:[[380,271],[438,279],[504,300],[586,281],[648,267],[721,288],[675,341],[500,327],
     [546,391],[618,405],[694,392],[649,440],[476,455],[534,465],[705,429]],
   rest:[[485,719,'bed'],[557,713],[641,711],[724,801],[687,840,'bed'],[593,807],[496,800],
     [630,880],[555,894,'bed'],[609,928],[732,879],[469,916]],
@@ -97,13 +95,13 @@ const stations = Object.entries(roomStations).flatMap(([room,points])=>
 );
 
 export const HOSPITAL_FLOOR = Object.freeze({
-  width:780,height:1000,start:{x:201,y:783},bounds:{left,right,top:141,bottom},
+  width:780,height:1000,start:{x:201,y:890},bounds:{left,right,top:141,bottom},
   rooms,hall,walls,doors,fixtures,stations,walkable:[...rooms,hall],
   solids:[...walls,...fixtures.filter(fixture=>!fixture.passable).map(fixture=>fixture.footprint)],
   playerSolids:[...walls,...fixtures.map(fixture=>fixture.footprint)],
   perches:[
-    {kind:'desk',x:345,y:826,height:58,depth:827,approach:{x:337,y:859}},
+    {kind:'desk',x:328,y:716,height:58,depth:717,approach:{x:324,y:748}},
     {kind:'table',x:273,y:438,height:32,depth:439,approach:{x:285,y:461}},
-    {kind:'tree',x:694,y:769,height:52,depth:770,approach:{x:675,y:811}},
+    {kind:'tree',x:694,y:787,height:52,depth:788,approach:{x:662,y:809}},
   ],
 });

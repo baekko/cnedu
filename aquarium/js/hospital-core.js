@@ -1,5 +1,5 @@
 import {awardClue,normalizeClueRewards,restoreSources} from './clue-order.js';
-import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v297';
+import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v299';
 
 const roundTime = 40;
 const roundCount = 3;

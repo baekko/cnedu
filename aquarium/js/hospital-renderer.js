@@ -1,14 +1,16 @@
 import {beginScene, spriteAnchor} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {HOSPITAL_PET_SIZES} from './hospital-core.js?v298';
-import {HOSPITAL_FLOOR, HOSPITAL_VIEW, HOSPITAL_WALL_HEIGHT} from './hospital-layout.js?v297';
+import {HOSPITAL_PET_SIZES} from './hospital-core.js?v299';
+import {HOSPITAL_FLOOR, HOSPITAL_VIEW, HOSPITAL_WALL_HEIGHT} from './hospital-layout.js?v299';
 
 const FURNITURE = ['desk','sofa','table','exam','cabinet','sink','treadmill','ramp','markers','bed','tree','plant'];
 const VETERINARY_FIXTURES = ['desk','sofa','exam','sink','treadmill','ramp','cabinet','bed'];
+const CABINET_TILES = {silverCabinet:['silverCabinet',0],storageCabinet:['cabinets',0],linenCabinet:['cabinets',1]};
 const FURNITURE_TILE = 200;
 const FURNITURE_COLUMNS = 4;
 const FURNITURE_GROUND = 192 / FURNITURE_TILE;
 const PET_BEDS = HOSPITAL_FLOOR.fixtures.filter(fixture=>fixture.kind==='bed');
+const DESK_PERCH = HOSPITAL_FLOOR.perches.find(perch=>perch.kind==='desk');
 const ORIGINAL_COATS = {tabby:1,tuxedo:2};
 const CAT_ACTION_ROWS = {tabby:0,tuxedo:1,korean:2,russian:3};
 const WALK = new Set(['walk','run','hop','binky','jump']);
@@ -27,20 +29,22 @@ function loadImage(path) {
 
 let sharedAssets;
 async function loadRoomArt() {
-  const [animals,furniture,postalCats,catActions,walls,diagonal,vet,manifest] = await Promise.all([
+  const [animals,furniture,postalCats,catActions,walls,diagonal,vet,silverCabinet,cabinets,manifest] = await Promise.all([
     loadImage('hospital/animals.webp'),
     loadImage('hospital/furniture.webp'),
     loadImage('postal/village-cats.webp?v265'),
     loadImage('hospital/cat-actions.webp').catch(()=>null),
-    loadImage('hospital/walls-facing-v296.webp'),
+    loadImage('hospital/walls-facing-v299.webp'),
     loadImage('hospital/animals-diagonal-v296.webp'),
     loadImage('hospital/fixtures-perspective-v296.webp'),
+    loadImage('hospital/silver-cabinet-v299.webp'),
+    loadImage('hospital/storage-cabinets-v299.webp'),
     fetch(asset('hospital/animals.json')).then(response => {
       if (!response.ok) throw new Error('동물 그림 목록을 불러오지 못했어요.');
       return response.json();
     }),
   ]);
-  return {animals,furniture,postalCats,catActions,walls,diagonal,vet,manifest};
+  return {animals,furniture,postalCats,catActions,walls,diagonal,vet,silverCabinet,cabinets,manifest};
 }
 
 export async function loadHospitalAssets(character) {
@@ -440,13 +444,40 @@ function sideWall(c,camera,part,revealActors) {
   c.restore();
 }
 
+function cabinetScales(art) {
+  const stage=document.createElement('canvas');
+  stage.width=stage.height=FURNITURE_TILE;
+  const c=stage.getContext('2d');
+  return Object.fromEntries(Object.entries(CABINET_TILES).map(([kind,[assetKey,tile]])=>{
+    c.clearRect(0,0,FURNITURE_TILE,FURNITURE_TILE);
+    c.drawImage(art[assetKey],tile*FURNITURE_TILE,0,FURNITURE_TILE,FURNITURE_TILE,
+      0,0,FURNITURE_TILE,FURNITURE_TILE);
+    const bytes=c.getImageData(0,0,FURNITURE_TILE,FURNITURE_TILE).data;
+    let left=FURNITURE_TILE,right=-1;
+    for(let py=0;py<FURNITURE_TILE;py++) for(let px=0;px<FURNITURE_TILE;px++) {
+      if(bytes[(py*FURNITURE_TILE+px)*4+3]<128) continue;
+      left=Math.min(left,px);right=Math.max(right,px);
+    }
+    if(right<left) throw new Error(`비어 있는 동물병원 수납장 그림: ${kind}`);
+    return [kind,FURNITURE_TILE/(right-left+1)];
+  }));
+}
+
 function furniture(c,art,object,camera,residents) {
-  const alternative=art.vet?VETERINARY_FIXTURES.indexOf(object.kind):-1;
-  const tile=alternative>=0?alternative:FURNITURE.indexOf(object.kind);
-  const image=alternative>=0?art.vet:art.furniture;
   const p=project(camera,object.x,object.y);
   const size=object.width*p.factor;
   oval(c,p.x+2,p.y-1,size*.36,object.depth*p.factor*.13,'#47372a31');
+  const cabinet=CABINET_TILES[object.kind];
+  if(cabinet) {
+    const [key,tile]=cabinet;
+    const spriteSize=object.footprint.w*p.factor*art.cabinetScales[object.kind];
+    c.drawImage(art[key],tile*FURNITURE_TILE,0,FURNITURE_TILE,FURNITURE_TILE,
+      p.x-spriteSize/2,p.y-spriteSize*FURNITURE_GROUND,spriteSize,spriteSize);
+    return;
+  }
+  const alternative=VETERINARY_FIXTURES.indexOf(object.kind);
+  const tile=alternative>=0?alternative:FURNITURE.indexOf(object.kind);
+  const image=alternative>=0?art.vet:art.furniture;
   const height={desk:.71,sofa:.57,table:.60,exam:.56,cabinet:.76,sink:.78,
     treadmill:.83,ramp:.7,markers:.30,bed:.46,tree:.86,plant:.9}[object.kind];
   const pox=p.x-size*.37,poy=p.y-size*height;
@@ -566,7 +597,7 @@ export class HospitalRenderer {
   constructor(canvas,images) {
     this.canvas = canvas;
     this.c = canvas.getContext('2d');
-    this.images = images;
+    this.images = {...images,cabinetScales:cabinetScales(images)};
     this.architecture = document.createElement('canvas');
     this.architecture.width = HOSPITAL_FLOOR.width;
     this.architecture.height = HOSPITAL_FLOOR.height;
@@ -642,7 +673,8 @@ export class HospitalRenderer {
         {species:'cat',breed:'tabby',x:110,y:733,dir:'right',action:'groom',age:time},
         {species:'dog',breed:'golden',x:95+Math.sin(time*1.8)*13,y:801,dir:Math.cos(time*1.8)>0?'right':'left',action:'walk',age:time},
         {species:'rabbit',breed:'lop',x:274,y:747,dir:'left',action:'ear',age:time},
-        {species:'cat',breed:'tuxedo',x:345,y:826,elevation:58,depth:827,dir:'left',action:'sleep',age:time},
+        {species:'cat',breed:'tuxedo',x:DESK_PERCH.x,y:DESK_PERCH.y,elevation:DESK_PERCH.height,
+          depth:DESK_PERCH.depth,dir:'left',action:'sleep',age:time},
       ],
     };
     c.save();
