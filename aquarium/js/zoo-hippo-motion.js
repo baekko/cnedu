@@ -1,5 +1,6 @@
 const clamp=x=>Math.max(0,Math.min(1,x));
 const smooth=x=>{x=clamp(x);return x*x*(3-2*x);};
+export const HIPPO_CELL={width:256,height:176,top:96,scale:1.5};
 // One continuous head and jaw, not a series of separately painted silhouettes.
 export function hippoMotion(a){
  let lift=1,jaw=1,motion=0;
@@ -16,16 +17,13 @@ export function hippoMotion(a){
  }
  return{lift,jaw,motion};
 }
-// The rounded CLOSED jaw is authored, never made by compressing an open mouth.
-// Head translation is rigid above the neck; the rear water anchor stays fixed.
-export function hippoVertex(x,y,rig){
- const neck=1-smooth((x-205)/125);
- return {x,y:y+85*(1-rig.lift)*neck};
-}
+// Use a common vertical translation for the complete animal and its mouth.
+export const hippoSink=rig=>260*(1-rig.lift);
+export const hippoVertex=(x,y,rig)=>({x,y:y+hippoSink(rig)});
+export const hippoFrameIndex=rig=>Math.round(rig.jaw*(HIPPO_MOUTH_ANCHORS.length-1));
+
 export function hippoMouth(rig){
- const jaw=rig.jaw*7,lo=Math.floor(jaw),hi=Math.min(7,lo+1),k=jaw-lo;
- const anchors=HIPPO_MOUTH_ANCHORS,p=anchors[lo],q=anchors[hi];
- return hippoVertex(p.x+(q.x-p.x)*k,p.y+(q.y-p.y)*k,rig);
+ const [x,y]=HIPPO_MOUTH_ANCHORS[hippoFrameIndex(rig)];
+ return hippoVertex(x*HIPPO_CELL.scale,HIPPO_CELL.top+y*HIPPO_CELL.scale,rig);
 }
-export function hippoFrameIndex(rig){return rig.lift<1?Math.round(rig.lift*64):65+Math.round(rig.jaw*7);}
-const HIPPO_MOUTH_ANCHORS=[{"x":68,"y":252.42},{"x":77.84,"y":253.23999999999998},{"x":75.38,"y":265.53999999999996},{"x":75.38,"y":266.36},{"x":77.02,"y":261.44},{"x":77.02,"y":262.26},{"x":77.02,"y":264.72},{"x":73.74,"y":261.44000000000005}];
+const HIPPO_MOUTH_ANCHORS=[[50.54,61.5],[58.94,75.38],[50.17,82.31],[57,105]];

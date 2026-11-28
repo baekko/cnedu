@@ -3,8 +3,8 @@ import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {beginScene} from './layout.js';
 import {ZOO_FEED_ZONE,ZOO_SUPPORT,animalPose} from './zoo-core.js?v=155';
-import {ANIMAL_ART} from './zoo-approved-art.js?v313';
-import {hippoFrameIndex} from './zoo-hippo-motion.js';
+import {ANIMAL_ART} from './zoo-approved-art.js?v317';
+import {HIPPO_CELL,hippoFrameIndex,hippoSink} from './zoo-hippo-motion.js?v317';
 import {heroPose,heroPoint,releasePoint} from './zoo-hero-pose.js?v=155';
 import {drawZooScenery,drawHippoWake,waterHeight} from './zoo-scenery.js?v315';
 const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -17,10 +17,10 @@ export async function loadZooAssets(){
  const animals=new Set(Object.entries(ANIMAL_ART).filter(([kind])=>kind!=='hippo').map(([,art])=>art.sheet));
  const props=['lion-rock','giraffe-pole','prop-monkey-tree-v63'];
  const files=[
-  ...[...animals].map(name=>['zoo-v313/'+name+'.webp',name]),
+  ...[...animals].map(name=>['zoo-v317/'+name+'.webp',name]),
   ...props.map(name=>['zoo-v313/'+name+'.webp',name]),
   ...['rock-low','rock-high','ice'].map(name=>['zoo-v316/'+name+'.webp',name]),
-  ['zoo-v316/world.webp','world-approved'],['zoo-v313/hippo-motion.webp','hippo-motion'],
+  ['zoo-v316/world.webp','world-approved'],['zoo-v317/hippo-motion.webp','hippo-motion'],
   ['zoo/entrance.webp','entrance'],['zoo/clue.webp','clue'],['language/throw-v42.webp','throw']
  ];
  for(const id of ['haru','doyun','narin','soi'])for(const action of ['idle','walk'])files.push(['hero-v153/'+id+'-'+action+'.webp',id+'-'+action]);
@@ -70,8 +70,10 @@ export class ZooRenderer{
   const p=animalPose(a),art=ANIMAL_ART[p.kind];
   if(p.kind!=='hippo'&&p.water<.8&&!p.airborne)ellipse(c,p.x,p.y+1,p.size*.24,4,'#50604722');
   if(p.kind==='hippo'){
+   if(p.rig.lift===0)return p;
    const w=this.waterSprite.getContext('2d');w.clearRect(0,0,384,384);
-   w.globalCompositeOperation='source-over';w.globalAlpha=1;const frame=hippoFrameIndex(p.rig);w.drawImage(this.images['hippo-motion'],frame%13*256,Math.floor(frame/13)*176,256,176,0,96,384,264);
+   const frame=hippoFrameIndex(p.rig),{width,height,top,scale}=HIPPO_CELL;
+   w.drawImage(this.images['hippo-motion'],frame*width,0,width,height,0,top+hippoSink(p.rig),width*scale,height*scale);
    const m=this.waterMask.getContext('2d');m.clearRect(0,0,384,384);
    for(let x=0;x<384;x+=3){const wx=p.x+(x-192)*p.size/384,y=(waterHeight(wx,t)-p.y)*384/p.size+art.baseline;
     const fade=m.createLinearGradient(0,y-5,0,y+4);fade.addColorStop(0,'#fff');fade.addColorStop(1,'#ffffff00');m.fillStyle=fade;m.fillRect(x,0,3,384);

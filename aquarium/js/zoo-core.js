@@ -1,8 +1,8 @@
 import {FLAT_WALK_SPEED,movedDuringStep} from './walk-cycle.js';
 import {awardClue,hasSource} from './clue-order.js';
-import {ANIMAL_ART} from './zoo-approved-art.js?v313';
+import {ANIMAL_ART} from './zoo-approved-art.js?v317';
 import {releasePoint} from './zoo-hero-pose.js?v=155';
-import {hippoMotion,hippoMouth} from './zoo-hippo-motion.js';
+import {hippoMotion,hippoMouth} from './zoo-hippo-motion.js?v317';
 import {lakeWorldOffset} from './zoo-scenery.js?v315';
 import {usesCoinRewards} from './clue-card-art.js?v245';
 
@@ -31,11 +31,11 @@ export function receivingPoint(pose){const art=ANIMAL_ART[pose.kind];let [nx,ny]
 // In particular the monkey can never be paused at an unsupported point in a jump.
 export function animalPose(a){
  const s=a.spec,t=a.clock;let x=s.start+284,y=399,frame=0,moving=false,open=false,ready=false,water=0,airborne=false,flip=false,phase='';
- let freezeSafe=true, mode='mouth', progress=0;
+ let freezeSafe=true, mode='mouth', progress=0,spriteOverride;
  switch(s.kind){
  case 'zebra':{
   const q=t%5.2,forward=q<2.3,u=forward?q/2.3:(q-2.3)/2.9;
-  x=s.start+(forward?225+85*smooth(u):310-85*smooth(u));moving=true;flip=forward;
+  x=s.start+(forward?225+70*smooth(u):295-70*smooth(u));moving=true;flip=forward;
   ready=!forward;open=ready&&a.reach>0;frame=open?3:0;phase=forward?'돌아서 돌아와요':'오는 방향 앞쪽으로';break;
  }
  case 'giraffe':{
@@ -56,7 +56,7 @@ export function animalPose(a){
   ready=open=frame===2||frame===3;freezeSafe=ready;phase=ready?'올라온 코끝으로':'코를 들어 올려요';progress=ready?(3.9-q)/2.25:0;mode='trunk';break;
  }
  case 'tiger':{
-  x=s.start+253+22*Math.sin(t*1.5);moving=true;flip=Math.cos(t*1.5)>0;
+  x=s.start+253+15*Math.sin(t*1.5);moving=true;flip=Math.cos(t*1.5)>0;
   phase='머리보다 높이 던져요';
   if(a.jump){const u=clamp(a.jump.age/(a.jump.duration||1.12));x=a.jump.x-46*Math.sin(Math.PI*u);y=399-91*Math.sin(Math.PI*u);frame=u<.12?2:u>.9?1:3;moving=false;flip=false;airborne=u>0&&u<1;ready=open=u>.12&&u<.9;phase='뛰어올라 받아요';}
   freezeSafe=!airborne;break;
@@ -72,7 +72,7 @@ export function animalPose(a){
  }
  case 'hippo':{
   const q=t%4.9;x=s.start+256+lakeWorldOffset(a.cameraX);
-  // The back stays at the same waterline. Only the anatomical head poses change.
+  // The animal rises as a whole and disappears below the water when it sinks.
   water=q<.55?1:q<1.65?1-smooth((q-.55)/1.1):q<3.2?0:q<4.65?smooth((q-3.2)/1.45):1;
   y=335;ready=open=q>=1.85&&q<3;frame=open?3:0;freezeSafe=ready||a.fed>=2;
   phase=q<1?'거품 뒤에 올라와요':q<1.85?'올라오는 중':open?'큰 입이 열렸어요':'물속으로 들어가요';progress=open?(3-q)/1.15:0;break;
@@ -84,11 +84,12 @@ export function animalPose(a){
   phase='얼음 위로 미끄러뜨려요';mode='slide';break;
  }
  case 'otter':{
-  const q=t%5.2;let u=0;
-  if(q<1.35){x=s.start+246;y=402;ready=a.fed===0;phase=a.fed===0?'낮은 바위의 앞발로':'높은 바위로 갈 거예요';}
-  else if(q<2.45){u=(q-1.35)/1.1;x=s.start+246+87*smooth(u);y=402-59*smooth(u)-36*Math.sin(Math.PI*u);airborne=true;moving=true;flip=true;phase='바위 사이로 뛰어요';}
-  else if(q<3.8){x=s.start+333;y=343;ready=a.fed===1;phase=a.fed===1?'이번엔 높은 바위!':'먼저 낮은 바위에서';}
-  else {u=(q-3.8)/1.4;x=s.start+333-87*smooth(u);y=343+59*smooth(u)-36*Math.sin(Math.PI*u);airborne=true;moving=true;phase='바위 사이로 뛰어요';}
+  const q=t%5.2,low=246,high=330,span=high-low;let u=0;
+  if(q<1.35){x=s.start+low;y=402;ready=a.fed===0;phase=a.fed===0?'낮은 바위의 앞발로':'높은 바위로 갈 거예요';}
+  else if(q<2.45){u=(q-1.35)/1.1;x=s.start+low+span*smooth(u);y=402-59*smooth(u)-36*Math.sin(Math.PI*u);airborne=true;moving=true;flip=true;phase='바위 사이로 뛰어요';}
+  else if(q<3.8){x=s.start+high;y=343;ready=a.fed===1;phase=a.fed===1?'이번엔 높은 바위!':'먼저 낮은 바위에서';}
+  else {u=(q-3.8)/1.4;x=s.start+high-span*smooth(u);y=343+59*smooth(u)-36*Math.sin(Math.PI*u);airborne=true;moving=true;phase='바위 사이로 뛰어요';}
+  if(airborne)spriteOverride=u<.08?2:u<.23?3:u>.80?4:1;
   open=ready;frame=open?3:0;freezeSafe=!moving;mode='hands';break;
  }
  }
@@ -98,7 +99,7 @@ export function animalPose(a){
  }
  if(a.chew>0&&!airborne&&freezeSafe){open=ready=false;moving=false;flip=false;frame=['monkey','tiger'].includes(s.kind)?4:a.chew>.42?3:4;phase='냠냠!';}
  if(a.fed>=2&&!airborne&&freezeSafe){open=ready=false;moving=false;flip=false;frame=a.chew>0?4:5;phase='먹이 주기 완료';}
- const art=ANIMAL_ART[s.kind];const spriteFrame=moving&&frame===0?art.walk[Math.floor((a.walkDistance||0)/7)%art.walk.length]:art.map[frame];
+ const art=ANIMAL_ART[s.kind];const spriteFrame=spriteOverride??(moving&&frame===0?art.walk[Math.floor((a.walkDistance||0)/7)%art.walk.length]:art.map[frame]);
  const pose={...s,x,y,frame,spriteFrame,moving,open:open&&a.chew<=0&&a.fed<2,ready:ready&&a.fed<2,water,airborne,flip,freezeSafe,mode,phase,progress,attention:a.attention,fed:a.fed};
  if(s.kind==='hippo'){pose.rig=hippoMotion(a);pose.spriteFrame=4;pose.surface={x:x-24,y:335};pose.headMotion=pose.rig.motion;}
  pose.target=receivingPoint(pose);pose.radius=s.kind==='hippo'?20:s.kind==='lion'?15:s.kind==='giraffe'?12:s.kind==='penguin'?9:13;

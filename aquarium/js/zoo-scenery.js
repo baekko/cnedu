@@ -62,9 +62,12 @@ export function drawHippoWake(c,p,t,pulses=[]){
   }
  }
  // A soft meniscus curls around the neck instead of a horizontal body cut.
- for(let side=0;side<2;side++){
-  c.strokeStyle='#d3e8d591';c.lineWidth=1.25;c.beginPath();
-  const x=cx+(side?1:-1)*23;c.moveTo(x-13,cy+1);c.quadraticCurveTo(x,cy+4+Math.sin(t*2)*.6,x+13,cy);c.stroke();
+ if(p.rig.lift>.35){
+  c.globalAlpha=Math.min(1,(p.rig.lift-.35)*3);
+  for(let side=0;side<2;side++){
+   c.strokeStyle='#d3e8d591';c.lineWidth=1.25;c.beginPath();
+   const x=cx+(side?1:-1)*23;c.moveTo(x-13,cy+1);c.quadraticCurveTo(x,cy+4+Math.sin(t*2)*.6,x+13,cy);c.stroke();
+  }
  }
  const motion=p.headMotion||0;
  if(motion>.05)for(let i=0;i<7;i++){
