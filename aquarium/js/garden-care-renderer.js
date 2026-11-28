@@ -2,10 +2,11 @@ import {drawGardener} from './garden-helper-renderer.js?v245';
 import {drawClueCard} from './clue-card-art.js?v245';
 import {box,oval,text,TAU} from './field-renderer.js?v245';
 import {DONORS,POLLEN_COLORS,POLLEN_NAMES,gardenBugPose} from './garden-care.js';
+const BLOOMS=['bloom-gold','bloom-pink','bloom-blue'];
 export function drawGardenCare(r,c,g,character){
  if(g.room===1){
-  for(const d of DONORS){r.object(c,['donor-gold','donor-pink','donor-blue'][d.color],d.x,247,46);box(c,d.x-31,258,62,18,'#fff3d9ed',4);oval(c,d.x-20,267,3.5,3.5,POLLEN_COLORS[d.color]);text(c,POLLEN_NAMES[d.color]+' 꽃가루',d.x+5,267,8,'#6b795c');}
-  for(const s of g.plants){const key=['target-gold','target-pink','target-blue'][s.pollenNeed],h=55;
+  for(const d of DONORS){r.object(c,BLOOMS[d.color],d.x,247,46);box(c,d.x-31,258,62,18,'#fff3d9ed',4);oval(c,d.x-20,267,3.5,3.5,POLLEN_COLORS[d.color]);text(c,POLLEN_NAMES[d.color]+' 꽃가루',d.x+5,267,8,'#6b795c');}
+  for(const s of g.plants){const key=BLOOMS[s.pollenNeed],h=55;
    box(c,s.x-43,277,86,22,'#fff3dfe8',4);text(c,s.name+(s.bloom?' ✓':''),s.x-8,288,10,'#596e57');if(!s.bloom)drawClueCard(c,s.x+18,288,8,11);oval(c,s.x+30,288,4,4,POLLEN_COLORS[s.pollenNeed]);
    oval(c,s.x,356,23,5,'#55654d25');r.object(c,key,s.x,355,h);
    if(!s.bloom){box(c,s.x-30,363,60,24,'#fff5d9ed',4);for(let n=0;n<3;n++)oval(c,s.x-10+n*10,370,3,3,n<s.pollinate?POLLEN_COLORS[s.pollenNeed]:'#c6c8ae');text(c,s.pollinate+' / 3',s.x,380,8,'#43846a');}

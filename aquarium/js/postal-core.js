@@ -1,5 +1,5 @@
 import {awardClue} from './clue-order.js';
-import {POSTAL_VILLAGES} from './postal-maps.js?v268';
+import {POSTAL_VILLAGES} from './postal-maps.js?v305';
 
 const ROUNDS = Object.freeze([
   Object.freeze({letters: 4, seconds: 60}),

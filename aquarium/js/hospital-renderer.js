@@ -29,22 +29,23 @@ function loadImage(path) {
 
 let sharedAssets;
 async function loadRoomArt() {
-  const [animals,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,traffic,manifest] = await Promise.all([
-    loadImage('hospital/animals.webp'),
+  const [animals,portraits,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,cafeWindow,manifest] = await Promise.all([
+    loadImage('hospital/animals-art-v305.webp'),
+    loadImage('hospital/animal-portraits-v305.webp'),
     loadImage('hospital/furniture.webp'),
-    loadImage('postal/village-cats.webp?v265'),
-    loadImage('hospital/cat-actions.webp').catch(()=>null),
-    loadImage('hospital/walls-facing-v304.webp'),
-    loadImage('hospital/animals-diagonal-v296.webp'),
+    loadImage('hospital/hospital-cats-v305.webp'),
+    loadImage('hospital/cat-actions-v305.webp'),
+    loadImage('hospital/walls-facing-v305.webp'),
+    loadImage('hospital/animals-diagonal-v305.webp'),
     loadImage('hospital/fixtures-perspective-v304.webp'),
     loadImage('hospital/fixtures-wall-v304.webp'),
-    loadImage('hospital/therapy-traffic-v304.webp'),
+    loadImage('hospital/therapy-cafe-v305.webp'),
     fetch(asset('hospital/animals.json')).then(response => {
       if (!response.ok) throw new Error('동물 그림 목록을 불러오지 못했어요.');
       return response.json();
     }),
   ]);
-  return {animals,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,traffic,manifest};
+  return {animals,portraits,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,cafeWindow,manifest};
 }
 
 export async function loadHospitalAssets(character) {
@@ -322,12 +323,7 @@ function viewFloorOpacity(camera,player,room,line,foreground=false) {
 // Pane bounds are measured in the rehab panel's 384 by 128 source coordinates.
 const THERAPY_WINDOW_COLUMNS=[[166.6,192.5],[195.8,222.3],[225.6,252.3],[255.8,282],[285.5,309.3]];
 const THERAPY_WINDOW_ROWS=[[11.8,32.7],[35.7,55.6],[58.7,78.2]];
-const TRAFFIC_CARS=[
-  {tile:1,direction:-1,offset:5.3,period:8.8,travel:5.2,width:32,ground:51},
-  {tile:0,direction:1,offset:1.1,period:8.8,travel:5.2,width:38,ground:65},
-];
-
-function therapyWindow(c,traffic,left,top,scaleX,scaleY,time) {
+function therapyWindow(c,cafeWindow,left,top,scaleX,scaleY) {
   const x=166.6,y=11.8,w=142.7,h=66.4;
   c.save();
   c.translate(left,top);
@@ -337,38 +333,11 @@ function therapyWindow(c,traffic,left,top,scaleX,scaleY,time) {
     for (const [upper,lower] of THERAPY_WINDOW_ROWS) c.rect(start,upper,end-start,lower-upper);
   }
   c.clip();
-  c.drawImage(traffic,0,0,280,140,x,y,w,h);
-  const signLeft=x+124*w/280,signTop=y+18.7*h/140;
-  const signWidth=32*w/280,signHeight=6.4*h/140;
-  const signFace=c.createLinearGradient(0,signTop,0,signTop+signHeight);
-  signFace.addColorStop(0,'#ffe3b9');
-  signFace.addColorStop(.28,'#f5dbb3');
-  signFace.addColorStop(.78,'#f5dbb3');
-  signFace.addColorStop(1,'#ffe2bb');
-  c.fillStyle=signFace;
-  c.fillRect(signLeft,signTop,signWidth,signHeight);
-  c.fillStyle='#583a25';
-  c.textAlign='center';
-  c.textBaseline='middle';
-  c.font='700 3.65px "Noto Sans KR", "Noto Sans CJK KR", "Malgun Gothic", sans-serif';
-  c.fillText('온기제과',x+w*.5,signTop+signHeight*.54,signWidth-.65);
-  for (const car of TRAFFIC_CARS) {
-    const progress=(time+car.offset)%car.period/car.travel;
-    if (progress>=1) continue;
-    const span=w+car.width;
-    const center=x-car.width/2+span*(car.direction>0?progress:1-progress);
-    const height=car.width/2;
-    oval(c,center,car.ground+.3,car.width*.35,1.5,'#29262139');
-    c.save();
-    c.translate(center,car.ground);
-    c.scale(car.direction,1);
-    c.drawImage(traffic,car.tile*128,144,128,64,-car.width/2,-height*60/64,car.width,height);
-    c.restore();
-  }
+  c.drawImage(cafeWindow,x,y,w,h);
   c.restore();
 }
 
-function paintedRear(c,art,wall,room,points,time) {
+function paintedRear(c,art,wall,room,points) {
   const [base,end,top]=points;
   const sw=WALL_FACE_TILE_WIDTH,sh=WALL_FACE_TILE_HEIGHT;
   const split=PANEL_SPLITS[room.id];
@@ -382,7 +351,7 @@ function paintedRear(c,art,wall,room,points,time) {
   c.drawImage(art.walls,sourceX,sourceY+rail,coverage*sw,sh-rail,
     base.x,railY,end.x-base.x,base.y-railY);
   if(room.id==='therapy') {
-    therapyWindow(c,art.traffic,base.x,top.y,(end.x-base.x)/sw,(railY-top.y+.16)/rail,time);
+    therapyWindow(c,art.cafeWindow,base.x,top.y,(end.x-base.x)/sw,(railY-top.y+.16)/rail);
   }
   if(!wall.segment && top.y>-2) {
     const signPosition=room.id==='therapy'?.26:.5;
@@ -390,7 +359,7 @@ function paintedRear(c,art,wall,room,points,time) {
   }
 }
 
-function facingWall(c,buffer,art,camera,wall,player,revealActors,time) {
+function facingWall(c,buffer,art,camera,wall,player,revealActors) {
   const room=roomFor(wall.room);
   const material=WALL_FINISH[wall.room]||WALL_FINISH.hall;
   const y=wall.lineY;
@@ -401,7 +370,7 @@ function facingWall(c,buffer,art,camera,wall,player,revealActors,time) {
   const foreground=wall.kind==='boundary';
   const baseAlpha=wall.edge==='front'?viewFloorOpacity(camera,player,room,y,foreground):1;
   drawWallSection(c,buffer,points,revealActors,camera,y,baseAlpha,wallCanvas=>{
-    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,wall,room,points,time);
+    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,wall,room,points);
     else paintPlaster(wallCanvas,camera,start,end,material);
     const outerY=y+(wall.edge==='front'?WALL_CAP_DEPTH:-WALL_CAP_DEPTH);
     const leftX=start.x-(start.x===room?.x?WALL_CAP_DEPTH:0);
@@ -739,15 +708,18 @@ export class HospitalRenderer {
 
   drawPetPortrait(pet,canvas) {
     const c=canvas.getContext('2d');
-    const {animals,manifest:{cellWidth,cellHeight,breeds}}=this.images;
-    const row=breeds[pet.species][pet.breed];
-    const size=Math.min(canvas.width/cellWidth,canvas.height/cellHeight);
-    const w=cellWidth*size,h=cellHeight*size;
+    const {portraits,manifest:{breeds}}=this.images;
+    const index=breeds[pet.species][pet.breed];
+    const columns=8,rows=4;
+    const tileWidth=portraits.width/columns,tileHeight=portraits.height/rows;
+    const scale=Math.min(canvas.width/tileWidth,canvas.height/tileHeight);
+    const w=tileWidth*scale,h=tileHeight*scale;
     c.clearRect(0,0,canvas.width,canvas.height);
-    c.drawImage(animals,0,row*cellHeight,cellWidth,cellHeight,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
+    c.drawImage(portraits,index%columns*tileWidth,Math.floor(index/columns)*tileHeight,tileWidth,tileHeight,
+      (canvas.width-w)/2,(canvas.height-h)/2,w,h);
   }
 
-  draw(game,character,time=0) {
+  draw(game,character) {
     const c = this.c;
     const {width,height,top} = HOSPITAL_VIEW;
     beginScene(c);
@@ -759,11 +731,11 @@ export class HospitalRenderer {
     c.beginPath();
     c.rect(0,0,width,height);
     c.clip();
-    this.paintWorld(c,game,character,this.petTargets,time);
+    this.paintWorld(c,game,character,this.petTargets);
     c.restore();
   }
 
-  paintWorld(c,game,character,targets,time=0) {
+  paintWorld(c,game,character,targets) {
     const {player,animals} = game;
     const {width,height} = HOSPITAL_VIEW;
     const camera=cameraWithClearance(game.camera,player,width);
@@ -780,7 +752,7 @@ export class HospitalRenderer {
           layers.push({y:part.end,draw:()=>sideWall(c,camera,part,residents)});
         }
       } else if(obstacle.kind==='face' || obstacle.kind==='boundary') {
-        layers.push({y:obstacle.lineY,draw:()=>facingWall(c,this.wallMask,this.images,camera,obstacle,player,residents,time)});
+        layers.push({y:obstacle.lineY,draw:()=>facingWall(c,this.wallMask,this.images,camera,obstacle,player,residents)});
       }
     }
     for(const door of HOSPITAL_FLOOR.doors) {

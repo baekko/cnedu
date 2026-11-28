@@ -1,9 +1,9 @@
 import {connectTitleModes,showStartupError} from './opening.js?v254';
 import {HospitalGame,HOSPITAL} from './hospital-core.js?v301';
-import {HospitalRenderer,loadHospitalAssets} from './hospital-renderer.js?v304';
+import {HospitalRenderer,loadHospitalAssets} from './hospital-renderer.js?v305';
 import {HospitalUI} from './hospital-ui.js?v301';
-import {PostalGame,POSTAL} from './postal-core.js?v294';
-import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v304';
+import {PostalGame,POSTAL} from './postal-core.js?v305';
+import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v305';
 import {PostalUI,syncPostalStats} from './postal-ui.js?v268';
 import {PursuitGame,PURSUIT} from './pursuit-game.js?v252';
 import {PursuitRenderer,loadPursuitAssets,pursuitMapHit,pursuitClueHit,pursuitStatus,syncPursuitStats} from './pursuit-renderer.js?v245';
@@ -32,16 +32,16 @@ import {briefingCopy} from './briefing-copy.js?v304';
 import {restoreSources} from './clue-order.js';
 import {CLUE_CARD_URL,cardPositionLabel,setCoinRewards} from './clue-card-art.js?v245';
 import {PHOTO,PhotoGame,PHOTO_ROOMS} from './photo-core.js';
-import {PhotoRenderer,loadPhotoAssets} from './photo-renderer.js?v304';
+import {PhotoRenderer,loadPhotoAssets} from './photo-renderer.js?v305';
 import {GARDEN,GardenGame,GARDEN_ROOMS} from './garden-core.js?v268';
-import {GardenRenderer,loadGardenAssets} from './garden-renderer.js?v304';
+import {GardenRenderer,loadGardenAssets} from './garden-renderer.js?v305';
 import {MONASTERY,MonasteryGame} from './monastery-core.js?v228';
 import {loadMonasteryAssets,MonasteryRenderer} from './monastery-renderer.js?v228';
 import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
 import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
-import {createTutorial} from './play-tutorials.js?v304';
+import {createTutorial} from './play-tutorials.js?v305';
 import {TutorialFinance} from './tutorial-finance.js?v268';
 import {TutorialChrome} from './tutorial-chrome.js?v295';
 import {TutorialPlayback} from './tutorial-playback.js';
@@ -1292,14 +1292,24 @@ $('close-puzzle').addEventListener('click',()=>closeExtra('puzzle-overlay'));
 function queueFinish(result){
  if(!finishTransition.start(result))return;trackRunScore();
  if(arcadeMode)recordArcadeResult(endReason==='leave');
- // Use wall time: a busy rendering frame must not turn one second into several.
- clearTimeout(finishTimeout);const pending=finishTransition.pending;
- finishTimeout=setTimeout(()=>{if(state!=='ending'||finishTransition.pending!==pending)return;const ready=finishTransition.update(finishTransition.seconds);if(ready)presentCompletedRun(ready);},finishTransition.seconds*1000);
+ clearTimeout(finishTimeout);
  clearTimeout(toastTimeout);$('game-toast').classList.remove('show');$('history-message').hidden=true;
  if(!result.survived&&!isMuseum()&&!isHistory()&&!isExchange()&&!isTemple()&&!isRobot()&&!isSpace()&&!isWriter()&&!isLanguage()&&!isNewspaper()&&!isDream()&&!isLiterature()&&!isZoo()&&!isAI()&&!isDessert()&&!isDetective()&&!isMonastery()&&endReason!=='leave')game.health=0;
- if(arcadeMode){setState('ending');hud();return;}
- const usable=keepsClues(placeId(activePlace),result,endReason);
- const rec=runRecord();if(rec){if(isCinema())rec.answered=game.answers.length;if(game.runPlan)rec.runPlan=[...game.runPlan];if(isMemory())rec.revisits=game.revisits;if(isHospital()||isPostal())rec.reports=game.reports.map(report=>({...report}));if(isPursuit())Object.assign(rec,{captured:game.captured,round:game.round,attemptsUsed:game.attemptsUsed,flashes:game.flashes,trace:game.trace.map(leg=>({...leg})),traceRule:PURSUIT_TRACE_RULE});if(!isExchange())Object.assign(rec,{clueSources:[...game.clueSources],clueRule:'count-v1'});rec.phase=usable?'result':'briefing';rec.survived=result.survived;rec.elapsed=result.elapsed;if(isMonastery())Object.assign(rec,{lit:[...game.clueSources],mistakes:game.mistakes,flashes:game.flashes});if(isDetective())Object.assign(rec,{room:game.roomIndex,caught:game.caught,flashes:game.flashes,evidence:game.rooms.flatMap(r=>r.evidence.filter(e=>e.collected).map(e=>e.id))});if(isTemple()){rec.reachedIthaca=game.reachedIthaca;rec.delays=game.delays;}if(isWriter())rec.reachedCastle=game.reachedCastle;if(usable){progress.clues=[...game.banked];persist();}persistJourney();}
+ if(!arcadeMode){
+  const usable=keepsClues(placeId(activePlace),result,endReason);
+  const rec=runRecord();if(rec){if(isCinema())rec.answered=game.answers.length;if(game.runPlan)rec.runPlan=[...game.runPlan];if(isMemory())rec.revisits=game.revisits;if(isHospital()||isPostal())rec.reports=game.reports.map(report=>({...report}));if(isPursuit())Object.assign(rec,{captured:game.captured,round:game.round,attemptsUsed:game.attemptsUsed,flashes:game.flashes,trace:game.trace.map(leg=>({...leg})),traceRule:PURSUIT_TRACE_RULE});if(!isExchange())Object.assign(rec,{clueSources:[...game.clueSources],clueRule:'count-v1'});rec.phase=usable?'result':'briefing';rec.survived=result.survived;rec.elapsed=result.elapsed;if(isMonastery())Object.assign(rec,{lit:[...game.clueSources],mistakes:game.mistakes,flashes:game.flashes});if(isDetective())Object.assign(rec,{room:game.roomIndex,caught:game.caught,flashes:game.flashes,evidence:game.rooms.flatMap(r=>r.evidence.filter(e=>e.collected).map(e=>e.id))});if(isTemple()){rec.reachedIthaca=game.reachedIthaca;rec.delays=game.delays;}if(isWriter())rec.reachedCastle=game.reachedCastle;if(usable){progress.clues=[...game.banked];persist();}persistJourney();}
+ }
+ const showCompleted=()=>{
+  const ready=finishTransition.update(finishTransition.seconds);
+  if(ready)presentCompletedRun(ready);
+ };
+ // The hospital's final round report already provides a stopping point.
+ if(isHospital()&&game.ended&&result.survived){showCompleted();return;}
+ // Use wall time so a busy frame cannot delay the end screen.
+ const pending=finishTransition.pending;
+ finishTimeout=setTimeout(()=>{
+  if(state==='ending'&&finishTransition.pending===pending)showCompleted();
+ },finishTransition.seconds*1000);
  setState('ending');hud();
 }
 function presentCompletedRun(result){

@@ -1,7 +1,7 @@
 import {drawExplorer} from './heroes.js?v=155';
 import {ROOM_HERO_SIZE} from './hero-scale.js';
 import {spriteAnchor} from './layout.js';
-import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v294';
+import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v305';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
 
@@ -19,9 +19,10 @@ const LOCKED_CAMERA = {x: 0, y: 0};
 const HOUSE_STYLES = 8;
 const HOUSES = Array.from({length: HOUSE_STYLES * 2}, (_, i) => `house-${i}`);
 const PLANT_VARIANTS = 4;
-const PLANTS = ['tree', 'flowers'].flatMap(kind =>
-  Array.from({length: PLANT_VARIANTS}, (_, i) => `${kind}-${i}`));
-const STREET_ART = [...HOUSES, 'office', 'recycling', 'mailbox', 'bench', 'shrubs', 'lamppost', ...PLANTS];
+const TREES = Array.from({length: PLANT_VARIANTS}, (_, i) => `tree-${i}`);
+const FLOWERS = Array.from({length: PLANT_VARIANTS}, (_, i) => `flowers-${i}`);
+const REVISED_ART = new Set([...HOUSES, 'office', 'bench', ...FLOWERS]);
+const STREET_ART = [...REVISED_ART, 'recycling', 'mailbox', 'shrubs', 'lamppost', ...TREES];
 const STREET_SIZES = {
   tree: [77, 78], recycling: [72, 41], bench: [60, 32], cat: [36, 28],
   lamppost: [22, 64], flowers: [34, 21], shrubs: [38, 26],
@@ -54,7 +55,10 @@ async function loadBicyclePoses(characterId) {
 let scenery;
 export async function loadPostalAssets(character) {
   scenery ||= Promise.all([
-    ...STREET_ART.map(async key => [key, await image(`./assets/postal/${key}-v304.webp`)]),
+    ...STREET_ART.map(async key => {
+      const version = REVISED_ART.has(key) ? 'v305' : 'v304';
+      return [key, await image(`./assets/postal/${key}-${version}.webp`)];
+    }),
     image('./assets/postal/village-cats.webp?v265').then(asset => ['village-cats', asset]),
   ])
     .then(Object.fromEntries).catch(error => { scenery = null; throw error; });

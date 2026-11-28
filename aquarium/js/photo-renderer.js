@@ -4,10 +4,27 @@ import {drawClueCard} from './clue-card-art.js?v245';
 import {FieldRenderer,loadFieldAssets,box,oval,text,TAU} from './field-renderer.js?v245';
 import {reflectionX,photoLight,PHOTO_ROOMS,PHOTO_AIM,photoLens,photoFrame,wantedAlternate} from './photo-core.js';
 import {PhotoViewfinder} from './photo-viewfinder.js?v245';
+const SUBJECT_ART='photo-v305/';
 export async function loadPhotoAssets(character){
- const images=await loadFieldAssets('photo',character,{entrance:'entrance-v129/photo.webp',room0:'photo-v304/room0.webp',room1:'photo-v304/room1.webp',room2:'photo-v304/room2.webp',subjects:'photo-v123/subjects.webp',subjectsAlt:'photo-v123/subjects-alt.webp'});
- await Promise.all(['cat','dog','rabbit','reflector-left','reflector-right'].map(key=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('촬영 소품을 불러오지 못했어요: '+key));im.src=new URL('../assets/'+(key==='cat'?'photo-v130/':'photo-v121/')+key+'.webp',import.meta.url).href;})));
- const response=await fetch(new URL('../assets/photo-v121/animals.json',import.meta.url));if(!response.ok)throw Error('동물 움직임 그림 정보 오류');images.animals=(await response.json()).animals;await loadPlayerActions(images,character);return images;
+ const images=await loadFieldAssets('photo',character,{entrance:'entrance-v129/photo.webp',room0:'photo-v304/room0.webp',room1:'photo-v304/room1.webp',room2:'photo-v304/room2.webp',subjects:SUBJECT_ART+'subjects.webp',subjectsAlt:SUBJECT_ART+'subjects-alt.webp'});
+ const sprites=['cat','dog','rabbit','reflector-left','reflector-right'].map(key=>new Promise((resolve,reject)=>{
+  const im=new Image();
+  im.onload=()=>{images[key]=im;resolve();};
+  im.onerror=()=>reject(Error('촬영 소품을 불러오지 못했어요: '+key));
+  im.src=new URL('../assets/'+SUBJECT_ART+key+'.webp',import.meta.url).href;
+ }));
+ const readAtlas=async (file,message)=>{
+  const response=await fetch(new URL('../assets/'+file,import.meta.url));
+  if(!response.ok)throw Error(message);
+  return response.json();
+ };
+ await Promise.all([
+  ...sprites,
+  readAtlas('photo-v121/animals.json','동물 움직임 그림 정보 오류').then(atlas=>{images.animals=atlas.animals;}),
+  readAtlas(SUBJECT_ART+'subjects.json','촬영 소품 그림 정보 오류').then(atlas=>{images.atlas=atlas;}),
+  loadPlayerActions(images,character),
+ ]);
+ return images;
 }
 export class PhotoRenderer extends FieldRenderer{
  briefing(c,character,t){photoBriefing(this,c,character,t);}

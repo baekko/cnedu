@@ -427,6 +427,32 @@ function addProps(village, streets, occupied, vacantFrontages, index) {
     const y = street.y1 + side * (street.width / 2 + 71 + random() * 58);
     plantGrove(x, y, (index + attempt) % 3);
   }
+
+  // Fill public green space last so the reserved roads, lots and existing
+  // furniture and animal routes retain their original clearances.
+  const groveTrees = village.props.filter(prop => prop.kind === 'tree');
+  const propsBeforePlanting = village.props.length;
+  const plantPublicTree = (x, y) => place({ kind: 'tree', x, y });
+  for (let x = 125; x < village.width - 100; x += 130 + random() * 30) {
+    plantPublicTree(x, 109 + random() * 32);
+    plantPublicTree(x + 24, village.height - 37 - random() * 49);
+  }
+  for (const { x, y } of parks) {
+    plantPublicTree(x - 149, y + 38);
+    plantPublicTree(x + 144, y + 31);
+    plantPublicTree(x - 121, y - 65);
+    plantPublicTree(x + 114, y - 59);
+  }
+  for (let y = 283; y < village.height - 180; y += 112 + random() * 27) {
+    plantPublicTree(73 + random() * 100, y);
+    plantPublicTree(village.width - 78 - random() * 107, y + 37);
+  }
+  for (let i = 0; i < groveTrees.length * 3 && village.props.length - propsBeforePlanting < 25; i++) {
+    const { x, y } = groveTrees[i % groveTrees.length];
+    const angle = random() * 2 * Math.PI;
+    const radius = 98 + random() * 84;
+    plantPublicTree(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+  }
 }
 
 function addGardens(village, vacantFrontages, occupied, index) {
