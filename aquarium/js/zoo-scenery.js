@@ -1,55 +1,46 @@
-// A single continuous painting: never blend a second copy over a habitat.
-// While the hippo is visible, its painted shore uses the same world coordinates.
+// The approved route artwork is assembled in world coordinates. The walkways,
+// shore and background move with one camera so the scene retains its composition.
 export const ZOO_VIEW_WIDTH=390;
 export const HIPPO_WATERLINE=335;
-export const HIPPO_LAKE_REFERENCE_CAMERA=6*420;
-export function lakeWorldOffset(cameraX=HIPPO_LAKE_REFERENCE_CAMERA){
+const WORLD_WIDTH=3780;
+const WORLD_HEIGHT=500;
+const TAU=Math.PI*2;
+
+export function lakeWorldOffset(){
  return 0;
 }
-const TAU=Math.PI*2;
-export function panoramaPlacement(cameraX,imageWidth,imageHeight,worldWidth=3780){
- const width=2100;
- const height=width*imageHeight/imageWidth;
- const camera=Math.max(0,Math.min(worldWidth-ZOO_VIEW_WIDTH,cameraX));
- const lakeX=2776-width*.72,lockStart=2230,lockEnd=2940,ramp=40;
- let x=lakeX;
- if(camera<lockStart){
-  const speed=lakeX/(lockStart-ramp/2),u=camera-(lockStart-ramp);
-  x=u<=0?camera*speed:speed*(lockStart-ramp+u-u*u/(2*ramp));
- }else if(camera>lockEnd){
-  const u=camera-lockEnd,speed=(worldWidth-width-lakeX)/(worldWidth-ZOO_VIEW_WIDTH-lockEnd-ramp/2);
-  x+=speed*(u<ramp?u*u/(2*ramp):u-ramp/2);
- }
- return{x,y:419-height*.85,width,height};
-}
-// The mask follows the painted shore. Banks, rocks, trees and the path stay still.
-function lakePath(c,r){
- const pts=[[.682,.504],[.732,.486],[.806,.48],[.888,.465],[1,.465],[1,.613],[.945,.64],[.916,.628],[.868,.65],[.839,.694],[.811,.75],[.77,.78],[.74,.832],[.69,.864],[.629,.853],[.584,.838],[.535,.815],[.548,.783],[.585,.794],[.637,.782],[.656,.735],[.637,.684],[.588,.673],[.583,.65],[.638,.602],[.661,.565]];
- c.beginPath();for(let i=0;i<pts.length;i++){const[x,y]=pts[i];i?c.lineTo(r.x+x*r.width,r.y+y*r.height):c.moveTo(r.x+x*r.width,r.y+y*r.height);}c.closePath();
-}
-function paintPanorama(c,image,r,t){
- c.drawImage(image,r.x,r.y,r.width,r.height);
- const sx=r.width/image.width,sy=r.height/image.height;
- c.save();lakePath(c,r);c.clip();
- // Small travelling refraction moves the original painted water itself.
- c.globalAlpha=.72;
- for(let y=Math.floor(image.height*.46);y<image.height*.87;y+=4){
-  const depth=(y/image.height-.46)/.41,dx=(Math.sin(y*.105+t*1.7)*1.7+Math.sin(y*.046-t*.9))*depth;
-  c.drawImage(image,Math.floor(image.width*.52),y,Math.ceil(image.width*.48),5,r.x+image.width*.52*sx+dx,r.y+y*sy,image.width*.48*sx,5*sy);
- }
- c.globalAlpha=1;
- // Reflections travel across the same water; they are not glued to the animal.
- for(let i=0;i<65;i++){
-  const u=.55+((i*47)%97)/97*.45,v=.49+((i*29)%83)/83*.35,depth=(v-.48)/.37;
-  const x=r.x+u*r.width+Math.sin(t*.5+i)*2,y=r.y+v*r.height+Math.sin(t*.7+i*.81)*1.2;
-  const width=(5+(i%5)*3)*(.35+depth),a=.06+Math.max(0,Math.sin(t*1.05+i*1.9))*.18;
-  c.strokeStyle=`rgba(210,240,220,${a})`;c.lineWidth=.6+depth*.55;c.beginPath();c.moveTo(x-width/2,y);c.quadraticCurveTo(x,y-1-depth,x+width/2,y);c.stroke();
+
+// World-space shoreline from the lake painting. Limit refraction to water,
+// excluding the planted banks and foreground stones.
+const LAKE=[
+ [2540,273],[2603,238],[2650,204],[2680,176],[2759,165],
+ [2870,160],[3006,145],[3260,148],[3440,145],[3735,149],
+ [3778,161],[3778,192],[3730,190],[3680,209],[3660,244],
+ [3610,255],[3510,253],[3436,242],[3368,271],[3311,254],
+ [3260,251],[3210,231],[3182,214],[3152,210],[3128,229],
+ [3112,252],[3070,254],[3040,254],[2999,274],[2974,291],
+ [2960,317],[2940,334],[2924,354],[2876,355],[2840,377],
+ [2819,399],[2774,410],[2735,395],[2695,411],[2648,402],
+ [2628,385],[2624,363],[2668,358],[2642,320],[2614,292]
+];
+
+export function drawZooScenery(c,image,cameraX,t=0){
+ const camera=Math.max(0,Math.min(WORLD_WIDTH-ZOO_VIEW_WIDTH,cameraX));
+ const scale=image.width/WORLD_WIDTH,span=ZOO_VIEW_WIDTH*scale;
+ c.drawImage(image,camera*scale,0,span,image.height,camera,0,ZOO_VIEW_WIDTH,WORLD_HEIGHT);
+ if(camera+ZOO_VIEW_WIDTH<LAKE[0][0])return;
+ c.save();
+ c.beginPath();
+ LAKE.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));
+ c.closePath();c.clip();
+ const sy=image.height/WORLD_HEIGHT;
+ c.globalAlpha=.7;
+ for(let y=148;y<415;y+=4){
+  const depth=(y-148)/267;
+  const shift=(Math.sin(y*.2+t*1.7)*1.35+Math.sin(y*.09-t*.9)*.8)*depth;
+  c.drawImage(image,camera*scale,y*sy,span,4*sy,camera+shift,y,ZOO_VIEW_WIDTH,4);
  }
  c.restore();
-}
-export function hippoLakePlacement(imageWidth,imageHeight){return panoramaPlacement(HIPPO_LAKE_REFERENCE_CAMERA,imageWidth,imageHeight);}
-export function drawZooScenery(c,image,cameraX,t=0){
- paintPanorama(c,image,panoramaPlacement(cameraX,image.width,image.height),t);
 }
 export function waterHeight(x,t){return HIPPO_WATERLINE+Math.sin(x*.055+t*1.8)*.8+Math.sin(x*.13-t*1.2)*.35;}
 export function waterClip(c,from,to,t,below=false,depth=90){

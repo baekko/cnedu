@@ -16,7 +16,7 @@ export function cameraRect(width,height,focusY,stage='aquarium',scrollable=false
   offsetX:(width-390*scale)/2,offsetY:Math.max(0,(height-sourceHeight*scale)/2),cropped:false};
 }
 export function sceneGeometry(height,stage='aquarium'){
- const top=stage==='aquarium'?142:170,base=stage==='aquarium'?536:500;
+ const top=stage==='aquarium'?142:170,base=stage==='hospital'?height:stage==='aquarium'?536:500;
  const header=stage==='history'?100:stage==='exchange'?220:0;
  const headerScale=header?Math.min(1,height/(header+180)):1;
  const fixed=header*headerScale,ratio=(height-fixed)/(base-header);
@@ -88,11 +88,15 @@ export class GameLayout{
  prepare(game,stage){
   const aligned=!['title','select','naming','welcome','stage','loading'].includes(this.app.dataset.screen);
   const key=[this.viewport.clientWidth,this.viewport.clientHeight,stage,aligned].join(':');if(key!==this.measureKey)this.measure(stage);
-  const sourceY=stage==='aquarium'?142:170,sourceHeight=stage==='aquarium'?536:500;
+  const sourceY=stage==='aquarium'?142:170;
+  const sourceHeight=stage==='hospital'&&!this.scrollable
+   ?Math.max(500,Math.ceil(this.viewHeight)):stage==='aquarium'?536:500;
   const target={sourceY,sourceHeight,width:390,height:sourceHeight},drawKey=[this.dpr,stage,this.measureKey].join(':');
   if(drawKey!==this.lastTarget){
    this.lastTarget=drawKey;this.canvas.style.width='390px';this.canvas.style.height=sourceHeight+'px';
    this.canvas.width=Math.round(390*this.dpr);this.canvas.height=Math.round(sourceHeight*this.dpr);
+   const worldHeight=Math.max(1688,(sourceY+sourceHeight)*2);
+   if(this.world.height!==worldHeight)this.world.height=worldHeight;
    const viewport=document.getElementById('game-viewport');if(viewport)viewport.scrollTop=0;
   }
   this.target=target;this.world.scene=sceneGeometry(sourceHeight,stage);if(game){game.sceneRatio=1;game.sceneSpriteScale=1;}

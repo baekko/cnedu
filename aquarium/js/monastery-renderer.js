@@ -5,14 +5,14 @@ import {hasSideAnimation} from './side-walk.js?v=155';
 import {heroWalkFrame} from './walk-cycle.js';
 import {SIDE_HERO_SIZE,ROOM_HERO_SIZE} from './hero-scale.js';
 import {drawMonasteryBridgeDeck} from './monastery-ground-art.js';
-import {MONASTERY,LANTERN_ROUTE,MONASTERY_BRIDGES,CORRIDOR_PILLARS,TEMPLE_CARTS,TEMPLE_SPLASHES,TEMPLE_BELLS,bridgePose,monasteryFloor,laneOffset,routeWind,cartPose,splashPose,bellPose,bellPassage,BELL_GEOMETRY,hookPose} from './monastery-core.js?v228';
+import {MONASTERY,LANTERN_ROUTE,MONASTERY_BRIDGES,CORRIDOR_PILLARS,TEMPLE_CARTS,CART_GEOMETRY,TEMPLE_SPLASHES,TEMPLE_BELLS,bridgePose,monasteryFloor,laneOffset,routeWind,cartPose,splashPose,bellPose,bellPassage,BELL_GEOMETRY,hookPose} from './monastery-core.js?v228';
 import {hasSource} from './clue-order.js';
 const TAU=Math.PI*2;
 const box=(c,x,y,w,h,fill,r=4)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const oval=(c,x,y,rx,ry,fill)=>{c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();};
 const label=(c,s,x,y,size=10,color='#534a36',align='center')=>{c.font=`700 ${size}px sans-serif`;c.fillStyle=color;c.textAlign=align;c.textBaseline='middle';c.fillText(s,x,y);};
 export async function loadMonasteryAssets(character){
- const images={},files=[['monastery-v311/panorama.webp','panorama'],['entrance-v129/monastery.webp','entrance'],...['lanterns','bridge','post-timber'].map(n=>['monastery-v105/'+n+'.webp',n])];
+ const images={},files=[['monastery-v313/panorama.webp','panorama'],['entrance-v129/monastery.webp','entrance'],...['lanterns','bridge','post-timber'].map(n=>['monastery-v105/'+n+'.webp',n])];
  files.push(['monastery-v106/cart.webp','cart'],['monastery-v106/bell.webp','bell']);
  for(const n of ['idle','walk'])files.push(['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp']);
  await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('사찰 그림: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));
@@ -64,8 +64,8 @@ export class MonasteryRenderer{
   const y=monasteryFloor(x,time),s=138/1536;oval(c,x,y+2,30,4,'#374d3b32');c.drawImage(this.images['post-timber'],x-256*s,y-1510*s,512*s,1536*s);
  }
  cart(c,cart,g){
-  const q=cartPose(cart,g.elapsed),foot=monasteryFloor(q.x,g.elapsed)+laneOffset(q.lane),s=90/768;oval(c,q.x,foot+1,30,4,'#3b3a3540');c.save();c.translate(q.x,foot);if(q.dir<0)c.scale(-1,1);c.drawImage(this.images.cart,-301.971*s,-448.827*s,768*s,456*s);
-  for(const wx of [174.825,429.629]){c.save();c.translate((wx-301.971)*s,(343.281-448.827)*s);c.rotate(q.x/12*q.dir);c.strokeStyle='#edbd786b';c.lineWidth=.7;for(let i=0;i<4;i++){c.rotate(Math.PI/4);c.beginPath();c.moveTo(-10.5,0);c.lineTo(10.5,0);c.stroke();}c.restore();}c.restore();
+  const q=cartPose(cart,g.elapsed),foot=monasteryFloor(q.x,g.elapsed)+laneOffset(q.lane),{width,height,drawWidth,anchorX,anchorY}=CART_GEOMETRY,s=drawWidth/width;oval(c,q.x,foot+1,30,4,'#3b3a3540');c.save();c.translate(q.x,foot);if(q.dir<0)c.scale(-1,1);c.drawImage(this.images.cart,-anchorX*s,-anchorY*s,drawWidth,height*s);
+  for(const wx of [174.825,429.629]){c.save();c.translate((wx-anchorX)*s,(343.281-anchorY)*s);c.rotate(q.x/12*q.dir);c.strokeStyle='#edbd786b';c.lineWidth=.7;for(let i=0;i<4;i++){c.rotate(Math.PI/4);c.beginPath();c.moveTo(-10.5,0);c.lineTo(10.5,0);c.stroke();}c.restore();}c.restore();
  }
  splash(c,s,g){
   const q=splashPose(s,g.splashAges[s.id-1]);if(q.phase==='idle'||q.phase==='calm')return;const y=monasteryFloor(s.x,g.elapsed)+laneOffset(s.lane),u=q.u;

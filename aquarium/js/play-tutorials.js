@@ -257,7 +257,7 @@ function monastery(){
  .until(0,'걸이 가까이까지 천천히 다가가요.',()=>g.player.x>631,{x:1},1.5,'→')
  .until(0,'방향키를 놓고 기다리면 연등이 걸려요.',()=>g.banked.size===1,{},2,'균형')
  .act(0,'한 개를 걸어 단서 한 장을 받았어요.',()=>g.releaseBalance(),'균형').hold(0,'다음 받침대에서도 같은 순서로 불을 밝혀요.',.7);
- t.cut(1,'연못의 흔들리는 목교를 지나가 볼게요.',()=>{for(let id=1;id<=4;id++)awardClue(g,id);g.held=LANTERN_ROUTE[4];at(g,3010,440);g.windAges[4]=.9;g.angle=.35;g.angularVelocity=.2;g.messageLeft=0;})
+ t.cut(1,'연못의 흔들리는 목교를 지나가 볼게요.',()=>{for(let id=1;id<=4;id++)awardClue(g,id);g.held=LANTERN_ROUTE[4];at(g,3010,440);g.windAges[4]=.35;g.angle=.35;g.angularVelocity=.2;g.messageLeft=0;})
  .hold(1,'천이 펄럭이면 곧 바람이 불어요.',.4)
  .act(1,'바람이 불면 균형 버튼을 계속 누르세요.',()=>g.beginBalance(),'균형')
  .input(1,'안정되지만 걸음이 느려져요.',1,{x:1},'→')

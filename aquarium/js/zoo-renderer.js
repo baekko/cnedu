@@ -3,10 +3,10 @@ import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene} from './layout.js';
 import {ZOO,ZOO_SUPPORT,FEED_ANIMALS,animalPose,trajectory} from './zoo-core.js?v=155';
-import {ANIMAL_ART} from './zoo-feed-art-v65.js';
+import {ANIMAL_ART} from './zoo-approved-art.js?v313';
 import {hippoFrameIndex} from './zoo-hippo-motion.js';
 import {heroPose,heroPoint,releasePoint} from './zoo-hero-pose.js?v=155';
-import {drawZooScenery,drawHippoWake,waterHeight} from './zoo-scenery.js';
+import {drawZooScenery,drawHippoWake,waterHeight} from './zoo-scenery.js?v313';
 const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const ellipse=(c,x,y,rx,ry,color)=>{c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();};
 const line=(c,x,y,xx,yy,color,w=1)=>{c.strokeStyle=color;c.lineWidth=w;c.lineCap='round';c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.stroke();};
@@ -16,9 +16,11 @@ const noise=n=>{const a=Math.sin(n*127.1+31.7)*43758.5453;return a-Math.floor(a)
 export async function loadZooAssets(){
  const images={};
  const animals=new Set(Object.entries(ANIMAL_ART).filter(([kind])=>kind!=='hippo').map(([,art])=>art.sheet));
- const scenery=['prop-lion-rock-v63','prop-otter-low-v63','prop-otter-high-v63','prop-monkey-tree-v63','prop-ice-v63','world-panorama-v64','hippo-motion-v67'];
+ const props=['lion-rock','giraffe-pole','rock-low','rock-high','prop-monkey-tree-v63','ice'];
  const files=[
-  ...[...animals,...scenery].map(name=>['zoo-v311/'+name+'.webp',name]),
+  ...[...animals].map(name=>['zoo-v313/'+name+'.webp',name]),
+  ...props.map(name=>['zoo-v313/'+name+'.webp',name]),
+  ['zoo-v313/world-approved.webp','world-approved'],['zoo-v313/hippo-motion.webp','hippo-motion'],
   ['zoo/entrance.webp','entrance'],['zoo/clue.webp','clue'],['language/throw-v42.webp','throw']
  ];
  for(const id of ['haru','doyun','narin','soi'])for(const action of ['idle','walk'])files.push(['hero-v153/'+id+'-'+action+'.webp',id+'-'+action]);
@@ -70,16 +72,16 @@ export class ZooRenderer{
  }
  habitat(c,a,t){const s=a.spec,b=s.start;
   for(let i=0;i<13;i++){const x=b+195+i*15;ellipse(c,x,410+noise(i+b)*4,2+noise(i)*3,1,'#9a967b35');}
-  if(s.kind==='lion'){const im=this.images['prop-lion-rock-v63'],w=204,h=w*im.height/im.width;c.drawImage(im,b+189,357-h*.22222,w,h);this.foliage(c,b+207,410,.65);}
-  if(s.kind==='giraffe'){this.wood(c,b+372,410,b+373,184,10);this.wood(c,b+373,211,b+346,196,6);this.foliage(c,b+346,192,1.3);this.foliage(c,b+225,411,.9);}
+  if(s.kind==='lion'){const im=this.images['lion-rock'],w=204,h=w*im.height/im.width;c.drawImage(im,b+189,342,w,h);}
+  if(s.kind==='giraffe'){const im=this.images['giraffe-pole'];c.drawImage(im,b+332,184,62,226);}
   if(s.kind==='elephant'){
    this.rock(c,b+355,413,79,29,'#a99c81');this.foliage(c,b+207,410,1);box(c,b+335,386,42,18,'#aa9874',5);ellipse(c,b+356,387,18,4,'#8db7ab');
    for(let i=0;i<5;i++)line(c,b+340+i*8,392,b+340+i*8,402,'#d2be93',.8);
   }
   if(s.kind==='monkey'){const im=this.images['prop-monkey-tree-v63'],w=ZOO_SUPPORT.monkey.treeWidth,h=w*im.height/im.width;c.drawImage(im,b+ZOO_SUPPORT.monkey.treeX,350-h*.65496,w,h);}
   if(s.kind==='tiger'){this.wood(c,b+328,403,b+384,392,24);this.foliage(c,b+365,384,1.1,true);this.rock(c,b+210,415,39,17,'#8e9a78');}
-  if(s.kind==='otter'){for(const [key,x,top,w,sy]of [['otter-low',195,402,102,.26891],['otter-high',291,343,108,.13333]]){const im=this.images['prop-'+key+'-v63'],h=w*im.height/im.width;c.drawImage(im,b+x,top-h*sy,w,h);}this.foliage(c,b+215,412,.6,true);}
-  if(s.kind==='penguin'){const im=this.images['prop-ice-v63'],w=224,h=w*im.height/im.width;c.drawImage(im,b+187,ZOO_SUPPORT.iceY-h*.34884,w,h);}
+  if(s.kind==='otter'){for(const [key,x,top,w,sy]of [['rock-low',195,402,102,.26891],['rock-high',291,343,108,.13333]]){const im=this.images[key],h=w*im.height/im.width;c.drawImage(im,b+x,top-h*sy,w,h);}this.foliage(c,b+215,412,.6,true);}
+  if(s.kind==='penguin'){const im=this.images.ice,w=224,h=w*im.height/im.width;c.drawImage(im,b+187,ZOO_SUPPORT.iceY-h*.34884,w,h);}
   if(s.kind==='hippo'){this.foliage(c,b+143,407,.8,true);for(let i=0;i<7;i++)line(c,b+144+i*3,406,b+140+i*4,380-(i%3)*7,'#7b996b',1.1);}
 
  }
@@ -93,7 +95,7 @@ export class ZooRenderer{
   if(p.kind!=='hippo'&&p.water<.8&&!p.airborne)ellipse(c,p.x,p.y+1,p.size*.24,4,'#50604722');
   if(p.kind==='hippo'){
    const w=this.waterSprite.getContext('2d');w.clearRect(0,0,384,384);
-   w.globalCompositeOperation='source-over';w.globalAlpha=1;const frame=hippoFrameIndex(p.rig);w.drawImage(this.images['hippo-motion-v67'],frame%13*256,Math.floor(frame/13)*176,256,176,0,96,384,264);
+   w.globalCompositeOperation='source-over';w.globalAlpha=1;const frame=hippoFrameIndex(p.rig);w.drawImage(this.images['hippo-motion'],frame%13*256,Math.floor(frame/13)*176,256,176,0,96,384,264);
    const m=this.waterMask.getContext('2d');m.clearRect(0,0,384,384);
    for(let x=0;x<384;x+=3){const wx=p.x+(x-192)*p.size/384,y=(waterHeight(wx,t)-p.y)*384/p.size+art.baseline;
     const fade=m.createLinearGradient(0,y-5,0,y+4);fade.addColorStop(0,'#fff');fade.addColorStop(1,'#ffffff00');m.fillStyle=fade;m.fillRect(x,0,3,384);
@@ -110,13 +112,7 @@ export class ZooRenderer{
  card(c,id,x,y,size=26){drawClueCard(c,x,y,size,size*1.3);}
  heart(c,x,y,s,color){c.save();c.translate(x,y);c.scale(s,s);c.fillStyle=color;c.beginPath();c.moveTo(0,3);c.bezierCurveTo(-12,-4,-9,-12,-3,-8);c.quadraticCurveTo(0,-5,3,-8);c.bezierCurveTo(9,-12,12,-4,0,3);c.fill();c.restore();}
  draw(g,character){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!g)return;c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();c.save();c.translate(-g.camera.x,0);
-  const lo=Math.max(0,Math.floor(g.camera.x/420)),hi=Math.min(8,Math.floor((g.camera.x+390)/420));
-  drawZooScenery(c,this.images['world-panorama-v64'],g.camera.x,g.elapsed);
-  // The foreground path is continuous across all nine habitats.
-  c.fillStyle='#e5d8b9';c.fillRect(g.camera.x,419,390,81);
-  c.fillStyle='#e9ddc0';c.fillRect(g.camera.x,422,390,38);
-  line(c,g.camera.x,420,g.camera.x+390,420,'#cfbe94',2);
-  for(let x=Math.floor(g.camera.x/64)*64;x<g.camera.x+430;x+=64){line(c,x,422,x-13,460,'#c2b79c',.9);line(c,x-13,460,x+3,500,'#c7bda3',.8);line(c,x-13,460,x+51,460,'#f8ead0',1);for(let k=0;k<4;k++)ellipse(c,x+noise(x+k)*55,426+noise(x-k)*68,1,.5,'#b1a78d30');}
+  drawZooScenery(c,this.images['world-approved'],g.camera.x,g.elapsed);
   for(let i=0;i<g.animals.length;i++){const a=g.animals[i],s=a.spec,display=animalPose(a);if(s.kind==='hippo'?display.x-display.size/2>g.camera.x+420||display.x+display.size/2<g.camera.x-30:s.start>g.camera.x+480||s.start+420<g.camera.x-100)continue;this.habitat(c,a,g.elapsed);if(a.fed<2){c.save();c.strokeStyle='#b0a57e66';c.lineWidth=1;c.setLineDash([4,5]);c.strokeRect(s.start+25,428,130,21);c.restore();for(const x of [66,93]){ellipse(c,s.start+x,442,4,6,'#a69b7866');ellipse(c,s.start+x,434,3,2,'#a69b7866');}}const p=this.animal(c,a,g.elapsed);this.waterFront(c,a,g.elapsed);
    // Low rail leaves the animal's face and the complete trajectory unobscured.
    for(const x of [s.start+205,s.start+395]){line(c,x,418,x,392,'#927854',5);line(c,x-1,414,x-1,393,'#c7af81',1.4);}line(c,s.start+206,400,s.start+394,400,'#c6aa7e',2);line(c,s.start+206,409,s.start+394,409,'#a78c64',1.7);

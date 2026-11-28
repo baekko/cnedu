@@ -1,9 +1,9 @@
 import {FLAT_WALK_SPEED,movedDuringStep} from './walk-cycle.js';
 import {awardClue,hasSource} from './clue-order.js';
-import {ANIMAL_ART} from './zoo-feed-art-v65.js';
+import {ANIMAL_ART} from './zoo-approved-art.js?v313';
 import {releasePoint} from './zoo-hero-pose.js?v=155';
 import {hippoMotion,hippoMouth} from './zoo-hippo-motion.js';
-import {lakeWorldOffset} from './zoo-scenery.js';
+import {lakeWorldOffset} from './zoo-scenery.js?v313';
 
 export const ZOO=Object.freeze({duration:120,width:3780,penWidth:420,ground:438,speed:FLAT_WALK_SPEED,gravity:430,flashes:2,answer:'레서판다',hints:['붉은 갈색 털과 줄무늬가 있는 긴 꼬리를 가진 동물입니다.','이름에 판다가 들어가며, 나무를 잘 탑니다.']});
 export const ZOO_SUPPORT={monkey:{treeX:165,treeWidth:220,lowX:223,highX:292,lowY:350,highY:350-(.65496-.34091)*(220*484/475)},iceY:390,fishY:386};

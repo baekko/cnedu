@@ -80,7 +80,16 @@ function project(camera,x,y,elevation=0) {
   return {x:195+(x-camera.x-195)*factor,y:16+(dy*.75-elevation)*factor,factor};
 }
 
-function cameraWithClearance(camera,player,width) {
+function groundDepth(screenY) {
+  const y=screenY-16;
+  return y/(.75*.8+.0008*y);
+}
+
+function cameraForView(camera,player,width,height) {
+  const back=-groundDepth(0);
+  const front=HOSPITAL_FLOOR.bounds.bottom-groundDepth(height);
+  const extraDepth=groundDepth(height/2)-groundDepth(HOSPITAL_VIEW.height/2);
+  camera={...camera,y:Math.max(back,Math.min(front,camera.y-extraDepth))};
   const p=project(camera,player.x,player.y);
   const margin=31;
   const correction=Math.min(width-margin,Math.max(margin,p.x))-p.x;
@@ -155,10 +164,12 @@ function floorTexture(c) {
   }
 }
 
-function paintGround(c,cache,camera) {
+function paintGround(c,cache,camera,viewHeight) {
   const {width,height}=HOSPITAL_FLOOR;
-  for(let sy=Math.max(0,Math.floor(camera.y-28));sy<Math.min(height,Math.ceil(camera.y+HOSPITAL_VIEW.height));sy+=4) {
-    const end=Math.min(sy+4,height);
+  const first=Math.max(0,Math.floor(camera.y+groundDepth(0)));
+  const last=Math.min(height,Math.ceil(camera.y+groundDepth(viewHeight)));
+  for(let sy=first;sy<last;sy+=4) {
+    const end=Math.min(sy+4,last);
     const a=project(camera,0,sy),b=project(camera,width,end);
     const middle=project(camera,0,(sy+end)/2);
     c.drawImage(cache,0,sy,width,end-sy,middle.x,a.y,width*middle.factor,b.y-a.y+.18);
@@ -249,7 +260,7 @@ function drawWallSection(c,buffer,points,actors,camera,depth,alpha,draw) {
     const x=Math.max(0,Math.floor(left)-10);
     const y=Math.max(0,Math.floor(top)-10);
     const w=Math.min(HOSPITAL_VIEW.width,Math.ceil(right)+10)-x;
-    const h=Math.min(HOSPITAL_VIEW.height,Math.ceil(bottom)+20)-y;
+    const h=Math.min(buffer.canvas.height/2,Math.ceil(bottom)+20)-y;
     if(w>0 && h>0) {
       buffer.clearRect(x,y,w,h);
       buffer.save();
@@ -427,7 +438,7 @@ function entryTrim(c,camera,door,player,revealActors) {
   c.restore();
 }
 
-function sidePieces(camera,wall,sides) {
+function sidePieces(camera,wall,sides,viewHeight) {
   const line=wall.lineX;
   const opposite=sides.find(other=>other!==wall && other.lineX===line && other.side!==wall.side
     && other.y<wall.y+wall.h && other.y+other.h>wall.y);
@@ -445,7 +456,7 @@ function sidePieces(camera,wall,sides) {
       const end=Math.min(y+28,cuts[i+1]);
       const a=project(camera,line,y);
       const b=project(camera,line,end,HOSPITAL_WALL_HEIGHT);
-      if(Math.max(a.x,b.x)<-16 || Math.min(a.x,b.x)>406 || project(camera,line,end).y<-5 || Math.min(a.y,b.y)>540) continue;
+      if(Math.max(a.x,b.x)<-16 || Math.min(a.x,b.x)>406 || project(camera,line,end).y<-5 || Math.min(a.y,b.y)>viewHeight+40) continue;
       parts.push({wall,y,end});
     }
   }
@@ -649,9 +660,9 @@ function animal(c,art,pet,camera) {
   return {pet,frame,x:petPoint.x-petWidth/2,y:petPoint.y+top,w:petWidth,h:height};
 }
 
-function visible(x,y,camera,padding) {
+function visible(x,y,camera,padding,viewHeight) {
   const p=project(camera,x,y);
-  return p.x>-padding && p.x<HOSPITAL_VIEW.width+padding && p.y>-padding && p.y<HOSPITAL_VIEW.height+padding;
+  return p.x>-padding && p.x<HOSPITAL_VIEW.width+padding && p.y>-padding && p.y<viewHeight+padding;
 }
 
 function animalDepth(pet) {
@@ -679,13 +690,14 @@ export class HospitalRenderer {
     sample.width=sample.height=1;
     this.petSample=sample.getContext('2d',{willReadFrequently:true});
     this.petTargets=[];
+    this.viewHeight=HOSPITAL_VIEW.height;
   }
 
   effect() {}
 
   petAt(horizontal,vertical) {
     if (horizontal<0 || horizontal>=1 || vertical<0 || vertical>=1) return null;
-    const x=horizontal*HOSPITAL_VIEW.width,y=vertical*HOSPITAL_VIEW.height;
+    const x=horizontal*HOSPITAL_VIEW.width,y=vertical*this.viewHeight;
     const targets=this.petTargets.filter(hit=>x>=hit.x-8 && x<hit.x+hit.w+8
       && y>=hit.y-8 && y<hit.y+hit.h+8);
     const hits=(hit,dx,dy)=>{
@@ -721,34 +733,39 @@ export class HospitalRenderer {
 
   draw(game,character) {
     const c = this.c;
-    const {width,height,top} = HOSPITAL_VIEW;
-    beginScene(c);
-    c.clearRect(0,0,width,844);
+    const {width,top} = HOSPITAL_VIEW;
+    const {height} = beginScene(c);
+    this.viewHeight=height;
+    c.clearRect(0,0,width,top+height);
     this.petTargets=[];
     if (!game) return;
+    if(this.wallMask.canvas.height!==height*2) {
+      this.wallMask.canvas.height=height*2;
+      this.wallMask.scale(2,2);
+    }
     c.save();
     c.translate(0,top);
     c.beginPath();
     c.rect(0,0,width,height);
     c.clip();
-    this.paintWorld(c,game,character,this.petTargets);
+    this.paintWorld(c,game,character,this.petTargets,height);
     c.restore();
   }
 
-  paintWorld(c,game,character,targets) {
+  paintWorld(c,game,character,targets,height=HOSPITAL_VIEW.height) {
     const {player,animals} = game;
-    const {width,height} = HOSPITAL_VIEW;
-    const camera=cameraWithClearance(game.camera,player,width);
+    const {width} = HOSPITAL_VIEW;
+    const camera=cameraForView(game.camera,player,width,height);
     const pets=game.phase==='explore'?animals:[];
     const residents=[player,...pets.filter(pet=>Math.abs(pet.x-player.x)<185 && Math.abs(pet.y-player.y)<170)];
     c.save();
     c.fillStyle='#b5aa95';c.fillRect(0,0,width,height);
-    paintGround(c,this.architecture,camera);
+    paintGround(c,this.architecture,camera,height);
     const layers = [];
     const sides=HOSPITAL_FLOOR.walls.filter(wall=>wall.kind==='side');
     for (const obstacle of HOSPITAL_FLOOR.walls) {
       if(obstacle.kind==='side') {
-        for(const part of sidePieces(camera,obstacle,sides)) {
+        for(const part of sidePieces(camera,obstacle,sides,height)) {
           layers.push({y:part.end,draw:()=>sideWall(c,camera,part,residents)});
         }
       } else if(obstacle.kind==='face' || obstacle.kind==='boundary') {
@@ -758,10 +775,10 @@ export class HospitalRenderer {
     for(const door of HOSPITAL_FLOOR.doors) {
       layers.push({y:door.y,draw:()=>entryTrim(c,camera,door,player,residents)});
     }
-    for (const object of HOSPITAL_FLOOR.fixtures) if (visible(object.x,object.y,camera,150)) {
+    for (const object of HOSPITAL_FLOOR.fixtures) if (visible(object.x,object.y,camera,150,height)) {
       layers.push({y:object.y,draw:()=>furniture(c,this.images,object,camera,residents)});
     }
-    for (const pet of pets) if (visible(pet.x,pet.y,camera,95)) {
+    for (const pet of pets) if (visible(pet.x,pet.y,camera,95,height)) {
       layers.push({y:animalDepth(pet),draw:()=>{
         const hit=animal(c,this.images,pet,camera);
         targets?.push(hit);
