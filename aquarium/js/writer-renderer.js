@@ -18,7 +18,7 @@ const writerArtFolders={
  room:'writer-v306',wonder:'writer-v306',gate:'writer-v306','author-v37':'writer-v306',
  ship:'writer-v307',
  'shelters-v35':'writer-v308','scenery-v35':'writer-v308','vine-v38':'writer-v308',
- 'vine-crown-v39':'writer-v308',[OZ_LANDSCAPE.asset]:'writer-v308',
+ 'vine-crown-v39':'writer-v308',cloud:'writer-v309',[OZ_LANDSCAPE.asset]:'writer-v309',
 };
 const writerArtPath=key=>(writerArtFolders[key]??'writer')+'/'+key+'.webp';
 export function writerBriefingPose(t){
@@ -31,7 +31,7 @@ export async function loadWriterAssets(character){
  const result={},files=['room','houses','ship','actors','wonder','fox','heroes','gate','cast-v35','scenery-v35','shelters-v35','giant-v39','vine-v38','vine-crown-v39','cat-v39','oz-friends-v36','marionette-v36','author-v37']
   .map(n=>[writerArtPath(n),n]);
  files.push([WRITER_CARD_ART.file,'card-soldier'],['writer-v130/pigs.webp','pigs-v38']);
- files.push([writerArtPath(OZ_LANDSCAPE.asset),OZ_LANDSCAPE.asset]);
+ for(const name of [OZ_LANDSCAPE.asset,'cloud'])files.push([writerArtPath(name),name]);
  files.push([GIANT_ART_V101.bodyFile,'giant-climb-body'],[GIANT_ART_V101.handsFile,'giant-climb-hands']);
  files.push([GIANT_ATTACK_ART_V102.file,'giant-attack-corrected'],[GIANT_ATTACK_ART_V102.highHandFile,'giant-attack-high-hand']);
  files.push(['museum/'+character.id+'-actions.webp','climb']);
@@ -69,6 +69,7 @@ export class WriterRenderer{
  effect(){}
  cell(c,file,col,row,x,y,size,cell=256,anchor=244/256){c.drawImage(this.images[file],col*cell,row*cell,cell,cell,x-size/2,y-size*anchor,size,size);}
  scenery(c,col,row,x,y,size,anchor=364/384){this.cell(c,'scenery-v35',col,row,x,y,size,384,anchor);}
+ cloud(c,x,y,size){this.cell(c,'cloud',0,0,x,y,size,384,276/384);}
  book(c,x,y,w,h,color='#537a78'){
   round(c,x-3,y-3,w+6,h+6,3,color);round(c,x,y,w,h,2,'#f1dfb5');c.fillStyle='#cfb78a';for(let yy=y+3;yy<y+h;yy+=4)c.fillRect(x+3,yy,w-6,.6);round(c,x-3,y-4,w+6,4,1,color);c.fillStyle='#e8c27a';c.fillRect(x+4,y-4,Math.min(24,w-8),1);
  }
@@ -83,7 +84,7 @@ export class WriterRenderer{
    c.drawImage(author,ax,64,275,344);
   }
   this.cat(c,g,roomScroll);
-  if(g.camera.y<0){c.save();c.globalAlpha=Math.min(1,-g.camera.y/440);const sky=c.createLinearGradient(0,0,0,500);sky.addColorStop(0,'#8abec8');sky.addColorStop(.65,'#d5e3d3');sky.addColorStop(1,'#f3e8c7');c.fillStyle=sky;c.fillRect(0,0,390,500);for(let i=0;i<5;i++)this.scenery(c,1,1,((i*167-g.camera.x*.05)%510+510)%510-60,90+i*105-g.camera.y*.12,230,276/384);c.restore();}
+  if(g.camera.y<0){c.save();c.globalAlpha=Math.min(1,-g.camera.y/440);const sky=c.createLinearGradient(0,0,0,500);sky.addColorStop(0,'#8abec8');sky.addColorStop(.65,'#d5e3d3');sky.addColorStop(1,'#f3e8c7');c.fillStyle=sky;c.fillRect(0,0,390,500);for(let i=0;i<5;i++)this.cloud(c,((i*167-g.camera.x*.05)%510+510)%510-60,90+i*105-g.camera.y*.12,230);c.restore();}
   const shade=c.createLinearGradient(0,250,0,470);shade.addColorStop(0,'#fff2c000');shade.addColorStop(1,'#fff0cc44');c.fillStyle=shade;c.fillRect(0,0,390,500);
  }
  desk(c,g){
@@ -234,7 +235,7 @@ export class WriterRenderer{
   this.giantLayer(c,g);
   c.drawImage(this.stem,VINE.x-98,this.stemTop);
   c.drawImage(this.crown,VINE.x-132*176/256,VINE.top-170,176,524*176/256);
-  for(const f of g.platforms().filter(f=>f.kind==='cloud')){if(f.y<g.camera.y-90||f.y>g.camera.y+610)continue;this.scenery(c,1,1,f.x+f.w/2,f.y,f.w*1.2,276/384);}
+  for(const f of g.platforms().filter(f=>f.kind==='cloud')){if(f.y<g.camera.y-90||f.y>g.camera.y+610)continue;this.cloud(c,f.x+f.w/2,f.y,f.w*1.2);}
   if(g.giant.phase==='warning'){
    const progress=Math.min(1,g.giant.age/GIANT.warning);c.save();c.globalAlpha=.64+.24*progress;c.shadowColor='#28372270';c.shadowBlur=2;giantHands(g.giant).forEach((hit,i)=>c.drawImage(this.palmShadows[g.giant.hand][i],hit.x-hit.w*.5,hit.y-hit.h*.5,hit.w*2,hit.h*2));c.restore();
   }

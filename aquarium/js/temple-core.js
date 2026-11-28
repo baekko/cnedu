@@ -8,6 +8,7 @@ export const TEMPLE_ROUTE_SCALE=1.5;
 export const routeZ=z=>z*TEMPLE_ROUTE_SCALE;
 export const TEMPLE_DOCK=Object.freeze({x:195,left:140,right:250,approach:routeZ(1830),boardFrom:routeZ(1855),walkEnd:routeZ(1880),boatZ:routeZ(1910)});
 export const TEMPLE_FINISH=Object.freeze({x:195,z:routeZ(5210),halfWidth:64});
+const ITHACA_ENTRY_SECONDS=.5;
 export const TEMPLE_TEMPO=1.2;
 export const CIRCE_ORB_SPEED=147.84*TEMPLE_TEMPO;
 export const TEMPLE=Object.freeze({duration:110,speed:168*TEMPLE_TEMPO,boatSpeed:192*TEMPLE_TEMPO,forwardSpeed:routeZ(46.8)*TEMPLE_TEMPO,stunSeconds:0,pigSeconds:3,shieldSeconds:4,recoveries:1,recoveryGrace:1,goal:TEMPLE_FINISH.z,answer:'올빼미',hints:['주로 밤에 활동하는 새입니다.','큰 눈과 둥근 얼굴이 특징입니다.']});
@@ -19,7 +20,7 @@ export const TEMPLE_ZONES=[
  {id:'scylla',name:'스킬라의 해협',from:2550,to:3340,tip:'머리 그림자에서 벗어나요',color:'#55947d'},
  {id:'whirlpool',name:'카리브디스',from:3340,to:3930,tip:'소용돌이의 중심을 피해요',color:'#467da1'},
  {id:'poseidon',name:'포세이돈의 바다',from:3930,to:4700,tip:'파도의 빈틈으로 지나가요',color:'#408da0'},
- {id:'ithaca',name:'이타카',from:4700,to:5400,tip:'항구에 내려 골인 문을 통과해요!',color:'#b69b62'}
+ {id:'ithaca',name:'이타카',from:4700,to:5400,tip:'항구에 내려 이타카 성문으로 들어가요.',color:'#b69b62'}
 ].map(zone=>({...zone,from:routeZ(zone.from),to:routeZ(zone.to)}));
 export const TEMPLE_CARDS=[{id:1,x:112,z:350},{id:2,x:272,z:680},{id:3,x:170,z:1315},{id:4,x:190,z:1780},{id:5,x:112,z:2250},{id:6,x:104,z:3010,locked:true},{id:7,x:215,z:3585},{id:8,x:200,z:4410},{id:9,x:195,z:5090}].map(c=>({...c,z:routeZ(c.z)}));
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -40,10 +41,10 @@ export class TempleGame{
  get isBoat(){return ['sail','boarding','landing'].includes(this.mode);}
  get windActive(){return !this.windDone&&this.player.z>=routeZ(1500)&&this.player.z<routeZ(1750)&&this.mode==='walk';}
  get interaction(){if(this.ended)return null;if(this.mode==='walk'&&this.player.z>=TEMPLE_DOCK.boardFrom&&this.player.z<=TEMPLE_DOCK.walkEnd&&this.player.x>=TEMPLE_DOCK.left+16&&this.player.x<=TEMPLE_DOCK.right-16)return '탑승';if(this.mode==='sail'&&this.player.z>=routeZ(4630)&&Math.abs(this.player.x-195)<95)return '하차';return null;}
- get canMove(){return !this.ended&&!this.scyllaGrab&&this.stunLeft<=0&&!['boarding','landing'].includes(this.mode);}
+ get canMove(){return !this.ended&&!this.scyllaGrab&&!this.ithacaEntry&&this.stunLeft<=0&&!['boarding','landing'].includes(this.mode);}
  get whirlpoolStrength(){return .5+.5*Math.sin(this.elapsed*1.35*TEMPLE_TEMPO);}
  get siren(){const phase=this.zoneClock%6.4,left=phase<3.2;return {x:left?28:362,z:routeZ(left?2190:2410),side:left?-1:1,age:phase%3.2,active:phase%3.2>=.85&&phase%3.2<2.95};}
- get canShield(){return !this.ended&&!this.scyllaGrab&&this.flashes>0&&this.shieldLeft<=0;}
+ get canShield(){return !this.ended&&!this.scyllaGrab&&!this.ithacaEntry&&this.flashes>0&&this.shieldLeft<=0;}
  flash(){if(!this.canShield)return false;this.flashes--;this.shieldLeft=TEMPLE.shieldSeconds;this.charmed=0;this.songExposure=0;this.sirenSlowLeft=0;this.effects.push({kind:'recovery',x:this.player.x,z:this.player.z,age:0});this.onEvent({type:'recovery'});return true;}
  queueMove(input){if(this.canMove&&!this.windActive)this.queuedMove={input:{...input},left:.08};}
  interact(){if(!this.canMove||!this.interaction)return false;this.mode=this.mode==='walk'?'boarding':'landing';this.transitionLeft=.7;this.transit={x:this.player.x,z:this.player.z,targetZ:routeZ(this.mode==='boarding'?1910:4750)};this.player.moving=false;this.onEvent({type:'templeBoard'});return true;}
@@ -156,7 +157,19 @@ export class TempleGame{
   }
  }
  update(dt,input={}){if(this.ended||!Number.isFinite(dt)||dt<=0)return;let left=Math.min(dt,TEMPLE.duration);while(left>1e-9&&!this.ended){const step=Math.min(left,1/90);this.step(step,input);left-=step;}}
+ enterIthaca(dt){
+  const step=this.ithacaEntry,p=this.player,duration=ITHACA_ENTRY_SECONDS;
+  const advance=Math.min(dt,duration-step.age);
+  step.age+=advance;
+  p.dir='up';p.moving=true;p.walk+=advance;
+  p.x=step.x+(step.targetX-step.x)*step.age/duration;
+  p.z=TEMPLE_FINISH.z+TEMPLE.forwardSpeed*step.age;p.y=p.z;
+  const viewAnchor=TEMPLE_FINISH.z-80;
+  this.cameraZ+=(viewAnchor-this.cameraZ)*Math.min(1,advance*8);
+  if(step.age>=duration){this.ithacaEntry=null;this.finish(true);}
+ }
  step(dt,input){
+  if(this.ithacaEntry){this.enterIthaca(dt);return;}
   tickVitality(this,dt);
   this.recoveryNoticeLeft=Math.max(0,this.recoveryNoticeLeft-dt);
   this.sirenSlowLeft=Math.max(0,this.sirenSlowLeft-dt);
@@ -181,7 +194,13 @@ export class TempleGame{
    if(b.age<5&&Math.hypot(b.x-this.player.x,b.z-this.player.z)<18){b.age=9;this.hit('pig');}
   }this.orbs=this.orbs.filter(b=>b.age<5);
   if(this.zone.id==='whirlpool'&&this.whirlpoolStrength>.6&&Math.hypot(this.player.x-150,this.player.z-routeZ(3585))<34)this.hit('whirlpool');
-  if(this.ended)return;collectRecovery(this,this.player);this.collect();if(this.mode==='shore'&&this.player.z>=TEMPLE_FINISH.z&&Math.abs(this.player.x-TEMPLE_FINISH.x)<=TEMPLE_FINISH.halfWidth){this.reachedIthaca=true;this.finish(true);}
+  if(this.ended)return;
+  collectRecovery(this,this.player);this.collect();
+  if(this.mode==='shore'&&this.player.z>=TEMPLE_FINISH.z&&Math.abs(this.player.x-TEMPLE_FINISH.x)<=TEMPLE_FINISH.halfWidth){
+   const {x,halfWidth}=TEMPLE_FINISH,clearance=halfWidth-14,p=this.player;
+   this.reachedIthaca=true;
+   this.ithacaEntry={age:0,x:p.x,targetX:clamp(p.x,x-clearance,x+clearance)};
+  }
  }
  finish(survived){if(this.ended)return;if(!survived&&this.scyllaGrab&&!this.scyllaGrab.done){this.scyllaGrab.defeated=true;return;}this.ended=true;this.player.moving=false;this.phase=survived?'returned':'failed';this.onEvent({type:'end',survived,elapsed:this.elapsed,found:[...this.found],reason:this.failureReason,reachedIthaca:this.reachedIthaca,delays:this.delays});}
 }
