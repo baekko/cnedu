@@ -8,16 +8,15 @@ import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js'
 import {hasSource} from './clue-order.js';
 import {beginScene} from './layout.js';
 import {LANGUAGE,LAB_LADDER,LAB_EXIT,LAB_ROOMS} from './language-core.js';
-import {paintLanguageBot} from './lab-damage-guide.js?v306';
 const TAU=Math.PI*2,heroRows={haru:0,doyun:1,narin:2,soi:3};
 const round=(c,x,y,w,h,fill,r=5)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
-const panel=(c,x,y,w,h,fill,outline='#56736b',r=5)=>{
- round(c,x,y,w,h,fill,r);c.strokeStyle=outline;c.lineWidth=.9;c.stroke();
+const panel=(c,x,y,w,h,fill,outline='#6b887f',r=5)=>{
+ round(c,x,y,w,h,fill,r);c.strokeStyle=outline;c.lineWidth=.65;c.stroke();
 };
 const line=(c,points,color='#497d7a',width=1.5)=>{c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();};
 const ellipse=(c,x,y,rx,ry,fill)=>{c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();};
 function metal(c,x,y,w,h){
- panel(c,x,y,w,h,'#b4ccbf','#567970');
+ panel(c,x,y,w,h,'#b4ccbf','#6b887f');
  c.save();c.clip();c.fillStyle='#dbe5d1';c.fillRect(x,y,w,Math.min(5,h*.36));
  c.fillStyle='#88a99b';c.fillRect(x,y+h-Math.min(5,h*.27),w,Math.min(5,h*.27));
  if(w>8){c.fillStyle='#f0f1dc';c.fillRect(x+4,y+2,w-8,1);}
@@ -25,7 +24,7 @@ function metal(c,x,y,w,h){
 }
 export async function loadLanguageAssets(character){
  await loadRecoveryArt();
- const images={},files=[...[0,1,2].map(i=>['language-v306/room-'+i+'.webp','room'+i]),['language/zebra.webp','zebra'],['language/throw-v42.webp','throw'],['writer/heroes.webp','poses'],['robot/'+character.id+'-work.webp','carry'],['museum/'+character.id+'-actions.webp','climb'],...['walk','idle'].map(k=>['hero-v153/'+character.id+'-'+k+'.webp',k])];
+ const images={},files=[...[0,1,2].map(i=>['language-v307/room-'+i+'.webp','room'+i]),['language/zebra.webp','zebra'],['language/throw-v42.webp','throw'],['writer/heroes.webp','poses'],['robot/'+character.id+'-work.webp','carry'],['museum/'+character.id+'-actions.webp','climb'],...['walk','idle'].map(k=>['hero-v153/'+character.id+'-'+k+'.webp',k])];
  await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('언어연구소 그림: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));return images;
 }
 export class LanguageRenderer{
@@ -61,10 +60,10 @@ export class LanguageRenderer{
  }
  board(c,s,g){
   const x=s.x,y=188;ellipse(c,x,441,39,5,'#244c4620');metal(c,x-8,310,16,126);metal(c,x-35,432,70,9);
-  round(c,x-73,y+3,146,137,'#345e5c',11);metal(c,x-72,y,144,132);panel(c,x-65,y+7,130,116,s.errorLeft>0?'#f4d0be':'#f7f3df','#7b9586',7);
+  round(c,x-73,y+3,146,137,'#6c9287',11);metal(c,x-72,y,144,132);panel(c,x-65,y+7,130,116,s.errorLeft>0?'#f4d0be':'#f7f3df','#8da599',7);
   c.fillStyle='#537674';c.font='800 9px sans-serif';c.textAlign='left';c.fillText('실험 '+String(s.id).padStart(2,'0'),x-56,y+23);
   ellipse(c,x+54,y+20,3,3,s.solved?'#6da48a':'#d9bd80');this.pictogram(c,s.kind,x,y+57,g.elapsed);
-  const chars=[...s.word],w=chars.length*29-4;chars.forEach((char,i)=>{const xx=x-w/2+i*29;round(c,xx,y+93,25,25,i<s.inserted.length?'#d3e7d4':'#e8e8d7',4);c.strokeStyle=i===s.inserted.length&&!s.solved?'#bd984e':'#a4b8a4';c.lineWidth=1;c.stroke();if(i<s.inserted.length){c.fillStyle='#3f7061';c.font='800 17px sans-serif';c.textAlign='center';c.fillText(char,xx+12.5,y+111);}else{c.fillStyle='#9faf9a';c.font='10px sans-serif';c.textAlign='center';c.fillText('·',xx+12.5,y+110);}});
+  const chars=[...s.word],w=chars.length*29-4;chars.forEach((char,i)=>{const xx=x-w/2+i*29;panel(c,xx,y+93,25,25,i<s.inserted.length?'#d3e7d4':'#e8e8d7',i===s.inserted.length&&!s.solved?'#b5914b':'#a4b8a4',4);if(i<s.inserted.length){c.fillStyle='#3f7061';c.font='800 17px sans-serif';c.textAlign='center';c.fillText(char,xx+12.5,y+111);}else{c.fillStyle='#9faf9a';c.font='10px sans-serif';c.textAlign='center';c.fillText('·',xx+12.5,y+110);}});
  }
  terrain(c,g){
   c.fillStyle='#263e4a';c.fillRect(g.camera.x,440,390,65);
@@ -72,7 +71,7 @@ export class LanguageRenderer{
   for(const f of g.platforms().filter(f=>f.id.startsWith('floor-'))){if(f.x+f.w<g.camera.x||f.x>g.camera.x+390)continue;const x=Math.max(f.x,g.camera.x),w=Math.min(f.x+f.w,g.camera.x+390)-x;
    c.save();c.beginPath();c.rect(x,440,w,60);c.clip();
    c.fillStyle='#a6c2b3';c.fillRect(x,440,w,60);c.fillStyle='#bfd1bd';c.fillRect(x,446,w,32);
-   c.fillStyle='#edf0d7';c.fillRect(x,440,w,4);c.fillStyle='#60877b';c.fillRect(x,444,w,3);
+   c.fillStyle='#edf0d7';c.fillRect(x,440,w,4);c.fillStyle='#7a9b8f';c.fillRect(x,444,w,2);
    for(let xx=Math.ceil(x/72)*72;xx<x+w;xx+=72)line(c,[[xx,447],[xx-15,500]],'#52766c55',1);line(c,[[x,477],[x+w,477]],'#52766c55',1);
    c.restore();
   }
@@ -120,8 +119,9 @@ export class LanguageRenderer{
   }
  }
  bot(c,b,t){
-  paintLanguageBot(c,b);
-  const face=Math.cos(t*b.speed+b.offset)>0?1:-1;c.save();c.translate(b.x,b.y);ellipse(c,0,0,20,4,'#234c5528');c.scale(face,1);const bob=Math.sin(t*8)*.7;
+  const face=Math.cos(t*b.speed+b.offset)>0?1:-1;c.save();c.translate(b.x,b.y);ellipse(c,0,0,24,4,'#234c5528');
+  // The patrol's shell spans the same width as its side-to-side contact check.
+  c.scale(face*48/38,1);const bob=Math.sin(t*8)*.7;
   panel(c,-19,-25+bob,38,23,'#c6808e','#784c5b',6);panel(c,-17,-26+bob,34,13,'#f5eadb','#986a70',4);line(c,[[-13,-23+bob],[12,-23+bob]],'#fff9ec',1);round(c,4,-18+bob,13,9,'#3b686b',3);for(const xx of [8,13])ellipse(c,xx,-14+bob,1.3,1.4,'#c2f2dc');round(c,-17,-5,34,5,'#406761',2);for(let i=0;i<4;i++)ellipse(c,-12+i*8,-2,3,3,'#54786d');line(c,[[-15,-30],[-10,-33],[0,-33]],'#bf9c6c',1);c.restore();
  }
  hero(c,g,character){
@@ -170,7 +170,7 @@ export class LanguageRenderer{
  entrance(c){
   c.save();ellipse(c,130,218,70,6,'#244c461c');
   metal(c,119,146,22,58);metal(c,82,201,96,12);line(c,[[89,204],[171,204]],'#f6f5d9',1.5);
-  round(c,38,31,184,133,'#345e5c',12);metal(c,36,25,188,132);round(c,44,33,172,116,'#f5f1dc',8);
+  round(c,38,31,184,133,'#6c9287',12);metal(c,36,25,188,132);round(c,44,33,172,116,'#f5f1dc',8);
   line(c,[[57,47],[188,47]],'#d3c390',2);ellipse(c,203,47,3,3,'#7cac8a');
   const chars=['가','A','あ'];for(let i=0;i<3;i++){const x=57+i*50;round(c,x,70,45,57,'#cbdac8',5);round(c,x+2,72,41,51,'#fff6da',4);c.strokeStyle='#c8b578';c.lineWidth=.8;c.stroke();c.fillStyle='#3e7065';c.font='700 29px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(chars[i],x+22.5,99);}
   c.restore();

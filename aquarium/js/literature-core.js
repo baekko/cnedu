@@ -130,8 +130,11 @@ export class LiteratureGame{
    if(target&&this.local.y<target.y-10){
     s.trailStep++;
     if(s.trailStep===elephantGates.length){
-     const landing=this.landing(4,{x:220,y:195},{...s,mounted:false});
      s.park=this.local;
+     // The parked elephant becomes solid when the rider's feet touch down.
+     // Pick a landing beside its actual position, toward the middle of the path.
+     const side=s.park.x>=EXITS[4].x?-1:1;
+     const landing=this.landing(4,{x:s.park.x+side*36,y:s.park.y+13},{...s,mounted:false});
      this.motion={kind:'dismount',age:0,from:{...this.player},to:localPoint(4,landing.x,landing.y)};
     }
    }

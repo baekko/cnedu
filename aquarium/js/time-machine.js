@@ -1,4 +1,4 @@
-import {MACHINE_TIMING as T} from './history-core.js';
+import {MACHINE_TIMING as T} from './history-core.js?v307';
 const clamp=n=>Math.max(0,Math.min(1,n));
 const ease=n=>{n=clamp(n);return n*n*(3-2*n);};
 export function machinePose(game){

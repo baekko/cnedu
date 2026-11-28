@@ -4,10 +4,9 @@ import {drawLiteratureWork} from './literature-work.js';
 import {hasSource} from './clue-order.js';
 import {beginScene} from './layout.js';
 import {drawExplorer,drawCarryCell} from './heroes.js?v=155';
-import {BOOKS,roomBase,lockAt,BACK_PORTAL} from './literature-core.js';
+import {BOOKS,roomBase,lockAt,BACK_PORTAL} from './literature-core.js?v307';
 import {FLOORS,EXITS,ropePoints,valvePoints,reelAt,windProps,knightPoint,salvagePoints,raftPoint,surfAt,sheepAt,patrolAt,patrolMembers,ropeWorkPoint,tentacleAt,tentaclePose,elephantGates,elephantObstacles,valveWorkPoint,VALVE_SECONDS,FISHING,SEWING,LOCK_WORK,seamX,elephantStart} from './literature-rules.js';
 import {literatureSurfAreas,literatureSearchlightAt,literatureProjectileArea} from './literature-damage-guide.js?v306';
-import {paintDamageGuide} from './damage-guide.js?v306';
 const TAU=Math.PI*2,clamp=n=>Math.max(0,Math.min(1,n));
 const box=(c,x,y,w,h,fill,r=3)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const line=(c,x,y,xx,yy,col,w=1)=>{c.strokeStyle=col;c.lineWidth=w;c.lineCap='round';c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.stroke();};
@@ -51,12 +50,20 @@ export class LiteratureRenderer{
   salvagePoints.forEach((p,k)=>{if(!s.flags.has(k)&&s.heldIndex!==k){this.depth(c,p.y,()=>{shadow(c,p.x,p.y,24);this.sprite(c,'prop-log-v55',p.x,p.y,62,true);});this.ring(c,p.x,p.y+3,t,27);}});
   if(!s.solved){const w=surfAt(t);c.save();c.beginPath();FLOORS[1].forEach(([x,y],j)=>j?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.clip();if(w.warning){for(let j=0;j<3;j++){c.strokeStyle='#d6ede8a0';c.lineWidth=1;c.beginPath();c.ellipse(352+j*8,288,5,55+j*8,0,-1.4,1.4);c.stroke();}}
   if(w.active)for(const area of literatureSurfAreas(w)){
-   const top=area.y,len=area.h,bottom=top+len,crest=y=>{const u=(y-top)/len;return w.x-8+8*(2*u-1)**2+Math.sin(y*.09+t*3)*1.8;},spread=y=>22*Math.sqrt(Math.max(0,Math.sin(Math.PI*(y-top)/len)));
-   const water=c.createLinearGradient(area.x,0,area.x+area.w,0);water.addColorStop(0,'#e4f0d990');water.addColorStop(.19,'#a5d2bf91');water.addColorStop(.55,'#7db8ae79');water.addColorStop(1,'#a1c6b53a');
-   paintDamageGuide(c,area,true,{fill:water,edge:'#d6eee2aa'});
+   const top=area.y,len=area.h,bottom=top+len;
+   const edge=y=>clamp(Math.min(y-top,bottom-y)/Math.min(5,len*.25));
+   const crest=y=>area.x+1.8+Math.sin(y*.09+t*3)*1.5+2.6*(1-edge(y))**2;
+   const spread=y=>area.w*(.91+.09*Math.sin(y*.08-t*2))*(.78+.22*edge(y));
+   const water=c.createLinearGradient(area.x,0,area.x+area.w,0);water.addColorStop(0,'#c8e6d460');water.addColorStop(.19,'#b7e0cc9a');water.addColorStop(.52,'#7db8ae79');water.addColorStop(1,'#a1c6b530');
    c.save();c.beginPath();c.rect(area.x,top,area.w,len);c.clip();
-   // The changing foam stays inside the visible contact area.
-   for(let y=top+2;y<bottom-2;y+=2){const u=(y-top)/len,fade=Math.sin(Math.PI*u);line(c,crest(y),y,crest(y+2),y+2,`rgba(246,247,222,${fade*.88})`,2.5+fade*.8);}
+   // Paint the water itself within its contact strip, with a curling foam edge.
+   const opacity=c.globalAlpha;c.fillStyle=water;
+   for(let y=top;y<bottom;y++){
+    c.globalAlpha=opacity*(.28+.72*edge(y+.5));
+    c.fillRect(crest(y),y,spread(y),Math.min(1,bottom-y));
+   }
+   c.globalAlpha=opacity;
+   for(let y=top;y<bottom;y+=2){const fade=.3+.7*Math.sin(Math.PI*(y-top)/len);line(c,crest(y),y,crest(y+2),y+2,`rgba(246,247,222,${fade*.88})`,2.5+fade*.8);}
    for(let j=0;j<Math.ceil(len/6);j++){const y=top+4+j*6;if(y>=bottom-3)continue;const u=(y-top)/len,fade=Math.sin(Math.PI*u),x=crest(y),roll=3+Math.sin(j*1.8+t*2)*1.5;oval(c,x+roll,y,2.7*fade,1.4*fade,'#fffbe5b0');c.strokeStyle=`rgba(234,244,218,${fade*.5})`;c.lineWidth=.8;c.beginPath();c.ellipse(x+9+roll,y+1,5*fade,2.3,.2,-1.8,1.2);c.stroke();}
    for(let j=0;j<3;j++){c.strokeStyle=`rgba(204,227,203,${.22-j*.05})`;c.lineWidth=1;c.beginPath();for(let y=top+len*.08;y<bottom-len*.08;y+=2){const x=crest(y)+spread(y)*(.25+j*.22);y===top+len*.08?c.moveTo(x,y):c.lineTo(x,y);}c.stroke();}
    c.restore();}
@@ -164,18 +171,19 @@ export class LiteratureRenderer{
  footprint(c,x,y,correct,done,t=0){c.save();c.translate(x,y);c.rotate(-.13);const col=done?'#93b298':'#576c68';oval(c,0,-5,8,12,col);box(c,-5,9,10,7,col,2);line(c,-5,1,5,1,'#cfceb2',.8);if(correct)poly(c,[[0,-10],[4,-5],[0,0],[-4,-5]],'#fff0c1');else if(Math.floor(x)%2)oval(c,0,-5,2.8,2.8,'#eee1b3');else line(c,-3,-5,3,-5,'#eee1b3',2);if(done){line(c,13,3,17,7,'#58866b',2);line(c,17,7,23,-3,'#58866b',2);}c.restore();}
  holmes(c,g,s){this.depth(c,176,()=>{box(c,173,149,44,27,'#ab895e',3);box(c,177,155,36,17,s.solved?'#605943':'#d0b37b',2);oval(c,195,162,2,2,'#7e7756');});if(s.progress===3&&!s.solved)this.ring(c,195,177,s.time,26);this.cast(c,'holmes',s);box(c,285,64,57,61,'#f1e6cbe8',5);this.footprint(c,314,89,true,false);text(c,'같은 모양',314,115,8,'#64786c');for(const f of g.footprints()){if(f.row>s.progress)c.globalAlpha=.42;this.footprint(c,f.x,f.y,f.correct,f.done);c.globalAlpha=1;if(f.row===s.progress&&!s.solved)this.ring(c,f.x,f.y+8,s.time,21);}
   if(!s.solved){const area=literatureSearchlightAt(s.time),x=area.x+area.w/2;
-   if(area.active){const grad=c.createLinearGradient(x,area.y,x,area.y+area.h);grad.addColorStop(0,'#f4d99185');grad.addColorStop(1,'#f6dfb04a');paintDamageGuide(c,area,true,{fill:grad,edge:'#f4dd94ac'});}
+   if(area.active){const light=c.createLinearGradient(area.x,0,area.x+area.w,0);light.addColorStop(0,'#ebca7f15');light.addColorStop(.2,'#f4d99169');light.addColorStop(.5,'#fff1be8f');light.addColorStop(.8,'#f4d99169');light.addColorStop(1,'#ebca7f15');
+    c.fillStyle=light;c.beginPath();c.roundRect(area.x,area.y,area.w,area.h,7);c.fill();}
    oval(c,x,187,9,7,area.active?'#f6deb0':'#c4bb96');line(c,x,175,x,181,'#66746b',3);}
  }
  hazard(c,h,t){
   if(h.type==='tentacleSwipe'){const warning=h.age<h.warn;if(warning){box(c,48,h.y-14,294,28,'#edbc6e30',10);c.save();c.setLineDash([5,5]);line(c,49,h.y,341,h.y,'#e5b367',1.7);c.restore();text(c,'촉수 주의',195,h.y-22,10,'#f7e3b2');}else{const left=h.side>0,x0=left?3:387,x1=left?339:51;c.save();c.lineCap='round';c.strokeStyle='#497b87';c.lineWidth=19;c.beginPath();c.moveTo(x0,h.y-18);c.bezierCurveTo(left?110:280,h.y-36,left?240:150,h.y+19,x1,h.y);c.stroke();c.strokeStyle='#92b9ae';c.lineWidth=8;c.stroke();for(let x=65;x<330;x+=24)oval(c,x,h.y+Math.sin(x/100)*8,3,2,'#cfdfbe');c.restore();}return;}
   const warning=h.age<h.warn,u=clamp(h.age/h.warn);
-  if(h.age<h.life&&!h.hit)paintDamageGuide(c,literatureProjectileArea(h),!warning,{fill:'#d3906235',edge:warning?'#b47558cc':'#ecbc91e0'});
-  if(warning){if(h.type==='barrel')text(c,'↓',h.x,h.y,16,'#a56c45');if(h.type==='meteor'&&u>.4)this.sprite(c,'prop-meteor',h.x,h.y-12-(1-u)*115,27+u*13);return;}
+  const contact=literatureProjectileArea(h);
+  if(warning){shadow(c,h.x,h.y,contact.r*(.7+.3*u));if(h.type==='barrel')text(c,'↓',h.x,h.y,16,'#a56c45');if(h.type==='meteor'&&u>.4)this.sprite(c,'prop-meteor',h.x,h.y-12-(1-u)*115,27+u*13);return;}
   const age=h.age-h.warn;if(h.type==='meteor'){c.save();c.translate(h.x,h.y-12);c.rotate(age*.8);this.sprite(c,'prop-meteor',0,0,40);c.restore();}
   else if(h.type==='shark'){const jump=Math.sin(age/.45*Math.PI)*25;shadow(c,h.x,282,27);c.save();c.translate(h.x,263-jump);poly(c,[[-21,11],[-14,-13],[5,-27],[19,-8],[22,11]],'#739da6');c.beginPath();c.moveTo(-15,4);c.quadraticCurveTo(0,-8,17,4);c.lineTo(13,16);c.lineTo(-12,16);c.fillStyle='#516974';c.fill();for(let i=0;i<5;i++)poly(c,[[-10+i*5,4],[-8+i*5,9],[-6+i*5,4]],'#f5f0d3');oval(c,-8,-10,2,2,'#2c505c');oval(c,10,-10,2,2,'#2c505c');c.restore();for(let i=0;i<6;i++)oval(c,h.x-27+i*10,281+Math.sin(i+t*4)*3,3,1,'#e9f0d9');}
   else if(h.type==='tentacle'){const sx=h.x<195?12:378,sy=h.y-75;c.save();c.strokeStyle='#608d91';c.lineWidth=15;c.lineCap='round';c.beginPath();c.moveTo(sx,sy);c.bezierCurveTo(sx+(h.x-sx)*.7,sy-40,h.x-20,h.y-33,h.x,h.y);c.stroke();c.strokeStyle='#a7c6b7';c.lineWidth=6;c.stroke();for(let i=0;i<5;i++)oval(c,h.x-(h.x-sx)*i*.06,h.y-i*8,2,2,'#e0d9b0');c.restore();}
-  else if(h.type==='barrel'){shadow(c,h.x,h.y,21);const im=this.images['barrel-roll-v58'],frame=Math.floor(Math.max(0,h.y-151)/90*8)%8,size=54;c.drawImage(im,frame%4*512,Math.floor(frame/4)*512,512,512,h.x-size/2,h.y-size*428/512,size,size);}
+  else if(h.type==='barrel'){shadow(c,h.x,h.y,contact.r);const im=this.images['barrel-roll-v58'],frame=Math.floor(Math.max(0,h.y-151)/90*8)%8,size=54;c.drawImage(im,frame%4*512,Math.floor(frame/4)*512,512,512,h.x-size/2,h.y-size*428/512,size,size);}
  }
  room(c,g,i,character){const s=g.scenes[i];c.save();c.translate(0,roomBase(i));c.beginPath();c.rect(0,0,390,500);c.clip();this.layers=[];c.drawImage(this.images['scene-'+i],0,0,390,500);
   // Shared gallery thresholds give the nine distinctive rooms a physical link.
@@ -197,7 +205,7 @@ export class LiteratureRenderer{
  }
  hero(c,g,character){const p=g.player;
   if((g.room===3&&g.scene.sewing&&g.scene.sewApproach>=.35)||(g.room===7&&g.scene.lockWork?.age>=.3)){const sewing=g.room===3,contact=sewing?SEWING.contact:LOCK_WORK.contact,age=sewing?g.scene.sewTime:g.scene.lockWork.age-.3;shadow(c,p.x,p.y,14);drawLiteratureWork(c,this.images['work-v68'],character.id,sewing?'sew':'lock',age,{x:contact.x,y:roomBase(g.room)+contact.y},sewing?p:undefined);return;}
-  if(g.room===4&&g.scene.mounted){const park=g.motion?g.scene.park:null;this.elephant(c,park?.x??p.x,park?roomBase(4)+park.y:p.y,'up',p.walk,!park&&p.moving);if(g.motion){const u=clamp(g.motion.age/.62);drawExplorer(c,this.images,character,{...p,y:p.y-58*(1-u),dir:'left',moving:false},.85);return;}c.save();c.beginPath();c.rect(p.x-21,p.y-112,42,36);c.clip();drawExplorer(c,this.images,character,{...p,dir:'up',y:p.y-58,moving:false},.85);c.restore();return;}
+  if(g.room===4&&g.scene.mounted){const park=g.motion?g.scene.park:null;this.elephant(c,park?.x??p.x,park?roomBase(4)+park.y:p.y,'up',p.walk,!park&&p.moving);if(g.motion){const u=clamp(g.motion.age/.62),dir=g.motion.to.x<g.motion.from.x?'left':'right';drawExplorer(c,this.images,character,{...p,y:p.y-58*(1-u),dir,moving:false},.85);return;}c.save();c.beginPath();c.rect(p.x-21,p.y-112,42,36);c.clip();drawExplorer(c,this.images,character,{...p,dir:'up',y:p.y-58,moving:false},.85);c.restore();return;}
   if(g.room===6&&g.scene.job){const job=g.scene.job,frame=Math.min(3,Math.floor(job.age/.4)),row=['haru','doyun','narin','soi'].indexOf(character.id),size=56;shadow(c,p.x-3,p.y,15);c.drawImage(this.images['untie-v57'],frame*256,Math.max(0,row)*256,256,256,p.x-size*176/256,p.y-size*238/256,size,size);return;}
   c.save();shadow(c,p.x,p.y,14);if(g.invincibleLeft>0)c.globalAlpha=.65+.35*Math.abs(Math.sin(g.elapsed*14));
   const busy=g.scene.carrying||g.actionAge<.38,row=p.dir==='up'?1:['left','right'].includes(p.dir)?2:0;

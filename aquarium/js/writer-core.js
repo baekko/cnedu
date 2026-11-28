@@ -6,6 +6,7 @@ import {damage,collectRecovery,tickVitality} from './vitality.js';
 import {GIANT_POSES} from './writer-giant-poses.js';
 import {GiantSpritePlayback,giantCanDamage} from './writer-giant-sprites-v101.js';
 import {giantHandsContact} from './writer-giant-collision.js?v=155';
+import {writerGust,gustHits} from './writer-wind.js?v307';
 export const WRITER=Object.freeze({duration:120,width:9600,height:500,speed:FLAT_WALK_SPEED,airSpeed:118,roomParallax:.2,gravity:640,flashes:3,stun:0,shieldSeconds:4,answer:'여우',hints:['꼬리가 풍성한 동물입니다.','동화에서 꾀가 많은 동물로 자주 등장합니다.']});
 export const STORIES=Object.freeze([
  {id:'pigs',name:'아기 돼지 삼 형제',start:0,end:1700,cards:[1,2]},
@@ -148,7 +149,7 @@ export class WriterGame{
   for(const h of this.houses){
    if(!h.active&&p.x>h.doorX-WRITER_WIND.trigger)h.active=true;if(!h.active)continue;h.age+=dt;
    const cycle=Math.floor(h.age/WRITER_WIND.period),phase=this.windPhase(h);
-   if(phase==='gust'&&this.chapter===0&&h.lastHit!==cycle&&intersects(writerBody(p),{x:h.x-220,y:325,w:530,h:125})&&!p.hidden){if(this.hurt('wind'))h.lastHit=cycle;}
+   if(phase==='gust'&&this.chapter===0&&h.lastHit!==cycle&&!p.hidden&&gustHits(writerGust(h),writerBody(p))){if(this.hurt('wind'))h.lastHit=cycle;}
    if(h.age>=WRITER_WIND.warning+WRITER_WIND.active&&h.type<2&&!h.broken){h.broken=true;if(this.hiding?.house===h)this.leaveHouse();this.fleeHouse(h);this.effects.push({type:'house',x:h.x,y:420,age:0});}
   }
   for(const pig of this.pigs){if(pig.mode!=='run')continue;if(pig.delay>0){pig.delay-=dt;continue;}const target=this.houses[pig.targetHouse],d=Math.min(285*dt,Math.max(0,target.doorX-pig.x));pig.x+=d;pig.distance+=d;if(pig.x>=target.doorX){pig.houseId=target.id;pig.mode='safe';}}

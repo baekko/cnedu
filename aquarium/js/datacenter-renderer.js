@@ -3,8 +3,6 @@ import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {workshopAssets,artMetadata,loadWorkshopEntrance} from './workshop-art.js?v=155';
 import {drawPlayerAction,loadPlayerActions,leverStandpoint} from './player-actions.js?v=155';
 import {DATA_FILES,DATA_NODES,DATA_RECEIVERS,DATA_VIRUSES,dataVirusPose} from './datacenter-core.js?v268';
-import {paintDamageGuide} from './damage-guide.js?v306';
-export const dataVirusDangerArea=p=>({x:p.x,y:p.y,r:16});
 export async function loadDataCenterAssets(character){
  const images=await workshopAssets('datacenter-v306',character,['room','props','records']);
  images.room0=images.room;
@@ -38,8 +36,25 @@ export class DataCenterRenderer extends FieldRenderer{
    box(c,r.x-32,137,64,17,wanted?'#fff4dcee':'#edf0e8dd',3);text(c,symbols[i],r.x-23,145,9,r.color);text(c,r.name,r.x+5,145,8,'#4e645e');
    if(wanted){c.strokeStyle=r.color;c.lineWidth=2;c.beginPath();c.roundRect(r.x-32,137,64,17,3);c.stroke();}
   }
-  for(const v of DATA_VIRUSES){if(g.isVirusCleared(v))continue;const p=dataVirusPose(v,g.elapsed);if(!p.warning&&!p.active)continue;const a=DATA_NODES[v.edge[0]],b=DATA_NODES[v.edge[1]];if(p.warning){c.save();c.strokeStyle='#c28955';c.lineWidth=2;c.setLineDash([4,5]);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();c.restore();box(c,b.x-8,b.y+22,16,16,'#f9e8bf',4);text(c,'!',b.x,b.y+30,11,'#a77145');}else{paintDamageGuide(c,dataVirusDangerArea(p),true,{fill:'#edab7f30',edge:'#b6605eab'});this.prop(c,'virus',p.x,p.y,18);}}
-  for(const p of g.packets){if(p.wait>0)continue;const col=DATA_RECEIVERS[p.target].color;oval(c,p.x,p.y+2,11,3,'#43554a35');this.record(c,g.files[p.file].symbol,p.x-12,p.y-21,24);box(c,p.x+4,p.y-7,11,11,col,3);text(c,symbols[p.target],p.x+9.5,p.y-1.5,7,'#fffdf1');}
+  for(const v of DATA_VIRUSES){
+   if(g.isVirusCleared(v))continue;
+   const p=dataVirusPose(v,g.elapsed);
+   if(p.active){
+    this.prop(c,'virus',p.x,p.y,18);
+   }else if(p.warning){
+    const a=DATA_NODES[v.edge[0]],b=DATA_NODES[v.edge[1]];
+    c.save();c.strokeStyle='#c28955';c.lineWidth=2;c.setLineDash([4,5]);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();c.restore();
+    box(c,b.x-8,b.y+22,16,16,'#f9e8bf',4);text(c,'!',b.x,b.y+30,11,'#a77145');
+   }
+  }
+  for(const p of g.packets){
+   if(p.wait>0)continue;
+   const col=DATA_RECEIVERS[p.target].color;
+   oval(c,p.x,p.y+11,11,3,'#43554a35');
+   this.record(c,g.files[p.file].symbol,p.x-12,p.y-12,24);
+   box(c,p.x+4,p.y+2,11,11,col,3);
+   text(c,symbols[p.target],p.x+9.5,p.y+7.5,7,'#fffdf1');
+  }
   const layers=g.levers.map(l=>({y:l.y,draw:()=>{this.prop(c,l.state?'leverRight':'leverLeft',l.x,l.y,30);if(g.nearbyLever===l){c.strokeStyle='#527b71';c.lineWidth=1.4;c.beginPath();c.ellipse(l.x,l.y+2,19,6,0,0,TAU);c.stroke();}}}));
   layers.push({y:445,draw:()=>{this.prop(c,'source',195,445,38);box(c,166,448,58,14,'#fff2d9ee',3);text(c,'전송 단말기',195,455,8,'#61786b');const waiting=g.packets.find(p=>p.wait>0);if(waiting){box(c,208,409,80,17,'#fff3dced',4);text(c,'다음 '+DATA_RECEIVERS[waiting.target].name.slice(0,2)+' · '+waiting.wait.toFixed(1)+'초',248,418,8,'#627269');}}});
   layers.push({y:g.player.y,draw:()=>{if(g.work){oval(c,g.player.x,g.player.y+1,11,3.5,'#33473a2c');drawPlayerAction(c,this.images,character,g.player,'leverUp',Math.min(3,Math.floor(g.workAge/.115)));}else this.hero(c,g,character);}});layers.sort((a,b)=>a.y-b.y).forEach(l=>l.draw());

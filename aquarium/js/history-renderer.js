@@ -1,21 +1,23 @@
 import {drawClueCard} from './clue-card-art.js?v245';
-import {historyMobFrame,HISTORY_MOB_ART} from './history-mob-sprites-v99.js';
+import {historyMobFrame,HISTORY_MOB_ART} from './history-mob-sprites-v99.js?v307';
 import {beginScene,spriteAnchor,drawRoom,sceneText} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {drawTimeMachine,machinePose,machineWalker,machineSize} from './time-machine.js';
-import {HISTORY,ERAS,HISTORY_ACTORS} from './history-core.js';
-import {paintDamageGuide} from './damage-guide.js?v306';
-const HISTORY_REVISED_ART=new Set(['museum.webp','jerusalem.webp','pyramid.webp','prehistoric.webp','machine-idle.webp','machine-powered.webp','breakables.webp']);
+import {drawTimeMachine,machinePose,machineWalker,machineSize} from './time-machine.js?v307';
+import {HISTORY,ERAS,HISTORY_ACTORS} from './history-core.js?v307';
+const HISTORY_REVISED_ART=new Set(['jerusalem.webp','pyramid.webp','prehistoric.webp','machine-idle.webp','machine-powered.webp','breakables.webp']);
+function historyAssetPath(file){
+ if(file==='museum.webp'||file.startsWith('history-v130/dino'))return 'history-v307/'+file.split('/').at(-1);
+ if(HISTORY_REVISED_ART.has(file))return 'history-v306/'+file;
+ if(file.startsWith('history-v130/'))return file;
+ const dir=file==='seated-heroes.webp'?'history-v27':file.endsWith('-walk.webp')||file.endsWith('-idle.webp')?'hero-v153':'history';
+ return dir+'/'+file;
+}
 export async function loadHistoryAssets(character){
  const files=['museum.webp','jerusalem.webp','pyramid.webp','prehistoric.webp','machine-idle.webp','machine-powered.webp','seated-heroes.webp','breakables.webp',`${character.id}-adventure.webp`,`${character.id}-walk.webp`,`${character.id}-idle.webp`];const images={};
  files.push(...Object.values(HISTORY_MOB_ART).map(a=>a.file));
- await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[file]=img;resolve();};img.onerror=()=>reject(new Error('박물관 그림을 불러오지 못했어요: '+file));const dir=HISTORY_REVISED_ART.has(file)?'history-v306':file.startsWith('history-v130/')?'':file==='seated-heroes.webp'?'history-v27':file.endsWith('-walk.webp')||file.endsWith('-idle.webp')?'hero-v153':'history';img.src=new URL(`../assets/${dir?dir+'/':''}${file}`,import.meta.url).href;})));return images;
+ await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[file]=img;resolve();};img.onerror=()=>reject(new Error('박물관 그림을 불러오지 못했어요: '+file));img.src=new URL(`../assets/${historyAssetPath(file)}`,import.meta.url).href;})));return images;
 }
 const pill=(c,x,y,w,h,fill)=>{c.beginPath();c.roundRect(x,y,w,h,Math.min(h/2,12));c.fillStyle=fill;c.fill();};
-export function historyCaptureArea(m,ratio=1){
- const radius=m.kind.startsWith('dino')?HISTORY_ACTORS.dinosaurContact:HISTORY_ACTORS.personContact;
- return {x:m.x,y:m.y,rx:radius,ry:radius/(1.2*ratio)};
-}
 export class HistoryRenderer{
  constructor(canvas,images){this.canvas=canvas;this.c=canvas.getContext('2d');this.images=images;this.effects=[];}
  effect(){}
@@ -34,16 +36,10 @@ export class HistoryRenderer{
   if(!pose.seated){const f=boarding?Math.min(1,age/.75):Math.min(1,Math.max(0,(age-1.3)/.8)),p={x:boarding?65+25*f:90+32*f,y:boarding?112-34*f:79+33*f,dir:boarding?'up':'down',moving:boarding||f<1,walk:time,hammerAge:99};drawExplorer(c,this.images,character,p,.75);}
  }
  monster(c,m){const f=historyMobFrame(m),size=m.kind.startsWith('dino')?HISTORY_ACTORS.dinosaurSize:HISTORY_ACTORS.personSize;c.save();spriteAnchor(c,m.x,m.y);if(m.dir==='left')c.scale(-1,1);c.drawImage(this.images[f.art.file],f.column*256,f.row*256,256,256,-size*f.art.foot[0]/256,-size*f.art.foot[1]/256,size,size);c.restore();}
- monsterContact(c,m,ratio){
-  c.save();c.beginPath();c.rect(...m.zone);c.clip();
-  paintDamageGuide(c,historyCaptureArea(m,ratio),true,{fill:'#a94f3828',edge:'#eab07ac4'});
-  c.restore();
- }
  draw(game,character,time,dt,playing){
   const c=this.c;if(game?.phase==='travel'){this.travel(c,game,character,time);return;}beginScene(c);c.clearRect(0,0,390,844);c.fillStyle='#244b52';c.fillRect(0,0,390,844);c.fillStyle='#eae6da';c.fillRect(0,678,390,166);
   const scene=game?.scene||'museum';drawRoom(c,this.images[scene+'.webp']);if(!game)return;
   c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();
-  if(game.phase==='explore'&&!game.ended)for(const m of game.mobs)this.monsterContact(c,m,game.sceneRatio||1);
   const things=[...game.mobs.map(m=>({y:m.y,draw:()=>this.monster(c,m)})),{y:game.machine.y-16,draw:()=>this.machine(c,game,time,character)}];
   if(game.box){const b=game.box;things.push({y:b.y,draw:()=>{c.save();if(b.hits<3){c.shadowColor='#fff1a1';c.shadowBlur=8+Math.sin(time*7)*6;c.globalAlpha=.8+.2*Math.sin(time*7);}const w=game.era.row===1?65:55;spriteAnchor(c,b.x,b.y);c.drawImage(this.images['breakables.webp'],b.hits*192,game.era.row*192,192,192,-w/2,-w*.84,w,w);c.restore();}});}
   const walker=machineWalker(game);

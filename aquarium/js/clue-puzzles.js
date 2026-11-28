@@ -3,7 +3,7 @@ import {PURSUIT} from './pursuit-game.js?v243';
 import {CITYHALL} from './cityhall-core.js';
 import {MEMORY} from './memory-core.js?v211';
 import {CINEMA} from './cinema-core.js?v268';
-import {GYM} from './gym-core.js?v268';
+import {GYM} from './gym-core.js?v307';
 import {POSTAL} from './postal-core.js?v268';
 import {HOSPITAL} from './hospital-core.js?v298';
 export const CLUE_PUZZLES=Object.freeze({

@@ -56,7 +56,7 @@ let scenery;
 export async function loadPostalAssets(character) {
   scenery ||= Promise.all([
     ...STREET_ART.map(async key => {
-      const version = REVISED_ART.has(key) ? 'v305' : 'v304';
+      const version = key === 'office' ? 'v307' : REVISED_ART.has(key) ? 'v305' : 'v304';
       return [key, await image(`./assets/postal/${key}-${version}.webp`)];
     }),
     image('./assets/postal/village-cats.webp?v265').then(asset => ['village-cats', asset]),

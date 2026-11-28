@@ -10,17 +10,28 @@ export function makeCombatEffects(){
   const core=[[80,3],[70+noise(f+4)*21,38],[91,61],[72+noise(f+9)*12,99],[89,122],[69,167],[82,181],[80,210]];
   c.lineJoin='round';c.lineCap='round';c.shadowColor='#ffd264';c.shadowBlur=15;line(c,core,'#f5b73c66',13);line(c,core,'#ffe98b',6);c.shadowBlur=0;line(c,core,'#fffef1',2.8);
   for(let i=1;i<5;i++){const [x,y]=core[i],d=i%2?1:-1,branch=[[x,y],[x+d*(18+noise(f+i)*13),y+14],[x+d*14,y+29],[x+d*33,y+43]];line(c,branch,'#ffdb70aa',3);line(c,branch,'#fff7c6',1.1);}
-  const glow=c.createRadialGradient(80,210,0,80,210,33);glow.addColorStop(0,'#fff4b1bb');glow.addColorStop(.4,'#ffcc5555');glow.addColorStop(1,'#ffd05700');c.fillStyle=glow;c.fillRect(44,176,72,64);
-  c.strokeStyle='#ffe9a7';c.lineWidth=1.4;c.beginPath();c.ellipse(80,210,16+f*2,7+f*.8,0,0,TAU);c.stroke();
-  for(let i=0;i<12;i++){const a=i*TAU/12+f*.2,r=13+(f%4)*4+noise(i)*8,x=80+Math.cos(a)*r,y=210+Math.sin(a)*r*.6;line(c,[[x,y],[x+Math.cos(a)*5,y+Math.sin(a)*4]],i%2?'#fff4b5':'#e4a346',1.4);}
  });
  const orb=strip(64,64,(c,f)=>{
-  c.translate(32,32);c.rotate(f/N*TAU);const gr=c.createRadialGradient(-2,-3,0,0,0,20);gr.addColorStop(0,'#fff6ff');gr.addColorStop(.3,'#e5b2ff');gr.addColorStop(.6,'#ac67dc');gr.addColorStop(1,'#9652d300');c.fillStyle=gr;c.fillRect(-22,-22,44,44);c.strokeStyle='#f6d9ff';c.lineWidth=1.2;for(let i=0;i<3;i++){c.rotate(TAU/3);c.beginPath();c.ellipse(0,0,13,5,.6,0,TAU);c.stroke();}for(let i=0;i<5;i++){const a=i*TAU/5;c.fillStyle='#efd5ff';c.fillRect(Math.cos(a)*18-1,Math.sin(a)*18-1,2,2);}
+  c.translate(32,32);c.rotate(f/N*TAU);const gr=c.createRadialGradient(-3,-4,0,0,0,32);gr.addColorStop(0,'#fff6ff');gr.addColorStop(.3,'#e5b2ff');gr.addColorStop(.6,'#ac67dc');gr.addColorStop(.82,'#af73da64');gr.addColorStop(1,'#9652d300');c.fillStyle=gr;c.fillRect(-32,-32,64,64);c.strokeStyle='#f6d9ff';c.lineWidth=1.2;for(let i=0;i<3;i++){c.rotate(TAU/3);c.beginPath();c.ellipse(0,0,20,7,.6,0,TAU);c.stroke();}for(let i=0;i<5;i++){const a=i*TAU/5;c.fillStyle='#efd5ff';c.fillRect(Math.cos(a)*28-1,Math.sin(a)*28-1,2,2);}
  });
  cached={draw(c,kind,frame,x,y,w,h,alpha=1){const s={bolt,orb}[kind];c.save();c.globalAlpha*=alpha;c.drawImage(s.sheet,((frame%N)+N)%N*s.w,0,s.w,s.h,x,y,w,h);c.restore();}};return cached;
 }
-export function drawBoltWarning(c,h,r){
- const ratio=Math.min(1,h.age/h.warn);c.save();const glow=c.createRadialGradient(0,0,7,0,0,r);glow.addColorStop(0,'#ffe8a022');glow.addColorStop(.7,'#ffd86230');glow.addColorStop(1,'#ffb63d77');c.fillStyle=glow;c.beginPath();c.arc(0,0,r,0,TAU);c.fill();c.strokeStyle='#ffe8a1';c.lineWidth=1.1;c.setLineDash([4,4]);c.stroke();c.setLineDash([]);c.strokeStyle='#fff0ba';c.lineWidth=2;c.beginPath();c.arc(0,0,r-4,-Math.PI/2,-Math.PI/2+TAU*ratio);c.stroke();
- for(let i=0;i<6;i++){const a=i*TAU/6;c.save();c.rotate(a);line(c,[[0,-r+10],[2,-r+7],[0,-r+4],[-2,-r+7],[0,-r+10]],'#efd18b',1);c.restore();}
- c.fillStyle='#f4ce69';c.beginPath();c.moveTo(1,-11);c.lineTo(-7,2);c.lineTo(-1,2);c.lineTo(-3,12);c.lineTo(8,-3);c.lineTo(2,-3);c.closePath();c.fill();c.restore();
+export function drawBoltGround(c,h,r){
+ const active=h.age>=h.warn,charge=active?1:Math.max(0,h.age/h.warn),frame=Math.floor(h.age*17);
+ const glow=c.createRadialGradient(0,0,0,0,0,r);
+ glow.addColorStop(0,active?'#fff9d1eb':'#ffdf889d');
+ glow.addColorStop(.42,active?'#ffd372a7':'#eea54273');
+ glow.addColorStop(.78,active?'#ffd2664d':'#eea54237');
+ glow.addColorStop(1,'#ffc55d00');
+ c.save();c.globalAlpha=active?Math.max(.4,Math.min(1,(h.life-h.age)*10)):.32+.68*charge;
+ c.fillStyle=glow;c.fillRect(-r,-r,2*r,2*r);
+ c.lineCap='round';
+ for(let i=0;i<(active?9:5);i++){
+  const angle=i*2.4+noise(i+frame)*.7,rad=r*(.72+noise(i*7+frame)*.23),a=angle+.28;
+  const branch=[[Math.cos(a)*rad*.12,Math.sin(a)*rad*.12],[Math.cos(angle)*rad*.4,Math.sin(angle)*rad*.4],
+   [Math.cos(a)*rad*.68,Math.sin(a)*rad*.68],[Math.cos(angle)*rad,Math.sin(angle)*rad]];
+  line(c,branch,active?'#ffe5a175':'#be782c80',3.4);
+  line(c,branch,active?'#fff7d6':'#fff0b8ba',active?1.35:.95);
+ }
+ c.restore();
 }

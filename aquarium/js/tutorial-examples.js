@@ -1,6 +1,6 @@
 // Longer, complete examples use the same production inputs as the real game.
 // Staging affects only the isolated tutorial instance.
-import {ALICE_GATE,WRITER_PLATFORMS} from './writer-core.js?v=155';
+import {ALICE_GATE,WRITER_PLATFORMS} from './writer-core.js?v307';
 
 export function extendExamples(t,place){
  const g=t.game;

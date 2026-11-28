@@ -1,6 +1,17 @@
 // Sea effects share the actual background pixels. No separate blue medallion or
 // opaque circular sprite is laid over the water. Frames are prepared only once.
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+// Small water highlights follow the current. None outlines a danger region.
+function flecks(c,x,y,width,height,time,color,opacity,count){
+ c.save();c.translate(x,y);c.strokeStyle=color;c.lineCap='round';
+ for(let i=0;i<count;i++){
+  const a=i*2.39996+time*2,r=.2+(i*7%13)/17;
+  const px=Math.cos(a)*r*width,py=Math.sin(a)*r*height*.75;
+  c.globalAlpha=opacity*(.35+.65*Math.sin(i*2.3+time*3)**2);
+  c.lineWidth=i%4===0?1.2:.7;c.beginPath();c.moveTo(px-2,py);c.quadraticCurveTo(px+2,py-1.4,px+4,py-.2);c.stroke();
+ }
+ c.restore();
+}
 export function makeSeaEffects(sea,waves){
  const softWaves=document.createElement('canvas');softWaves.width=1024;softWaves.height=1152;
  const wc=softWaves.getContext('2d');wc.drawImage(waves,0,0);wc.globalCompositeOperation='destination-in';
@@ -32,6 +43,28 @@ export function makeSeaEffects(sea,waves){
  return {
   whirlpool(c,x,y,t,strength){
    const f=Math.floor(t*8)%frames;c.save();c.globalAlpha=.84+strength*.16;c.drawImage(sheet,(f%cols)*size,Math.floor(f/cols)*size,size,size,x-size/2,y-size/2,size,size);c.restore();
+   const pull=Math.max(0,(strength-.6)/.4);
+   if(pull>0){
+    c.save();c.translate(x,y);c.globalAlpha=pull*.55;
+    const depth=c.createRadialGradient(0,0,4,0,0,34);
+    depth.addColorStop(0,'#1c3a4d');depth.addColorStop(.58,'#25526484');depth.addColorStop(1,'#25526400');
+    c.fillStyle=depth;c.fillRect(-34,-34,68,68);c.restore();
+    flecks(c,x,y,33,33,-t*1.8,'#c9f5e6',pull*.58,11);
+   }
+  },
+  sirenReflection(c,x,y,t){
+   c.save();c.translate(x,y);c.scale(1,34/38);
+   const light=c.createRadialGradient(0,0,0,0,0,38);
+   light.addColorStop(0,'#efd4f763');light.addColorStop(.54,'#e6bdf335');light.addColorStop(1,'#e6bdf300');
+   c.fillStyle=light;c.fillRect(-38,-38,76,76);c.restore();
+   flecks(c,x,y,34,34,t,'#e8c6f2',.42,10);
+  },
+  scyllaWake(c,x,y,charge){
+   c.save();c.translate(x,y);c.scale(19/20,1);
+   const shade=c.createRadialGradient(0,0,0,0,0,20);
+   shade.addColorStop(0,'#152b42b0');shade.addColorStop(.56,'#152b4262');shade.addColorStop(1,'#152b4200');
+   c.globalAlpha=.44+charge*.56;c.fillStyle=shade;c.fillRect(-20,-20,40,40);c.restore();
+   flecks(c,x,y,17,18,charge,'#bceae0',.24+charge*.24,7);
   },
   wave(c,h,Y,half,crest){
    const horizontal=h.axis==='z',position=horizontal?Y(h.z):h.x;
@@ -49,7 +82,7 @@ export function makeSeaEffects(sea,waves){
    c.clip();
    for(let x=lo;x<hi;x+=6){
     const end=Math.min(x+6,hi),mid=(x+end)/2,edge=Math.abs(mid-gap)-half;if(edge<=0)continue;
-    const opacity=clamp(edge/20,0,1)*(active?1:.3+.45*clamp(h.age/h.warn,0,1));
+    const opacity=clamp(edge/12,0,1)*(active?1:.3+.45*clamp(h.age/h.warn,0,1));
     const sx=(x-left)/width*1024,sw=(end-x)/width*1024,roll=Math.sin(x*.026-time*1.4)*2.4;
     // The crest, and therefore contact, is centred on the hazard's own position.
     const top=-crest+roll;

@@ -27,7 +27,8 @@ export function containerDistance(p,box,row,ratio=1){
  const dx=Math.max(Math.abs(p.x-box.x)-w/2,0),dy=Math.max((box.y-p.y)*ratio-w*.84,(p.y-box.y)*ratio-w*.16-12,0);
  return Math.hypot(dx,dy);
 }
-export const HISTORY_ACTORS=Object.freeze({heroSize:56,personSize:60,dinosaurSize:168,walkFps:4,personContact:20,dinosaurContact:26});
+const DINOSAUR_SCALE=.8;
+export const HISTORY_ACTORS=Object.freeze({heroSize:56,personSize:60,dinosaurSize:168*DINOSAUR_SCALE,dinosaurStride:98*DINOSAUR_SCALE,walkFps:4,personContact:20,dinosaurContact:26*DINOSAUR_SCALE});
 export const inside=(p,z)=>p.x>=z[0]&&p.x<=z[0]+z[2]&&p.y>=z[1]&&p.y<=z[1]+z[3];
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const facing=(dx,dy,old='down')=>Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy?dy<0?'up':'down':old;

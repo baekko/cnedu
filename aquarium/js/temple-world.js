@@ -26,6 +26,10 @@ export class TempleWorld{
   cover(this.ithaca,routeZ(4690),routeZ(5640));
   cover(this.garden,routeZ(540),routeZ(1200));
   cover(this.coast,routeZ(1505),routeZ(2090));
+  // The illustration spans the full land route in world coordinates.
+  const land=this.images['land-route.webp'],landTop=Y(routeZ(2050));
+  const landHeight=routeZ(2170);
+  if(landTop<500&&landTop+landHeight>0)c.drawImage(land,0,landTop,390,landHeight);
   // The pier extends from the path into the same shoreline water.
   const dock=Y(routeZ(1850));if(dock>-80&&dock<580){c.fillStyle='#9c693f';c.fillRect(140,dock-56,110,85);for(let i=0;i<9;i++){c.fillStyle=i%2?'#c8995c':'#bb874d';c.fillRect(143,dock-54+i*9,104,7);}c.fillStyle='#745030';c.fillRect(137,dock-60,6,92);c.fillRect(247,dock-60,6,92);}
  }

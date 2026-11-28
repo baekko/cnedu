@@ -1,5 +1,5 @@
 import {CHARACTERS} from './config.js';
-import {normalizePlayerName} from './journey.js?v268';
+import {normalizePlayerName} from './journey.js?v307';
 
 const storageKeys=new Map([
  ['escape','ptb_aquarium_character_escape_v1'],

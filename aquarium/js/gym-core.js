@@ -1,5 +1,5 @@
 import {FieldGame,clamp} from './field-base.js';
-import {HISTORY} from './history-core.js';
+import {HISTORY} from './history-core.js?v307';
 import {movedDuringStep} from './walk-cycle.js';
 
 export const GYM=Object.freeze({duration:50,health:2,speed:HISTORY.speed,flashes:2,freezeSeconds:3,invincibleSeconds:1.35,ballRadius:7.5,windup:1.05,lockSeconds:.4,answer:'호루라기',hints:['경기를 시작하거나 멈출 때 입으로 부는 도구예요.','심판이 불면 삑! 소리가 나요. 호로 시작하는 네 글자예요.']});

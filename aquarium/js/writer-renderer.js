@@ -9,13 +9,17 @@ import {GIANT_ATTACK_ART_V102} from './writer-giant-hand-v102.js';
 import {GiantSpritePlayback} from './writer-giant-sprites-v101.js';
 import {OZ_LANDSCAPE,ozLandscapePlacement,ozLandscapeVisible} from './writer-oz-layout.js';
 import {beginScene} from './layout.js';
-import {WRITER,STORIES,WRITER_CARDS,WRITER_PLATFORMS,ALICE_GATE,WRITER_WIND,NOSE,GIANT,giantHands,CASTLE,PIRATES,VINE,WRITER_CAT,PUPPETS,puppetAt,OZ_FRIENDS} from './writer-core.js?v=155';
-import {paintDamageGuide} from './damage-guide.js?v306';
-import {writerGustArea,writerHookArea,writerPuppetArea,writerMonkeyArea} from './writer-damage-guide.js?v306';
+import {WRITER,STORIES,WRITER_CARDS,WRITER_PLATFORMS,ALICE_GATE,WRITER_WIND,NOSE,GIANT,giantHands,CASTLE,PIRATES,VINE,WRITER_CAT,PUPPETS,puppetAt,OZ_FRIENDS} from './writer-core.js?v307';
+import {writerGust,gustCrossSection} from './writer-wind.js?v307';
 const TAU=Math.PI*2,rows={haru:0,doyun:1,narin:2,soi:3};
 const round=(c,x,y,w,h,r,fill)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const doors=[[118.09,236.42,83.42,116.24],[93.01,225.63,85.65,126.87],[97.14,231,80.61,121.53]];
-const redrawnArt=new Set(['room','ship','wonder','gate','scenery-v35','shelters-v35','vine-v38','vine-crown-v39','author-v37']);
+const redrawnArt=new Set(['room','wonder','gate','shelters-v35','author-v37']);
+const fineLineArt=new Set(['ship','scenery-v35','vine-v38','vine-crown-v39']);
+function writerArtPath(key){
+ const folder=fineLineArt.has(key)?'writer-v307':redrawnArt.has(key)?'writer-v306':'writer';
+ return folder+'/'+key+'.webp';
+}
 export function writerBriefingPose(t){
  const phase=t%3.2,back=t%6.4>=3.2,jump=phase>=.7&&phase<1.65,u=(phase-.7)/.95;
  const x=phase<.7?40+25*phase/.7:jump?65+50*u:phase<2.25?115+25*(phase-1.65)/.6:140;
@@ -24,9 +28,9 @@ export function writerBriefingPose(t){
 export async function loadWriterAssets(character){
  await loadRecoveryArt();
  const result={},files=['room','houses','ship','actors','wonder','fox','heroes','gate','cast-v35','scenery-v35','shelters-v35','giant-v39','vine-v38','vine-crown-v39','cat-v39','oz-friends-v36','marionette-v36','author-v37']
-  .map(n=>[(redrawnArt.has(n)?'writer-v306/':'writer/')+n+'.webp',n]);
+  .map(n=>[writerArtPath(n),n]);
  files.push([WRITER_CARD_ART.file,'card-soldier'],['writer-v130/pigs.webp','pigs-v38']);
- files.push(['writer-v306/'+OZ_LANDSCAPE.asset+'.webp',OZ_LANDSCAPE.asset]);
+ files.push(['writer-v307/'+OZ_LANDSCAPE.asset+'.webp',OZ_LANDSCAPE.asset]);
  files.push([GIANT_ART_V101.bodyFile,'giant-climb-body'],[GIANT_ART_V101.handsFile,'giant-climb-hands']);
  files.push([GIANT_ATTACK_ART_V102.file,'giant-attack-corrected'],[GIANT_ATTACK_ART_V102.highHandFile,'giant-attack-high-hand']);
  files.push(['museum/'+character.id+'-actions.webp','climb']);
@@ -100,19 +104,51 @@ export class WriterRenderer{
   // A continuous narrow printed path links the six pop-up spreads.
   c.strokeStyle='#a98b5e55';c.lineWidth=1;c.beginPath();c.moveTo(0,438);c.lineTo(WRITER.width,438);c.stroke();
  }
+ gust(c,g,house){
+  const wind=writerGust(house),width=wind.right-wind.left;
+  const age=house.age%WRITER_WIND.period-WRITER_WIND.warning;
+  c.save();
+  c.beginPath();
+  c.moveTo(wind.right,wind.mouthTop);
+  c.lineTo(wind.left,wind.farTop);
+  c.lineTo(wind.left,wind.farBottom);
+  c.lineTo(wind.right,wind.mouthBottom);
+  c.closePath();
+  c.clip();
+  c.lineCap='round';
+  for(let i=0;i<22;i++){
+   const length=50+(i%5)*10;
+   const front=wind.right-((age*2.05+i*.143)%1)*(width+length-2);
+   const back=Math.min(wind.right,front+length);
+   if(back<wind.left||back-front<2)continue;
+   const band=((i%11)+.5)/11;
+   const at=(x,bend)=>{
+    const {top,bottom}=gustCrossSection(wind,x);
+    return top+(bottom-top)*Math.max(.02,Math.min(.98,band+bend));
+   };
+   const span=back-front,roll=Math.sin(g.elapsed*7.7+i*1.9)*.09;
+   const shade=c.createLinearGradient(back,0,front,0);
+   shade.addColorStop(0,'#fff4cc00');
+   shade.addColorStop(.31,i%3?'#fff1d3b3':'#c2ded2ac');
+   shade.addColorStop(.79,i%3?'#ffedcb91':'#d1ece28e');
+   shade.addColorStop(1,'#e5ebcf20');
+   c.strokeStyle=shade;
+   c.lineWidth=1.2+(i%4)*.48;
+   c.beginPath();
+   c.moveTo(back,at(back,0));
+   c.bezierCurveTo(back-span*.28,at(back-span*.28,roll),
+    front+span*.18,at(front+span*.18,-roll),front,at(front,0));
+   c.stroke();
+  }
+  c.restore();
+ }
  pigs(c,g){
   for(const h of g.houses){
    if(h.x<g.camera.x-350||h.x>g.camera.x+550)continue;
    const phase=g.windPhase(h),a=h.age%WRITER_WIND.period,col=phase==='warning'?(a<.9?1:2):phase==='gust'?3:0;
    c.save();c.translate(h.x+190,440);c.scale(-1,1);this.cell(c,'actors',col,0,0,0,79);c.restore();
-   if(phase==='gust'){
-    const area=writerGustArea(h);
-    c.save();c.beginPath();c.rect(area.x,area.y,area.w,area.h);c.clip();
-    for(let j=0;j<16;j++){const u=(g.elapsed*230+j*39)%530,xx=h.x+310-u,yy=340+j%6*17;c.strokeStyle=j%2?'#f5e6bbcc':'#a9c3b9bb';c.lineWidth=j%3===0?2.4:1.2;c.beginPath();c.moveTo(xx+32,yy);c.bezierCurveTo(xx+7,yy-8,xx-8,yy+9,xx-35,yy);c.stroke();}
-    c.restore();
-   }
    this.cell(c,'shelters-v35',h.type,h.broken?1:0,h.x,440,180,384,356/384);
-   if(g.chapter===0&&(phase==='warning'||phase==='gust'&&h.lastHit!==Math.floor(h.age/WRITER_WIND.period)))paintDamageGuide(c,writerGustArea(h),phase==='gust',{fill:'#e3e6b71a',edge:'#edf1c596'});
+   if(phase==='gust')this.gust(c,g,h);
    if(phase==='warning'){c.fillStyle='#b5654a';c.font='bold 18px sans-serif';c.textAlign='center';c.fillText('!',h.x+190,350-Math.sin(g.elapsed*8)*3);}
    if(!h.broken&&(g.nearHouse()===h||g.hiding?.house===h)){
     c.strokeStyle=g.hiding?.house===h?'#b5d7bc':'#f7dc93';c.lineWidth=1.5;c.beginPath();c.ellipse(h.doorX,441,22,4,0,0,TAU);c.stroke();
@@ -169,7 +205,6 @@ export class WriterRenderer{
   for(const [i,pirate] of PIRATES.entries()){const pending=g.hooks.find(h=>h.pirate===i&&h.age<h.warning),age=pending?.age??99;this.cell(c,'actors',age<.4?1:age<.8?2:0,1,pirate.x,pirate.y,74);}
   for(const h of g.hooks){
    if(h.age<h.warning){c.save();c.strokeStyle='#e6bd7faa';c.setLineDash([4,7]);c.lineWidth=1;c.beginPath();c.moveTo(h.x,h.y);c.lineTo(h.tx,h.ty);c.stroke();c.restore();continue;}
-   if(!h.hit)paintDamageGuide(c,writerHookArea(h),true,{fill:'#ead3a742',edge:'#eac990a7'});
    c.save();c.translate(h.x,h.y);c.rotate(Math.atan2(h.vy,h.vx)+Math.PI/2);c.strokeStyle='#684731';c.lineWidth=6;c.beginPath();c.moveTo(0,-11);c.lineTo(0,3);c.bezierCurveTo(0,15,14,14,12,2);c.stroke();c.strokeStyle='#d8c89d';c.lineWidth=3;c.stroke();c.fillStyle='#fff1c2';c.fillRect(-1,-11,2,8);c.restore();
   }
  }
@@ -187,7 +222,6 @@ export class WriterRenderer{
   // Shrink only the artwork, around the unchanged moving torso/hit position.
   // Keep its suspension point connected while preserving the swing and timing.
   for(const anchor of PUPPETS){const q=puppetAt(anchor,g.elapsed),im=this.images['marionette-v36'],scale=152/576;
-   if(g.chapter===3)paintDamageGuide(c,writerPuppetArea(q),true,{fill:'#ead3a71a',edge:'#dab58388'});
    c.save();c.translate(q.x,q.y);c.rotate(q.angle);c.strokeStyle='#9d7548';c.lineWidth=.8;c.beginPath();c.moveTo(0,-95);c.lineTo(0,(45-327)*scale);c.stroke();c.drawImage(im,-193*scale,-327*scale,384*scale,576*scale);c.restore();}
  }
  giantLayer(c,g,front=false){
@@ -214,7 +248,6 @@ export class WriterRenderer{
   this.scenery(c,1,0,WRITER.width-130,441,330);
   for(const [i,f] of OZ_FRIENDS.entries()){const met=g.ozFriends.has(i);this.cell(c,'oz-friends-v36',i,met?1:0,f.x,440,83);c.font='bold 11px sans-serif';c.textAlign='center';const width=c.measureText(f.name).width+14;round(c,f.x-width/2,342,width,20,6,'#fff1dbe8');c.fillStyle='#42675d';c.fillText(f.name,f.x,356);}
   for(const m of g.monkeys){const warning=m.age<m.warning;if(warning){const t=m.age/m.warning;c.fillStyle='#6c5a4b55';c.beginPath();c.ellipse(m.x,441,14+12*t,4+4*t,0,0,TAU);c.fill();c.strokeStyle='#cc9d62';c.lineWidth=1.3;c.beginPath();c.ellipse(m.x,441,27,8,0,0,TAU);c.stroke();}
-   else if(!m.hit)paintDamageGuide(c,writerMonkeyArea(m),true,{fill:'#ead3a71a',edge:'#dab58388'});
    this.cell(c,'cast-v35',warning?Math.floor(m.age*7)%3:3,2,m.x,m.y,62,256,.5);}
  }
  hero(c,g,character){
