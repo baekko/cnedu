@@ -1,7 +1,7 @@
 import {box,oval,text} from './field-renderer.js?v245';
 import {beginScene} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {PURSUIT,PURSUIT_CITIES,PURSUIT_START,getPursuitCity} from './pursuit-game.js?v243';
 
 import {PURSUIT_MAP as map,pursuitMapPoint as xy,pursuitPins,pursuitPinHit,pursuitLabelBox} from './pursuit-map.js?v235';
@@ -85,30 +85,31 @@ export function pursuitClueHit(game,x,y){
 }
 
 export function pursuitStatus(game){
+ const coins=usesCoinRewards();
  if(game.phase==='flying')return [
   game.departure.name+'에서 '+game.destination.name+'으로 이동 중',
   '선택한 도시에서 범인의 흔적을 찾고 있어요.',
  ];
  if(game.captured!==null)return [
   game.captured?'범인을 붙잡았어요':'범인을 놓쳤어요',
-  '모은 단서 '+game.banked.size+' / '+PURSUIT.rounds+'장',
+  (coins?'모은 금화 ':'모은 단서 ')+game.banked.size+' / '+PURSUIT.rounds+(coins?'개':'장'),
  ];
  const latest=game.trace.at(-1);
  if(latest){
   const city=getPursuitCity(latest.city).name;
   if(latest.correct)return [
-   city+'에서 단서 카드를 얻었어요',
+   city+(coins?'에서 금화를 얻었어요':'에서 단서 카드를 얻었어요'),
    '범인이 다른 도시로 달아났어요.',
   ];
   const remaining=game.choices.length-Number(game.phase==='arrival');
   return [
    city+'에서 범인을 찾지 못했어요',
-   '같은 단서로 남은 '+remaining+'곳 중 다시 고르세요.',
+   (coins?'같은 수사 자료로 남은 ':'같은 단서로 남은 ')+remaining+'곳 중 다시 고르세요.',
   ];
  }
  return [
   game.selectedCity?game.selectedCity.name+' 선택':'지도에서 도시를 고르세요',
-  game.selectedCity?'비행을 눌러 출발하세요.':'그림 단서가 가리키는 도시를 찾아요.',
+  game.selectedCity?'비행을 눌러 출발하세요.':coins?'수사 자료가 가리키는 도시를 찾아요.':'그림 단서가 가리키는 도시를 찾아요.',
  ];
 }
 
@@ -247,7 +248,8 @@ export class PursuitRenderer{
    const tint=i<game.banked.size?'#4c8a70':i===game.round-1&&!game.ended?'#3b7f8b':'#a7bdb5';
    oval(c,262+i*13,15,3.65,3.65,tint);
   }
-  const title=game.canAct?'비행을 눌러 출발하세요':game.round===PURSUIT.rounds?'마지막 추적의 그림 단서':'그림 단서';
+  const picture=usesCoinRewards()?'수사 자료':'그림 단서';
+  const title=game.canAct?'비행을 눌러 출발하세요':game.round===PURSUIT.rounds?'마지막 추적의 '+picture:picture;
   label(c,title,195,36,352,15,palette.ink);
  }
  drawClues(c,game){

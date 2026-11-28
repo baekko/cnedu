@@ -4,11 +4,14 @@ import {arcadeCharacterSetupId,canResumeArcade} from './arcade-state.js?v254';
 
 export const arcadePlaces=()=>PLACES.filter(place=>place.playable);
 export const COINS_PER_GAME=9;
+export const POINTS_PER_COIN=10;
+export const coinPoints=coins=>coins*POINTS_PER_COIN;
 export const arcadeMenuExclusions=mode=>mode==='practice'?['score','items','replay']:mode==='challenge'?['items','restart','replay']:[];
 const saveKey='ptb_aquarium_arcade_v1';
 const knownPlace=id=>arcadePlaces().some(place=>place.id===id);
 const newId=()=>globalThis.crypto.randomUUID();
 const countCoins=value=>Math.max(0,Math.min(COINS_PER_GAME,Math.trunc(Number(value)||0)));
+// Runs and local/shared records retain coin counts. Score displays convert them to points.
 const totalOf=games=>Object.values(games).reduce((total,game)=>total+game.coins,0);
 
 export function arcadePlayer(value){

@@ -10,31 +10,29 @@ export function lakeWorldOffset(){
  return 0;
 }
 
-// World-space shoreline from the lake painting. Limit refraction to water,
-// excluding the planted banks and foreground stones.
-const LAKE=[
- [2540,273],[2603,238],[2650,204],[2680,176],[2759,165],
- [2870,160],[3006,145],[3260,148],[3440,145],[3735,149],
- [3778,161],[3778,192],[3730,190],[3680,209],[3660,244],
- [3610,255],[3510,253],[3436,242],[3368,271],[3311,254],
- [3260,251],[3210,231],[3182,214],[3152,210],[3128,229],
- [3112,252],[3070,254],[3040,254],[2999,274],[2974,291],
- [2960,317],[2940,334],[2924,354],[2876,355],[2840,377],
- [2819,399],[2774,410],[2735,395],[2695,411],[2648,402],
- [2628,385],[2624,363],[2668,358],[2642,320],[2614,292]
+// Keep the animated strips inside open water. The distance to the shoreline
+// leaves room for both the shifting image and the painted leaves and rocks.
+const OPEN_WATER=[
+ [2582,253],[2648,235],[2670,218],[2691,202],[2710,178],[2790,177],
+ [2950,164],[3110,167],[3280,161],[3490,157],[3714,159],[3746,169],
+ [3741,187],[3710,193],[3660,201],[3630,212],[3605,236],[3530,236],
+ [3432,233],[3360,222],[3335,214],[3310,206],[3251,199],[3216,208],
+ [3193,226],[3141,235],[3090,245],[3053,252],[3005,263],[2975,273],
+ [2941,280],[2910,274],[2892,273],[2858,284],[2822,315],[2795,351],
+ [2769,365],[2722,371],[2705,358],[2661,349],[2640,313],[2595,276]
 ];
 
 export function drawZooScenery(c,image,cameraX,t=0){
  const camera=Math.max(0,Math.min(WORLD_WIDTH-ZOO_VIEW_WIDTH,cameraX));
  const scale=image.width/WORLD_WIDTH,span=ZOO_VIEW_WIDTH*scale;
  c.drawImage(image,camera*scale,0,span,image.height,camera,0,ZOO_VIEW_WIDTH,WORLD_HEIGHT);
- if(camera+ZOO_VIEW_WIDTH<LAKE[0][0])return;
+ if(camera+ZOO_VIEW_WIDTH<OPEN_WATER[0][0])return;
  c.save();
  c.beginPath();
- LAKE.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));
+ OPEN_WATER.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));
  c.closePath();c.clip();
  const sy=image.height/WORLD_HEIGHT;
- c.globalAlpha=.7;
+ c.globalAlpha=.55;
  for(let y=148;y<415;y+=4){
   const depth=(y-148)/267;
   const shift=(Math.sin(y*.2+t*1.7)*1.35+Math.sin(y*.09-t*.9)*.8)*depth;

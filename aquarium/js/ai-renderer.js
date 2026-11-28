@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {AI,BODIES,POWERS,INKS,CAST,SLOTS,TABLES,LABELS} from './ai-core.js';
 import {ImageDecoder,POWER_WORDS,ENV_WORDS} from './ai-inference.js';
 import {PODS,podY,socket,sampleRect,fitArtwork} from './ai-art-layout.js';
@@ -127,6 +127,6 @@ export class AIRenderer{
  develop(c,g){const r=g.print;if(!r)return;const work={body:r.body.kind,part:r.part.kind,ink:r.ink?.kind,powerLevel:r.powerLevel,inkLevel:r.inkLevel};
   box(c,0,0,390,500,'#10213abb');box(c,41,72,308,344,'#152e47',11);c.strokeStyle='#7bd8ce';c.lineWidth=1.3;c.stroke();label(c,r.developed?'출력 완료':'출력 중',195,100,15,DIG);
   this.picture(c,work,56,123,278,213,g.elapsed);label(c,[work.ink&&LABELS[work.ink],LABELS[work.part],LABELS[work.body]].filter(Boolean).join(' · '),195,357,16,'#eef3dd');
-  label(c,r.developed?(r.good?'원본 재현 · 단서 획득':'다른 장면이에요 · 틀린 특징만 바꿔요'):'완성된 그림을 출력하고 있어요',195,385,11,'#a7ded5');if(r.developed&&r.good)drawClueCard(c,128,385,14,18);}
+  label(c,r.developed?(r.good?(usesCoinRewards()?'원본 재현 · 금화 획득':'원본 재현 · 단서 획득'):'다른 장면이에요 · 틀린 특징만 바꿔요'):'완성된 그림을 출력하고 있어요',195,385,11,'#a7ded5');if(r.developed&&r.good)drawClueCard(c,128,385,14,18);}
  draw(g,char){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!g)return;c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();this.room(c,g,char);if(g.phase==='infer')this.inference(c,g);else if(g.print)this.develop(c,g);c.restore();}
 }

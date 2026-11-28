@@ -11,6 +11,38 @@
   touch-action: manipulation;
 }
 
+.vet-round-total {
+  position: absolute;
+  z-index: 10;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 4px 12px;
+  border: 1px solid #accbc1;
+  border-radius: 14px;
+  background: #f2faf3;
+  color: #28574d;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.health-stat .vet-round-total {
+  top: 3px;
+  right: 8px;
+  left: auto;
+  transform: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
 .vet-portrait {
   position: absolute;
   z-index: 14;

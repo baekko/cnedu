@@ -3,9 +3,11 @@ import {awardClue,hasSource} from './clue-order.js';
 import {ANIMAL_ART} from './zoo-approved-art.js?v313';
 import {releasePoint} from './zoo-hero-pose.js?v=155';
 import {hippoMotion,hippoMouth} from './zoo-hippo-motion.js';
-import {lakeWorldOffset} from './zoo-scenery.js?v313';
+import {lakeWorldOffset} from './zoo-scenery.js?v315';
+import {usesCoinRewards} from './clue-card-art.js?v245';
 
 export const ZOO=Object.freeze({duration:120,width:3780,penWidth:420,ground:438,speed:FLAT_WALK_SPEED,gravity:430,flashes:2,answer:'레서판다',hints:['붉은 갈색 털과 줄무늬가 있는 긴 꼬리를 가진 동물입니다.','이름에 판다가 들어가며, 나무를 잘 탑니다.']});
+export const ZOO_FEED_ZONE=Object.freeze({left:24,right:154,top:428,bottom:449});
 export const ZOO_SUPPORT={monkey:{treeX:165,treeWidth:220,lowX:223,highX:292,lowY:350,highY:350-(.65496-.34091)*(220*484/475)},iceY:390,fishY:386};
 export const ZOO_ZONES=['초원 먹이 시간','숲속 먹이 시간','물가 먹이 시간'];
 export const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
@@ -95,7 +97,7 @@ export function animalPose(a){
   open=ready=true;frame=s.kind==='monkey'?0:3;moving=false;flip=false;phase='잠깐 기다려 줄게요';
  }
  if(a.chew>0&&!airborne&&freezeSafe){open=ready=false;moving=false;flip=false;frame=['monkey','tiger'].includes(s.kind)?4:a.chew>.42?3:4;phase='냠냠!';}
- if(a.fed>=2&&!airborne&&freezeSafe){open=ready=false;moving=false;flip=false;frame=a.chew>0?4:5;phase='단서 획득';}
+ if(a.fed>=2&&!airborne&&freezeSafe){open=ready=false;moving=false;flip=false;frame=a.chew>0?4:5;phase='먹이 주기 완료';}
  const art=ANIMAL_ART[s.kind];const spriteFrame=moving&&frame===0?art.walk[Math.floor((a.walkDistance||0)/7)%art.walk.length]:art.map[frame];
  const pose={...s,x,y,frame,spriteFrame,moving,open:open&&a.chew<=0&&a.fed<2,ready:ready&&a.fed<2,water,airborne,flip,freezeSafe,mode,phase,progress,attention:a.attention,fed:a.fed};
  if(s.kind==='hippo'){pose.rig=hippoMotion(a);pose.spriteFrame=4;pose.surface={x:x-24,y:335};pose.headMotion=pose.rig.motion;}
@@ -127,7 +129,7 @@ export class ZooGame{
  get canMove(){return !this.ended;}
  get canShield(){return !this.ended&&this.flashes>0&&this.active.fed<2&&this.active.attention<=0;}
  get canThrow(){return !this.ended&&this.cooldown<=0&&!this.pending&&this.active.fed<2;}
- get inFeedSpot(){const x=this.player.x-this.active.spec.start;return x>=24&&x<=154;}
+ get inFeedSpot(){const x=this.player.x-this.active.spec.start;return x>=ZOO_FEED_ZONE.left&&x<=ZOO_FEED_ZONE.right;}
  get origin(){return releasePoint(this.character,this.player);}
  get prompt(){return this.noticeLeft>0?this.notice:this.banked.size===9?'오른쪽 끝으로 걸어가요':'';}
  get preview(){return feedTrajectory(this.origin,this.angle,this.charging?this.charge:this.lastPower,this.active.spec);}
@@ -138,7 +140,7 @@ export class ZooGame{
  releaseThrow(){if(!this.charging)return false;const power=this.charge;this.cancelThrow();if(!this.canThrow)return false;this.lastPower=power;this.player.shotAge=0;this.pending={delay:.14,power,angle:this.angle,food:this.active.spec.food,id:this.active.spec.id};this.cooldown=.48;this.throwCount++;return true;}
  act(){if(this.charging)return this.releaseThrow();if(!this.beginThrow())return false;this.charge=this.lastPower;return this.releaseThrow();}
  flash(){if(!this.canShield)return false;this.flashes--;this.active.attention=4;this.say('호루라기 · 착지한 뒤 기다려 줘요');this.onEvent({type:'zooWhistle'});return true;}
- feed(a,pose){if(a.fed>=2||a.chew>0||!pose.open)return false;a.fed++;a.chew=.9;if(a.spec.kind==='hippo')a.waterPulses.push({age:0,strength:.7});this.hitCount++;this.effects.push({kind:'heart',x:pose.target.x,y:pose.target.y,age:0});this.onEvent({type:'zooFeed',id:a.spec.id});if(a.fed===2){const earned=awardClue(this,a.spec.id);this.effects.push({kind:'card',id:earned,x:pose.x,y:pose.y-a.spec.size*.84,age:0});this.say(a.spec.name+' · 단서 획득!',1.4);this.onEvent({type:'card',id:earned,x:pose.x-this.camera.x,y:170+pose.y-a.spec.size*.84});}return true;}
+ feed(a,pose){if(a.fed>=2||a.chew>0||!pose.open)return false;a.fed++;a.chew=.9;if(a.spec.kind==='hippo')a.waterPulses.push({age:0,strength:.7});this.hitCount++;this.effects.push({kind:'heart',x:pose.target.x,y:pose.target.y,age:0});this.onEvent({type:'zooFeed',id:a.spec.id});if(a.fed===2){const earned=awardClue(this,a.spec.id);this.effects.push({kind:'card',id:earned,x:pose.x,y:pose.y-a.spec.size*.84,age:0});this.say(a.spec.name+' · '+(usesCoinRewards()?'금화 획득!':'단서 획득!'),1.4);this.onEvent({type:'card',id:earned,x:pose.x-this.camera.x,y:170+pose.y-a.spec.size*.84});}return true;}
  update(dt,input={}){if(this.ended)return;let left=clamp(dt,0,65);while(left>1e-8&&!this.ended){const h=Math.min(left,1/90);left-=h;this.step(h,input);}}
  step(dt,input){
   this.elapsed=Math.min(ZOO.duration,this.elapsed+dt);this.cooldown=Math.max(0,this.cooldown-dt);this.noticeLeft=Math.max(0,this.noticeLeft-dt);this.player.shotAge+=dt;

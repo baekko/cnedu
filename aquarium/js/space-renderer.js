@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';
 import {hasSource} from './clue-order.js';
 import {beginScene} from './layout.js';
@@ -37,7 +37,7 @@ export class SpaceRenderer{
   if(g.recoveryGlow>0){c.save();c.translate(p.x,p.y);c.globalAlpha=g.recoveryGlow/.7;c.strokeStyle='#bdfaf0';c.lineWidth=1.8;for(let i=0;i<4;i++){const a=i*TAU/4,r=27+(1-g.recoveryGlow/.7)*13;c.beginPath();c.arc(0,0,r,a+.15,a+.85);c.stroke();c.fillStyle='#e8ffed';c.beginPath();c.arc(Math.cos(a+.85)*r,Math.sin(a+.85)*r,2,0,TAU);c.fill();}c.restore();}
   if(g.stunLeft>0){c.fillStyle='#ffe8a0';for(let i=0;i<3;i++){const a=t*5+i*TAU/3;c.beginPath();c.arc(p.x+Math.cos(a)*23,p.y-30+Math.sin(a)*5,2,0,TAU);c.fill();}}
  }
- miniMap(c,g){const x=12,y=335,w=96,h=129,pad=7,innerW=w-pad*2,innerH=88;round(c,x,y,w,h,'#102b3bed',7);c.strokeStyle='#82b6bc66';c.lineWidth=.7;c.stroke();c.fillStyle='#c5dfe0';c.font='9px sans-serif';c.textAlign='left';c.fillText('단서 · 산소 위치',x+pad,y+13);
+ miniMap(c,g){const x=12,y=335,w=96,h=129,pad=7,innerW=w-pad*2,innerH=88;round(c,x,y,w,h,'#102b3bed',7);c.strokeStyle='#82b6bc66';c.lineWidth=.7;c.stroke();c.fillStyle='#c5dfe0';c.font='9px sans-serif';c.textAlign='left';c.fillText(usesCoinRewards()?'금화 · 산소 위치':'단서 · 산소 위치',x+pad,y+13);
   const X=v=>x+pad+v/SPACE.width*innerW,Y=v=>y+18+v/SPACE.height*innerH;c.strokeStyle='#78a2ac66';c.lineWidth=3;c.beginPath();c.moveTo(X(325),Y(937.5));c.lineTo(X(1387.5),Y(937.5));c.moveTo(X(825),Y(475));c.lineTo(X(825),Y(1625));c.stroke();
   c.strokeStyle='#c4ebeb99';c.lineWidth=.7;c.strokeRect(X(g.camera.x),Y(g.camera.y),390/SPACE.width*innerW,500/SPACE.height*innerH);
   for(const card of g.cards){if(hasSource(g,card.id))continue;const q=cardPosition(card,g.elapsed),cx=X(q.x),cy=Y(q.y);drawClueCard(c,cx,cy,7,9);}
@@ -49,7 +49,7 @@ export class SpaceRenderer{
   c.save();c.translate(x,y);c.rotate(Math.atan2(dy,dx));c.fillStyle='#ffe3a0';c.strokeStyle='#846e40';c.lineWidth=1;c.beginPath();c.moveTo(6,0);c.lineTo(-4,-5);c.lineTo(-1,0);c.lineTo(-4,5);c.closePath();c.fill();c.stroke();c.restore();
  }
  draw(g,character,t=0){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!g)return;t=g.elapsed;c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();this.backdrop(c,g,t);c.save();c.translate(-g.camera.x,-g.camera.y);this.station(c,g,t);for(const card of g.cards)if(!hasSource(g,card.id))this.card(c,card,g);for(const d of SPACE_DRONES)this.drone(c,d,g);for(const d of g.debris)this.debris(c,d,g);c.save();if(g.phase==='depart'){c.beginPath();c.ellipse(SPACE_EXIT.x,SPACE_EXIT.y,SPACE_EXIT.rx,SPACE_EXIT.ry,0,0,TAU);c.rect(0,SPACE_EXIT.y+SPACE_EXIT.ry*.35,SPACE.width,SPACE.height);c.clip();}drawRecoveryItems(c,g);this.hero(c,g,character,t);drawVitalityFx(c,g,g.player.x,g.player.y,27);c.restore();
-  for(const e of g.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/1.2);c.strokeStyle=e.type==='hit'?'#ffc999':'#a8f1ef';c.lineWidth=1.5;c.beginPath();c.arc(e.x,e.y,12+e.age*25,0,TAU);c.stroke();if(e.type==='card'){c.fillStyle='#fff1b9';c.font='bold 12px sans-serif';c.textAlign='center';c.fillText('+1',e.x,e.y-24-e.age*22);}c.restore();}c.restore();this.directionHint(c,g);this.miniMap(c,g);c.restore();
+  for(const e of g.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/1.2);c.strokeStyle=e.type==='hit'?'#ffc999':'#a8f1ef';c.lineWidth=1.5;c.beginPath();c.arc(e.x,e.y,12+e.age*25,0,TAU);c.stroke();if(e.type==='card'&&!usesCoinRewards()){c.fillStyle='#fff1b9';c.font='bold 12px sans-serif';c.textAlign='center';c.fillText('+1',e.x,e.y-24-e.age*22);}c.restore();}c.restore();this.directionHint(c,g);this.miniMap(c,g);c.restore();
  }
  briefing(c,character,t){const phase=t%6,g={player:{x:90+Math.sin(t*.9)*23,y:61+Math.cos(t*.9)*5,dir:Math.cos(t*.9)>0?'right':'left',walk:t,moving:true,thrust:Math.sin(t%4)<.9,vx:Math.cos(t*.9)*45,vy:0},stunLeft:0,boostLeft:phase>=2&&phase<5?1:0,invincibleLeft:0,recoveryGlow:phase>=3.4&&phase<4.1?4.1-phase:0};this.hero(c,g,character,t,91);}
 }

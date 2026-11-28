@@ -1,5 +1,5 @@
 import {templeBriefing} from './briefing-scenes.js?v=155';
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';
 import {drawScyllaNeck} from './scylla-neck.js';
 import {SCYLLA,scyllaRest,scyllaAttackPose,scyllaSpritePose,scyllaGrabPose} from './temple-scylla.js?v=157';
@@ -183,11 +183,11 @@ export class TempleRenderer{
 
   drawRecoveryItems(c,g,p=>({x:p.x,y:Y(p.z)}));this.hero(c,g,character,Y,t);this.scylla(c,g,Y,t,character);if(!g.scyllaGrab)drawVitalityFx(c,g,g.player.x,Y(g.player.z)-23,30);if(g.isBoat&&!g.scyllaGrab)this.fx.draw(c,2,Math.floor(t*7),g.player.x-46,Y(g.player.z)-25,92,92,.55);if(g.effects.some(e=>e.kind==='recovery'))this.fx.draw(c,3,Math.floor(t*8),g.player.x-47,Y(g.player.z)-71,94,94,.8);
   if(beyondGate)this.cityGate(c,Y);
-  for(const e of g.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/.9);c.fillStyle='#fff5bf';if(e.kind==='card'){c.font='bold 12px sans-serif';c.textAlign='center';c.fillText('+1 단서',e.x,Y(e.z)-35-e.age*24);}else for(let i=0;i<8;i++){const a=i*Math.PI/4;c.fillRect(e.x+Math.cos(a)*e.age*35,Y(e.z)+Math.sin(a)*e.age*24,3,3);}c.restore();}
+  for(const e of g.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/.9);c.fillStyle='#fff5bf';if(e.kind==='card'){c.font='bold 12px sans-serif';c.textAlign='center';if(!usesCoinRewards())c.fillText('+1 단서',e.x,Y(e.z)-35-e.age*24);}else for(let i=0;i<8;i++){const a=i*Math.PI/4;c.fillRect(e.x+Math.cos(a)*e.age*35,Y(e.z)+Math.sin(a)*e.age*24,3,3);}c.restore();}
   if(!g.ended){
    if(g.zoneAge<3){pill(c,105,422,180,25,'#183e4be8');c.fillStyle='#ffe9b8';c.font='bold 12px sans-serif';c.textAlign='center';c.fillText(g.zone.name,195,439);}
    let tip='';if(g.scyllaGrab)tip='스킬라가 물고 동굴로 끌고 가요';else if(g.sirenSlowLeft>0)tip='음파에 닿아 배가 느려졌어요';else if(g.pigLeft>0)tip='돼지로 변해도 계속 움직일 수 있어요';else if(g.windActive)tip='← + ↑ 함께 누르고 바람을 버티며 걸어가요';else if(g.interaction)tip=g.interaction==='탑승'?'탑승 버튼을 눌러 바다로 떠나요':'하차 버튼을 눌러 이타카로!';else if(g.mode==='walk'&&g.windDone&&g.player.z>routeZ(1785))tip='부두 끝의 배 가까이로 걸어가세요';else if(g.zone.id==='scylla'&&g.headsLanded.size<6)tip=`여섯 머리의 공격을 피해요 · ${g.headsLanded.size}/6`;else if(g.charmed>0)tip=g.siren.side<0?'→ 오른쪽으로 조종해 노래를 벗어나요':'← 왼쪽으로 조종해 노래를 벗어나요';else if(g.zoneAge<4&&g.zoneAge>1)tip=g.zone.id==='wind'&&g.windDone?'부두로 이동해 배에 탑승해요':g.zone.tip;
-   if(tip){pill(c,23,456,344,29,'#143f4be8');c.fillStyle='#fff1ce';c.font='bold 11px sans-serif';c.textAlign='center';c.fillText(tip,195,475);}
+   if(tip){pill(c,23,456,344,29,'#143f4be8');c.fillStyle='#fff1ce';c.font='bold 11px sans-serif';c.textAlign='center';c.fillText(usesCoinRewards()?tip.replace('단서를','금화를'):tip,195,475);}
    c.fillStyle='#f7edcc60';c.fillRect(18,493,354,3);c.fillStyle='#f2c66f';c.fillRect(18,493,354*clamp(g.player.z/TEMPLE.goal,0,1),3);
   }
   if(g.recoveryNoticeLeft>0){const text='아테나의 가호가 있었습니다.';c.save();c.font='bold 12px sans-serif';c.textAlign='center';const w=c.measureText(text).width+24,x=clamp(g.player.x,w/2+7,383-w/2),y=clamp(Y(g.player.z)-85,12,395);c.globalAlpha=Math.min(1,g.recoveryNoticeLeft*3);pill(c,x-w/2,y,w,27,'#254f52ef');c.strokeStyle='#e9cf8d';c.lineWidth=1;c.beginPath();c.roundRect(x-w/2,y,w,27,9);c.stroke();c.fillStyle='#fff2c4';c.fillText(text,x,y+18);c.restore();}

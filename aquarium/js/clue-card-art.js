@@ -9,6 +9,7 @@ const goldCoin=typeof Image==='undefined'?null:new Image();
 if(goldCoin)goldCoin.src=new URL('../assets/common/arcade-gold-coin.webp',import.meta.url).href;
 let coinRewards=false;
 export function setCoinRewards(enabled){coinRewards=enabled;}
+export function usesCoinRewards(){return coinRewards;}
 export function drawClueCard(c,x,y,w=24,h=32){
  if(coinRewards){
   const size=Math.min(w,h)*1.14;

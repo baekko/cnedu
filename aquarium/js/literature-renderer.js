@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {CAST} from './literature-layout.js';
 import {drawLiteratureWork} from './literature-work.js';
 import {hasSource} from './clue-order.js';
@@ -34,7 +34,7 @@ export class LiteratureRenderer{
   const gl=c.createLinearGradient(-17,-40,18,0);gl.addColorStop(0,'#b6e0de50');gl.addColorStop(.5,'#efffff18');gl.addColorStop(1,'#9bc7d369');c.fillStyle=gl;c.beginPath();c.moveTo(-16,-2);c.lineTo(-16,-31);c.bezierCurveTo(-16,-53,16,-53,16,-31);c.lineTo(16,-2);c.quadraticCurveTo(0,6,-16,-2);c.fill();stroke(c,'#d3e6df',1.2);line(c,-11,-29,-11,-12,'#f9ffedb0',2);c.restore();
  }
  rose(c,x,y,t,covered){if(covered){this.glass(c,x,y,1.25,true);return;}shadow(c,x,y,16);c.save();c.translate(x,y);c.rotate(Math.sin(t)*.018);this.sprite(c,'prop-rose',0,0,29,true);c.restore();}
- card(c,id,x,y,t,pickup=false){const yy=y-(pickup?34:10)+Math.sin(t*3+id)*2;if(pickup){this.target(c,x,y,t,'단서 줍기');poly(c,[[x-4,y-12],[x+4,y-12],[x,y-6]],'#fff2b3');}else shadow(c,x,y+5,15);drawClueCard(c,x,yy,24,32);}
+ card(c,id,x,y,t,pickup=false){const yy=y-(pickup?34:10)+Math.sin(t*3+id)*2;if(pickup){this.target(c,x,y,t,usesCoinRewards()?'금화 줍기':'단서 줍기');poly(c,[[x-4,y-12],[x+4,y-12],[x,y-6]],'#fff2b3');}else shadow(c,x,y+5,15);drawClueCard(c,x,yy,24,32);}
  progress(c,x,y,n,total){for(let i=0;i<total;i++){oval(c,x+(i-(total-1)/2)*12,y,3.5,3.5,i<n?'#6c9d82':'#ede1c1');c.strokeStyle='#b69b69';c.lineWidth=.65;c.stroke();}}
  sword(c,x,y,a,size=55){c.save();c.translate(x,y);c.rotate(a);line(c,0,0,size,0,'#74878b',3);line(c,1,-.9,size,-.9,'#ebf2e8',1.4);poly(c,[[size,-1.5],[size+7,0],[size,1.5]],'#dbe8e4');line(c,2,-7,2,7,'#b39255',2);line(c,-9,0,0,0,'#775c45',3);oval(c,-11,0,2,2,'#c6a66a');c.restore();}
  npc(c,key,x,y,h,t=0){this.depth(c,y,()=>{const im=this.images[key],w=h*im.width/im.height;shadow(c,x,y,w*.3);c.save();c.translate(x,y);c.drawImage(im,-w/2,-h,w,h);c.restore();});}
@@ -198,7 +198,7 @@ export class LiteratureRenderer{
   const layers=this.layers;this.layers=null;layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.paint();
   if(i===1&&!s.solved)this.target(c,raftPoint.x,raftPoint.y,s.time,'나무 전달');
   if(i===5)this.tentacles(c,s);
-  if(s.solved){const thanks={0:[239,99,'장미를 지켜 줘서 고마워!'],1:[272,346,'뗏목을 도와줘서 고마워!'],2:[80,169,'같이 잡아 줘서 고맙구나!'],3:[266,149,'이런 소매를 꿈꿨어. 고마워!'],6:[142,62,'자유롭게 해 줘서 고마워!'],8:[85,102,'단서를 찾아 줘서 고맙네!']}[i];if(thanks)this.thanks(c,...thanks);}
+  if(s.solved){const thanks={0:[239,99,'장미를 지켜 줘서 고마워!'],1:[272,346,'뗏목을 도와줘서 고마워!'],2:[80,169,'같이 잡아 줘서 고맙구나!'],3:[266,149,'이런 소매를 꿈꿨어. 고마워!'],6:[142,62,'자유롭게 해 줘서 고마워!'],8:[85,102,usesCoinRewards()?'금화를 찾아 줘서 고맙네!':'단서를 찾아 줘서 고맙네!']}[i];if(thanks)this.thanks(c,...thanks);}
   if(i>0){const p=BACK_PORTAL;c.save();c.strokeStyle='#e5b84d';c.lineWidth=2;c.setLineDash([5,4]);c.lineDashOffset=s.time*7;c.beginPath();c.ellipse(p.x,p.y,23,11,0,0,TAU);c.stroke();c.setLineDash([]);poly(c,[[p.x-6,p.y-3],[p.x,p.y+4],[p.x+6,p.y-3]],'#e8c766');text(c,'이전',p.x+38,p.y,10,'#486d68');c.restore();}
   if(s.card&&!hasSource(g,i+1))this.card(c,s.card.id,s.card.x,s.card.y-roomBase(i),g.elapsed,true);
   c.restore();

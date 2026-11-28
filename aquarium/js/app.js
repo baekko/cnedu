@@ -28,6 +28,7 @@ import {CONSERVATION,ConservationGame} from './conservation-core.js?v268';
 import {ConservationRenderer,loadConservationAssets} from './conservation-renderer.js?v268';
 import {WorkshopUI} from './workshop-ui.js';
 import {instructionHTML} from './instructions.js?v304';
+import {arcadeCopy} from './arcade-copy.js?v315';
 import {briefingCopy} from './briefing-copy.js?v304';
 import {restoreSources} from './clue-order.js';
 import {CLUE_CARD_URL,cardPositionLabel,setCoinRewards} from './clue-card-art.js?v245';
@@ -93,7 +94,7 @@ import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './ren
 import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v307';
 import { loadMotion, SpritePlayer } from './motions.js';
 
-import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v295';
+import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME,POINTS_PER_COIN,coinPoints} from './arcade-run.js?v295';
 import {ARCADE_SCREENS,drawArcadeMap,drawArcadeRecords,fillArcadeRecords,drawArcadeResult,showArcadeStatus,showArcadeShareStatus,popArcadeCoins} from './arcade-view.js?v295';
 import {drawArcadeChoices} from './arcade-choice-view.js?v268';
 import {drawPlaceEntry} from './place-entry-view.js?v311';
@@ -314,10 +315,8 @@ function setState(next) {
     $('brief-lead').textContent=arcadeMode&&isExchange()
       ?'다섯 번 투자하고 마지막 자본 300만 원당 금화 한 개를 얻어요.'
       :arcadeRewardText(copy.lead);
-    const list=gameInstructionList;
-    const rows=instructionHTML(activePlace,{coins:!!arcadeMode});
-    list.innerHTML=arcadeRewardText(rows);
-    applyIcons(list);
+    gameInstructionList.innerHTML=instructionHTML(activePlace,{coins:!!arcadeMode});
+    applyIcons(gameInstructionList);
   }
   if(state==='tutorial'&&next!=='tutorial'){playLesson?.chrome?.destroy();playLesson?.hospital?.host.remove();playLesson=null;$('tutorial-finance').replaceChildren();}
   dessertFinish?.render(game,false);
@@ -453,10 +452,7 @@ function cancelCharacterName(){
 }
 $('name-cancel').addEventListener('click',cancelCharacterName);
 function arcadeRewardText(text){
- if(!arcadeMode||isPursuit())return text;
- if(isGym())text=text.replace(/카드(?=\s*(?:줍기|를 주우세요))/g,'금화');
- return text.replace(/단서\s*카드|단서/g,'금화')
-  .replace(/(금화\s*(?:\d+|아홉|세|두|한)\s*)장(을)?/g,(_,amount,objectParticle)=>amount+(objectParticle?'개를':'개'));
+ return arcadeMode?arcadeCopy(text,activePlace):text;
 }
 function focusArcade(){
  document.getElementById('arcade-title')?.focus({preventScroll:true});
@@ -706,7 +702,7 @@ function showArcadeResult(result){
  setState('arcade-result');updateArcadeShareStatus();focusArcade();
 }
 function arcadeScoreHTML(){
- return `<div class="score-summary"><span>챌린지 누적<strong>${arcadeRuns.total}<small> / ${arcadeRuns.maximum}점</small></strong></span><span>이번 게임<strong>${arcadeCoins}<small> / 9점</small></strong></span></div><p class="panel-note">금화 한 개는 기록에서 1점이에요.</p>`;
+ return `<div class="score-summary"><span>챌린지 누적<strong>${coinPoints(arcadeRuns.total)}<small> / ${coinPoints(arcadeRuns.maximum)}점</small></strong></span><span>이번 게임<strong>${coinPoints(arcadeCoins)}<small> / ${coinPoints(COINS_PER_GAME)}점</small></strong></span></div><p class="panel-note">금화 한 개는 ${POINTS_PER_COIN}점이에요.</p>`;
 }
 function prepareArcadeTicket(){
  const run=arcadeRuns.run;
@@ -834,6 +830,7 @@ $('name-form').addEventListener('submit',async event=>{
   Promise.all(['correct','wrong'].map(action=>loadMotion(character,action))).catch(()=>{});
 });
 const hospitalUI=new HospitalUI($('hospital-overlay'),{
+ totalHost:$('history-era').parentElement,
  onChange(){clearInput();hud();},
 });
 let dessertFinish=null;
@@ -866,7 +863,7 @@ function hud() {
   if(isMonastery()){
     $('history-era').textContent=(game.zoneIndex+1)+' / 3';$('pilot-label').textContent=character.name+' · '+game.zone.name;
     $('monastery-balance').disabled=state!=='playing'||!game.held||game.retryLeft>0;$('monastery-balance').setAttribute('aria-pressed',String(game.balancing));$('monastery-balance').classList.toggle('action-ready',game.balancing);
-    $('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.toggle('danger',Math.abs(game.angle)>.85||game.retryLeft>0);
+    $('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.toggle('danger',Math.abs(game.angle)>.85||game.retryLeft>0);
     for(const dir of ['up','down'])document.querySelector('.dir.'+dir).disabled=state!=='playing';
     $('ocean').setAttribute('aria-label','사찰 연등 행렬 · '+game.zone.name+' · '+(game.lane<.5?'안쪽 길':'바깥쪽 길')+' · 걸어 둔 연등 '+game.banked.size+'/9 · '+(game.held?'연등 운반 중 · 안정도 '+Math.round(game.stability*100)+'%':'빈손')+' · '+(game.wind.phase==='gust'?'바람 부는 중':game.wind.phase==='warning'?'바람 예고':'잔잔함'));
   }
@@ -885,25 +882,25 @@ function hud() {
     $('interact-button').disabled=state!=='playing'||!game.interaction;
     $('interact-button').textContent=game.interaction?.startsWith('하차')?'하차':'탑승';
     const text=phase==='intro'?'박물관을 둘러보세요.':phase==='ready'?'타임머신에 탑승하세요':phase==='docked'?`${game.era.name} 도착! 하차해 주세요.`:phase==='explore'?(remaining<=5?'서둘러 타임머신으로 돌아오세요!':`${game.era.name} · 단서 3개를 찾아 돌아오세요`):phase==='boarding'?'의자에 앉아 출발을 준비해요':phase==='disembarking'?'문이 열리면 계단으로 내려와요':phase==='travel'?`시간 여행 중 · ${Math.max(1,Math.ceil(5-game.phaseTime))}초`:phase==='returned'?'박물관으로 무사히 돌아왔어요!':'';
-    $('history-message').textContent=text;$('history-message').hidden=!text||!['playing','countdown'].includes(state);
+    $('history-message').textContent=arcadeRewardText(text);$('history-message').hidden=!text||!['playing','countdown'].includes(state);
     $('history-message').classList.toggle('danger',phase==='explore'&&remaining<=5);
   }
   const fishingCue=isLiterature()&&state==='playing'?game.fishingCue:null;
   for(const dir of ['left','right'])document.querySelector('.dir.'+dir).classList.toggle('fishing-brace',fishingCue?.mode==='brace'&&fishingCue.direction===dir);
   $('literature-act').classList.toggle('fishing-reel',fishingCue?.mode==='reel');
-  if(isLiterature()){$('pilot-label').textContent=character.name+' · 명작 둘러보기';$('literature-act').textContent=game.actionLabel;$('literature-act').disabled=state!=='playing'||!game.canMove||!!game.scene.job;$('literature-act').classList.toggle('action-ready',game.nearAction&&game.canMove);$('literature-act').setAttribute('aria-label',game.actionLabel);$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
-  if(isAI()){const aim=game.target,shots=game.order.slots.map(k=>game.photos[k]?LABELS[game.photos[k].kind]:'빈칸'),inf=game.phase==='infer';const tune=$('ai-tunes');tune.hidden=state!=='playing'||!inf;if(inf){for(const b of tune.children){const ch=Number(b.dataset.ch),n=Number(b.dataset.level);b.hidden=ch===1&&!game.photos.ink;const label=ch?ENV_WORDS[n]:POWER_WORDS[game.photos.part.kind][n];if(b.textContent!==label)b.textContent=label;const pressed=String((ch?game.draft.inkLevel:game.draft.powerLevel)===n);if(b.getAttribute('aria-pressed')!==pressed)b.setAttribute('aria-pressed',pressed);}}$('ai-original').hidden=!inf;$('ai-original').disabled=state!=='playing'||!inf;$('ai-act').disabled=state!=='playing'||!game.canAct;$('ai-act').classList.toggle('action-ready',game.canAct&&(!!aim||inf));$('ai-act').textContent=game.actionLabel;$('ai-act').setAttribute('aria-label',game.actionLabel);$('pilot-label').textContent=character.name+' · 생성 연구실';$('history-era').textContent=(game.orderIndex+1)+' / 9';$('history-message').hidden=true;$('ocean').setAttribute('aria-label','AI상상출력실 · 의뢰 '+(game.orderIndex+1)+' '+game.order.title+' · 원본 '+game.order.slots.map(s=>LABELS[game.reference[s]]).join(' + ')+' · 단서 '+game.banked.size+'/9 · '+({collect:'특징 스캔 · 벽 모니터에 주문 표시',infer:'생성 초안',print:'생성 결과',complete:'완료'}[game.phase])+' · 가까운 대상 '+(aim?aim.type==='press'?'생성 코어':LABELS[aim.kind]:'없음')+' · 입력 '+shots.join(', ')+(inf?' · 동작 '+(game.draft.powerLevel+1)+(game.draft.ink?' · 효과 '+(game.draft.inkLevel+1):''):''));}
-  if(isZoo()){$('ocean').setAttribute('aria-label',game.active.spec.name+' 먹이 '+game.active.fed+'/2 · 각도 '+Math.round(game.angle)+'도 · 던진 먹이 '+game.throwCount+'개');$('history-era').textContent=(game.room+1)+' / 9';$('pilot-label').textContent=character.name+' · '+ZOO_ZONES[game.zone];$('zoo-act').disabled=state!=='playing'||(!game.canThrow&&!game.charging);$('zoo-act').classList.toggle('action-ready',game.charging);$('zoo-act').setAttribute('aria-label',game.charging?'손을 떼면 먹이 던지기':'누르고 힘을 모아 먹이 던지기');$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
-  if(isDream()){$('history-era').textContent=(game.room+1)+' / 3';$('pilot-label').textContent=character.name+' · '+DREAM_ROOMS[game.room];$('dream-act').disabled=state!=='playing'||!game.canShift;$('dream-jump').disabled=state!=='playing'||!game.canJump;$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isLiterature()){$('pilot-label').textContent=character.name+' · 명작 둘러보기';$('literature-act').textContent=game.actionLabel;$('literature-act').disabled=state!=='playing'||!game.canMove||!!game.scene.job;$('literature-act').classList.toggle('action-ready',game.nearAction&&game.canMove);$('literature-act').setAttribute('aria-label',game.actionLabel);$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isAI()){const aim=game.target,shots=game.order.slots.map(k=>game.photos[k]?LABELS[game.photos[k].kind]:'빈칸'),inf=game.phase==='infer';const tune=$('ai-tunes');tune.hidden=state!=='playing'||!inf;if(inf){for(const b of tune.children){const ch=Number(b.dataset.ch),n=Number(b.dataset.level);b.hidden=ch===1&&!game.photos.ink;const label=ch?ENV_WORDS[n]:POWER_WORDS[game.photos.part.kind][n];if(b.textContent!==label)b.textContent=label;const pressed=String((ch?game.draft.inkLevel:game.draft.powerLevel)===n);if(b.getAttribute('aria-pressed')!==pressed)b.setAttribute('aria-pressed',pressed);}}$('ai-original').hidden=!inf;$('ai-original').disabled=state!=='playing'||!inf;$('ai-act').disabled=state!=='playing'||!game.canAct;$('ai-act').classList.toggle('action-ready',game.canAct&&(!!aim||inf));$('ai-act').textContent=game.actionLabel;$('ai-act').setAttribute('aria-label',game.actionLabel);$('pilot-label').textContent=character.name+' · 생성 연구실';$('history-era').textContent=(game.orderIndex+1)+' / 9';$('history-message').hidden=true;$('ocean').setAttribute('aria-label','AI상상출력실 · 의뢰 '+(game.orderIndex+1)+' '+game.order.title+' · 원본 '+game.order.slots.map(s=>LABELS[game.reference[s]]).join(' + ')+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9 · '+({collect:'특징 스캔 · 벽 모니터에 주문 표시',infer:'생성 초안',print:'생성 결과',complete:'완료'}[game.phase])+' · 가까운 대상 '+(aim?aim.type==='press'?'생성 코어':LABELS[aim.kind]:'없음')+' · 입력 '+shots.join(', ')+(inf?' · 동작 '+(game.draft.powerLevel+1)+(game.draft.ink?' · 효과 '+(game.draft.inkLevel+1):''):''));}
+  if(isZoo()){$('ocean').setAttribute('aria-label',game.active.spec.name+' 먹이 '+game.active.fed+'/2 · 각도 '+Math.round(game.angle)+'도 · 던진 먹이 '+game.throwCount+'개');$('history-era').textContent=(game.room+1)+' / 9';$('pilot-label').textContent=character.name+' · '+ZOO_ZONES[game.zone];$('zoo-act').disabled=state!=='playing'||(!game.canThrow&&!game.charging);$('zoo-act').classList.toggle('action-ready',game.charging);$('zoo-act').setAttribute('aria-label',game.charging?'손을 떼면 먹이 던지기':'누르고 힘을 모아 먹이 던지기');$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isDream()){$('history-era').textContent=(game.room+1)+' / 3';$('pilot-label').textContent=character.name+' · '+DREAM_ROOMS[game.room];$('dream-act').disabled=state!=='playing'||!game.canShift;$('dream-jump').disabled=state!=='playing'||!game.canJump;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
   dessertFinish?.render(game,isDessert()&&state==='playing');
-  if(isDetective()){$('pilot-label').textContent=character.name+' · '+game.room.name;$('detective-act').textContent=game.actionLabel;$('detective-act').disabled=state!=='playing'||!game.canAct;$('detective-act').setAttribute('aria-label','누르고 조사하기');$('detective-hide').textContent=game.hidden?'나오기':'숨기';$('detective-hide').setAttribute('aria-label',game.hidden?'가구에서 나오기':'가구 뒤에 숨기');$('detective-hide').disabled=state!=='playing'||!game.canHide;$('detective-hide').classList.toggle('action-ready',game.canHide);$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing';$('history-message').classList.toggle('danger',game.suspicion>.5);$('ocean').setAttribute('aria-label','탐정사무소 · '+game.room.name+' · 이 방 증거 '+game.roomCollected+'/3 · 모은 단서 '+game.banked.size+'/9 · '+(game.hidden?'숨는 중':'이동 중')+' · '+(game.pursued?'추격 또는 수색 중':'순찰 중')+' · 경계 '+Math.round(game.suspicion*100)+'퍼센트');}
-  if(isDessert()){$('history-era').textContent=game.handLabel;$('pilot-label').textContent=character.name+' · 오븐 대소동';$('dessert-act').textContent=game.actionLabel;$('dessert-act').disabled=state!=='playing'||!game.canAct;$('dessert-act').setAttribute('aria-label',game.actionLabel);$('dessert-act').classList.toggle('action-ready',game.target&&['ready','finishing'].includes(game.ovens[game.target.id].status)&&game.canAct);$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!!game.finishing||!game.prompt;$('history-message').classList.remove('danger');$('ocean').setAttribute('aria-label','디저트 공방 · '+PASTRIES.map(p=>p.name+' '+game.delivered[p.id]+'/3').join(', ')+' · 단서 '+game.banked.size+'/9 · '+game.ovens.map(o=>PASTRIES[o.id].name+' '+({baking:'굽는 중',ready:'꺼낼 때',burnt:'새 반죽 교체 중',cooling:'자동 포장',finishing:'장식 대기',done:'완료'}[o.status])).join(' · '));}
+  if(isDetective()){$('pilot-label').textContent=character.name+' · '+game.room.name;$('detective-act').textContent=game.actionLabel;$('detective-act').disabled=state!=='playing'||!game.canAct;$('detective-act').setAttribute('aria-label','누르고 조사하기');$('detective-hide').textContent=game.hidden?'나오기':'숨기';$('detective-hide').setAttribute('aria-label',game.hidden?'가구에서 나오기':'가구 뒤에 숨기');$('detective-hide').disabled=state!=='playing'||!game.canHide;$('detective-hide').classList.toggle('action-ready',game.canHide);$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing';$('history-message').classList.toggle('danger',game.suspicion>.5);$('ocean').setAttribute('aria-label','탐정사무소 · '+game.room.name+' · 이 방 증거 '+game.roomCollected+'/3'+(arcadeMode?' · 모은 금화 ':' · 모은 단서 ')+game.banked.size+'/9 · '+(game.hidden?'숨는 중':'이동 중')+' · '+(game.pursued?'추격 또는 수색 중':'순찰 중')+' · 경계 '+Math.round(game.suspicion*100)+'퍼센트');}
+  if(isDessert()){$('history-era').textContent=game.handLabel;$('pilot-label').textContent=character.name+' · 오븐 대소동';$('dessert-act').textContent=game.actionLabel;$('dessert-act').disabled=state!=='playing'||!game.canAct;$('dessert-act').setAttribute('aria-label',game.actionLabel);$('dessert-act').classList.toggle('action-ready',game.target&&['ready','finishing'].includes(game.ovens[game.target.id].status)&&game.canAct);$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!!game.finishing||!game.prompt;$('history-message').classList.remove('danger');$('ocean').setAttribute('aria-label','디저트 공방 · '+PASTRIES.map(p=>p.name+' '+game.delivered[p.id]+'/3').join(', ')+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9 · '+game.ovens.map(o=>PASTRIES[o.id].name+' '+({baking:'굽는 중',ready:'꺼낼 때',burnt:'새 반죽 교체 중',cooling:'자동 포장',finishing:'장식 대기',done:'완료'}[o.status])).join(' · '));}
 
-  if(isNewspaper()){$('history-era').textContent=game.packed?'사진 + 제목':game.held?(game.held.kind==='photo'?'사진':'제목'):game.bagActive?'가방 준비':'빈손';$('pilot-label').textContent=character.name+' · 신문 편집';$('newspaper-act').textContent=game.actionLabel;$('newspaper-act').disabled=state!=='playing'||!game.canMove||!!game.motion||game.actionWait>0;$('newspaper-act').setAttribute('aria-label',game.actionLabel==='인쇄'?'완성한 기사 인쇄':'사진·제목 집기 또는 배치');$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
-  if(isLanguage()){$('history-era').textContent=(game.room+1)+' / 3';$('pilot-label').textContent=character.name+' · '+LAB_ROOMS[game.room];$('language-act').textContent=game.actionLabel;$('language-act').disabled=state!=='playing'||!game.canMove||game.actionWait>0||game.player.climbing;$('language-act').setAttribute('aria-label',game.held?'글자 던지기':'글자 집기');$('language-jump').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
-  if(isWriter()){$('history-era').textContent=(game.chapter+1)+' / '+STORIES.length;$('pilot-label').textContent=character.name+' · 이야기 둘러보기';$('writer-act').textContent=game.actionLabel;$('writer-act').classList.toggle('three-letters',game.actionLabel.length>2);$('writer-act').disabled=state!=='playing'||!game.canAct;$('writer-act').setAttribute('aria-label',game.chapter===0?(game.player.hidden?'집에서 나오기':'집 안에 숨기'):game.chapter===1?'크기 바꾸기':game.chapter===2?(game.player.flying?'비행 끝내기':'비행 시작'):game.chapter===3?'피노키오에게 거짓말하기':'이 구간은 방향키를 사용해요');$('writer-jump').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
-  if(isSpace()){$('history-era').textContent=game.phase==='depart'?'출발 중':game.stunLeft>0?'회전 중':'안정';$('pilot-label').textContent=character.name+' · 우주유영';$('brake-button').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
-  if(isRobot()){$('history-era').textContent=game.held?partInfo(game.held.kind).name:game.job?'작업 중':'빈손';$('pilot-label').textContent=character.name+' · 로봇 수리';$('work-button').disabled=state!=='playing'||!game.canMove||game.actionWait>0;$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isNewspaper()){$('history-era').textContent=game.packed?'사진 + 제목':game.held?(game.held.kind==='photo'?'사진':'제목'):game.bagActive?'가방 준비':'빈손';$('pilot-label').textContent=character.name+' · 신문 편집';$('newspaper-act').textContent=game.actionLabel;$('newspaper-act').disabled=state!=='playing'||!game.canMove||!!game.motion||game.actionWait>0;$('newspaper-act').setAttribute('aria-label',game.actionLabel==='인쇄'?'완성한 기사 인쇄':'사진·제목 집기 또는 배치');$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isLanguage()){$('history-era').textContent=(game.room+1)+' / 3';$('pilot-label').textContent=character.name+' · '+LAB_ROOMS[game.room];$('language-act').textContent=game.actionLabel;$('language-act').disabled=state!=='playing'||!game.canMove||game.actionWait>0||game.player.climbing;$('language-act').setAttribute('aria-label',game.held?'글자 던지기':'글자 집기');$('language-jump').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isWriter()){$('history-era').textContent=(game.chapter+1)+' / '+STORIES.length;$('pilot-label').textContent=character.name+' · 이야기 둘러보기';$('writer-act').textContent=game.actionLabel;$('writer-act').classList.toggle('three-letters',game.actionLabel.length>2);$('writer-act').disabled=state!=='playing'||!game.canAct;$('writer-act').setAttribute('aria-label',game.chapter===0?(game.player.hidden?'집에서 나오기':'집 안에 숨기'):game.chapter===1?'크기 바꾸기':game.chapter===2?(game.player.flying?'비행 끝내기':'비행 시작'):game.chapter===3?'피노키오에게 거짓말하기':'이 구간은 방향키를 사용해요');$('writer-jump').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isSpace()){$('history-era').textContent=game.phase==='depart'?'출발 중':game.stunLeft>0?'회전 중':'안정';$('pilot-label').textContent=character.name+' · 우주유영';$('brake-button').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
+  if(isRobot()){$('history-era').textContent=game.held?partInfo(game.held.kind).name:game.job?'작업 중':'빈손';$('pilot-label').textContent=character.name+' · 로봇 수리';$('work-button').disabled=state!=='playing'||!game.canMove||game.actionWait>0;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
   if(isTemple()){$('history-era').textContent=game.delays+'회';$('pilot-label').textContent=`${character.name} · ${game.zone.name}`;$('interact-button').disabled=state!=='playing'||!game.interaction;$('interact-button').textContent=game.interaction||'탑승';$('health-value').setAttribute('aria-label',`체력 ${game.health}칸`);for(const direction of ['left','up'])document.querySelector('.dir.'+direction).classList.toggle('temple-brace',state==='playing'&&game.windActive);}
   $('flash-button').disabled=state!=='playing'||game.flashes===0||(isPhoto()&&(!!game.autoShot||!game.target))||(activePlace==='garden'&&!game.canCallGardener)||(activePlace==='datacenter'&&!game.canCleanVirus)||(activePlace==='conservation'&&(game.book.protected||game.book.done))||(isMonastery()&&!game.canShield)||((isSpace()||isWriter())&&!game.canRecover)||(isLiterature()&&!game.canShield)||((isRobot()||isLanguage())&&!game.canMagnet)||(isDetective()&&!game.canDecoy)||(isDessert()&&!game.canFreeze)||(isNewspaper()&&!game.canUseBag)||(isAI()&&!game.canAutoMatch)||(isZoo()&&!game.canShield)||(isDream()&&!game.canErase)||(isTemple()&&!game.canShield)||((isMuseum()||isGym())&&game.freezeLeft>0)||(isHistory()&&(game.phase!=='explore'||game.boostLeft>0));
 }
@@ -1043,7 +1040,7 @@ function beginCountdown(target=isExchange()?'exchange':'playing') {
   unlockAudio();countdownLeft=3;lastCount=3;lastFrame=performance.now();
   $('count-number').textContent='3';$('count-number').classList.remove('pop');void $('count-number').offsetWidth;$('count-number').classList.add('pop');
   $('countdown').querySelector('span').textContent=isHospital()?`${game.room+1}차 동물 세기`:isPostal()?`${game.room+1}차 배달 시작`:'게임을 시작해요!';
-  $('countdown').querySelector('p').textContent=isHospital()?'병원을 둘러볼 준비를 해요':isPursuit()?'그림 단서를 살펴볼 준비를 해요':isMemory()?'원본 그림을 볼 준비를 해요':isCinema()?'영화 장면을 살펴보세요':isMonastery()?'연등을 받아 걸이까지 운반해요':isCityHall()?'정책을 선택할 준비를 해요':'방향키에 손을 올려 주세요';
+  $('countdown').querySelector('p').textContent=arcadeRewardText(isHospital()?'병원을 둘러볼 준비를 해요':isPursuit()?'그림 단서를 살펴볼 준비를 해요':isMemory()?'원본 그림을 볼 준비를 해요':isCinema()?'영화 장면을 살펴보세요':isMonastery()?'연등을 받아 걸이까지 운반해요':isCityHall()?'정책을 선택할 준비를 해요':'방향키에 손을 올려 주세요');
   setState('countdown');tone(480,.1);
 }
 function resetAdventure(keepPursuitPlan=false){
@@ -1319,6 +1316,9 @@ function presentCompletedRun(result){
 }
 function showPursuitReport(){
  $('pursuit-report-name').textContent=`${character.name} 지리전문수사관님`;
+ const directions=$('pursuit-report-overlay').querySelectorAll('.pursuit-report-orders p');
+ directions[0].textContent=arcadeMode?'수사 자료 세 장을 보고 후보 일곱 곳 중 행선지를 찾으세요.':'그림 단서 세 장으로 후보 일곱 곳 중 행선지를 찾으세요.';
+ directions[1].textContent=arcadeMode?'행선지를 맞히면 현지 수사팀이 다음 수사 자료를 보냅니다.':'행선지를 맞히면 현지 수사팀이 다음 단서를 보냅니다.';
  setState('pursuit-report');hud();
  $('pursuit-report-title').focus({preventScroll:true});
 }
@@ -1348,11 +1348,11 @@ function presentFailure(){
   const rec=runRecord();if(rec){rec.phase='briefing';rec.survived=false;rec.elapsed=0;persistJourney();}
   $('failure-title').textContent=endReason==='leave'?'게임을 중단했어요':isMuseum()?'물감에 뒤덮였어요!':'잠수함이 부서졌어요!';
   $('failure-message').textContent=isMuseum()&&game.hitColor?`${COLORS[game.hitColor-1].name} 몬스터에 닿았어요. 다시 도전해 주세요.`:'다시 도전하거나 지난 장소를 골라요.';
-  if(isHistory()){ $('failure-title').textContent=endReason==='leave'?'게임을 중단했어요':game.failureReason==='timeout'?'타임머신을 놓쳤어요!':'붙잡히고 말았어요!';$('failure-message').textContent='박물관에서 다시 시작해요. 이번 여행의 단서는 초기화됩니다.';$('history-message').hidden=true;}
+  if(isHistory()){ $('failure-title').textContent=endReason==='leave'?'게임을 중단했어요':game.failureReason==='timeout'?'타임머신을 놓쳤어요!':'붙잡히고 말았어요!';$('failure-message').textContent=arcadeRewardText('박물관에서 다시 시작해요. 이번 여행의 단서는 초기화됩니다.');$('history-message').hidden=true;}
   if(isTemple()){$('failure-title').textContent=endReason==='leave'?'게임을 중단했어요':game.failureReason==='timeout'?'귀환 시간이 지났어요':'귀환에 실패했어요';$('failure-message').textContent='신전에서 다시 출발해요. 공격의 예고를 보고 피해 보세요.';}
   if(isLanguage()){$('failure-title').textContent='언어 실험을 중단했어요';$('failure-message').textContent='다시 도전하면 첫 번째 실험실부터 시작해요.';$('history-message').hidden=true;}
   if(isWriter()){$('failure-title').textContent='이야기 속 도전을 중단했어요';$('failure-message').textContent='다시 도전하면 첫 번째 이야기부터 시작해요.';$('history-message').hidden=true;}
-  if(isSpace()){$('failure-title').textContent='우주유영을 중단했어요';$('failure-message').textContent='다시 도전하면 단서를 처음부터 모아요.';$('history-message').hidden=true;}
+  if(isSpace()){$('failure-title').textContent='우주유영을 중단했어요';$('failure-message').textContent=arcadeRewardText('다시 도전하면 단서를 처음부터 모아요.');$('history-message').hidden=true;}
   if(isAI()){$('failure-title').textContent='출력을 중단했어요';$('failure-message').textContent='다시 도전하거나 지난 장소를 골라요.';$('history-message').hidden=true;}
   if(isLiterature()){$('failure-title').textContent='문학관 게임을 중단했어요';$('failure-message').textContent='다시 도전하거나 지난 장소를 골라요.';$('history-message').hidden=true;}
   if(isZoo()){$('failure-title').textContent='동물원 게임을 중단했어요';$('failure-message').textContent='다시 도전하거나 지난 장소를 골라요.';$('history-message').hidden=true;}
@@ -1361,7 +1361,7 @@ function presentFailure(){
   if(isDetective()){$('failure-title').textContent='조사를 중단했어요';$('failure-message').textContent='탐정사무소에서 새 조사로 다시 시작할 수 있어요.';}
   if(isDessert()){$('failure-title').textContent='디저트 만들기를 중단했어요';$('failure-message').textContent='다시 도전하면 세 오븐이 처음부터 굽기 시작해요.';$('history-message').hidden=true;}
   if(isNewspaper()){$('failure-title').textContent='신문 편집을 중단했어요';$('failure-message').textContent='다시 도전하면 새 기사로 시작해요.';$('history-message').hidden=true;}
-  if(isRobot()){$('failure-title').textContent='수리를 중단했어요';$('failure-message').textContent='다시 도전하면 부품과 단서를 처음부터 모아요.';$('history-message').hidden=true;}
+  if(isRobot()){$('failure-title').textContent='수리를 중단했어요';$('failure-message').textContent=arcadeRewardText('다시 도전하면 부품과 단서를 처음부터 모아요.');$('history-message').hidden=true;}
   if(isPursuit()){
    $('failure-title').textContent='추적을 중단했어요';
    $('failure-message').textContent='다시 도전하면 새로운 도시들을 추적해요.';
@@ -1883,7 +1883,7 @@ async function prepareHistory(){
  $('app').classList.remove('monastery-mode','detective-mode','dessert-mode','ai-mode','zoo-mode','literature-mode','dream-mode','newspaper-mode','language-mode','writer-mode','space-mode','museum-mode','exchange-mode','temple-mode','robot-mode');$('app').classList.add('history-mode');
  syncCurrentPlaceHeaders();document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 03';
  document.querySelector('.health-stat .hud-label').textContent='여행 장소';$('health-value').hidden=true;$('museum-colors').hidden=true;$('history-era').hidden=false;$('history-actions').hidden=false;$('hammer-button').hidden=false;$('museum-actions').hidden=true;
- document.querySelector('.control-label span').textContent='방향키로 이동 · 망치로 단서 찾기';document.querySelector('#flash-button b').textContent='속도업';document.querySelector('.flash-tip').textContent=`5초간 2배 · ${HISTORY.boosts}회 사용 가능`;
+ document.querySelector('.control-label span').textContent=arcadeRewardText('방향키로 이동 · 망치로 단서 찾기');document.querySelector('#flash-button b').textContent='속도업';document.querySelector('.flash-tip').textContent=`5초간 2배 · ${HISTORY.boosts}회 사용 가능`;
  document.querySelector('#pause-overlay .modal-lead').textContent='시간과 적도 함께 멈췄어요.';
  applyIcons(gameInstructionList);
  document.querySelector('.desktop-keys').textContent='방향키 이동 · J/SPACE 망치 · E 탑승/하차 · L 속도업';$('ocean').setAttribute('aria-label','45도 위에서 보는 박물관 시간 여행 게임');$('dpad').setAttribute('aria-label','캐릭터 이동 방향키');$('brief-sub').setAttribute('aria-label',`${character.name}, 타임머신에 탑승한 모습`);
@@ -2153,7 +2153,7 @@ async function prepareSpace(){
  syncCurrentPlaceHeaders();document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 07';document.querySelector('.health-stat .hud-label').textContent='체력';
  $('health-value').hidden=false;$('museum-colors').hidden=true;$('history-era').hidden=true;$('history-message').hidden=true;$('history-actions').hidden=true;$('museum-actions').hidden=true;
  document.querySelector('.control-label span').textContent='방향키로 우주유영';document.querySelector('#flash-button b').textContent='부스터';document.querySelector('.flash-tip').textContent='3초간 속도 1.5배 · 3회 사용 가능';document.querySelector('#pause-overlay .modal-lead').textContent='시간과 우주의 움직임이 함께 멈췄어요.';
- applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='방향키 이동 · SPACE/J 제동 · L 부스터';$('ocean').setAttribute('aria-label','사방으로 펼쳐진 우주정거장에서 단서 카드를 회수하는 게임');$('dpad').setAttribute('aria-label','우주유영 이동 방향키');$('brief-sub').setAttribute('aria-label','선택한 캐릭터가 우주복을 입고 회전하다 자세를 바로잡는 모습');$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
+ applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='방향키 이동 · SPACE/J 제동 · L 부스터';$('ocean').setAttribute('aria-label',arcadeRewardText('사방으로 펼쳐진 우주정거장에서 단서 카드를 회수하는 게임'));$('dpad').setAttribute('aria-label','우주유영 이동 방향키');$('brief-sub').setAttribute('aria-label','선택한 캐릭터가 우주복을 입고 회전하다 자세를 바로잡는 모습');$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
 }
 async function enterSpace(){
  $('museum-enter').disabled=true;$('museum-enter').textContent='우주복을 준비하는 중…';
@@ -2171,7 +2171,7 @@ async function prepareWriter(){
  syncCurrentPlaceHeaders();document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 08';document.querySelector('.health-stat .hud-label').textContent='체력';
  $('health-value').hidden=false;$('museum-colors').hidden=true;$('history-era').hidden=true;$('history-message').hidden=true;$('history-actions').hidden=true;$('museum-actions').hidden=true;
  document.querySelector('.control-label span').textContent='방향키로 이야기 둘러보기';document.querySelector('#flash-button b').textContent='마법 책갈피';document.querySelector('.flash-tip').textContent=`4초 보호막 · ${WRITER.flashes}회 사용 가능`;document.querySelector('#pause-overlay .modal-lead').textContent='시간과 이야기 속 움직임이 함께 멈췄어요.';
- applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='방향키 이동 · SPACE/J/K 점프 · ↑ 콩나무 · E 행동 · L 책갈피';$('ocean').setAttribute('aria-label','동화작가의 방에서 여섯 문학작품 속을 이동하는 게임');$('dpad').setAttribute('aria-label','이야기 속 캐릭터 이동 방향키');$('brief-sub').setAttribute('aria-label','선택한 캐릭터가 펼쳐진 책 위를 달리고 점프하여 단서를 줍는 모습');$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
+ applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='방향키 이동 · SPACE/J/K 점프 · ↑ 콩나무 · E 행동 · L 책갈피';$('ocean').setAttribute('aria-label','동화작가의 방에서 여섯 문학작품 속을 이동하는 게임');$('dpad').setAttribute('aria-label','이야기 속 캐릭터 이동 방향키');$('brief-sub').setAttribute('aria-label',arcadeRewardText('선택한 캐릭터가 펼쳐진 책 위를 달리고 점프하여 단서를 줍는 모습'));$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
 }
 async function enterWriter(){
  $('museum-enter').disabled=true;$('museum-enter').textContent='이야기를 펼치는 중…';
@@ -2227,7 +2227,7 @@ async function prepareDream(){
  syncCurrentPlaceHeaders();document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 11';document.querySelector('.health-stat .hud-label').textContent='체력';
  $('health-value').hidden=false;$('museum-colors').hidden=true;$('history-era').hidden=true;$('history-message').hidden=true;$('history-actions').hidden=true;$('museum-actions').hidden=true;
  document.querySelector('.control-label span').textContent='방향키로 이동';document.querySelector('#flash-button b').textContent='꿈 지우개';document.querySelector('.flash-tip').textContent='앞쪽 장애물을 4초간 지우기 · 1회 사용 가능';document.querySelector('#pause-overlay .modal-lead').textContent='꿈과 게임 시간이 함께 멈췄어요.';
- applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='← → 이동 · SPACE 점프 · J/E 반전 · L 지우개';$('ocean').setAttribute('aria-label','바닥과 천장을 뒤집어 달리며 단서를 찾는 꿈속 게임');$('dpad').setAttribute('aria-label','꿈속 이동 방향키');$('brief-sub').setAttribute('aria-label','선택한 캐릭터가 바닥과 천장을 오가는 모습');$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
+ applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='← → 이동 · SPACE 점프 · J/E 반전 · L 지우개';$('ocean').setAttribute('aria-label',arcadeRewardText('바닥과 천장을 뒤집어 달리며 단서를 찾는 꿈속 게임'));$('dpad').setAttribute('aria-label','꿈속 이동 방향키');$('brief-sub').setAttribute('aria-label','선택한 캐릭터가 바닥과 천장을 오가는 모습');$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
 }
 async function enterDream(){
  $('museum-enter').disabled=true;$('museum-enter').textContent='꿈을 준비하는 중…';
@@ -2466,7 +2466,7 @@ async function prepareField(place){
  $('history-actions').hidden=true;$('museum-actions').hidden=true;$('history-era').hidden=false;$('museum-colors').hidden=true;
  document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · '+(PLACES.findIndex(p=>p.id===place)+1);
  syncCurrentPlaceHeaders();document.querySelector('.health-stat .hud-label').textContent=place==='photo'?'촬영실':place==='garden'?'온실':place==='datacenter'?'전송 중':'작업 종류';
- document.querySelector('.control-label span').textContent=place==='conservation'?'방향키로 도구 이동':'방향키로 이동';document.querySelector('#flash-button b').textContent=spec.item||(place==='photo'?'자동 촬영':'정원사 호출벨');document.querySelector('.flash-tip').textContent=spec.itemTip||(place==='photo'?'피사체를 따라가 자동으로 한 장 촬영 · 1회 사용 가능':'가까운 식물 한 곳을 정원사가 마무리 · 1회 사용 가능');document.querySelector('#pause-overlay .modal-lead').textContent=spec.item?'제한시간과 작업이 함께 멈췄어요.':place==='photo'?'제한시간과 촬영 대상이 함께 멈췄어요.':'제한시간과 온실의 온도가 함께 멈췄어요.';
+ document.querySelector('.control-label span').textContent=place==='conservation'?'방향키로 도구 이동':'방향키로 이동';document.querySelector('#flash-button b').textContent=place==='pursuit'&&arcadeMode?'추가 정보':spec.item||(place==='photo'?'자동 촬영':'정원사 호출벨');document.querySelector('.flash-tip').textContent=spec.itemTip||(place==='photo'?'피사체를 따라가 자동으로 한 장 촬영 · 1회 사용 가능':'가까운 식물 한 곳을 정원사가 마무리 · 1회 사용 가능');document.querySelector('#pause-overlay .modal-lead').textContent=spec.item?'제한시간과 작업이 함께 멈췄어요.':place==='photo'?'제한시간과 촬영 대상이 함께 멈췄어요.':'제한시간과 온실의 온도가 함께 멈췄어요.';
  applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent=spec.item?'방향키 / WASD '+(place==='conservation'?'도구 이동':'이동')+' · SPACE/J/E 작업'+(place==='conservation'?' · R 종이 회전':'')+' · L 아이템':'방향키 / WASD 이동 · SPACE/J/E '+(place==='photo'?'누르고 놓아 촬영':'장치 조작')+(place==='photo'?' · 양옆 출입구로 공간 이동':' · 1/2/3 공간 이동')+' · L 아이템';
  $('dpad').setAttribute('aria-label',spec.name+' 방향키');$('brief-sub').setAttribute('aria-label',spec.name+' 캐릭터');$('answer-input').value='';$('answer-help').textContent='완성한 그림 속 도구의 이름은 무엇일까요?';
  if(place==='gym'){$('history-era').hidden=true;$('health-value').hidden=false;document.querySelector('.health-stat .hud-label').textContent='체력';syncCurrentPlaceHeaders();document.querySelector('.desktop-keys').textContent='방향키 / WASD 이동 · L 타임아웃 휘슬';document.querySelector('#pause-overlay .modal-lead').textContent='제한시간과 공이 함께 멈췄어요.';}
@@ -2475,9 +2475,9 @@ async function prepareField(place){
   $('health-value').hidden=true;
   document.querySelector('.health-stat .hud-label').textContent='추적 단계';
   document.querySelector('.control-label span').textContent='방향키로 지도 핀 선택';
-  document.querySelector('.desktop-keys').textContent='지도 핀 누르기 / 방향키로 선택 · SPACE 비행 · L 추가 단서';
+  document.querySelector('.desktop-keys').textContent='지도 핀 누르기 / 방향키로 선택 · SPACE 비행 · L '+(arcadeMode?'추가 정보':'추가 단서');
   document.querySelector('#pause-overlay .modal-lead').textContent='추적을 잠시 멈췄어요. 이어서 남은 비행 기회를 사용할 수 있어요.';
-  $('brief-sub').setAttribute('aria-label',character.name+'의 국제수사본부. 그림 단서와 일곱 후보 도시가 표시된 세계 지도');
+  $('brief-sub').setAttribute('aria-label',character.name+'의 국제수사본부. '+(arcadeMode?'수사 자료':'그림 단서')+'와 일곱 후보 도시가 표시된 세계 지도');
  }
  if(place==='memory'){
   $('health-value').hidden=true;document.querySelector('.health-stat .hud-label').textContent='그림';
@@ -2519,7 +2519,7 @@ function cinemaHud(){
  const item=$('flash-button');if(item.dataset.icon!=='filmInfo'){item.dataset.icon='filmInfo';item.querySelector('svg').outerHTML=icon('filmInfo');}
  item.disabled=state!=='playing'||game.flashes<1||game.hintShown||game.phase==='feedback';item.setAttribute('aria-label','영화 정보, '+game.flashes+'회 남음');
  $('field-act').textContent='결정';$('field-act').disabled=state!=='playing'||!game.canAct;$('field-act').setAttribute('aria-label','고른 영화 결정');
- cinemaUI?.render(game,state==='playing');$('ocean').setAttribute('aria-label','영화관 · '+game.statusDescription+' · 모은 단서 '+game.banked.size+'/9'+(game.hintShown?' · '+game.film.hint:''));
+ cinemaUI?.render(game,state==='playing');$('ocean').setAttribute('aria-label','영화관 · '+game.statusDescription+(arcadeMode?' · 모은 금화 ':' · 모은 단서 ')+game.banked.size+'/9'+(game.hintShown?' · '+game.film.hint:''));
 }
 function hospitalHud(){
  const playing=state==='playing', exploring=game.phase==='explore';
@@ -2613,7 +2613,7 @@ function pursuitHud(){
  if(item.dataset.icon!=='memorySearch'){item.dataset.icon='memorySearch';item.querySelector('svg').outerHTML=icon('memorySearch');}
  $('flash-value').textContent=String(game.flashes);
  item.disabled=!playing||!game.canHint;
- item.setAttribute('aria-label','추가 단서, '+game.flashes+'회 남음');
+ item.setAttribute('aria-label',(arcadeMode?'추가 정보':'추가 단서')+', '+game.flashes+'회 남음');
  for(const btn of $('dpad').querySelectorAll('.dir')){
   const direction=btn.dataset.direction;
   const dx=direction==='left'?-1:direction==='right'?1:0;
@@ -2626,11 +2626,11 @@ function pursuitHud(){
  const selection=playing&&game.canAct&&cityName?cityName+' 선택. 비행 버튼을 눌러 출발해요.':'';
  const announcement=[statusText,selection].filter(Boolean).join(' ');
  if(choiceStatus.textContent!==announcement)choiceStatus.textContent=announcement;
- const status=game.phase==='flying'?(game.destination?.name||'목적지')+' 이동 중':game.phase==='arrival'?'도착':game.phase==='complete'?'추적 종료':game.enlargedClue?'그림 단서 확대':(cityName?'선택 도시 '+cityName:'지도에서 핀 선택');
+ const status=game.phase==='flying'?(game.destination?.name||'목적지')+' 이동 중':game.phase==='arrival'?'도착':game.phase==='complete'?'추적 종료':game.enlargedClue?(arcadeMode?'수사 자료 확대':'그림 단서 확대'):(cityName?'선택 도시 '+cityName:'지도에서 핀 선택');
  const remaining=game.phase==='choosing'&&!game.enlargedClue?' · 남은 후보 '+game.choices.length+'곳':'';
  const retry=game.phase==='choosing'&&game.retryNotice?.city?' · '+game.retryNotice.city.name+' 제외':'';
  const report=game.phase==='arrival'&&game.arrival?.correct&&game.round<PURSUIT.rounds?' · 범인은 이미 다른 도시로 달아났어요':'';
- const label='국제수사본부 · 남은 비행 '+game.remainingAttempts+'회 · '+game.round+'/9단계 · '+status+report+retry+remaining+' · 모은 카드 '+game.banked.size+'/9';
+ const label='국제수사본부 · 남은 비행 '+game.remainingAttempts+'회 · '+game.round+'/9단계 · '+status+report+retry+remaining+(arcadeMode?' · 모은 금화 ':' · 모은 카드 ')+game.banked.size+'/9';
  if($('ocean').getAttribute('aria-label')!==label)$('ocean').setAttribute('aria-label',label);
 }
 let pursuitTap=null;
@@ -2668,18 +2668,18 @@ function memoryHud(){
  action.textContent='찾기';action.setAttribute('aria-label','표시한 위치 찾기');
  action.disabled=!playing||!game.canAct;action.classList.toggle('action-ready',!action.disabled);
  for(const btn of $('dpad').querySelectorAll('.dir'))btn.disabled=!playing||!game.canMove;
- $('ocean').setAttribute('aria-label','기억연구소 · 그림 '+(game.room+1)+' / 3 · '+game.statusDescription+' · 기회 '+game.remainingAttempts+'번 · 단서 '+game.banked.size+'/9');
+ $('ocean').setAttribute('aria-label','기억연구소 · 그림 '+(game.room+1)+' / 3 · '+game.statusDescription+' · 기회 '+game.remainingAttempts+'번'+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9');
 }
 function fieldHud(){
- if(isGym()){$('history-era').hidden=true;$('health-value').hidden=false;$('pilot-label').textContent=character.name+' · 피구 코트';$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');$('flash-button').disabled=state!=='playing'||game.flashes<=0||game.freezeLeft>0;$('ocean').setAttribute('aria-label','체육관 피구 · 체력 '+game.health+'칸 · 단서 '+game.banked.size+'/9'+(game.freezeLeft>0?' · 타임아웃 '+game.freezeLeft.toFixed(1)+'초':''));return;}
+ if(isGym()){$('history-era').hidden=true;$('health-value').hidden=false;$('pilot-label').textContent=character.name+' · 피구 코트';$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');$('flash-button').disabled=state!=='playing'||game.flashes<=0||game.freezeLeft>0;$('ocean').setAttribute('aria-label','체육관 피구 · 체력 '+game.health+'칸'+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9'+(game.freezeLeft>0?' · 타임아웃 '+game.freezeLeft.toFixed(1)+'초':''));return;}
 
  if(isWorkshop()){workshopHud();return;}
  const spec=FIELD[activePlace];$('history-era').textContent=(game.room+1)+' / 3';$('pilot-label').textContent=character.name+' · '+spec.rooms[game.room];
  if(!isPhoto()){document.querySelector('#flash-button b').textContent=game.itemLabel;document.querySelector('.flash-tip').textContent=game.itemTip;}else syncCurrentPlaceHeaders();
  $('field-room-name').textContent=spec.rooms[game.room]+(!isPhoto()?'\n'+(game.room===0?'실내 '+game.climate.temperature.toFixed(1)+'℃ · '+game.climate.weather.label:game.room===1?(game.pollen===null?'꽃가루를 받아요':['금빛','분홍','파란'][game.pollen]+' 꽃가루'):'남은 벌레 '+game.bugs.filter(b=>b.hp>0).length):'');for(const b of $('field-room-nav').querySelectorAll('button')){b.setAttribute('aria-pressed',String(Number(b.dataset.fieldRoom)===game.room));b.disabled=state!=='playing';const n=Number(b.dataset.fieldRoom),label=isPhoto()?String(n+1):String(n+1)+'\n'+['온도','꽃가루','해충'][n];if(b.textContent!==label)b.textContent=label;b.setAttribute('aria-label',spec.rooms[n]+' · 자유 이동'+(!isPhoto()&&n===0?' · '+game.rooms[n].temperature.toFixed(1)+'도':''));}
  $('field-act').textContent=game.actionLabel;$('field-act').disabled=state!=='playing'||!!game.autoShot||(!game.canAct&&!game.focusing);$('field-act').classList.toggle('action-ready',isPhoto()?game.focusing&&game.quality().good:game.canAct);$('field-act').setAttribute('aria-label',isPhoto()?(game.autoShot?'자동 촬영 중':game.focusing&&game.quality().good?'촬영 준비 완료 · 손을 떼어 찍기':'누르고 초점 맞춘 뒤 놓아 촬영하기'):game.actionLabel+' · 가까운 화분 또는 온실 장치');
- $('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');
- $('ocean').setAttribute('aria-label',spec.name+' · '+spec.rooms[game.room]+' · 단서 '+game.banked.size+'/9 · '+game.prompt+(isPhoto()?' · 목표 '+(game.target?.name||'촬영실 완료')+' · 초점 '+Math.round(game.focus*100)+'%':' · '+game.statusDescription));
+ $('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');
+ $('ocean').setAttribute('aria-label',spec.name+' · '+spec.rooms[game.room]+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9 · '+arcadeRewardText(game.prompt)+(isPhoto()?' · 목표 '+(game.target?.name||'촬영실 완료')+' · 초점 '+Math.round(game.focus*100)+'%':' · '+game.statusDescription));
 }
 $('field-room-nav').addEventListener('click',e=>{const button=e.target.closest('[data-field-room]');if(!button||!isField()||state!=='playing')return;advanceLiteratureInput();game.goRoom(Number(button.dataset.fieldRoom));hud();});
 $('field-act').addEventListener('pointerdown',e=>{if(!isField()||state!=='playing')return;e.preventDefault();advanceLiteratureInput();unlockAudio();e.currentTarget.setPointerCapture(e.pointerId);game.beginAction();hud();});
@@ -2711,5 +2711,5 @@ $('ocean').addEventListener('pointercancel',()=>{memoryTap=null;});
 
 function workshopHud(){
  const spec=FIELD[activePlace];$('history-era').textContent=activePlace==='datacenter'?game.packets.length+' / 2':['먼지','종이','압착'][game.book.mode];$('pilot-label').textContent=character.name+' · '+(game.file?.name||game.book?.name);document.querySelector('#flash-button b').textContent=game.itemLabel;document.querySelector('.flash-tip').textContent=game.itemTip;
- $('field-act').textContent=game.actionLabel;$('field-act').disabled=state!=='playing'||!game.canAct;$('field-act').setAttribute('aria-label',game.actionLabel);$('field-act').classList.toggle('action-ready',game.holding||!!game.work);$('history-message').textContent=game.prompt;$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');workshopUI.render(game,state==='playing',activePlace);$('ocean').setAttribute('aria-label',spec.name+' · '+game.statusDescription+' · 단서 '+game.banked.size+'/9 · '+game.prompt);
+ $('field-act').textContent=game.actionLabel;$('field-act').disabled=state!=='playing'||!game.canAct;$('field-act').setAttribute('aria-label',game.actionLabel);$('field-act').classList.toggle('action-ready',game.holding||!!game.work);$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');workshopUI.render(game,state==='playing',activePlace);$('ocean').setAttribute('aria-label',spec.name+' · '+game.statusDescription+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9 · '+arcadeRewardText(game.prompt));
 }

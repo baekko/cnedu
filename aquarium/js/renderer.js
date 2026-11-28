@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {beginScene,spriteAnchor,sceneText} from './layout.js';
 import { GAME, CHARACTERS, SHARKS } from './config.js';
 import { alphaMask, masksTouch } from './collision.js';
@@ -159,7 +159,7 @@ export class Renderer {
       }else{
         const colors=fx.type==='hit'?'#fff1d5':fx.type==='heal'?'#d8ffe5':'#fff3c2';
         for(let i=0;i<7;i++){const a=i/7*Math.PI*2;ellipse(c,fx.x+Math.cos(a)*p*40,fx.y+Math.sin(a)*p*40-p*12,2*(1-p)+.5,2*(1-p)+.5,colors);}
-        c.fillStyle=colors;c.textAlign='center';c.font='bold 13px sans-serif';sceneText(c,fx.type==='heal'?'+1':fx.type==='card'?'+1 카드':'',fx.x,fx.y-25-p*20);
+        c.fillStyle=colors;c.textAlign='center';c.font='bold 13px sans-serif';sceneText(c,fx.type==='heal'?'+1':fx.type==='card'&&!usesCoinRewards()?'+1 카드':'',fx.x,fx.y-25-p*20);
       }
       c.restore();
     }

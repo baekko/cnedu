@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {historyMobFrame,HISTORY_MOB_ART} from './history-mob-sprites-v99.js?v307';
 import {beginScene,spriteAnchor,drawRoom,sceneText} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
@@ -50,7 +50,7 @@ export class HistoryRenderer{
   for(const card of game.cards){
    if(card.collected)continue;const bob=Math.sin(time*4+card.id)*2;c.save();spriteAnchor(c,card.x,card.y);c.translate(0,-13+bob);c.rotate(-.07+Math.sin(time*2+card.id)*.035);drawClueCard(c,0,0,26,36);c.restore();
   }
-  for(const e of game.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/.8);if(e.type==='card'){c.fillStyle='#fff';c.font='bold 12px sans-serif';c.textAlign='center';sceneText(c,'+1 단서',e.x,e.y-30-e.age*30);}else{c.fillStyle='#bc945c';for(let i=0;i<8;i++){const a=i*Math.PI/4;c.fillRect(e.x+Math.cos(a)*e.age*35,e.y+Math.sin(a)*e.age*22-10,3,3);}}c.restore();}
+  for(const e of game.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/.8);if(e.type==='card'){c.fillStyle='#fff';c.font='bold 12px sans-serif';c.textAlign='center';if(!usesCoinRewards())sceneText(c,'+1 단서',e.x,e.y-30-e.age*30);}else{c.fillStyle='#bc945c';for(let i=0;i<8;i++){const a=i*Math.PI/4;c.fillRect(e.x+Math.cos(a)*e.age*35,e.y+Math.sin(a)*e.age*22-10,3,3);}}c.restore();}
   if(game.boostLeft>0&&!game.ended){pill(c,118,423,154,24,'#effff6');c.fillStyle='#247575';c.font='bold 11px sans-serif';c.textAlign='center';sceneText(c,`속도 2배 · ${game.boostLeft.toFixed(1)}초`,195,439);}
   c.restore();
  }

@@ -11,27 +11,36 @@
   <script type="importmap">
 {
   "imports": {
+    "./js/ai-renderer.js?v245": "./js/ai-renderer.js?v315",
+    "./js/arcade-run.js?v295": "./js/arcade-run.js?v315",
+    "./js/arcade-view.js?v295": "./js/arcade-view.js?v315",
+    "./js/clue-card-art.js?v245": "./js/clue-card-art.js?v315",
     "./js/config.js": "./js/config.js?v312",
     "./js/config.js?v214": "./js/config.js?v312",
-    "./js/exchange-ui.js?v268": "./js/exchange-ui.js?v312",
+    "./js/detective-core.js": "./js/detective-core.js?v308",
+    "./js/exchange-ui.js?v268": "./js/exchange-ui.js?v315",
+    "./js/gym-core.js?v307": "./js/gym-core.js?v308",
+    "./js/history-core.js?v307": "./js/history-core.js?v312",
+    "./js/history-renderer.js?v307": "./js/history-renderer.js?v315",
+    "./js/hospital-ui.js?v301": "./js/hospital-ui.js?v315",
+    "./js/instructions.js?v304": "./js/instructions.js?v315",
     "./js/layout.js": "./js/layout.js?v313",
     "./js/layout.js?v214": "./js/layout.js?v313",
-    "./js/history-core.js?v307": "./js/history-core.js?v312",
+    "./js/literature-renderer.js?v307": "./js/literature-renderer.js?v315",
     "./js/monastery-core.js?v228": "./js/monastery-core.js?v313",
     "./js/museum-core.js": "./js/museum-core.js?v312",
     "./js/play-tutorials.js?v307": "./js/play-tutorials.js?v313",
-    "./js/detective-core.js": "./js/detective-core.js?v308",
-    "./js/gym-core.js?v307": "./js/gym-core.js?v308",
-    "./js/history-renderer.js?v307": "./js/history-renderer.js?v308",
-    "./js/instructions.js?v304": "./js/instructions.js?v313",
-    "./js/space-renderer.js?v307": "./js/space-renderer.js?v309",
+    "./js/pursuit-renderer.js?v245": "./js/pursuit-renderer.js?v315",
+    "./js/renderer.js?v311": "./js/renderer.js?v315",
+    "./js/space-renderer.js?v307": "./js/space-renderer.js?v315",
     "./js/temple-core.js?v268": "./js/temple-core.js?v309",
     "./js/temple-core.js?v308": "./js/temple-core.js?v309",
-    "./js/temple-renderer.js?v307": "./js/temple-renderer.js?v309",
+    "./js/temple-renderer.js?v307": "./js/temple-renderer.js?v315",
     "./js/tutorial-pages.js?v304": "./js/tutorial-pages.js?v312",
     "./js/writer-core.js?v307": "./js/writer-core.js?v308",
-    "./js/writer-renderer.js?v307": "./js/writer-renderer.js?v310",
-    "./js/zoo-core.js?v=155": "./js/zoo-core.js?v313"
+    "./js/writer-renderer.js?v307": "./js/writer-renderer.js?v315",
+    "./js/zoo-core.js?v=155": "./js/zoo-core.js?v315",
+    "./js/zoo-renderer.js?v313": "./js/zoo-renderer.js?v315"
   }
 }
   </script>
@@ -62,7 +71,7 @@
           <h2 id="arcade-rules-title" tabindex="-1">미니게임 챌린지 방법</h2>
           <div class="instruction-list">
             <div><p><b>게임맵에서 장소 고르기</b><small>원하는 순서로 도전하세요. 챌린지에서는 각 장소에 한 번씩 도전할 수 있어요.</small></p></div>
-            <div><p><b>금화 1개당 1점</b><small>게임마다 최대 9점을 얻어요. 게임 메뉴의 ‘나의 점수’에서 모은 점수를 확인할 수 있어요.</small></p></div>
+            <div><p><b>금화 1개당 10점</b><small>게임마다 금화 9개를 모아 최대 90점을 얻을 수 있어요. 게임 메뉴의 ‘나의 점수’에서 모은 점수를 확인할 수 있어요.</small></p></div>
             <div><p><b>완주하면 기록 저장</b><small>모든 게임을 끝까지 마치면 캐릭터 이름과 점수가 기록실에 저장되고 공유돼요. 창을 닫을 때 진행 중인 게임은 중단으로 남아요.</small></p></div>
             <div><p><b>연습은 원하는 만큼</b><small>‘연습하기’를 누른 뒤 연습할 장소를 고르세요. 챌린지 점수에는 도전에서 모은 금화만 들어가요.</small></p></div>
           </div>
@@ -264,10 +273,10 @@
   <link rel="stylesheet" href="./css/arcade-rules.css?v268">
   <link rel="stylesheet" href="./place-entry-v246.css?v268">
   <link rel="stylesheet" href="./opening-v246.css?v249">
-  <link rel="stylesheet" href="./css/hospital.css?v301">
+  <link rel="stylesheet" href="./css/hospital.css?v315">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v314').catch(async error => {
+    import('./js/app.js?v315').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

@@ -1,13 +1,14 @@
 import {CHARACTERS} from './config.js';
 import {icon} from './icons.js?v245';
 import {placeIcon,placeInfo} from './places.js?v295';
-import {arcadePlaces,arcadePlayer,COINS_PER_GAME} from './arcade-run.js?v295';
+import {arcadePlaces,arcadePlayer,COINS_PER_GAME,POINTS_PER_COIN,coinPoints} from './arcade-run.js?v295';
 import {arcadeMenuButton} from './expedition-shell.js?v295';
 
 export const ARCADE_SCREENS=new Set(['arcade-choice','arcade-map','arcade-records','arcade-result']);
 const root=()=>document.getElementById('arcade-screen');
 const coin='<span class="arcade-coin" aria-hidden="true"></span>';
 const scrollPositions={practice:0,challenge:0};
+const pointTotal=(coins,maximum)=>`${coinPoints(coins)} / ${coinPoints(maximum)}점`;
 
 function button(action,label,{symbol='',primary=false}={}){
  return `<button type="button" class="atlas-button${primary?' atlas-button-primary':''}" data-arcade-action="${action}">${symbol?icon(symbol):''}<span>${label}</span></button>`;
@@ -18,7 +19,7 @@ function heading(title,note='',emblem=''){
 function tally(runs,total){
  return `<div class="atlas-tally">
  <span>완료 <b>${runs.completed} / ${total}</b></span>
- <span>${coin} <b>${runs.total} / ${runs.maximum}점</b></span>
+ <span>${coin} <b>${pointTotal(runs.total,runs.maximum)}</b></span>
  <progress aria-label="도전 완료 수" value="${runs.completed}" max="${total}"></progress>
  </div>`;
 }
@@ -32,14 +33,14 @@ export function drawArcadeMap(mode,runs,{reset=false,notice=''}={}){
  const title=challenge?'미니게임 챌린지':'미니게임 연습하기';
  const finished=challenge&&runs.canRecord;
  const instructions=finished?'모든 게임을 완주했어요.':challenge?'원하는 장소를 골라 한 번씩 도전하세요.':'어느 장소든 골라 연습할 수 있어요.';
- const stats=challenge?`<div class="arcade-tally"><span>완료 <b>${runs.completed} / ${places.length}</b></span><span>${coin} <b>${runs.total} / ${runs.maximum}점</b></span></div>`:'';
+ const stats=challenge?`<div class="arcade-tally"><span>완료 <b>${runs.completed} / ${places.length}</b></span><span>${coin} <b>${pointTotal(runs.total,runs.maximum)}</b></span></div>`:'';
  root().innerHTML=`<header class="arcade-map-header"><div><h1 id="arcade-title" tabindex="-1">${title}</h1><p>${instructions}</p></div>
  <div class="arcade-toolbar">${arcadeMenuButton()}<button type="button" class="arcade-map-switch" data-arcade-action="${challenge?'practice':'challenge'}">${challenge?'연습하기':'챌린지'}</button></div></header>
  ${stats}<p class="arcade-status" role="status" hidden></p>${finished?shareStatus():''}
  <div class="arcade-map-scroll" aria-label="미니게임 지도"><ol class="arcade-map">
  ${places.map((place,index)=>{
   const game=challenge?runs.run.games[place.id]:null;
-  const status=game?(game.abandoned?'중단':game.coins+' / '+COINS_PER_GAME+'점'):String(index+1).padStart(2,'0');
+  const status=game?(game.abandoned?'중단':pointTotal(game.coins,COINS_PER_GAME)):String(index+1).padStart(2,'0');
   return `<li><button type="button" data-arcade-place="${place.id}"${game?' disabled':''}>
   <span class="arcade-map-icon">${placeIcon(place.id)}</span><span class="arcade-map-name">${place.name}</span><small>${status}</small>
   </button></li>`;
@@ -97,7 +98,7 @@ export function fillArcadeRecords(records,message){
    countLabel.textContent=`${count}개 게임`;
    countLabel.hidden=false;
   }
-  article.querySelector('strong').textContent=`${row.score} / ${row.maximum}점`;
+  article.querySelector('strong').textContent=pointTotal(row.score,row.maximum);
   return article;
  });
  list.replaceChildren(...rows);
@@ -115,7 +116,7 @@ export function drawArcadeResult({place,mode,coins,detail,finished},runs){
  root().innerHTML=`<div class="arcade-result atlas-result">
  ${heading(placeInfo(place).name+' 결과')}
  <div class="atlas-result-stamp">
- <div class="atlas-result-score">${coin}<strong>${coins}<small> / ${COINS_PER_GAME}</small></strong><span>모은 금화</span></div>
+ <div class="atlas-result-score">${coin}<strong>${coins}<small> / ${COINS_PER_GAME}</small></strong><span>모은 금화</span><span>${pointTotal(coins,COINS_PER_GAME)}</span></div>
  <div class="atlas-coin-track" aria-hidden="true">${Array.from({length:COINS_PER_GAME},(_,index)=>index<coins?coin:'<span class="atlas-empty-coin"></span>').join('')}</div>
  </div>
  <p class="arcade-status atlas-result-detail" role="status" hidden></p>
@@ -131,7 +132,7 @@ export function popArcadeCoins(count,position){
  const target=document.getElementById('arcade-coin-effects');
  for(let i=0;i<count;i++){
   const effect=document.createElement('span');
-  effect.className='arcade-coin-pop';effect.innerHTML=coin+'<small>+10point</small>';
+  effect.className='arcade-coin-pop';effect.innerHTML=coin+`<small>+${POINTS_PER_COIN}point</small>`;
   effect.style.left=position?.x ?? '50%';effect.style.top=position?.y ?? '36%';
   if(position&&parseFloat(position.x)>target.clientWidth-55)effect.classList.add('arcade-coin-pop-inward');
   effect.style.setProperty('--pop-shift',(i-(count-1)/2)*13+'px');

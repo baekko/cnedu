@@ -32,10 +32,15 @@ function reportField(name) {
 }
 
 export class HospitalUI {
-  constructor(host, {onChange = () => {}, onFinish = () => {}} = {}) {
+  constructor(host, {onChange = () => {}, onFinish = () => {}, totalHost = host} = {}) {
     this.onChange = onChange;
     this.onFinish = onFinish;
     const id = host.id ? `${host.id}-counts` : 'vet-counts';
+    const roundTotal = document.createElement('p');
+    roundTotal.className = 'vet-round-total';
+    roundTotal.setAttribute('role', 'status');
+    roundTotal.setAttribute('aria-atomic', 'true');
+    roundTotal.hidden = true;
     const element = document.createElement('div');
     element.className = 'vet-interface';
     element.hidden = true;
@@ -63,7 +68,9 @@ export class HospitalUI {
         <canvas width="384" height="288" aria-hidden="true"></canvas>
         <button type="button" class="vet-primary">닫기</button>
       </section>`;
+    totalHost.append(roundTotal);
     host.append(element, portrait);
+    this.roundTotal = roundTotal;
     this.element = element;
     this.portrait = portrait;
     this.portraitTitle = portrait.querySelector('h2');
@@ -100,6 +107,10 @@ export class HospitalUI {
     this.phase = phase;
     this.game = game;
     this.arcade = arcade;
+    this.roundTotal.hidden = !this.observing;
+    const totalLabel = this.observing
+      ? `전체 동물 ${game.counts.reduce((total, count) => total + count, 0)}마리` : '';
+    if (this.roundTotal.textContent !== totalLabel) this.roundTotal.textContent = totalLabel;
     this.element.hidden = !phase;
     this.entry.hidden = phase !== 'entry';
     this.report.hidden = phase !== 'report';

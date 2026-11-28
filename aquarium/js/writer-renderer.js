@@ -1,4 +1,4 @@
-import {drawClueCard} from './clue-card-art.js?v245';
+import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {writerCardSprite,writerHeroSprite,WRITER_CARD_ART} from './writer-sprites-v99.js?v=155';
 import {loadRecoveryArt,drawRecoveryItems,drawVitalityFx} from './game-items.js';
@@ -285,7 +285,7 @@ export class WriterRenderer{
   round(c,12,13,269,32,8,'#f9efdce8');c.fillStyle='#3e6566';c.font='bold 12px sans-serif';c.textAlign='left';c.fillText(g.story.name,24,33);
   for(const [i,id] of g.story.cards.entries()){c.fillStyle=hasSource(g,id)?'#c9964c':'#cecfba';c.beginPath();c.arc(309+i*20,29,4,0,TAU);c.fill();}
   const next=WRITER_CARDS.filter(card=>!hasSource(g,card.id)).sort((a,b)=>Math.abs(a.x-g.player.x)-Math.abs(b.x-g.player.x))[0];
-  if(next&&(next.x<g.camera.x||next.x>g.camera.x+390)){const left=next.x<g.camera.x;c.fillStyle='#f6e6bb';c.font='bold 12px sans-serif';c.textAlign=left?'left':'right';c.fillText(left?'◀ 단서':'단서 ▶',left?12:378,480);}
+  if(next&&(next.x<g.camera.x||next.x>g.camera.x+390)){const left=next.x<g.camera.x;c.fillStyle='#f6e6bb';c.font='bold 12px sans-serif';c.textAlign=left?'left':'right';const reward=usesCoinRewards()?'금화':'단서';c.fillText(left?'◀ '+reward:reward+' ▶',left?12:378,480);}
   else if(next&&next.y<g.camera.y+95){c.fillStyle='#fff1dbe8';round(c,343,16,28,26,6,'#fff1dbe8');c.font='bold 17px sans-serif';c.textAlign='center';c.fillStyle='#43685d';c.fillText('↑',357,35);}
   c.restore();
  }

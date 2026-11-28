@@ -1,4 +1,5 @@
 import {HOSPITAL} from './hospital-core.js?v301';
+import {arcadeCopy} from './arcade-copy.js?v315';
 
 // Button-first help shared by the opening explanation and in-game help.
 export const BUTTON_INSTRUCTIONS=Object.freeze({
@@ -65,4 +66,5 @@ const COIN_INSTRUCTIONS={
 };
 export function instructionHTML(place,{coins=false}={}){
  const rows=(coins&&COIN_INSTRUCTIONS[place])||BUTTON_INSTRUCTIONS[place==='art'?'museum':place]||BUTTON_INSTRUCTIONS.aquarium;
- return rows.map(([symbol,title,copy])=>`<div><span class="instruction-icon${symbol.startsWith('@')?' instruction-word':''}"${symbol.startsWith('@')?'':` data-game-icon="${symbol}"`}>${symbol.startsWith('@')?symbol.slice(1):''}</span><p><b>${title}</b><small>${copy}</small></p></div>`).join('');}
+ const display=text=>coins?arcadeCopy(text,place):text;
+ return rows.map(([symbol,title,copy])=>`<div><span class="instruction-icon${symbol.startsWith('@')?' instruction-word':''}"${symbol.startsWith('@')?'':` data-game-icon="${symbol}"`}>${symbol.startsWith('@')?display(symbol.slice(1)):''}</span><p><b>${display(title)}</b><small>${display(copy)}</small></p></div>`).join('');}
