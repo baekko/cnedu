@@ -4,14 +4,19 @@ import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene,drawRoom} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
 import {DETECTIVE_PROPS} from './detective-prop-art.js';
-import {visionEnd,coverRect,DETECTIVE} from './detective-core.js';
+import {coverRect,DETECTIVE} from './detective-core.js';
+import {detectiveVisionRays} from './detective-vision.js?v306';
+import {paintDamageGuide} from './damage-guide.js?v306';
 import {DETECTIVE_DOORS} from './detective-door-layout.js';
 const TAU=Math.PI*2;
 const box=(c,x,y,w,h,fill,r=5)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const oval=(c,x,y,rx,ry,fill)=>{c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();};
 function text(c,s,x,y,size=11,color='#4e594d',align='center'){c.fillStyle=color;c.font=`700 ${size}px sans-serif`;c.textAlign=align;c.textBaseline='middle';c.fillText(s,x,y);}
 export async function loadDetectiveAssets(character){
- const images={},files=DETECTIVE_DOORS.map(d=>[d.file,d.room]);for(const n of['props','guard','entrance','clue'])files.push([n==='guard'?GUARD_ART.file:'detective/'+n+'.webp',n]);for(const n of['idle','walk'])files.push(['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp']);
+ const images={},files=DETECTIVE_DOORS.map(({room})=>['detective-v306/'+room+'.webp',room]);
+ files.push(['detective-v306/props.webp','props'],[GUARD_ART.file,'guard'],
+  ['detective/entrance.webp','entrance'],['detective/clue.webp','clue']);
+ for(const n of['idle','walk'])files.push(['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp']);
  await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{images[key]=image;resolve();};image.onerror=()=>reject(Error('탐정사무소 그림: '+file));image.src=new URL('../assets/'+file,import.meta.url).href;})));await loadDetectiveInspection(images);return images;
 }
 export class DetectiveRenderer{
@@ -31,7 +36,7 @@ export class DetectiveRenderer{
  }
  sight(c,g,room){
   c.save();const grad=c.createRadialGradient(g.x,g.y,4,g.x,g.y,g.range);grad.addColorStop(0,'#ffe6a29e');grad.addColorStop(.62,'#edc66e69');grad.addColorStop(1,'#e9bc5945');
-  c.beginPath();c.moveTo(g.x,g.y);for(let i=0;i<=30;i++){const a=g.angle-.77+1.54*i/30,p=visionEnd(g,a,room.covers);c.lineTo(p.x,p.y);}c.closePath();c.fillStyle=grad;c.fill();c.strokeStyle='#d9b369a0';c.lineWidth=.6;c.stroke();c.restore();
+  c.beginPath();c.moveTo(g.x,g.y);for(const p of detectiveVisionRays(g,room.covers))c.lineTo(p.x,p.y);c.closePath();c.fillStyle=grad;c.fill();c.strokeStyle='#d9b369a0';c.lineWidth=.6;c.stroke();c.restore();
  }
  evidence(c,e,g){
   const cover=e.cover===undefined?null:g.room.covers[e.cover],x=e.x,y=cover?cover.y-17:e.y-39;
@@ -46,6 +51,7 @@ export class DetectiveRenderer{
  draw(g,character){
   const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!g)return;drawRoom(c,this.images[g.room.id]);c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();
   for(const guard of g.room.guards){this.sight(c,guard,g.room);if(Math.hypot(guard.x-g.player.x,guard.y-g.player.y)<108&&guard.mode==='patrol'){c.save();c.strokeStyle='#796b4c65';c.lineWidth=.8;c.setLineDash([2,5]);c.beginPath();c.ellipse(guard.x,guard.y,DETECTIVE.hearing,DETECTIVE.hearing,0,0,TAU);c.stroke();c.restore();}}
+  if(!g.hidden&&g.immunity<=0)for(const guard of g.room.guards)if(Math.hypot(g.player.x-guard.x,g.player.y-guard.y)<48)paintDamageGuide(c,{x:guard.x,y:guard.y,r:DETECTIVE.contact},true,{fill:'#cc78561a',edge:'#c97c5388'});
   const door=g.exit;if(g.canExit){oval(c,door.x,door.thresholdY+11,door.width*.35,4,'#dce7ae90');text(c,'↑',door.x,door.thresholdY+9,15,'#f4e7a8');}else{box(c,door.x-17,door.thresholdY-17,34,13,'#fff0d8e8',4);text(c,g.roomCollected+' / 3',door.x,door.thresholdY-10.5,8,'#9b774c');}
   const layers=g.room.covers.map(o=>({y:o.y+o.h/2,paint:()=>this.prop(c,o.art,o.x,o.y+o.h/2,o.w+5)}));
   for(const e of g.room.evidence)if(e.cover===undefined)layers.push({y:e.y-9,paint:()=>this.prop(c,4,e.x,e.y-5,49)});

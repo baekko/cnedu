@@ -19,8 +19,8 @@ export function makeCombatEffects(){
  });
  cached={draw(c,kind,frame,x,y,w,h,alpha=1){const s={bolt,orb}[kind];c.save();c.globalAlpha*=alpha;c.drawImage(s.sheet,((frame%N)+N)%N*s.w,0,s.w,s.h,x,y,w,h);c.restore();}};return cached;
 }
-export function drawBoltWarning(c,h){
- const ratio=Math.min(1,h.age/h.warn);c.save();c.scale(1,.76);const glow=c.createRadialGradient(0,0,7,0,0,h.r+5);glow.addColorStop(0,'#ffe8a022');glow.addColorStop(.7,'#ffd86230');glow.addColorStop(1,'#ffb63d77');c.fillStyle=glow;c.beginPath();c.arc(0,0,h.r,0,TAU);c.fill();c.strokeStyle='#c58c33';c.lineWidth=1;c.stroke();c.strokeStyle='#fff0ba';c.lineWidth=2;c.beginPath();c.arc(0,0,h.r+4,-Math.PI/2,-Math.PI/2+TAU*ratio);c.stroke();
- for(let i=0;i<6;i++){const a=i*TAU/6;c.save();c.rotate(a);line(c,[[0,-h.r+6],[2,-h.r+3],[0,-h.r],[-2,-h.r+3],[0,-h.r+6]],'#efd18b',1);c.restore();}
+export function drawBoltWarning(c,h,r){
+ const ratio=Math.min(1,h.age/h.warn);c.save();const glow=c.createRadialGradient(0,0,7,0,0,r);glow.addColorStop(0,'#ffe8a022');glow.addColorStop(.7,'#ffd86230');glow.addColorStop(1,'#ffb63d77');c.fillStyle=glow;c.beginPath();c.arc(0,0,r,0,TAU);c.fill();c.strokeStyle='#ffe8a1';c.lineWidth=1.1;c.setLineDash([4,4]);c.stroke();c.setLineDash([]);c.strokeStyle='#fff0ba';c.lineWidth=2;c.beginPath();c.arc(0,0,r-4,-Math.PI/2,-Math.PI/2+TAU*ratio);c.stroke();
+ for(let i=0;i<6;i++){const a=i*TAU/6;c.save();c.rotate(a);line(c,[[0,-r+10],[2,-r+7],[0,-r+4],[-2,-r+7],[0,-r+10]],'#efd18b',1);c.restore();}
  c.fillStyle='#f4ce69';c.beginPath();c.moveTo(1,-11);c.lineTo(-7,2);c.lineTo(-1,2);c.lineTo(-3,12);c.lineTo(8,-3);c.lineTo(2,-3);c.closePath();c.fill();c.restore();
 }

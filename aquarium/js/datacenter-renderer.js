@@ -3,19 +3,26 @@ import {FieldRenderer,box,oval,text,TAU} from './field-renderer.js?v245';
 import {workshopAssets,artMetadata,loadWorkshopEntrance} from './workshop-art.js?v=155';
 import {drawPlayerAction,loadPlayerActions,leverStandpoint} from './player-actions.js?v=155';
 import {DATA_FILES,DATA_NODES,DATA_RECEIVERS,DATA_VIRUSES,dataVirusPose} from './datacenter-core.js?v268';
-export async function loadDataCenterAssets(character){const images=await workshopAssets('datacenter-v128',character,['room','props','entrance']);Object.assign(images,await workshopAssets('datacenter-v130',null,['records']),await workshopAssets('datacenter-v181',null,['room']));images.room0=images.room;images.propsAtlas=await artMetadata('datacenter-v128','props');await loadPlayerActions(images,character);await loadWorkshopEntrance(images,'datacenter');return images;}
+import {paintDamageGuide} from './damage-guide.js?v306';
+export const dataVirusDangerArea=p=>({x:p.x,y:p.y,r:16});
+export async function loadDataCenterAssets(character){
+ const images=await workshopAssets('datacenter-v306',character,['room','props','records']);
+ images.room0=images.room;
+ images.propsAtlas=await artMetadata('datacenter-v128','props');
+ await Promise.all([loadPlayerActions(images,character),loadWorkshopEntrance(images,'datacenter')]);
+ return images;
+}
 export class DataCenterRenderer extends FieldRenderer{
  briefing(c,character,t){dataBriefing(this,c,character,t);}
  record(c,symbol,x,y,size){const column={map:0,star:1,sound:2}[symbol];c.drawImage(this.images.records,column*256,0,256,256,x,y,size,size);}
  prop(c,key,x,y,height){const b=this.images.propsAtlas.frames[key],k=height/(b.opaqueBounds[3]-b.opaqueBounds[1]);c.drawImage(this.images.props,b.sx,b.sy,b.sw,b.sh,x-b.anchor[0]*k,y-b.anchor[1]*k,b.sw*k,b.sh*k);}
  cable(c,from,to,active,color){
   const a=DATA_NODES[from],b=DATA_NODES[to];c.lineCap='round';
-  c.strokeStyle='#695a4638';c.lineWidth=10;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();
-  c.strokeStyle=active?color:'#a7aca78c';c.lineWidth=active?5:3;c.stroke();
+  c.strokeStyle=active?'#4a4d42':'#777a6b';c.lineWidth=active?6:3.2;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();
+  c.strokeStyle=active?color:'#c2c7bd';c.lineWidth=active?3.6:1.5;c.stroke();
   if(active){
-   c.strokeStyle='#fff8dc';c.lineWidth=1;c.stroke();
    const angle=Math.atan2(b.y-a.y,b.x-a.x);
-   for(const u of [.38,.68]){c.save();c.translate(a.x+(b.x-a.x)*u,a.y+(b.y-a.y)*u);c.rotate(angle);c.fillStyle=color;c.strokeStyle='#fff4db';c.lineWidth=1;c.beginPath();c.moveTo(5,0);c.lineTo(-4,-4);c.lineTo(-4,4);c.closePath();c.fill();c.stroke();c.restore();}
+   for(const u of [.38,.68]){c.save();c.translate(a.x+(b.x-a.x)*u,a.y+(b.y-a.y)*u);c.rotate(angle);c.fillStyle=color;c.strokeStyle='#4a4d42';c.lineWidth=1;c.beginPath();c.moveTo(5,0);c.lineTo(-4,-4);c.lineTo(-4,4);c.closePath();c.fill();c.stroke();c.restore();}
   }
  }
 
@@ -31,9 +38,9 @@ export class DataCenterRenderer extends FieldRenderer{
    box(c,r.x-32,137,64,17,wanted?'#fff4dcee':'#edf0e8dd',3);text(c,symbols[i],r.x-23,145,9,r.color);text(c,r.name,r.x+5,145,8,'#4e645e');
    if(wanted){c.strokeStyle=r.color;c.lineWidth=2;c.beginPath();c.roundRect(r.x-32,137,64,17,3);c.stroke();}
   }
-  for(const v of DATA_VIRUSES){if(g.isVirusCleared(v))continue;const p=dataVirusPose(v,g.elapsed);if(!p.warning&&!p.active)continue;const a=DATA_NODES[v.edge[0]],b=DATA_NODES[v.edge[1]];if(p.warning){c.save();c.strokeStyle='#c28955';c.lineWidth=2;c.setLineDash([4,5]);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();c.restore();box(c,b.x-8,b.y+22,16,16,'#f9e8bf',4);text(c,'!',b.x,b.y+30,11,'#a77145');}else{this.prop(c,'virus',p.x,p.y,18);}}
+  for(const v of DATA_VIRUSES){if(g.isVirusCleared(v))continue;const p=dataVirusPose(v,g.elapsed);if(!p.warning&&!p.active)continue;const a=DATA_NODES[v.edge[0]],b=DATA_NODES[v.edge[1]];if(p.warning){c.save();c.strokeStyle='#c28955';c.lineWidth=2;c.setLineDash([4,5]);c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();c.restore();box(c,b.x-8,b.y+22,16,16,'#f9e8bf',4);text(c,'!',b.x,b.y+30,11,'#a77145');}else{paintDamageGuide(c,dataVirusDangerArea(p),true,{fill:'#edab7f30',edge:'#b6605eab'});this.prop(c,'virus',p.x,p.y,18);}}
   for(const p of g.packets){if(p.wait>0)continue;const col=DATA_RECEIVERS[p.target].color;oval(c,p.x,p.y+2,11,3,'#43554a35');this.record(c,g.files[p.file].symbol,p.x-12,p.y-21,24);box(c,p.x+4,p.y-7,11,11,col,3);text(c,symbols[p.target],p.x+9.5,p.y-1.5,7,'#fffdf1');}
-  const layers=g.levers.map(l=>({y:l.y,draw:()=>{this.prop(c,l.state?'leverRight':'leverLeft',l.x,l.y,30);if(g.nearbyLever===l){c.strokeStyle='#ead49c';c.lineWidth=1.4;c.beginPath();c.ellipse(l.x,l.y+2,19,6,0,0,TAU);c.stroke();}}}));
+  const layers=g.levers.map(l=>({y:l.y,draw:()=>{this.prop(c,l.state?'leverRight':'leverLeft',l.x,l.y,30);if(g.nearbyLever===l){c.strokeStyle='#527b71';c.lineWidth=1.4;c.beginPath();c.ellipse(l.x,l.y+2,19,6,0,0,TAU);c.stroke();}}}));
   layers.push({y:445,draw:()=>{this.prop(c,'source',195,445,38);box(c,166,448,58,14,'#fff2d9ee',3);text(c,'전송 단말기',195,455,8,'#61786b');const waiting=g.packets.find(p=>p.wait>0);if(waiting){box(c,208,409,80,17,'#fff3dced',4);text(c,'다음 '+DATA_RECEIVERS[waiting.target].name.slice(0,2)+' · '+waiting.wait.toFixed(1)+'초',248,418,8,'#627269');}}});
   layers.push({y:g.player.y,draw:()=>{if(g.work){oval(c,g.player.x,g.player.y+1,11,3.5,'#33473a2c');drawPlayerAction(c,this.images,character,g.player,'leverUp',Math.min(3,Math.floor(g.workAge/.115)));}else this.hero(c,g,character);}});layers.sort((a,b)=>a.y-b.y).forEach(l=>l.draw());
   for(const v of DATA_VIRUSES)if(g.isVirusCleared(v)){const a=DATA_NODES[v.edge[0]],b=DATA_NODES[v.edge[1]],x=(a.x+b.x)/2,y=(a.y+b.y)/2;oval(c,x,y,7,7,'#ecf9eae6');text(c,'✓',x,y,9,'#488975');}

@@ -6,17 +6,19 @@ import {SCYLLA,scyllaRest,scyllaAttackPose,scyllaSpritePose,scyllaGrabPose} from
 import {sirenWaveRadii} from './temple-siren.js?v=157';
 import {walkFrame} from './walk-cycle.js';
 import {makeTempleEffects,drawWindField} from './temple-fx.js';
-import {makeCombatEffects,drawBoltWarning} from './temple-combat-fx.js';
+import {makeCombatEffects,drawBoltWarning} from './temple-combat-fx.js?v306';
 import {beginScene} from './layout.js';
 import {drawTempleHero as drawExplorer} from './temple-hero.js?v=155';
 import {TEMPLE,routeZ} from './temple-core.js?v268';
 import {TempleWorld} from './temple-world.js?v268';
-import {makeSeaEffects} from './temple-water.js';
+import {makeSeaEffects} from './temple-water.js?v306';
+import {templeFootprint,templeWaveGap,templeWaveThickness,paintTempleHazard,paintTempleEnvironmentDamage} from './temple-damage-guide.js?v306';
+const TEMPLE_REVISED_ART=new Set(['temple.webp','forest.webp','sea.webp','ithaca.webp','temple-garden.webp','forest-coast.webp','boat-v20.webp','head.webp']);
 export async function loadTempleAssets(character){
  await loadRecoveryArt();
  const files=['temple','forest','sea','ithaca','temple-garden','forest-coast','cliff','head','pig','entrance'].map(n=>n+'.webp');
  files.push(`${character.id}-armor.webp`,'pig-walk.webp','gods-actions-v20.webp','waves-v21.webp','heroes-rowing-v20.webp','boat-v20.webp');const images={};
- await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[file]=im;resolve();};im.onerror=()=>reject(new Error('신전 그림: '+file));im.src=new URL('../assets/'+(file.endsWith('-armor.webp')?'temple-v153':file==='pig-walk.webp'?'temple-v156':'temple')+'/'+file,import.meta.url).href;})));return images;
+ await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[file]=im;resolve();};im.onerror=()=>reject(new Error('신전 그림: '+file));const dir=TEMPLE_REVISED_ART.has(file)?'temple-v306':file.endsWith('-armor.webp')?'temple-v153':file==='pig-walk.webp'?'temple-v156':'temple';im.src=new URL(`../assets/${dir}/${file}`,import.meta.url).href;})));return images;
 }
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const pill=(c,x,y,w,h,fill)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,9);c.fill();};
@@ -127,13 +129,16 @@ export class TempleRenderer{
   this.introduce(c,g,'whirlpool','카리브디스',150,cy-145);
  }
 
- wave(c,h,Y){this.sea.wave(c,h,Y);}
- hazard(c,h,Y,t){
-  if(h.kind==='wave'){this.wave(c,h,Y);return;}const y=Y(h.z);if(y<-90||y>590)return;const ready=h.age>=h.warn;
-  c.save();c.translate(h.x,y);
-  if(h.kind==='head'){const ratio=clamp(h.age/h.warn,0,1);c.fillStyle=ready?'#0d3f5688':`rgba(12,49,70,${.15+.42*ratio})`;c.beginPath();c.ellipse(0,0,h.r,h.r*.76,0,0,TAU);c.fill();c.strokeStyle=ready?'#d7fffa':'#ffe9b9';c.lineWidth=2;c.setLineDash(ready?[]:[5,4]);c.stroke();if(!ready){c.globalAlpha=.5;this.sprite(c,'head',0,2,26,.5);}}
-  else if(!ready)drawBoltWarning(c,h);
-  c.restore();
+ hazard(c,h,g,Y){
+  const r=templeFootprint(g),y=Y(h.z),ready=h.age>=h.warn;
+  if(h.kind==='wave')this.sea.wave(c,h,Y,templeWaveGap(h,r),templeWaveThickness(r));
+  else if(!ready&&!h.bit&&y>=-90&&y<=590){
+   c.save();c.translate(h.x,y);
+   if(h.kind==='head')this.sprite(c,'head',0,2,26,.5);
+   else drawBoltWarning(c,h,h.r+r);
+   c.restore();
+  }
+  paintTempleHazard(c,h,g,Y);
  }
  hero(c,g,character,Y,t){const p=g.player,y=Y(p.z);c.save();c.translate(p.x,y);c.fillStyle='#193c4938';c.beginPath();c.ellipse(0,2,g.isBoat?24:13,g.isBoat?9:5,0,0,TAU);c.fill();
   if(g.transit){const boarding=g.mode==='boarding',f=1-g.transitionLeft/.7,aboard=boarding?f>.85:f<.15,boatX=boarding?195:g.transit.x,boatZ=boarding?g.transit.targetZ:g.transit.z;c.save();c.translate(boatX-p.x,Y(boatZ)-y);this.boat(c,g,character,t,aboard);c.restore();if(!aboard)drawExplorer(c,this.images,character,{...p,x:0,y:5,dir:'up',moving:true,walk:(p.walk||0)+f},boarding?1-.38*f:.62+.38*f);}
@@ -153,11 +158,12 @@ export class TempleRenderer{
   this.sirens(c,g,Y,t);this.whirlpool(c,g,Y,t);
   if(!g.isBoat&&g.mode==='walk'&&Y(routeZ(1880))>-100&&Y(routeZ(1880))<550)this.sprite(c,'boat-v20',195,Y(routeZ(1910))+18,62);
   if(g.mode==='shore'&&g.dockedBoat)this.sprite(c,'boat-v20',g.dockedBoat.x,Y(g.dockedBoat.z)+18,62);
-  for(const h of g.hazards)this.hazard(c,h,Y,t);
-  for(const h of this.boltVisuals){const y=Y(h.z);if(y<-60||y>640)continue;c.save();c.translate(h.x,y);drawBoltWarning(c,{...h,age:1,warn:1});this.combat.draw(c,'bolt',Math.floor(h.age*20),-80,-210,160,240,Math.min(1,(.45-h.age)*8));c.restore();}
+  for(const h of this.boltVisuals){const y=Y(h.z);if(y<-60||y>640)continue;c.save();c.translate(h.x,y);this.combat.draw(c,'bolt',Math.floor(h.age*20),-80,-210,160,240,Math.min(1,(.45-h.age)*8));c.restore();}
+  for(const h of g.hazards)this.hazard(c,h,g,Y);
   for(const card of g.cards)this.card(c,card,Y,t);
   for(const b of g.orbs){if(b.age<(b.launchDelay||0))continue;const y=Y(b.z),speed=Math.hypot(b.vx,b.vz);for(let i=3;i>0;i--)this.combat.draw(c,'orb',Math.floor(t*10)-i,b.x-b.vx/speed*i*5-15,y+b.vz/speed*i*5-15,30,30,.13);this.combat.draw(c,'orb',Math.floor(t*10),b.x-16,y-16,32,32);}
 
+  paintTempleEnvironmentDamage(c,g,Y);
   drawRecoveryItems(c,g,p=>({x:p.x,y:Y(p.z)}));this.hero(c,g,character,Y,t);this.scylla(c,g,Y,t,character);if(!g.scyllaGrab)drawVitalityFx(c,g,g.player.x,Y(g.player.z)-23,30);if(g.isBoat&&!g.scyllaGrab)this.fx.draw(c,2,Math.floor(t*7),g.player.x-46,Y(g.player.z)-25,92,92,.55);if(g.effects.some(e=>e.kind==='recovery'))this.fx.draw(c,3,Math.floor(t*8),g.player.x-47,Y(g.player.z)-71,94,94,.8);
   for(const e of g.effects){c.save();c.globalAlpha=Math.max(0,1-e.age/.9);c.fillStyle='#fff5bf';if(e.kind==='card'){c.font='bold 12px sans-serif';c.textAlign='center';c.fillText('+1 단서',e.x,Y(e.z)-35-e.age*24);}else for(let i=0;i<8;i++){const a=i*Math.PI/4;c.fillRect(e.x+Math.cos(a)*e.age*35,Y(e.z)+Math.sin(a)*e.age*24,3,3);}c.restore();}
   if(!g.ended){

@@ -33,23 +33,26 @@ export function makeSeaEffects(sea,waves){
   whirlpool(c,x,y,t,strength){
    const f=Math.floor(t*8)%frames;c.save();c.globalAlpha=.84+strength*.16;c.drawImage(sheet,(f%cols)*size,Math.floor(f/cols)*size,size,size,x-size/2,y-size/2,size,size);c.restore();
   },
-  wave(c,h,Y){
+  wave(c,h,Y,half,crest){
    const horizontal=h.axis==='z',position=horizontal?Y(h.z):h.x;
    const lo=horizontal?0:Y(h.z+(h.span||200)),hi=horizontal?390:Y(h.z-(h.span||200));
-   const gap=horizontal?h.gap:Y(h.gap),half=h.gapSize/2,active=h.age>=h.warn;
+   const gap=horizontal?h.gap:Y(h.gap),active=h.age>=h.warn;
    if(horizontal&&(position<-150||position>650))return;if(!horizontal&&(position<-150||position>540))return;
-   const span=hi-lo,width=Math.max(390,span),height=width*288/1024,left=(lo+hi-width)/2;
+   const span=hi-lo,width=Math.max(390,span),height=crest*2,left=(lo+hi-width)/2;
    const cycle=[1,2,2,2,3,2],time=Math.max(0,h.age-h.warn)*5.5,step=Math.floor(time),mix=time-step;
    const first=active?cycle[step%cycle.length]:0,second=active?cycle[(step+1)%cycle.length]:1;
    c.save();if(horizontal)c.translate(0,position);else{c.translate(position,0);c.transform(0,1,h.v>0?1:-1,0,0,0);}
-   // Draw narrow strips with a travelling crest, not repeated wave icons. The
-   // gap fades gently at its banks and remains completely clear in the middle.
+   // Clip the moving crest at the physical edge, avoiding any foam in the gap.
+   c.beginPath();
+   if(gap-half>lo)c.rect(lo,-crest,Math.min(hi,gap-half)-lo,height);
+   if(gap+half<hi)c.rect(Math.max(lo,gap+half),-crest,hi-Math.max(lo,gap+half),height);
+   c.clip();
    for(let x=lo;x<hi;x+=6){
     const end=Math.min(x+6,hi),mid=(x+end)/2,edge=Math.abs(mid-gap)-half;if(edge<=0)continue;
     const opacity=clamp(edge/20,0,1)*(active?1:.3+.45*clamp(h.age/h.warn,0,1));
     const sx=(x-left)/width*1024,sw=(end-x)/width*1024,roll=Math.sin(x*.026-time*1.4)*2.4;
     // The crest, and therefore contact, is centred on the hazard's own position.
-    const top=-height*.58+roll;
+    const top=-crest+roll;
     c.globalAlpha=opacity*(1-mix);c.drawImage(softWaves,sx,first*288,sw,288,x,top,end-x,height);
     c.globalAlpha=opacity*mix;c.drawImage(softWaves,sx,second*288,sw,288,x,top,end-x,height);
    }
