@@ -69,7 +69,7 @@ function aquarium(){
  t.act(1,'상어가 오는 길을 보고 비켜요.',()=>{g.spawnEnemy('basic');g.enemies.at(-1).y=g.enemies.at(-1).baseY=340;},'↓');
  t.walk(1,'아래쪽 빈 공간으로 피했어요.',170,480).hold(1,'상어가 지나간 뒤 단서를 찾아요.',2.5);
  t.act(2,'위험할 때 빛을 쓰면 가까운 상어가 피해요.',()=>{g.spawnEnemy('hammer');Object.assign(g.enemies.at(-1),{x:450,y:g.player.y,baseY:g.player.y});},'빛');
- t.hold(2,'빛 발사 · 3회 사용 가능',1.9,'빛').act(2,'빛을 발사해 상어를 밀어내요.',()=>g.flash(),'빛').hold(2,'지금처럼 가까운 상어에게 사용해요.',3.2,'빛');
+ t.hold(2,'빛 발사 · 1회 사용 가능',1.9,'빛').act(2,'빛을 발사해 상어를 밀어내요.',()=>g.flash(),'빛').hold(2,'지금처럼 가까운 상어에게 사용해요.',3.2,'빛');
  t.act(3,'이번에는 피하지 않고 상어에 부딪히는 모습을 볼게요.',()=>{g.spawnEnemy('basic');Object.assign(g.enemies.at(-1),{x:440,y:g.player.y,baseY:g.player.y});},'');
  t.until(3,'상어와 닿는 순간 내구도가 세 칸에서 두 칸으로 줄어요.',()=>g.health===2,{},6).hold(3,'잠수함에 생긴 금과 위쪽 내구도를 확인해요.',2.5);
  t.act(3,'금이 간 상태에서 수리해파리를 먹어 봐요.',()=>g.pickups.push({type:'heal',x:365,y:g.player.y,phase:0}),'');

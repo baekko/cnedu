@@ -43,7 +43,7 @@ export class ExchangeUI{
   `${this.character.name}님, 반갑습니다. 투자를 도와드리겠습니다.`,
   '지금부터 2000년부터 2020년까지, 5년 간격으로 다섯 번 투자합니다. 시작 자본은 100만원입니다.',
   '시대의 흐름을 담은 정보 네 줄을 읽고 종목과 금액을 정하세요. 5년 뒤에는 주식을 모두 팔아 결과를 확인합니다.',
-  this.coinMode?'2020년의 마지막 투자는 2025년에 결과를 확인합니다. 투자가 끝나면 남은 자본 300만 원당 금화 1개로 바꿔 드리겠습니다. 회사와 주가는 게임을 위해 만든 가상입니다.':'2020년의 마지막 투자는 2025년에 결과를 확인합니다. 모은 자본으로 단서 카드를 구입하세요. 회사와 주가는 게임을 위해 만든 가상입니다.'
+  this.coinMode?'2020년의 마지막 투자는 2025년에 결과를 확인합니다. 투자가 끝나면 남은 자본 300만 원당 금화 1개로 바꿔 드리겠습니다.':'2020년의 마지막 투자는 2025년에 결과를 확인합니다. 모은 자본으로 단서 카드를 구입하세요.'
  ];
  this.root.querySelector('#ex-year').textContent=g.data.year+'년';this.root.querySelector('#ex-capital').textContent=money(g.cash)+'만원';this.root.querySelector('#ex-round').textContent=(g.round+1)+' / '+EXCHANGE_ROUNDS.length;
  const previous=this.root.querySelector('#ex-previous');previous.textContent=['walk','dialogue'].includes(g.phase)?'이전':'파산';previous.disabled=g.phase==='walk'||g.phase==='dialogue'&&g.dialogue===0||['travel','complete','bankrupt'].includes(g.phase);this.root.querySelector('#ex-bankrupt-confirm').hidden=!this.confirming;this.root.querySelector('.ex-controls').classList.toggle('confirming',this.confirming);p.inert=this.confirming;

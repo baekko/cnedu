@@ -1823,7 +1823,7 @@ async function prepareMuseum(){
   $('museum-actions').hidden=false;
   document.querySelector('.control-label span').textContent='이동 · 사다리는 위아래';
   document.querySelector('#flash-button b').textContent='시간 정지';
-  document.querySelector('.flash-tip').textContent='몬스터만 3초 정지 · 3회 사용 가능';
+  document.querySelector('.flash-tip').textContent=`몬스터만 3초 정지 · ${MUSEUM.freezes}회 사용 가능`;
   document.querySelector('#pause-overlay .modal-lead').textContent='시간과 몬스터도 함께 멈췄어요.';
   applyIcons(gameInstructionList);
   document.querySelector('.desktop-keys').textContent='방향키 이동 · J/SPACE 새총 · K 점프 · L 정지';
@@ -1883,7 +1883,7 @@ async function prepareHistory(){
  $('app').classList.remove('monastery-mode','detective-mode','dessert-mode','ai-mode','zoo-mode','literature-mode','dream-mode','newspaper-mode','language-mode','writer-mode','space-mode','museum-mode','exchange-mode','temple-mode','robot-mode');$('app').classList.add('history-mode');
  syncCurrentPlaceHeaders();document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 03';
  document.querySelector('.health-stat .hud-label').textContent='여행 장소';$('health-value').hidden=true;$('museum-colors').hidden=true;$('history-era').hidden=false;$('history-actions').hidden=false;$('hammer-button').hidden=false;$('museum-actions').hidden=true;
- document.querySelector('.control-label span').textContent='방향키로 이동 · 망치로 단서 찾기';document.querySelector('#flash-button b').textContent='속도업';document.querySelector('.flash-tip').textContent='5초간 2배 · 3회 사용 가능';
+ document.querySelector('.control-label span').textContent='방향키로 이동 · 망치로 단서 찾기';document.querySelector('#flash-button b').textContent='속도업';document.querySelector('.flash-tip').textContent=`5초간 2배 · ${HISTORY.boosts}회 사용 가능`;
  document.querySelector('#pause-overlay .modal-lead').textContent='시간과 적도 함께 멈췄어요.';
  applyIcons(gameInstructionList);
  document.querySelector('.desktop-keys').textContent='방향키 이동 · J/SPACE 망치 · E 탑승/하차 · L 속도업';$('ocean').setAttribute('aria-label','45도 위에서 보는 박물관 시간 여행 게임');$('dpad').setAttribute('aria-label','캐릭터 이동 방향키');$('brief-sub').setAttribute('aria-label',`${character.name}, 타임머신에 탑승한 모습`);
@@ -2012,7 +2012,7 @@ function prepareAquarium(){
  $('history-message').hidden=true;
  document.querySelector('.control-label span').textContent='방향키로 이동';
  document.querySelector('#flash-button b').textContent='빛 발사';
- document.querySelector('.flash-tip').textContent='위험할 때 눌러요';
+ document.querySelector('.flash-tip').textContent=`위험할 때 눌러요 · ${GAME.flashes}회 사용 가능`;
  document.querySelector('.desktop-keys').textContent='방향키 이동 · SPACE 빛 발사';
  $('brief-sub').setAttribute('aria-label',`${character.name}, 잠수함에 탑승한 모습`);
  $('ocean').setAttribute('aria-label','수족관 게임 화면');$('dpad').setAttribute('aria-label','잠수함 방향키');

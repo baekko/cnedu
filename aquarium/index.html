@@ -11,15 +11,21 @@
   <script type="importmap">
 {
   "imports": {
+    "./js/config.js": "./js/config.js?v312",
+    "./js/config.js?v214": "./js/config.js?v312",
+    "./js/exchange-ui.js?v268": "./js/exchange-ui.js?v312",
+    "./js/history-core.js?v307": "./js/history-core.js?v312",
+    "./js/museum-core.js": "./js/museum-core.js?v312",
+    "./js/play-tutorials.js?v307": "./js/play-tutorials.js?v312",
     "./js/detective-core.js": "./js/detective-core.js?v308",
     "./js/gym-core.js?v307": "./js/gym-core.js?v308",
     "./js/history-renderer.js?v307": "./js/history-renderer.js?v308",
-    "./js/instructions.js?v304": "./js/instructions.js?v309",
+    "./js/instructions.js?v304": "./js/instructions.js?v312",
     "./js/space-renderer.js?v307": "./js/space-renderer.js?v309",
     "./js/temple-core.js?v268": "./js/temple-core.js?v309",
     "./js/temple-core.js?v308": "./js/temple-core.js?v309",
     "./js/temple-renderer.js?v307": "./js/temple-renderer.js?v309",
-    "./js/tutorial-pages.js?v304": "./js/tutorial-pages.js?v309",
+    "./js/tutorial-pages.js?v304": "./js/tutorial-pages.js?v312",
     "./js/writer-core.js?v307": "./js/writer-core.js?v308",
     "./js/writer-renderer.js?v307": "./js/writer-renderer.js?v310",
     "./js/zoo-core.js?v=155": "./js/zoo-core.js?v308"
@@ -110,7 +116,7 @@
             <button id="postal-deliver" class="interact-action postal-control" type="button" disabled>배달</button>
           </div>
           <button id="memory-revisit" class="flash-button memory-revisit" type="button" aria-label="원본 10초 더보기, 1회 남음" title="원본 10초 더보기" hidden disabled><span class="memory-item-name">원본<br>10초</span><span class="flash-count">×<strong id="memory-revisit-value">1</strong></span></button>
-          <div class="flash-control"><button id="flash-button" class="flash-button" aria-label="빛 발사, 3회 남음"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m9 25 9-9 9 9-9 9Z"/><path d="m15 14 5-5 13 13-5 5Z"/><path d="m26 7 3-4M32 12l5-2M35 18h4" class="rays"/></svg><b>빛 발사</b><span class="flash-count">×<strong id="flash-value">3</strong></span></button><span class="flash-tip">위험할 때 눌러요</span></div>
+          <div class="flash-control"><button id="flash-button" class="flash-button" aria-label="빛 발사, 1회 남음"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m9 25 9-9 9 9-9 9Z"/><path d="m15 14 5-5 13 13-5 5Z"/><path d="m26 7 3-4M32 12l5-2M35 18h4" class="rays"/></svg><b>빛 발사</b><span class="flash-count">×<strong id="flash-value">1</strong></span></button><span class="flash-tip">위험할 때 눌러요 · 1회 사용 가능</span></div>
         </div>
       </section>
 
@@ -258,7 +264,7 @@
   <link rel="stylesheet" href="./css/hospital.css?v301">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v311').catch(async error => {
+    import('./js/app.js?v312').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

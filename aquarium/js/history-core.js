@@ -1,6 +1,6 @@
 import {movedDuringStep} from './walk-cycle.js';
 import {awardClue,hasSource} from './clue-order.js';
-export const HISTORY=Object.freeze({duration:20,travelSeconds:5,speed:118,boostSeconds:5,boosts:3,hammerCooldown:.4,hammerImpact:.18,hammerRange:38,answer:'독수리',hints:['날아다니는 생물입니다.','맹금류입니다.']});
+export const HISTORY=Object.freeze({duration:20,travelSeconds:5,speed:118,boostSeconds:5,boosts:1,hammerCooldown:.4,hammerImpact:.18,hammerRange:38,answer:'독수리',hints:['날아다니는 생물입니다.','맹금류입니다.']});
 // Mechanical choreography never spends exploration time.
 export const MACHINE_TIMING=Object.freeze({seat:.75,fold:.65,close:.65,power:.45,open:.65,unfold:.65,exit:.8});
 export const BOARD_SECONDS=MACHINE_TIMING.seat+MACHINE_TIMING.fold+MACHINE_TIMING.close+MACHINE_TIMING.power;
@@ -34,7 +34,7 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const facing=(dx,dy,old='down')=>Math.abs(dx)>Math.abs(dy)?dx<0?'left':'right':dy?dy<0?'up':'down':old;
 export class HistoryGame{
  constructor({onEvent=()=>{}}={}){
-  this.onEvent=onEvent;this.phase='intro';this.phaseTime=0;this.eraIndex=-1;this.destination=0;this.remaining=20;this.elapsed=0;this.ended=false;this.health=1;this.flashes=3;this.boostLeft=0;this.banked=new Set();this.clueSources=new Set();this.found=new Set();this.effects=[];this.mobs=[];this.cards=[];this.box=null;
+  this.onEvent=onEvent;this.phase='intro';this.phaseTime=0;this.eraIndex=-1;this.destination=0;this.remaining=20;this.elapsed=0;this.ended=false;this.health=1;this.flashes=HISTORY.boosts;this.boostLeft=0;this.banked=new Set();this.clueSources=new Set();this.found=new Set();this.effects=[];this.mobs=[];this.cards=[];this.box=null;
   this.player={x:195,y:456,dir:'up',walk:0,moving:false,hammerAge:99};this.machine={x:195,y:275};this.hammerWait=0;this.pendingHit=false;this.failureReason=null;
  }
  get era(){return ERAS[this.eraIndex];}

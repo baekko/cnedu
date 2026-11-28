@@ -1,6 +1,6 @@
 // 화면, 난이도, 상어와 카드 설정을 이 파일에서 조정합니다.
 export const GAME = Object.freeze({
-  width: 390, height: 844, duration: 50, health: 3, flashes: 3,
+  width: 390, height: 844, duration: 50, health: 3, flashes: 1,
   sharkSpawnRate: .8, speed: 180, hitRadius: 34.5, submarineScale: 1.2995, invincibleSeconds: 1.2,
   field: { left: 49, right: 348, top: 188, bottom: 634 },
   storageKey: 'ptb_aquarium_v2',

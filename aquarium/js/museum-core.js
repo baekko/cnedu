@@ -1,7 +1,7 @@
 import {FLAT_WALK_SPEED,movedDuringStep} from './walk-cycle.js';
 import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {awardClue,hasSource} from './clue-order.js';
-export const MUSEUM = Object.freeze({duration:40, floors:[650,532,414,296], ladders:[29,137,361], speed:FLAT_WALK_SPEED, airSpeed:137, climbSpeed:100, jumpSpeed:294, gravity:900, shotCooldown:.62, freezeSeconds:3, freezes:3, answer:'사자', hints:['아프리카에 주로 서식하고 있습니다.','동물의 왕이라는 별명을 가지고 있습니다.']});
+export const MUSEUM = Object.freeze({duration:40, floors:[650,532,414,296], ladders:[29,137,361], speed:FLAT_WALK_SPEED, airSpeed:137, climbSpeed:100, jumpSpeed:294, gravity:900, shotCooldown:.62, freezeSeconds:3, freezes:1, answer:'사자', hints:['아프리카에 주로 서식하고 있습니다.','동물의 왕이라는 별명을 가지고 있습니다.']});
 export const COLORS = [
  {name:'빨강',hex:'#f04451',speed:42,skill:'일정한 속도로 도망쳐요'},
  {name:'주황',hex:'#ff963e',speed:44,skill:'가끔 빠르게 달려요'},
