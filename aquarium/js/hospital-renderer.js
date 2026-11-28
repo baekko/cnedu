@@ -11,7 +11,6 @@ const FURNITURE_TILE = 200;
 const FURNITURE_COLUMNS = 4;
 const FURNITURE_GROUND = 192 / FURNITURE_TILE;
 const PET_BEDS = HOSPITAL_FLOOR.fixtures.filter(fixture=>fixture.kind==='bed');
-const DESK_PERCH = HOSPITAL_FLOOR.perches.find(perch=>perch.kind==='desk');
 const ORIGINAL_COATS = {tabby:1,tuxedo:2};
 const CAT_ACTION_ROWS = {tabby:0,tuxedo:1,korean:2,russian:3};
 const WALK = new Set(['walk','run','hop','binky','jump']);
@@ -30,7 +29,7 @@ function loadImage(path) {
 
 let sharedAssets;
 async function loadRoomArt() {
-  const [animals,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,manifest] = await Promise.all([
+  const [animals,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,traffic,manifest] = await Promise.all([
     loadImage('hospital/animals.webp'),
     loadImage('hospital/furniture.webp'),
     loadImage('postal/village-cats.webp?v265'),
@@ -39,12 +38,13 @@ async function loadRoomArt() {
     loadImage('hospital/animals-diagonal-v296.webp'),
     loadImage('hospital/fixtures-perspective-v296.webp'),
     loadImage('hospital/fixtures-wall-v300.webp'),
+    loadImage('hospital/therapy-traffic-v302.webp'),
     fetch(asset('hospital/animals.json')).then(response => {
       if (!response.ok) throw new Error('동물 그림 목록을 불러오지 못했어요.');
       return response.json();
     }),
   ]);
-  return {animals,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,manifest};
+  return {animals,furniture,postalCats,catActions,walls,diagonal,vet,wallFixtures,traffic,manifest};
 }
 
 export async function loadHospitalAssets(character) {
@@ -338,7 +338,42 @@ function viewFloorOpacity(camera,player,room,line,foreground=false) {
   return 1-.13*inWidth*indoors*inFrame;
 }
 
-function paintedRear(c,art,wall,room,points) {
+// Pane bounds are measured in the rehab panel's 384 by 128 source coordinates.
+const THERAPY_WINDOW_COLUMNS=[[169,192],[195,222],[225,252],[255,282],[285,308]];
+const THERAPY_WINDOW_ROWS=[[11,33],[36,56],[59,78]];
+const TRAFFIC_CARS=[
+  {tile:1,direction:-1,offset:5.3,period:8.8,travel:5.2,width:40,ground:52},
+  {tile:0,direction:1,offset:1.1,period:8.8,travel:5.2,width:46,ground:65},
+];
+
+function therapyWindow(c,traffic,left,top,scaleX,scaleY,time) {
+  const x=169,y=11,w=139,h=67;
+  c.save();
+  c.translate(left,top);
+  c.scale(scaleX,scaleY);
+  c.beginPath();
+  for (const [start,end] of THERAPY_WINDOW_COLUMNS) {
+    for (const [upper,lower] of THERAPY_WINDOW_ROWS) c.rect(start,upper,end-start,lower-upper);
+  }
+  c.clip();
+  c.drawImage(traffic,0,0,280,140,x,y,w,h);
+  for (const car of TRAFFIC_CARS) {
+    const progress=(time+car.offset)%car.period/car.travel;
+    if (progress>=1) continue;
+    const span=w+car.width;
+    const center=x-car.width/2+span*(car.direction>0?progress:1-progress);
+    const height=car.width/2;
+    oval(c,center,car.ground+.3,car.width*.35,1.5,'#29262139');
+    c.save();
+    c.translate(center,car.ground);
+    c.scale(car.direction,1);
+    c.drawImage(traffic,car.tile*128,144,128,64,-car.width/2,-height*60/64,car.width,height);
+    c.restore();
+  }
+  c.restore();
+}
+
+function paintedRear(c,art,wall,room,points,time) {
   const [base,end,top]=points;
   const sw=WALL_FACE_TILE_WIDTH,sh=WALL_FACE_TILE_HEIGHT;
   const split=PANEL_SPLITS[room.id];
@@ -351,12 +386,15 @@ function paintedRear(c,art,wall,room,points) {
     base.x,top.y,end.x-base.x,railY-top.y+.16);
   c.drawImage(art.walls,sourceX,sourceY+rail,coverage*sw,sh-rail,
     base.x,railY,end.x-base.x,base.y-railY);
+  if(room.id==='therapy') {
+    therapyWindow(c,art.traffic,base.x,top.y,(end.x-base.x)/sw,(railY-top.y+.16)/rail,time);
+  }
   if(!wall.segment && top.y>-2) {
     roomSign(c,room.name,base.x+(end.x-base.x)*.5,Math.max(6,top.y+10*base.factor),10*base.factor);
   }
 }
 
-function facingWall(c,buffer,art,camera,wall,player,revealActors) {
+function facingWall(c,buffer,art,camera,wall,player,revealActors,time) {
   const room=roomFor(wall.room);
   const material=WALL_FINISH[wall.room]||WALL_FINISH.hall;
   const y=wall.lineY;
@@ -367,7 +405,7 @@ function facingWall(c,buffer,art,camera,wall,player,revealActors) {
   const foreground=wall.kind==='boundary';
   const baseAlpha=wall.edge==='front'?viewFloorOpacity(camera,player,room,y,foreground):1;
   drawWallSection(c,buffer,points,revealActors,camera,y,baseAlpha,wallCanvas=>{
-    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,wall,room,points);
+    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,wall,room,points,time);
     else paintPlaster(wallCanvas,camera,start,end,material);
     const outerY=y+(wall.edge==='front'?WALL_CAP_DEPTH:-WALL_CAP_DEPTH);
     const leftX=start.x-(start.x===room?.x?WALL_CAP_DEPTH:0);
@@ -713,7 +751,7 @@ export class HospitalRenderer {
     c.drawImage(animals,0,row*cellHeight,cellWidth,cellHeight,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
   }
 
-  draw(game,character) {
+  draw(game,character,time=0) {
     const c = this.c;
     const {width,height,top} = HOSPITAL_VIEW;
     beginScene(c);
@@ -725,11 +763,11 @@ export class HospitalRenderer {
     c.beginPath();
     c.rect(0,0,width,height);
     c.clip();
-    this.paintWorld(c,game,character,this.petTargets);
+    this.paintWorld(c,game,character,this.petTargets,time);
     c.restore();
   }
 
-  paintWorld(c,game,character,targets) {
+  paintWorld(c,game,character,targets,time=0) {
     const {player,animals} = game;
     const {width,height} = HOSPITAL_VIEW;
     const camera=cameraWithClearance(game.camera,player,width);
@@ -746,7 +784,7 @@ export class HospitalRenderer {
           layers.push({y:part.end,draw:()=>sideWall(c,camera,part,residents)});
         }
       } else if(obstacle.kind==='face' || obstacle.kind==='boundary') {
-        layers.push({y:obstacle.lineY,draw:()=>facingWall(c,this.wallMask,this.images,camera,obstacle,player,residents)});
+        layers.push({y:obstacle.lineY,draw:()=>facingWall(c,this.wallMask,this.images,camera,obstacle,player,residents,time)});
       }
     }
     for(const door of HOSPITAL_FLOOR.doors) {
@@ -771,24 +809,31 @@ export class HospitalRenderer {
   }
 
   drawPreview(c,character,time) {
-    const x = 206+Math.sin(time*1.45)*45;
-    const game = {
-      phase:'explore',camera:{x:18,y:522},
-      player:{x,y:780,dir:Math.cos(time*1.45)>0?'right':'left',moving:true,walk:time},
-      animals:[
-        {species:'cat',breed:'tabby',x:110,y:733,dir:'right',action:'groom',age:time},
-        {species:'dog',breed:'golden',x:95+Math.sin(time*1.8)*13,y:801,dir:Math.cos(time*1.8)>0?'right':'left',action:'walk',age:time},
-        {species:'rabbit',breed:'lop',x:274,y:747,dir:'left',action:'ear',age:time},
-        {species:'cat',breed:'tuxedo',x:DESK_PERCH.x,y:DESK_PERCH.y,elevation:DESK_PERCH.height,
-          depth:DESK_PERCH.depth,dir:'left',action:'sleep',age:time},
-      ],
-    };
+    const pace=time*1.47;
+    const walking=Math.cos(pace);
+    const dogPace=time*1.78+1.2;
+    const pets=[
+      {species:'dog',breed:'golden',x:126+Math.sin(dogPace)*6,y:76,width:61,
+        dir:Math.cos(dogPace)>0?'right':'left',action:'walk'},
+      {species:'cat',breed:'tabby',x:101,y:109,width:43,dir:'right',action:'groom'},
+      {species:'rabbit',breed:'lop',x:153,y:108,width:38,dir:'left',action:'ear'},
+    ];
     c.save();
     c.beginPath();
-    c.roundRect(2,2,176,111,9);
+    c.rect(2,2,176,111);
     c.clip();
-    c.scale(.47,.47);
-    this.paintWorld(c,game,character);
+    drawExplorer(c,this.images,character,{x:45+Math.sin(pace)*8,y:101,
+      dir:walking>0?'right':'left',moving:Math.abs(walking)>.17,walk:time,hammerAge:99});
+    for (const pet of pets) {
+      const frame=animalFrame(this.images,{...pet,age:time});
+      const unit=pet.width/frame.sw;
+      c.save();
+      spriteAnchor(c,pet.x,pet.y);
+      if (frame.left) c.scale(-1,1);
+      c.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,
+        -pet.width/2,-frame.ground*unit,pet.width,frame.sh*unit);
+      c.restore();
+    }
     c.restore();
   }
 

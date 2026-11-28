@@ -3,7 +3,7 @@ import {HOSPITAL} from './hospital-core.js?v301';
 // Each caption describes the action demonstrated on that page.
 const PAGES = {
  hospital: [
-  [[0], '병원을 돌며 동물 세기', `${HOSPITAL.roundTime}초 동안 종류마다 2~7마리씩 무작위로 나온 동물을 세어요. 동물을 누르면 큰 그림을 볼 수 있어요.`],
+  [[0], '병원을 돌며 동물 세기', `${HOSPITAL.roundTime}초 동안 강아지, 고양이, 토끼를 따로 세어요. 동물을 누르면 큰 그림을 볼 수 있어요.`],
   [[1], '숫자 입력과 결과 확인', '위아래 화살표로 세 종류의 수를 맞추고 제출해요. 모두 세 번 진행하고 맞힌 종류 하나당 단서 한 장을 받아요.'],
  ],
  postal: [

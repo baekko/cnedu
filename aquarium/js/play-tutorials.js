@@ -11,7 +11,7 @@ import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
 import {GardenGame} from './garden-core.js?v268';
 import {DONORS,gardenBugPose} from './garden-care.js';
 import {extendExamples} from './tutorial-examples.js?v=156';
-import {groupTutorial} from './tutorial-pages.js?v301';
+import {groupTutorial} from './tutorial-pages.js?v302';
 // Isolated demonstrations. Inputs call the production game rules; no journey or storage access.
 import {AquariumGame} from './core.js';
 import {MuseumGame} from './museum-core.js';

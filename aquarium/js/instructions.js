@@ -3,10 +3,10 @@ import {HOSPITAL} from './hospital-core.js?v301';
 // Button-first help shared by the opening explanation and in-game help.
 export const BUTTON_INSTRUCTIONS=Object.freeze({
  hospital:[
-  ['move',`${HOSPITAL.roundTime}초 동안 동물 세기`,'방향키로 방과 복도를 오가며 강아지, 고양이, 토끼를 따로 세어요. 종류마다 2~7마리씩 나와요.'],
+  ['move',`${HOSPITAL.roundTime}초 동안 동물 세기`,'방향키로 방과 복도를 오가며 강아지, 고양이, 토끼를 따로 세어요.'],
   ['memorySearch','동물 크게 보기','동물을 누르면 큰 그림을 볼 수 있어요.'],
   ['@↑↓','세 종류의 수 입력','시간이 끝나면 숫자 옆 화살표를 눌러 수를 맞추고 제출해요. 방향키로도 조절할 수 있어요.'],
-  ['@3회','세 번 세고 결과 확인','종류별 마릿수는 매번 무작위로 정해져요. 맞힌 종류 하나당 단서 한 장을 받아요.'],
+  ['@3회','세 번 세고 결과 확인','맞힌 종류 하나당 단서 한 장을 받아요.'],
  ],
  postal:[
   ['@지도','빨간 핀으로 배달지 찾기','마을지도를 펼쳐 배달할 집의 위치를 확인해요.'],
