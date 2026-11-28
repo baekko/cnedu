@@ -33,7 +33,10 @@ export class NewspaperRenderer{
   for(let i=0;i<3;i++){const yy=-54+i*9;box(c,-28,yy,48,7,['#8b8980','#405759','#b78a55'][i],3);line(c,-26,yy+1,17,yy+1,'#d9cfb0',.8);if(active){const off=time*32%8;for(let j=0;j<6;j++)line(c,-28+j*8+off,yy+1,-26+j*8+off,yy+5,'#d7d4ba',.65);}}
   box(c,30,-55,11,20,'#d6cc9e',3);oval(c,35.5,-49,2,2,active?'#e7cf79':'#80ae88');oval(c,35.5,-40,2.2,2.2,'#9e7159');
   line(c,-40,-20,40,-20,'#c1cdb0',1);box(c,-40,-16,80,7,'#2c5856',2);box(c,-35,-7,70,6,'#c5b88c',2);
-  const amount=active?Math.min(1,time/NEWSPAPER.printSeconds):.6;c.save();c.beginPath();c.rect(-35,-14,70,42);c.clip();this.paper(c,-26,-47+amount*38,52,43,id);c.restore();
+  if(id!==null){
+   const amount=active?Math.min(1,time/NEWSPAPER.printSeconds):.6;
+   c.save();c.beginPath();c.rect(-35,-14,70,42);c.clip();this.paper(c,-26,-47+amount*38,52,43,id);c.restore();
+  }
   for(const xx of[-39,39])for(const yy of[-58,-23]){oval(c,xx,yy,1.5,1.5,'#c8c69c');line(c,xx-1,yy,xx+1,yy,'#6a8272',.5);}
   c.restore();
  }
@@ -96,12 +99,14 @@ export class NewspaperRenderer{
  }
  draw(g,character){
   const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!g)return;this.articles=g.articles;c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();c.drawImage(this.images.room,0,0,390,500);
-  // Keep the room's frame; its cork centre starts empty and fills after printing.
-  box(c,125,9,143,57,'#c7a474',1);for(let j=0;j<72;j++){c.fillStyle=j%2?'#af8b5e35':'#ecd1a235';c.fillRect(127+(j*31)%138,11+(j*19)%53,1,1);}
-  (g.publishedArticles||[]).forEach((id,i)=>{const x=130+(i%3)*44,y=13+Math.floor(i/3)*17;this.paper(c,x,y,39,15,id);oval(c,x+19.5,y+1,1,1,'#8d5d46');});
-  const printing=g.boards.find(b=>b.status==='printing'),last=g.boards.find(b=>b.status==='published');this.printer(c,322,127,79,g.printerAge,!!printing,printing?.article??last?.article??0);
-  // A small pinboard name is part of the room, not another gameplay instruction.
-  box(c,132,111,110,22,'#395f58',4);stroke(c,'#bca576');text(c,'오늘의 편집실',187,126,10,'#eee2bb');
+  // Add pages only to the clear centre of the original board so the desk
+  // lamps and books in front of its lower corners retain their painted edges.
+  c.save();c.beginPath();c.rect(137,11,116,49);c.clip();
+  (g.publishedArticles||[]).forEach((id,i)=>{const x=137+(i%3)*41,y=11+Math.floor(i/3)*17;this.paper(c,x,y,34,15,id);oval(c,x+17,y+1,1,1,'#8d5d46');});
+  c.restore();
+  const printing=g.boards.find(b=>b.status==='printing');
+  const last=g.publishedArticles?.at(-1)??null;
+  this.printer(c,195,128,66,printing?.age??0,!!printing,printing?.article??last);
   for(const b of g.boards)this.board(c,g,b);
   this.belt(c,g);box(c,331,316,38,18,'#729280',3);stroke(c,g.held&&g.returnNear()?'#d3a752':'#4c7565');box(c,334,318,32,8,'#d4d0a9',2);text(c,'반납',350,332,8,'#fff3d2');this.hero(c,g,character);this.action(c,g);
   for(const e of g.effects){const u=e.age/1.5;c.save();c.globalAlpha=Math.min(1,(1-u)*3);c.translate(e.x,e.y-u*53);drawClueCard(c,0,0,22,30);c.restore();}

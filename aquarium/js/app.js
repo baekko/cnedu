@@ -60,7 +60,7 @@ import {loadLiteratureAssets,LiteratureRenderer} from './literature-renderer.js?
 import {DREAM,DreamGame,DREAM_ROOMS} from './dream-core.js?v268';
 import {loadDreamAssets,DreamRenderer} from './dream-renderer.js?v307';
 import {NEWSPAPER,NewspaperGame} from './newspaper-core.js';
-import {loadNewspaperAssets,NewspaperRenderer} from './newspaper-renderer.js?v311';
+import {loadNewspaperAssets,NewspaperRenderer} from './newspaper-renderer.js?v314';
 import {LANGUAGE,LanguageGame,LAB_ROOMS} from './language-core.js';
 import {loadLanguageAssets,LanguageRenderer} from './language-renderer.js?v307';
 import {WRITER,WriterGame,WRITER_CARDS,STORIES,VINE,GIANT} from './writer-core.js?v307';
