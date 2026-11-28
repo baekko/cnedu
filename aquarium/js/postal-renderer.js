@@ -4,7 +4,6 @@ import {spriteAnchor} from './layout.js';
 import {POSTAL_BIKE_STANDS,POSTAL_MAIL_SLOT_Y,POSTAL_PEDAL_DISTANCE,POSTAL_VIEW,POSTAL_WALK_SPEED,postalDepartureMountTime} from './postal-core.js?v294';
 import {drawPostalCat,postalCatPose} from './postal-cats.js?v268';
 import {drawPostalMap} from './postal-route-map.js?v268';
-import {drawPostalHouseProjection} from './postal-house-projection.js?v268';
 
 const BICYCLE_CELL = 160;
 const BICYCLE_TILE = 224;
@@ -19,8 +18,10 @@ const SPRITE_SCALE = .78;
 const LOCKED_CAMERA = {x: 0, y: 0};
 const HOUSE_STYLES = 8;
 const HOUSES = Array.from({length: HOUSE_STYLES * 2}, (_, i) => `house-${i}`);
-const STREET_ART = [...HOUSES, 'office', 'tree', 'recycling', 'mailbox', 'bench',
-  'village-cats', 'flowers', 'shrubs', 'lamppost'];
+const PLANT_VARIANTS = 4;
+const PLANTS = ['tree', 'flowers'].flatMap(kind =>
+  Array.from({length: PLANT_VARIANTS}, (_, i) => `${kind}-${i}`));
+const STREET_ART = [...HOUSES, 'office', 'recycling', 'mailbox', 'bench', 'shrubs', 'lamppost', ...PLANTS];
 const STREET_SIZES = {
   tree: [77, 78], recycling: [72, 41], bench: [60, 32], cat: [36, 28],
   lamppost: [22, 64], flowers: [34, 21], shrubs: [38, 26],
@@ -52,7 +53,10 @@ async function loadBicyclePoses(characterId) {
 
 let scenery;
 export async function loadPostalAssets(character) {
-  scenery ||= Promise.all(STREET_ART.map(async key => [key, await image(`./assets/postal/${key}.webp?v265`)]))
+  scenery ||= Promise.all([
+    ...STREET_ART.map(async key => [key, await image(`./assets/postal/${key}-v304.webp`)]),
+    image('./assets/postal/village-cats.webp?v265').then(asset => ['village-cats', asset]),
+  ])
     .then(Object.fromEntries).catch(error => { scenery = null; throw error; });
   const [objects, bikePoses, idle, walk, mailFrames] = await Promise.all([
     scenery,
@@ -113,7 +117,15 @@ function sprite(c, asset, x, y, maxWidth, maxHeight) {
 
 function drawPlot(c, art, house) {
   const style = house.art + (house.side === 'south' ? HOUSE_STYLES : 0);
-  drawPostalHouseProjection(c, art[HOUSES[style]], style, house.plot);
+  const {x, y, width, height} = house.plot;
+  c.drawImage(art[HOUSES[style]], x + 1, y, width - 2, height);
+}
+
+function propArtwork(art, prop) {
+  if (prop.kind !== 'tree' && prop.kind !== 'flowers') return art[prop.kind];
+  const coordinates = Math.imul(prop.x, 374761393) ^ Math.imul(prop.y, 668265263);
+  const variant = ((coordinates ^ (coordinates >>> 16)) >>> 0) % PLANT_VARIANTS;
+  return art[`${prop.kind}-${variant}`];
 }
 
 function drawGarden(c, garden) {
@@ -371,7 +383,7 @@ export class PostalRenderer {
           ellipse(c, x, y, 14, 3, '#52664938');
           drawPostalCat(c, art['village-cats'], prop, catPose);
         } else {
-          sprite(c, art[kind], x, y, width, height);
+          sprite(c, propArtwork(art, prop), x, y, width, height);
         }
         c.restore();
       });
@@ -409,7 +421,7 @@ export class PostalRenderer {
     const t = time % (departure + 1.6);
     panel(c, 19, 77, 142, 27, '#e7dac1', 12);
     sprite(c, art.office, 136, 85, 62, 55);
-    sprite(c, art.tree, 39, 82, 28, 39);
+    sprite(c, art['tree-0'], 39, 82, 28, 39);
     if (t < walkTime) {
       const [dx, dy] = POSTAL_BIKE_STANDS.left;
       drawPose(c, art, 'bike', 'left', 0, bike.x, bike.y, scale);

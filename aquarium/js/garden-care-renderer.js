@@ -5,10 +5,9 @@ import {DONORS,POLLEN_COLORS,POLLEN_NAMES,gardenBugPose} from './garden-care.js'
 export function drawGardenCare(r,c,g,character){
  if(g.room===1){
   for(const d of DONORS){r.object(c,['donor-gold','donor-pink','donor-blue'][d.color],d.x,247,46);box(c,d.x-31,258,62,18,'#fff3d9ed',4);oval(c,d.x-20,267,3.5,3.5,POLLEN_COLORS[d.color]);text(c,POLLEN_NAMES[d.color]+' 꽃가루',d.x+5,267,8,'#6b795c');}
-  for(const s of g.plants){const key='flower-open',h=55;
+  for(const s of g.plants){const key=['target-gold','target-pink','target-blue'][s.pollenNeed],h=55;
    box(c,s.x-43,277,86,22,'#fff3dfe8',4);text(c,s.name+(s.bloom?' ✓':''),s.x-8,288,10,'#596e57');if(!s.bloom)drawClueCard(c,s.x+18,288,8,11);oval(c,s.x+30,288,4,4,POLLEN_COLORS[s.pollenNeed]);
    oval(c,s.x,356,23,5,'#55654d25');r.object(c,key,s.x,355,h);
-   {c.save();c.beginPath();c.rect(s.x-33,355-h,66,h*.55);c.clip();c.filter='hue-rotate('+[65,0,228][s.pollenNeed]+'deg)';r.object(c,key,s.x,355,h);c.restore();}
    if(!s.bloom){box(c,s.x-30,363,60,24,'#fff5d9ed',4);for(let n=0;n<3;n++)oval(c,s.x-10+n*10,370,3,3,n<s.pollinate?POLLEN_COLORS[s.pollenNeed]:'#c6c8ae');text(c,s.pollinate+' / 3',s.x,380,8,'#43846a');}
   }
  }else{

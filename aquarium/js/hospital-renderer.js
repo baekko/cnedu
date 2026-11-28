@@ -34,11 +34,11 @@ async function loadRoomArt() {
     loadImage('hospital/furniture.webp'),
     loadImage('postal/village-cats.webp?v265'),
     loadImage('hospital/cat-actions.webp').catch(()=>null),
-    loadImage('hospital/walls-facing-v299.webp'),
+    loadImage('hospital/walls-facing-v304.webp'),
     loadImage('hospital/animals-diagonal-v296.webp'),
-    loadImage('hospital/fixtures-perspective-v296.webp'),
-    loadImage('hospital/fixtures-wall-v300.webp'),
-    loadImage('hospital/therapy-traffic-v302.webp'),
+    loadImage('hospital/fixtures-perspective-v304.webp'),
+    loadImage('hospital/fixtures-wall-v304.webp'),
+    loadImage('hospital/therapy-traffic-v304.webp'),
     fetch(asset('hospital/animals.json')).then(response => {
       if (!response.ok) throw new Error('동물 그림 목록을 불러오지 못했어요.');
       return response.json();
@@ -95,58 +95,49 @@ function polygon(c,points,fill) {
   c.fill();
 }
 
+const FLOOR_FINISH={
+  lobby:['#f4ddbe','#f1d6b6','#cba987'],
+  exam:['#eceee0','#e7ebdc','#b5c2ab'],
+  therapy:['#f5ddc4','#f0d4ba','#c5a286'],
+  rest:['#f0e8e0','#ebe0d8','#c3b3ab'],
+};
+
 function tint(c,room) {
-  const {x,y,w,h,floor,id} = room;
+  const {x,y,w,h,id}=room;
+  const [light,shade,grout]=FLOOR_FINISH[id];
+  const tile=44;
   c.save();
   c.beginPath();
   c.rect(x,y,w,h);
   c.clip();
-  const mineral = id==='exam' || id==='rest';
-  const spread = c.createLinearGradient(x,y,x+w,y+h);
-  spread.addColorStop(0,floor);
-  spread.addColorStop(.45,mineral?'#e8ded1':'#ecdbc4');
-  spread.addColorStop(1,floor);
-  c.fillStyle=spread;
-  c.fillRect(x,y,w,h);
-  c.strokeStyle=mineral?'#776c5b39':'#7258403b';
-  c.lineWidth=.64;
-  const tileX=mineral?49:36;
-  for(let xx=x;xx<x+w;xx+=tileX) {
-    c.beginPath();
-    c.moveTo(xx,y);
-    c.lineTo(xx,y+h);
-    if(!mineral) for(let yy=y+((xx-x)/tileX%2)*29;yy<y+h;yy+=58) {
-      c.moveTo(xx,yy);c.lineTo(xx+tileX,yy);
+  for(let row=0;row*tile<h;row++) {
+    for(let column=0;column*tile<w;column++) {
+      c.fillStyle=(column+row*3)%5===3?shade:light;
+      c.fillRect(x+column*tile,y+row*tile,tile,tile);
     }
-    c.stroke();
   }
-  if(mineral) for(let yy=y;yy<y+h;yy+=52) {
-    c.beginPath();c.moveTo(x,yy);c.lineTo(x+w,yy);c.stroke();
+  c.strokeStyle=grout;
+  c.lineWidth=.82;
+  c.beginPath();
+  for(let xx=x+tile;xx<x+w;xx+=tile) {
+    c.moveTo(xx,y);c.lineTo(xx,y+h);
   }
-  c.fillStyle='#67635426';
-  c.fillRect(x,y,w,11);
-  c.transform(1,0,mineral?-.27:.44,1,(mineral?.27:-.44)*y,0);
-  const spacing=mineral?96:72;
-  for(let beamX=x-100;beamX<x+w+100;beamX+=spacing) {
-    const beam=c.createLinearGradient(beamX-28,y,beamX+28,y);
-    beam.addColorStop(0,'#fff9e500');beam.addColorStop(.5,mineral?'#fff9e532':'#fff5d04e');beam.addColorStop(1,'#fff9e500');
-    c.fillStyle=beam;c.fillRect(beamX-28,y,56,h);
+  for(let yy=y+tile;yy<y+h;yy+=tile) {
+    c.moveTo(x,yy);c.lineTo(x+w,yy);
   }
+  c.stroke();
+  c.fillStyle='#78684a21';c.fillRect(x,y,w,8);
   c.restore();
 }
 
 function floorTexture(c) {
   const {width,height,rooms,doors,fixtures,hall}=HOSPITAL_FLOOR;
-  c.fillStyle='#b9b9a7';c.fillRect(0,0,width,height);
+  c.fillStyle='#a7ab96';c.fillRect(0,0,width,height);
   for(const room of rooms) tint(c,room);
-  const exterior=c.createLinearGradient(0,HOSPITAL_FLOOR.bounds.bottom,0,height);
-  exterior.addColorStop(0,'#c4b9a5');exterior.addColorStop(1,'#bcaf9a');
-  c.fillStyle=exterior;
+  c.fillStyle='#bfb59e';
   c.fillRect(hall.x,HOSPITAL_FLOOR.bounds.bottom,hall.w,height-HOSPITAL_FLOOR.bounds.bottom);
-  const hallLight=c.createLinearGradient(0,hall.y,0,hall.bottom);
-  hallLight.addColorStop(0,'#afbbac');hallLight.addColorStop(.37,'#d1d9c8');hallLight.addColorStop(1,'#bac6b5');
-  c.fillStyle=hallLight;c.fillRect(hall.x,hall.y,hall.w,hall.h);
-  c.strokeStyle='#586d5547';c.lineWidth=.75;
+  c.fillStyle='#d7e1cd';c.fillRect(hall.x,hall.y,hall.w,hall.h);
+  c.strokeStyle='#abbca1';c.lineWidth=.82;
   for(let x=hall.x+10;x<hall.x+hall.w;x+=48) {c.beginPath();c.moveTo(x,hall.y);c.lineTo(x,hall.bottom);c.stroke();}
   for(let y=hall.y+12;y<hall.bottom;y+=42) {c.beginPath();c.moveTo(hall.x,y);c.lineTo(hall.x+hall.w,y);c.stroke();}
   c.fillStyle='#808b6c45';
@@ -161,16 +152,6 @@ function floorTexture(c) {
   for(const {x,y,w} of doors) {
     c.fillStyle='#96846e85';c.fillRect(x,y-5,w,10);c.fillStyle='#efddbc9e';c.fillRect(x,y-1,w,2);
   }
-  const paint=c.getImageData(0,0,width,height);
-  let noise=0x432fe9;
-  for(let i=0;i<paint.data.length;i+=4) {
-    noise=(Math.imul(noise,1664525)+1013904223)>>>0;
-    const shade=((noise>>>24)-127)*.032;
-    paint.data[i]+=shade;
-    paint.data[i+1]+=shade;
-    paint.data[i+2]+=shade;
-  }
-  c.putImageData(paint,0,0);
 }
 
 function paintGround(c,cache,camera) {
@@ -193,8 +174,8 @@ function roomSign(c,label,x,y,size) {
 const roomFor = id => HOSPITAL_FLOOR.rooms.find(room=>room.id===id);
 const WALL_FACE_TILE_WIDTH=384;
 const WALL_FACE_TILE_HEIGHT=128;
-const PANEL_SPLITS={lobby:.43,rest:.49};
-const PANEL_RAIL_Y={lobby:91,exam:86,therapy:87,rest:79};
+const PANEL_SPLITS={lobby:.417,rest:.49};
+const PANEL_RAIL_Y={lobby:88,exam:85,therapy:86,rest:79};
 const WAINSCOT_HEIGHT=39;
 const WALL_CAP_DEPTH=4;
 const DOOR_HEIGHT=84;
@@ -202,11 +183,11 @@ const DOOR_HEIGHT=84;
 // These are sampled from the neutral points of the painted rear panels. The
 // same rail elevation follows each panel onto the adjoining plaster walls.
 const WALL_FINISH={
-  lobby:{plaster:'#cfa176',shadow:'#9d784f',wood:'#555640',rail:'#8d7955',base:'#686b53',cap:'#e6c6a1'},
-  exam:{plaster:'#999269',shadow:'#767251',wood:'#935526',rail:'#b18249',base:'#825020',cap:'#d5c098'},
-  therapy:{plaster:'#d6a777',shadow:'#aa7e55',wood:'#8c511f',rail:'#b07b45',base:'#7e461b',cap:'#e0c29d'},
-  rest:{plaster:'#d5ab7a',shadow:'#a38460',wood:'#82867a',rail:'#a29e8a',base:'#73766b',cap:'#dec4a7'},
-  hall:{plaster:'#bdbda0',shadow:'#91917c',wood:'#7a8475',rail:'#a4a491',base:'#6f796f',cap:'#d9d4b9'},
+  lobby:{plaster:'#f5c68c',shadow:'#dba673',wood:'#5c7457',rail:'#738966',base:'#405840',cap:'#f5d7ad'},
+  exam:{plaster:'#afb482',shadow:'#93986e',wood:'#a75b2c',rail:'#b57743',base:'#76421f',cap:'#d2cf9e'},
+  therapy:{plaster:'#f7c792',shadow:'#dcaa7a',wood:'#aa5b2a',rail:'#be8248',base:'#75421e',cap:'#f7d6a5'},
+  rest:{plaster:'#f7c997',shadow:'#dbad83',wood:'#758e80',rail:'#8ea293',base:'#526d60',cap:'#f7d9ac'},
+  hall:{plaster:'#cbd9bc',shadow:'#abb99c',wood:'#7d957d',rail:'#97ab90',base:'#576f5a',cap:'#e1e9cf'},
 };
 
 function smooth01(value) {
@@ -339,15 +320,15 @@ function viewFloorOpacity(camera,player,room,line,foreground=false) {
 }
 
 // Pane bounds are measured in the rehab panel's 384 by 128 source coordinates.
-const THERAPY_WINDOW_COLUMNS=[[169,192],[195,222],[225,252],[255,282],[285,308]];
-const THERAPY_WINDOW_ROWS=[[11,33],[36,56],[59,78]];
+const THERAPY_WINDOW_COLUMNS=[[166.6,192.5],[195.8,222.3],[225.6,252.3],[255.8,282],[285.5,309.3]];
+const THERAPY_WINDOW_ROWS=[[11.8,32.7],[35.7,55.6],[58.7,78.2]];
 const TRAFFIC_CARS=[
-  {tile:1,direction:-1,offset:5.3,period:8.8,travel:5.2,width:40,ground:52},
-  {tile:0,direction:1,offset:1.1,period:8.8,travel:5.2,width:46,ground:65},
+  {tile:1,direction:-1,offset:5.3,period:8.8,travel:5.2,width:32,ground:51},
+  {tile:0,direction:1,offset:1.1,period:8.8,travel:5.2,width:38,ground:65},
 ];
 
 function therapyWindow(c,traffic,left,top,scaleX,scaleY,time) {
-  const x=169,y=11,w=139,h=67;
+  const x=166.6,y=11.8,w=142.7,h=66.4;
   c.save();
   c.translate(left,top);
   c.scale(scaleX,scaleY);
@@ -357,6 +338,20 @@ function therapyWindow(c,traffic,left,top,scaleX,scaleY,time) {
   }
   c.clip();
   c.drawImage(traffic,0,0,280,140,x,y,w,h);
+  const signLeft=x+124*w/280,signTop=y+18.7*h/140;
+  const signWidth=32*w/280,signHeight=6.4*h/140;
+  const signFace=c.createLinearGradient(0,signTop,0,signTop+signHeight);
+  signFace.addColorStop(0,'#ffe3b9');
+  signFace.addColorStop(.28,'#f5dbb3');
+  signFace.addColorStop(.78,'#f5dbb3');
+  signFace.addColorStop(1,'#ffe2bb');
+  c.fillStyle=signFace;
+  c.fillRect(signLeft,signTop,signWidth,signHeight);
+  c.fillStyle='#583a25';
+  c.textAlign='center';
+  c.textBaseline='middle';
+  c.font='700 3.65px "Noto Sans KR", "Noto Sans CJK KR", "Malgun Gothic", sans-serif';
+  c.fillText('온기제과',x+w*.5,signTop+signHeight*.54,signWidth-.65);
   for (const car of TRAFFIC_CARS) {
     const progress=(time+car.offset)%car.period/car.travel;
     if (progress>=1) continue;
@@ -390,7 +385,8 @@ function paintedRear(c,art,wall,room,points,time) {
     therapyWindow(c,art.traffic,base.x,top.y,(end.x-base.x)/sw,(railY-top.y+.16)/rail,time);
   }
   if(!wall.segment && top.y>-2) {
-    roomSign(c,room.name,base.x+(end.x-base.x)*.5,Math.max(6,top.y+10*base.factor),10*base.factor);
+    const signPosition=room.id==='therapy'?.26:.5;
+    roomSign(c,room.name,base.x+(end.x-base.x)*signPosition,Math.max(6,top.y+10*base.factor),10*base.factor);
   }
 }
 
@@ -809,31 +805,31 @@ export class HospitalRenderer {
   }
 
   drawPreview(c,character,time) {
-    const pace=time*1.47;
-    const walking=Math.cos(pace);
-    const dogPace=time*1.78+1.2;
+    const duration=2.8;
     const pets=[
-      {species:'dog',breed:'golden',x:126+Math.sin(dogPace)*6,y:76,width:61,
-        dir:Math.cos(dogPace)>0?'right':'left',action:'walk'},
-      {species:'cat',breed:'tabby',x:101,y:109,width:43,dir:'right',action:'groom'},
-      {species:'rabbit',breed:'lop',x:153,y:108,width:38,dir:'left',action:'ear'},
+      {species:'dog',breed:'golden',width:61,action:'idle'},
+      {species:'cat',breed:'tabby',width:49,action:'groom'},
+      {species:'rabbit',breed:'lop',width:43,action:'ear'},
     ];
+    const pet=pets[Math.floor(time/duration)%pets.length];
+    const age=time%duration;
+    const arrival=Math.max(0,1-age/.46);
+    const departure=Math.max(0,1-(duration-age)/.42);
+    const moving=arrival>0 || departure>0;
+    const hopPhase=((arrival>0?1-arrival:departure)*2)%1;
+    const hop=pet.species==='rabbit' && moving?Math.sin(hopPhase*Math.PI)*7:0;
+    const pose=animalFrame(this.images,{...pet,age,dir:departure>0?'right':'left',
+      action:moving?'walk':pet.action,hopPhase});
+    const unit=pet.width/pose.sw;
     c.save();
     c.beginPath();
     c.rect(2,2,176,111);
     c.clip();
-    drawExplorer(c,this.images,character,{x:45+Math.sin(pace)*8,y:101,
-      dir:walking>0?'right':'left',moving:Math.abs(walking)>.17,walk:time,hammerAge:99});
-    for (const pet of pets) {
-      const frame=animalFrame(this.images,{...pet,age:time});
-      const unit=pet.width/frame.sw;
-      c.save();
-      spriteAnchor(c,pet.x,pet.y);
-      if (frame.left) c.scale(-1,1);
-      c.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,
-        -pet.width/2,-frame.ground*unit,pet.width,frame.sh*unit);
-      c.restore();
-    }
+    drawExplorer(c,this.images,character,{x:58,y:107,dir:'right',moving:false,walk:0,hammerAge:99},1.5);
+    spriteAnchor(c,125+(arrival+departure)*78,106-hop);
+    if (pose.left) c.scale(-1,1);
+    c.drawImage(pose.image,pose.sx,pose.sy,pose.sw,pose.sh,
+      -pet.width/2,-pose.ground*unit,pet.width,pose.sh*unit);
     c.restore();
   }
 
