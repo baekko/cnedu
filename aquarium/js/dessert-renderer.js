@@ -1,7 +1,7 @@
 import {drawClueCard} from './clue-card-art.js?v245';
 import {beginScene,drawRoom} from './layout.js';
 import {drawExplorer,drawCarryCell} from './heroes.js?v=155';
-import {setFinishingAtlas} from './dessert-finish-art.js';
+import {setFinishingAtlas} from './dessert-finish-art.js?v311';
 import {PASTRIES} from './dessert-core.js';
 const TAU=Math.PI*2;
 const box=(c,x,y,w,h,fill,r=4)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
@@ -11,7 +11,7 @@ const line=(c,x,y,x2,y2,color,w=1)=>{c.strokeStyle=color;c.lineWidth=w;c.lineCap
 const text=(c,s,x,y,size=10,color='#655340',weight=700)=>{c.fillStyle=color;c.font=`${weight} ${size}px sans-serif`;c.textAlign='center';c.textBaseline='alphabetic';c.fillText(s,x,y);};
 
 export async function loadDessertAssets(character){
- const images={},files=[['robot/'+character.id+'-work.webp','carry'],['dessert/finish-v97.webp','finishing'],['dessert/room-v181.webp','room'],['dessert/ovens.webp','ovens'],['dessert/clue.webp','clue'],...['walk','idle'].map(n=>['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp'])];
+ const images={},files=[['robot/'+character.id+'-work.webp','carry'],['dessert/finish-v311.webp','finishing'],['dessert/room-v311.webp','room'],['dessert/ovens-v311.webp','ovens'],['dessert/clue.webp','clue'],...['walk','idle'].map(n=>['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp'])];
  await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('디저트 공방 그림: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));setFinishingAtlas(images.finishing);return images;
 }
 

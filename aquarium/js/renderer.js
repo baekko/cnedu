@@ -5,13 +5,20 @@ import { alphaMask, masksTouch } from './collision.js';
 import {LIGHT_FX_SECONDS,drawLightWater,drawLightSurface} from './aquarium-light.js';
 
 export async function loadAssets() {
-  const files = [...CHARACTERS.map(c => c.asset), ...Object.values(SHARKS).map(s => s.asset), 'jelly.png', 'aquarium-v21/reef-left.webp', 'aquarium-v21/reef-right.webp', 'aquarium-v21/shells.webp', 'aquarium-v8/fish.webp', 'aquarium-v89/water.webp', 'aquarium-v8/submarine.webp', 'aquarium-v8/submarine-window-mask.webp'];
+  const scenery = [
+    ...Object.values(SHARKS).map(s => s.asset),
+    'jelly.png', 'aquarium-v21/reef-left.webp', 'aquarium-v21/reef-right.webp',
+    'aquarium-v21/shells.webp', 'aquarium-v8/fish.webp', 'aquarium-v89/water.webp',
+    'aquarium-v8/submarine.webp',
+  ];
+  const files = [...CHARACTERS.map(c => c.asset), ...scenery, 'aquarium-v8/submarine-window-mask.webp'];
   const images = {};
   await Promise.all(files.map(file => new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => { images[file] = img; resolve(); };
     img.onerror = () => reject(new Error(`그림을 불러오지 못했어요: ${file}`));
-    img.src = new URL(`../assets/${file}`, import.meta.url).href;
+    const asset = scenery.includes(file) ? `aquarium-v311/${file.split('/').pop()}` : file;
+    img.src = new URL(`../assets/${asset}`, import.meta.url).href;
   })));
   return images;
 }

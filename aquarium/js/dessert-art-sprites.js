@@ -1,2 +1,15 @@
-// Cropped sprite bounds in finish-v97.webp (4 columns × 3 rows).
-export const FINISH_SPRITES = [{"sx":16,"sy":39,"sw":328,"sh":292},{"sx":378,"sy":39,"sw":328,"sh":292},{"sx":747,"sy":23,"sw":317,"sh":316},{"sx":1094,"sy":69,"sw":346,"sh":233},{"sx":49,"sy":374,"sw":285,"sh":327},{"sx":409,"sy":420,"sw":259,"sh":254},{"sx":741,"sy":389,"sw":316,"sh":314},{"sx":1167,"sy":370,"sw":201,"sh":347},{"sx":63,"sy":735,"sw":266,"sh":336},{"sx":386,"sy":756,"sw":315,"sh":299},{"sx":762,"sy":732,"sw":282,"sh":342},{"sx":1091,"sy":811,"sw":355,"sh":210}];
+// Tight bounds for the individual illustrations in finish-v311.webp.
+export const FINISH_SPRITES = [
+ {"sx":43,"sy":52,"sw":275,"sh":257},
+ {"sx":406,"sy":51,"sw":274,"sh":259},
+ {"sx":779,"sy":48,"sw":251,"sh":266},
+ {"sx":1121,"sy":77,"sw":291,"sh":207},
+ {"sx":56,"sy":393,"sw":249,"sh":300},
+ {"sx":429,"sy":431,"sw":227,"sh":224},
+ {"sx":769,"sy":406,"sw":271,"sh":273},
+ {"sx":1170,"sy":384,"sw":193,"sh":317},
+ {"sx":86,"sy":743,"sw":189,"sh":323},
+ {"sx":404,"sy":782,"sw":277,"sh":245},
+ {"sx":781,"sy":745,"sw":248,"sh":320},
+ {"sx":1104,"sy":796,"sw":326,"sh":218}
+];

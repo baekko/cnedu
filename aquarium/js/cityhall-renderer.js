@@ -7,7 +7,7 @@ import {box,oval} from './field-renderer.js?v245';
 import {CITY_ROOM} from './cityhall-core.js?v=144';
 
 const clamp=n=>Math.max(0,Math.min(1,n));
-const ROOM_ART='room-v141';
+const ROOM_ART='room-v311';
 const MAYOR={x:CITY_ROOM.mayorX,y:CITY_ROOM.mayorY,dir:'down',walk:0,moving:false,hammerAge:99};
 const DESK_BACK=178;
 const DESK_EDGE=[[105,DESK_BACK],[285,DESK_BACK],[305,201],[299,210],[302,261],[88,261],[91,210],[85,201]];

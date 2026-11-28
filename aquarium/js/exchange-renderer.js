@@ -4,13 +4,13 @@ import {beginScene,drawRoom,sceneText} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
 import {EXCHANGE_ROOM} from './exchange-core.js';
 export async function loadExchangeAssets(character){
- const images={},files=['room-v22.webp','desk-v20.webp','room-v13.png','clerk-v19.webp',`${character.id}-walk.webp`,`${character.id}-idle.webp`];
+ const images={},files=['room-v311.webp','desk-v20.webp','room-v13.png','clerk-v19.webp',`${character.id}-walk.webp`,`${character.id}-idle.webp`];
  await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[file]=im;resolve();};im.onerror=()=>reject(Error('증권거래소 그림을 불러오지 못했어요.'));im.src=new URL('../assets/'+(file.includes(character.id)?'hero-v153':'exchange')+'/'+file,import.meta.url).href;})));await loadPlayerActions(images,character);return images;
 }
 export class ExchangeRenderer{
  briefing(c,character,t){exchangeBriefing(this,c,character,t);}
  constructor(canvas,images){this.c=canvas.getContext('2d');this.images=images;this.effects=[];}
- draw(game,character,time){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);c.fillStyle='#234c52';c.fillRect(0,0,390,844);drawRoom(c,this.images['room-v22.webp']);c.fillStyle='#eaf3ea';c.fillRect(0,678,390,166);if(!game)return;
+ draw(game,character,time){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);c.fillStyle='#234c52';c.fillRect(0,0,390,844);drawRoom(c,this.images['room-v311.webp']);c.fillStyle='#eaf3ea';c.fillRect(0,678,390,166);if(!game)return;
   c.save();c.translate(0,170);
   // Reference-based trading post: monitor canopy, visible central support,
   // workstations and a clear service counter are one structural asset.

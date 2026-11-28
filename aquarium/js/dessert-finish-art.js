@@ -1,5 +1,5 @@
 import {stampTarget} from './dessert-finishing.js';
-import {FINISH_SPRITES} from './dessert-art-sprites.js';
+import {FINISH_SPRITES} from './dessert-art-sprites.js?v311';
 let finishingAtlas=null;
 export function setFinishingAtlas(image){finishingAtlas=image;}
 export const hasFinishingAtlas=()=>!!finishingAtlas;
@@ -15,9 +15,9 @@ function round(c,x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);c.f
 function curve(c,pts,color,width=1){c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.beginPath();c.moveTo(pts[0],pts[1]);c.bezierCurveTo(...pts.slice(2));c.stroke();}
 function label(c,s,x,y,size=9,color='#dce9dc'){c.font=`700 ${size}px sans-serif`;c.fillStyle=color;c.textAlign='center';c.fillText(s,x,y);}
 function mat(c,height=132){
- const g=c.createLinearGradient(0,0,0,height);g.addColorStop(0,'#315965');g.addColorStop(1,'#1f414b');round(c,3,3,294,height-6,11,g,'#b99a70');
- c.strokeStyle='#72928d45';c.lineWidth=.5;for(let x=15;x<296;x+=14){c.beginPath();c.moveTo(x,8);c.lineTo(x,height-7);c.stroke();}for(let y=14;y<height-4;y+=14){c.beginPath();c.moveTo(8,y);c.lineTo(292,y);c.stroke();}
- for(const x of[10,290])for(const y of[10,height-10])oval(c,x,y,1.6,1.6,'#d1b27d');
+ round(c,3,3,294,height-6,11,'#224954','#e7d2a3');
+ c.strokeStyle='#56787d';c.lineWidth=.5;for(let x=15;x<296;x+=14){c.beginPath();c.moveTo(x,8);c.lineTo(x,height-7);c.stroke();}for(let y=14;y<height-4;y+=14){c.beginPath();c.moveTo(8,y);c.lineTo(292,y);c.stroke();}
+ for(const x of[10,290])for(const y of[10,height-10])oval(c,x,y,1.6,1.6,'#e7d2a3');
 }
 export function drawFruit(c,i,x,y,size=1){
  if(sprite(c,4+i,x-17*size,y-18*size,34*size,36*size))return;
@@ -76,11 +76,11 @@ function muffin(c,x,y,amount,active){
  if(active){const top=y-5-61*.84,bottom=y-5-61*.6;c.strokeStyle='#c5ed9f';c.lineWidth=2;c.setLineDash([3,2]);c.strokeRect(x-29,top,58,bottom-top);c.setLineDash([]);}
 }
 function pipingBag(c,x,tip){
- if(finishingAtlas){const b=FINISH_SPRITES[8],w=42,h=w*b.sh/b.sw;c.save();c.translate(x,tip);c.rotate(-.55);sprite(c,8,-.035*w,-.985*h,w,h,true);c.restore();return;}
+ if(finishingAtlas){const b=FINISH_SPRITES[8],w=24,h=w*b.sh/b.sw;sprite(c,8,x-w*.5,tip-h,w,h,true);return;}
  c.save();c.translate(x,tip-5);c.rotate(-.17);const g=c.createLinearGradient(-16,-40,14,-4);g.addColorStop(0,'#fff3ea');g.addColorStop(.6,'#f3c8ce');g.addColorStop(1,'#ce93a9');c.beginPath();c.moveTo(-12,-38);c.quadraticCurveTo(20,-42,16,-22);c.lineTo(1,-1);c.lineTo(-4,-2);c.closePath();c.fillStyle=g;c.fill();c.strokeStyle='#bd879a';c.lineWidth=.8;c.stroke();curve(c,[-5,-34,-3,-20,-1,-12,-1,-7],'#fff5ec',1.4);round(c,-5,-4,7,8,1,'#a4bac0','#677c88');c.restore();
 }
 function tart(c,marks,step){
- if(finishingAtlas){sprite(c,11,60,55,180,107);sprite(c,3,77,60,146,99);for(let i=0;i<3;i++){const x=112+i*38;if(i<step)drawFruit(c,marks[i],x,96,.9);else{c.setLineDash([2,2]);c.strokeStyle=i===step?'#598463':'#c2a978';c.lineWidth=i===step?1.7:1;c.beginPath();c.ellipse(x,100,14,10,0,0,TAU);c.stroke();c.setLineDash([]);}}return;}
+ if(finishingAtlas){sprite(c,11,60,55,180,107,true);sprite(c,3,77,60,146,99);for(let i=0;i<3;i++){const x=112+i*38;if(i<step)drawFruit(c,marks[i],x,96,.9);else{c.setLineDash([2,2]);c.strokeStyle=i===step?'#598463':'#c2a978';c.lineWidth=i===step?1.7:1;c.beginPath();c.ellipse(x,100,14,10,0,0,TAU);c.stroke();c.setLineDash([]);}}return;}
  oval(c,150,104,98,20,'#15333d80');oval(c,150,94,103,27,'#d1d9cc');oval(c,150,90,99,24,'#eff0dc');
  c.strokeStyle='#adb5a1';c.lineWidth=1;c.beginPath();c.ellipse(150,91,96,22,0,0,TAU);c.stroke();
  oval(c,150,92,83,24,'#a6723d');oval(c,150,85,85,22,gradient(c,150,84,92,[[0,'#f0c78a'],[.8,'#dfb06a'],[1,'#b08042']]));
@@ -97,7 +97,16 @@ export function drawFinishing(c,t){
   stamp(c,20+260*t.cursor,29,t.wait>0?Math.sin(Math.PI*Math.min(1,t.wait/.4))*5:0);
   for(let i=0;i<3;i++)cookie(c,62+i*88,91,i<t.step,i===t.step);
  }else if(t.kind==='muffin'){
-  for(let i=0;i<3;i++){const x=62+i*88,amount=i<t.step?.72:i===t.step?t.amount:0;muffin(c,x,85,amount,i===t.step);if(i===t.step&&t.holding)pipingBag(c,x,80-61*amount);if(i<t.step)label(c,'✓',x,121,10,'#cde6a5');}
+  for(let i=0;i<3;i++){
+   const x=62+i*88,amount=i<t.step?.72:i===t.step?t.amount:0;
+   muffin(c,x,85,amount,i===t.step);
+   if(i===t.step&&t.holding)pipingBag(c,x,80-61*amount);
+   if(i<t.step){
+    c.beginPath();c.moveTo(x-4,115);c.lineTo(x-1,118);c.lineTo(x+5,111);
+    c.lineCap='round';c.lineJoin='round';c.strokeStyle='#435c34';c.lineWidth=3.5;c.stroke();
+    c.strokeStyle='#d6eda9';c.lineWidth=1.9;c.stroke();
+   }
+  }
  }else{
   round(c,32,10,236,35,7,'#f4e5c7','#c9ae80');label(c,'견본',57,31,9,'#7c6046');
   t.pattern.forEach((f,i)=>{drawFruit(c,f,110+i*55,27,.76);if(i<2)label(c,'›',138+i*55,31,12,'#a78760');});tart(c,t.marks,t.step);

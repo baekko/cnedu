@@ -1,7 +1,7 @@
 // Each place has one entrance object and a color palette.
 const places={
  aquarium:['aquarium-v8/title-submarine.webp','#086274','#d7f1f3','#7dc9d6'],
- art:['entrance-symbols/art.webp','#795363','#f5e6e9','#dca9b7'],
+ art:['entrance-v311/art.webp','#795363','#f5e6e9','#dca9b7'],
  history:['history-v26/machine-idle.webp','#555886','#ebe9f8','#b6b3e4'],
  exchange:['exchange/desk-v20.webp','#346755','#e2f0e7','#a9ceb5'],
  temple:['temple/entrance.webp','#315d76','#e5f3fb','#99c9da'],

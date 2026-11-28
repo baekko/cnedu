@@ -7,8 +7,12 @@ import {LAB,PARTS,ROBOT_MODELS,REPAIRS} from './robot-core.js';
 const TAU=Math.PI*2;
 const rounded=(c,x,y,w,h,fill,r=5)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 export async function loadRobotAssets(character){
- const images={},files=['room-modern-v43',...new Set(ROBOT_MODELS.map(m=>m.sheet)),...PARTS.map(p=>p.id),'station','magnet','penguin',character.id+'-work'];
- await Promise.all([...files.map(n=>['robot/'+n+'.webp',n+'.webp']),['robot-v110/'+character.id+'-repair.webp',character.id+'-repair.webp'],...['walk','idle'].map(n=>['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp'])].map(([src,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('연구소 그림: '+src));im.src=new URL('../assets/'+src,import.meta.url).href;})));
+ const images={},art=['room-modern-v43',...new Set(ROBOT_MODELS.map(m=>m.sheet)),...PARTS.map(p=>p.id),'station','magnet'];
+ const files=[
+  ...art.map(n=>['robot-v311/'+n+'.webp',n+'.webp']),
+  ...['penguin',character.id+'-work'].map(n=>['robot/'+n+'.webp',n+'.webp']),
+ ];
+ await Promise.all([...files,['robot-v110/'+character.id+'-repair.webp',character.id+'-repair.webp'],...['walk','idle'].map(n=>['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp'])].map(([src,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('연구소 그림: '+src));im.src=new URL('../assets/'+src,import.meta.url).href;})));
  return images;
 }
 export class RobotRenderer{

@@ -1,5 +1,5 @@
 import {FRUITS,stampTarget} from './dessert-finishing.js';
-import {drawFinishing,drawFruit,hasFinishingAtlas} from './dessert-finish-art.js';
+import {drawFinishing,drawFruit,hasFinishingAtlas} from './dessert-finish-art.js?v311';
 export class DessertFinishUI{
  constructor(root,{getGame=()=>null,active=()=>false,onChange=()=>{},demo=false}={}){
   Object.assign(this,{root,getGame,active,onChange,demo});this.panel=document.createElement('section');this.panel.className='dessert-finish';this.panel.hidden=true;this.panel.setAttribute('aria-label','디저트 마무리 작업대');

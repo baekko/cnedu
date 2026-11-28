@@ -9,7 +9,11 @@ import {GYM,gymThrowPose} from './gym-core.js?v307';
 import {gymCourtPoint} from './gym-court.js?v=163';
 
 export async function loadGymAssets(character){
- const images={},entries=[['scenery-v163','room0'],['entrance','entrance'],['ball','ball'],['whistle','whistle'],['throwers','throwers']].map(([file,key])=>[key==='room0'?'gym-v184/room.webp':'gym-v161/'+file+'.webp',key]);
+ const images={},entries=[
+  ['gym-v311/room.webp','room0'],['gym-v311/ball.webp','ball'],
+  ['gym-v161/entrance.webp','entrance'],['gym-v161/whistle.webp','whistle'],
+  ['gym-v161/throwers.webp','throwers'],
+ ];
  for(const pose of ['idle','walk'])entries.push(['hero-v153/'+character.id+'-'+pose+'.webp',character.id+'-'+pose+'.webp']);
  await Promise.all(entries.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('체육관 그림을 불러오지 못했어요: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));
  const r=await fetch(new URL('../assets/gym-v161/throwers.json',import.meta.url));if(!r.ok)throw Error('던지는 동작을 불러오지 못했어요.');images.atlas=await r.json();return images;

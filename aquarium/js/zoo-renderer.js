@@ -12,9 +12,23 @@ const ellipse=(c,x,y,rx,ry,color)=>{c.fillStyle=color;c.beginPath();c.ellipse(x,
 const line=(c,x,y,xx,yy,color,w=1)=>{c.strokeStyle=color;c.lineWidth=w;c.lineCap='round';c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.stroke();};
 const box=(c,x,y,w,h,color,r=5)=>{c.fillStyle=color;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const noise=n=>{const a=Math.sin(n*127.1+31.7)*43758.5453;return a-Math.floor(a);};
-// Surface-only replacements keep the exact original atlas grids and alpha.
-const SURFACE_SHEETS=new Set([...Object.values(ANIMAL_ART).map(a=>a.sheet),'hippo-motion-v67']);
-export async function loadZooAssets(){const images={},files=[...[...new Set(Object.values(ANIMAL_ART).map(a=>a.sheet)),'prop-lion-rock-v63','prop-otter-low-v63','prop-otter-high-v63','prop-monkey-tree-v63','prop-ice-v63','world-panorama-v64','hippo-motion-v67'].map(n=>[(SURFACE_SHEETS.has(n)?'zoo-surface-v102/':'zoo-feed/')+n+'.webp',n]),['zoo/entrance.webp','entrance'],['zoo/clue.webp','clue'],['language/throw-v42.webp','throw']];for(const id of ['haru','doyun','narin','soi'])for(const action of ['idle','walk'])files.push(['hero-v153/'+id+'-'+action+'.webp',id+'-'+action]);await Promise.all(files.map(([path,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('동물원 그림: '+path));im.src=new URL('../assets/'+path,import.meta.url).href;})));return images;}
+// The scene art uses the existing atlas grids, anchor points and shoreline.
+export async function loadZooAssets(){
+ const images={};
+ const animals=new Set(Object.entries(ANIMAL_ART).filter(([kind])=>kind!=='hippo').map(([,art])=>art.sheet));
+ const scenery=['prop-lion-rock-v63','prop-otter-low-v63','prop-otter-high-v63','prop-monkey-tree-v63','prop-ice-v63','world-panorama-v64','hippo-motion-v67'];
+ const files=[
+  ...[...animals,...scenery].map(name=>['zoo-v311/'+name+'.webp',name]),
+  ['zoo/entrance.webp','entrance'],['zoo/clue.webp','clue'],['language/throw-v42.webp','throw']
+ ];
+ for(const id of ['haru','doyun','narin','soi'])for(const action of ['idle','walk'])files.push(['hero-v153/'+id+'-'+action+'.webp',id+'-'+action]);
+ await Promise.all(files.map(([path,key])=>new Promise((resolve,reject)=>{
+  const im=new Image();im.onload=()=>{images[key]=im;resolve();};
+  im.onerror=()=>reject(Error('동물원 그림: '+path));
+  im.src=new URL('../assets/'+path,import.meta.url).href;
+ })));
+ return images;
+}
 export class ZooRenderer{
  constructor(canvas,images){this.canvas=canvas;this.c=canvas.getContext('2d');this.images=images;this.effects=[];this.waterSprite=document.createElement('canvas');this.waterMask=document.createElement('canvas');this.waterSprite.width=this.waterSprite.height=this.waterMask.width=this.waterMask.height=384;}
  effect(){}
@@ -99,7 +113,9 @@ export class ZooRenderer{
   const lo=Math.max(0,Math.floor(g.camera.x/420)),hi=Math.min(8,Math.floor((g.camera.x+390)/420));
   drawZooScenery(c,this.images['world-panorama-v64'],g.camera.x,g.elapsed);
   // The foreground path is continuous across all nine habitats.
-  const path=c.createLinearGradient(0,419,0,500);path.addColorStop(0,'#d1c7a4');path.addColorStop(.06,'#eee1c2');path.addColorStop(1,'#dbcdb2');c.fillStyle=path;c.fillRect(g.camera.x,419,390,81);line(c,g.camera.x,420,g.camera.x+390,420,'#fff1d0',2);
+  c.fillStyle='#e5d8b9';c.fillRect(g.camera.x,419,390,81);
+  c.fillStyle='#e9ddc0';c.fillRect(g.camera.x,422,390,38);
+  line(c,g.camera.x,420,g.camera.x+390,420,'#cfbe94',2);
   for(let x=Math.floor(g.camera.x/64)*64;x<g.camera.x+430;x+=64){line(c,x,422,x-13,460,'#c2b79c',.9);line(c,x-13,460,x+3,500,'#c7bda3',.8);line(c,x-13,460,x+51,460,'#f8ead0',1);for(let k=0;k<4;k++)ellipse(c,x+noise(x+k)*55,426+noise(x-k)*68,1,.5,'#b1a78d30');}
   for(let i=0;i<g.animals.length;i++){const a=g.animals[i],s=a.spec,display=animalPose(a);if(s.kind==='hippo'?display.x-display.size/2>g.camera.x+420||display.x+display.size/2<g.camera.x-30:s.start>g.camera.x+480||s.start+420<g.camera.x-100)continue;this.habitat(c,a,g.elapsed);if(a.fed<2){c.save();c.strokeStyle='#b0a57e66';c.lineWidth=1;c.setLineDash([4,5]);c.strokeRect(s.start+25,428,130,21);c.restore();for(const x of [66,93]){ellipse(c,s.start+x,442,4,6,'#a69b7866');ellipse(c,s.start+x,434,3,2,'#a69b7866');}}const p=this.animal(c,a,g.elapsed);this.waterFront(c,a,g.elapsed);
    // Low rail leaves the animal's face and the complete trajectory unobscured.

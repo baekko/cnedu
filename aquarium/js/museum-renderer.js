@@ -7,7 +7,18 @@ import {beginScene,spriteAnchor,sceneText} from './layout.js';
 import {MUSEUM,COLORS,pigment} from './museum-core.js';
 export async function loadMuseumAssets(character){
  const files=['land.webp','creatures.webp','paintings.webp','wall-v20.webp','monsters.webp',`${character.id}-shoot.webp`,`${character.id}-actions.webp`,`${character.id}-walk.webp`,`${character.id}-idle.webp`];const out={};
- await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{out[file]=im;resolve();};im.onerror=()=>reject(new Error(`미술관 그림을 불러오지 못했어요: ${file}`));im.src=new URL(`../assets/${['land.webp','creatures.webp'].includes(file)?'museum-v130':['wall-v20.webp','monsters.webp'].includes(file)?'museum-v19':file.endsWith('-walk.webp')||file.endsWith('-idle.webp')?'hero-v153':'museum'}/${file}`,import.meta.url).href;})));return out;
+ const folders={
+  'land.webp':'museum-v130','creatures.webp':'museum-v130','monsters.webp':'museum-v19',
+  'paintings.webp':'museum-v311','wall-v20.webp':'museum-v311',
+ };
+ await Promise.all(files.map(file=>new Promise((resolve,reject)=>{
+  const im=new Image();
+  im.onload=()=>{out[file]=im;resolve();};
+  im.onerror=()=>reject(new Error(`미술관 그림을 불러오지 못했어요: ${file}`));
+  const folder=folders[file]??(file.endsWith('-walk.webp')||file.endsWith('-idle.webp')?'hero-v153':'museum');
+  im.src=new URL(`../assets/${folder}/${file}`,import.meta.url).href;
+ })));
+ return out;
 }
 const round=(c,x,y,w,h,r,fill)=>{c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();};
 // Fit the entire gilt frame between the upper platform fascia and this floor.

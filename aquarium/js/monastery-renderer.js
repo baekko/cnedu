@@ -4,7 +4,7 @@ import {HERO_GRIPS,sideWalkPalm} from './hero-grips.js?v=155';
 import {hasSideAnimation} from './side-walk.js?v=155';
 import {heroWalkFrame} from './walk-cycle.js';
 import {SIDE_HERO_SIZE,ROOM_HERO_SIZE} from './hero-scale.js';
-import {levelMonasteryPanorama,drawMonasteryBridgeDeck} from './monastery-ground-art.js';
+import {drawMonasteryBridgeDeck} from './monastery-ground-art.js';
 import {MONASTERY,LANTERN_ROUTE,MONASTERY_BRIDGES,CORRIDOR_PILLARS,TEMPLE_CARTS,TEMPLE_SPLASHES,TEMPLE_BELLS,bridgePose,monasteryFloor,laneOffset,routeWind,cartPose,splashPose,bellPose,bellPassage,BELL_GEOMETRY,hookPose} from './monastery-core.js?v228';
 import {hasSource} from './clue-order.js';
 const TAU=Math.PI*2;
@@ -12,10 +12,11 @@ const box=(c,x,y,w,h,fill,r=4)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,
 const oval=(c,x,y,rx,ry,fill)=>{c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();};
 const label=(c,s,x,y,size=10,color='#534a36',align='center')=>{c.font=`700 ${size}px sans-serif`;c.fillStyle=color;c.textAlign=align;c.textBaseline='middle';c.fillText(s,x,y);};
 export async function loadMonasteryAssets(character){
- const images={},files=[['monastery-v123/panorama.webp','panorama'],['entrance-v129/monastery.webp','entrance'],...['lanterns','bridge','post-timber'].map(n=>['monastery-v105/'+n+'.webp',n])];
+ const images={},files=[['monastery-v311/panorama.webp','panorama'],['entrance-v129/monastery.webp','entrance'],...['lanterns','bridge','post-timber'].map(n=>['monastery-v105/'+n+'.webp',n])];
  files.push(['monastery-v106/cart.webp','cart'],['monastery-v106/bell.webp','bell']);
  for(const n of ['idle','walk'])files.push(['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp']);
- await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('사찰 그림: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));images.panorama=levelMonasteryPanorama(images.panorama);return images;
+ await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('사찰 그림: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));
+ return images;
 }
 export class MonasteryRenderer{
  constructor(canvas,images){this.canvas=canvas;this.c=canvas.getContext('2d');this.images=images;this.effects=[];}

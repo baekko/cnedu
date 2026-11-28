@@ -9,7 +9,7 @@ const line=(c,x,y,x2,y2,color,w=1)=>{c.strokeStyle=color;c.lineWidth=w;c.lineCap
 const oval=(c,x,y,rx,ry,color)=>{c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();};
 const text=(c,s,x,y,size=10,color='#345d59',align='center',weight=700)=>{c.fillStyle=color;c.font=`${weight} ${size}px sans-serif`;c.textAlign=align;c.textBaseline='alphabetic';c.fillText(s,x,y);};
 export async function loadNewspaperAssets(character){
- const images={},files=[['newspaper-v130/photos-a.webp','photos-a'],['newspaper-v130/photos-b.webp','photos-b'],['newspaper-v183/room.webp','room'],...['photos','giraffe'].map(n=>['newspaper/'+n+'.webp',n]),['robot/'+character.id+'-work.webp','carry'],...['walk','idle'].map(n=>['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp'])];
+ const images={},files=[['newspaper-v130/photos-a.webp','photos-a'],['newspaper-v130/photos-b.webp','photos-b'],['newspaper-v311/room.webp','room'],...['photos','giraffe'].map(n=>['newspaper/'+n+'.webp',n]),['robot/'+character.id+'-work.webp','carry'],...['walk','idle'].map(n=>['hero-v153/'+character.id+'-'+n+'.webp',character.id+'-'+n+'.webp'])];
  await Promise.all(files.map(([file,key])=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[key]=im;resolve();};im.onerror=()=>reject(Error('신문사 그림: '+file));im.src=new URL('../assets/'+file,import.meta.url).href;})));return images;
 }
 export class NewspaperRenderer{
