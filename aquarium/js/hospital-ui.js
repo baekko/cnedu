@@ -54,8 +54,21 @@ export class HospitalUI {
         <p class="vet-rewards" role="status" aria-atomic="true"></p>
         <button type="button" class="vet-primary" data-vet-next>다음 회차</button>
       </section>`;
-    host.append(element);
+    const portrait = document.createElement('div');
+    portrait.className = 'vet-portrait';
+    portrait.hidden = true;
+    portrait.innerHTML = `
+      <section class="vet-panel vet-portrait-card" role="dialog" aria-modal="true" aria-labelledby="${id}-portrait-title">
+        <h2 id="${id}-portrait-title"></h2>
+        <canvas width="384" height="288" aria-hidden="true"></canvas>
+        <button type="button" class="vet-primary">닫기</button>
+      </section>`;
+    host.append(element, portrait);
     this.element = element;
+    this.portrait = portrait;
+    this.portraitTitle = portrait.querySelector('h2');
+    this.portraitCanvas = portrait.querySelector('canvas');
+    this.portraitClose = portrait.querySelector('button');
     this.entry = element.querySelector('[data-vet-panel="entry"]');
     this.report = element.querySelector('[data-vet-panel="report"]');
     this.countFields = [...element.querySelectorAll('[data-vet-species]')].map(row => ({
@@ -73,11 +86,17 @@ export class HospitalUI {
     this.next = element.querySelector('[data-vet-next]');
     element.addEventListener('click', event => this.click(event));
     element.addEventListener('focusin', event => this.selectFocusedCount(event));
+    portrait.addEventListener('click', event => {
+      if (event.target === portrait || event.target === this.portraitClose) this.closePortrait();
+    });
   }
 
   render(game, playing, arcade = false) {
     const phase = playing && (game?.phase === 'entry' || game?.phase === 'report') ? game.phase : null;
     const phaseChanged = phase !== this.phase || game !== this.game;
+    this.observing = playing && game?.phase === 'explore';
+    if (!this.observing || game !== this.game || game.room !== this.round) this.closePortrait(false);
+    this.round = game?.room;
     this.phase = phase;
     this.game = game;
     this.arcade = arcade;
@@ -91,6 +110,23 @@ export class HospitalUI {
       this.renderReport();
       if (phaseChanged) this.reportTitle.focus({preventScroll: true});
     }
+  }
+
+  showPortrait(pet, draw) {
+    if (!this.observing) return false;
+    this.portraitTitle.textContent = speciesLabels[['dog','cat','rabbit'].indexOf(pet.species)];
+    draw(pet, this.portraitCanvas);
+    this.returnFocus = document.activeElement;
+    this.portrait.hidden = false;
+    this.portraitClose.focus({preventScroll: true});
+    return true;
+  }
+
+  closePortrait(restoreFocus = true) {
+    if (this.portrait.hidden) return;
+    this.portrait.hidden = true;
+    if (restoreFocus && this.returnFocus?.isConnected) this.returnFocus.focus({preventScroll: true});
+    this.returnFocus = null;
   }
 
   renderCounts() {
@@ -155,6 +191,14 @@ export class HospitalUI {
   }
 
   key(event) {
+    if (!this.portrait.hidden) {
+      if (event.key === 'Escape' || event.key === 'Tab') {
+        event.preventDefault();
+        if (event.key === 'Escape') this.closePortrait();
+        else this.portraitClose.focus();
+      }
+      return true;
+    }
     if (!this.phase || event.altKey || event.ctrlKey || event.metaKey) return false;
     const direction = arrowDirections[event.code || event.key];
     if (direction && this.phase === 'entry') {

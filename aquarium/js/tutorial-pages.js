@@ -1,10 +1,10 @@
-import {HOSPITAL} from './hospital-core.js?v298';
+import {HOSPITAL} from './hospital-core.js?v301';
 
 // Each caption describes the action demonstrated on that page.
 const PAGES = {
  hospital: [
-  [[0], '병원을 돌며 동물 세기', `${HOSPITAL.roundTime}초 동안 방과 복도를 걸으며 강아지, 고양이, 토끼를 세어요. 방을 오갈 때 같은 동물은 한 번씩만 세어요.`],
-  [[1], '숫자 입력과 결과 확인', '숫자 옆의 위아래 화살표를 눌러 세 종류의 수를 맞추고 제출해요. 같은 방법으로 세 번 진행해요.'],
+  [[0], '병원을 돌며 동물 세기', `${HOSPITAL.roundTime}초 동안 종류마다 2~7마리씩 무작위로 나온 동물을 세어요. 동물을 누르면 큰 그림을 볼 수 있어요.`],
+  [[1], '숫자 입력과 결과 확인', '위아래 화살표로 세 종류의 수를 맞추고 제출해요. 모두 세 번 진행하고 맞힌 종류 하나당 단서 한 장을 받아요.'],
  ],
  postal: [
   [[0], '마을지도 보기', '마을지도에서 빨간 핀을 찾아 배달할 집을 기억하세요.'],

@@ -1,8 +1,12 @@
 import {awardClue,normalizeClueRewards,restoreSources} from './clue-order.js';
-import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v299';
+import {HOSPITAL_FLOOR,HOSPITAL_VIEW} from './hospital-layout.js?v301';
 
 const roundTime = 40;
 const roundCount = 3;
+const minimumCount = 2;
+const maximumCount = 7;
+// Keep plans and reports produced by the earlier three-to-nine rules playable.
+const maximumSavedCount = 9;
 
 export const HOSPITAL = Object.freeze({
   duration: roundTime * roundCount,
@@ -29,18 +33,20 @@ export const HOSPITAL_PET_SIZES = Object.freeze({
 });
 
 const STILL_ACTIONS = {
-  dog: ['sit', 'sleep', 'bark', 'sniff'],
-  cat: ['groom', 'curl', 'stretch', 'sit'],
-  rabbit: ['nose', 'ear', 'sit', 'sleep'],
+  dog: ['sit', 'bark', 'sniff'],
+  cat: ['groom', 'stretch', 'sit'],
+  rabbit: ['nose', 'ear', 'sit'],
 };
 const sleeps = animal => animal.action === 'sleep' || animal.action === 'curl';
-const DURATIONS = {idle: 2, sit: 3, sleep: 6, curl: 6, groom: 3, stretch: 1.9, sniff: 2.6, bark: 1.25, ear: 2.7, nose: 3.1};
+const DURATIONS = {sit: 3, groom: 3, stretch: 1.9, sniff: 2.6, bark: 1.25, ear: 2.7, nose: 3.1};
 const GRID = 24;
 const MARGIN = 8;
 const PLAYER_MARGIN = 10;
 const CONTACT_GAP = .001;
 const MAX_STEP = 1 / 30;
 const LEAP_ARC = 25;
+const RABBIT_LANDING_PAUSE = .105;
+const RABBIT_HOPS = {hop:{seconds:.42,height:11.5},binky:{seconds:.48,height:16}};
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const pick = (list, random) => list[Math.min(list.length - 1, Math.floor(random() * list.length))];
@@ -57,7 +63,7 @@ function seededRandom(seed) {
 
 export function hospitalRunPlan(random = Math.random) {
   return Array.from({length: HOSPITAL.roundCount}, () => ({
-    counts: HOSPITAL_SPECIES.map(() => clamp(3 + Math.floor(random() * 7), 3, 9)),
+    counts: HOSPITAL_SPECIES.map(() => clamp(minimumCount + Math.floor(random() * (maximumCount - minimumCount + 1)), minimumCount, maximumCount)),
     seed: Math.floor(random() * 4294967296) >>> 0,
   }));
 }
@@ -65,7 +71,7 @@ export function hospitalRunPlan(random = Math.random) {
 export function normalizeHospitalPlan(plan) {
   if (!Array.isArray(plan) || plan.length !== HOSPITAL.roundCount) return null;
   const valid = plan.every(round => Array.isArray(round?.counts) && round.counts.length === HOSPITAL_SPECIES.length
-    && round.counts.every(value => Number.isInteger(value) && value >= 3 && value <= 9)
+    && round.counts.every(value => Number.isInteger(value) && value >= minimumCount && value <= maximumSavedCount)
     && Number.isInteger(round.seed) && round.seed >= 0 && round.seed < 4294967296);
   return valid ? plan.map(({counts,seed}) => ({counts: [...counts],seed})) : null;
 }
@@ -273,6 +279,13 @@ function pose(animal, action, seconds) {
   animal.actionLeft = seconds;
   animal.moving = false;
   animal.jump = 0;
+  if (animal.species === 'rabbit') animal.hopPhase = 0;
+}
+
+function petStepBlocked(animals, animal, next) {
+  return animals.some(other => other !== animal && !other.elevation
+    && distance(other, next) < Math.min(19, .22 * (animal.width + other.width))
+    && distance(other, next) < distance(other, animal));
 }
 
 function cloneReport({round,guesses,counts,correct,score}) {
@@ -283,9 +296,9 @@ export function normalizeHospitalReports(reports) {
   if (!Array.isArray(reports)) return [];
   const accepted = [];
   const valid = (values, minimum) => Array.isArray(values) && values.length === HOSPITAL_SPECIES.length
-    && values.every(value => Number.isInteger(value) && value >= minimum && value <= 9);
+    && values.every(value => Number.isInteger(value) && value >= minimum && value <= maximumSavedCount);
   for (const report of reports.slice(0, HOSPITAL.roundCount)) {
-    if (report?.round !== accepted.length + 1 || !valid(report.guesses, 0) || !valid(report.counts, 3)) break;
+    if (report?.round !== accepted.length + 1 || !valid(report.guesses, 0) || !valid(report.counts, minimumCount)) break;
     const correct = report.counts.map((count, index) => count === report.guesses[index]);
     accepted.push(cloneReport({...report, correct, score: correct.filter(Boolean).length}));
   }
@@ -337,19 +350,22 @@ export class HospitalGame {
     const animals = [];
     const roomPopulation = new Map();
     const stations = shuffled(this.stations, this.random);
+    const sleepySpecies = pick(HOSPITAL_SPECIES, this.random);
+    const climbingCat = Math.min(2, this.counts[1] - (sleepySpecies === 'cat' ? 2 : 1));
     HOSPITAL_SPECIES.forEach((species, group) => {
       const breeds = shuffled(HOSPITAL_BREEDS[species], this.random);
       for (let index = 0; index < this.counts[group]; index++) {
+        const sleeping = species === sleepySpecies && index === this.counts[group] - 1;
         const breed = breeds[index % breeds.length];
         const scale = (index >= breeds.length ? .90 : .96) + this.random() * .08;
         const width = HOSPITAL_PET_SIZES[breed] * scale;
         const unoccupied = stations.filter(point => !animals.some(animal => animal.stationId === point.id));
         const separated = unoccupied.filter(point => distance(point, this.player) > 40
           && animals.every(other => distance(other, point) >= 8 + (width + other.width) * .31));
-        const partner = species === 'cat' && index === 2 ? animals.find(pet => pet.species === 'cat' && !sleeps(pet)) : null;
+        const perching = species === 'cat' && index === climbingCat;
+        const partner = perching ? animals.find(pet => pet.species === 'cat' && !sleeps(pet)) : null;
         const neighboring = partner ? separated.filter(point => point.room === partner.home.room && this.canFace(partner, point)) : [];
-        const perching = species === 'cat' && index === 2;
-        const wantsPair = species === 'cat' && index === 0;
+        const wantsPair = species === 'cat' && index === 0 && climbingCat > 0;
         const highPerches = perching || wantsPair ? (this.floor.perches || []).filter(perch => this.validPerch(perch)) : [];
         const perches = highPerches.filter(perch => perch.kind === (this.room === 1 ? 'table' : 'desk'));
         const near = features => separated.filter(point => features.some(perch =>
@@ -372,12 +388,12 @@ export class HospitalGame {
           x: point.x, y: point.y, dir: side === 'l' ? 'left' : 'right', facing: view + side,
           stationId: point.id, home: point, elevation: 0, jump: 0, age: 0, walk: 0,
           moving: false, route: null, stuck: 0,
-          roaming: index === 0 || (index % 4 === 3),
+          roaming: species === 'rabbit' ? index < 2 || index % 3 === 0 : index === 0 || index % 4 === 3,
           venturesome: index === 0 && (species === 'dog' || species === 'cat'),
           perching, preferredPerches: perches,
           speed: species === 'dog' ? 53 + this.random() * 22 : species === 'cat' ? 55 + this.random() * 28 : 43 + this.random() * 17,
         };
-        const action = STILL_ACTIONS[species][index % STILL_ACTIONS[species].length];
+        const action = sleeping ? (species === 'cat' ? 'curl' : 'sleep') : STILL_ACTIONS[species][index % STILL_ACTIONS[species].length];
         const actionTime = animal.perching ? 1.9 + this.random() * 1.6 : animal.roaming ? 1 + this.random() * 3 : 2 + this.random() * 5;
         pose(animal, action, actionTime);
         animal.age = this.random() * .8;
@@ -484,6 +500,10 @@ export class HospitalGame {
   }
 
   followAnimalRoute(animal, dt) {
+    if (animal.species === 'rabbit') {
+      this.followRabbitRoute(animal, dt);
+      return;
+    }
     const target = animal.route[0];
     const gap = distance(animal, target);
     const velocity = animal.speed * (animal.action === 'run' ? 1.6 : 1);
@@ -491,9 +511,7 @@ export class HospitalGame {
     const dx = gap ? (target.x - animal.x) * step / gap : 0;
     const dy = gap ? (target.y - animal.y) * step / gap : 0;
     const next = {x: animal.x + dx, y: animal.y + dy};
-    const blocked = this.animals.some(other => other !== animal && !other.elevation
-      && distance(other, next) < Math.min(19, .22 * (animal.width + other.width))
-      && distance(other, next) < distance(other, animal));
+    const blocked = petStepBlocked(this.animals, animal, next);
     animal.moving = !blocked && step > 0;
     animal.stuck = blocked ? animal.stuck + dt : 0;
     if (blocked && animal.stuck < .5) return;
@@ -508,7 +526,6 @@ export class HospitalGame {
     Object.assign(animal, next);
     if (step) faceAnimal(animal, dx, dy);
     animal.walk += step / 60;
-    if (animal.action === 'binky') animal.jump = Math.max(0, Math.sin(animal.age * 9)) * 9;
     if (step + .001 < gap) return;
     animal.route.shift();
     if (animal.route.length) return;
@@ -518,6 +535,51 @@ export class HospitalGame {
       return;
     }
     this.restAnimal(animal);
+  }
+
+  followRabbitRoute(animal, dt) {
+    if (animal.hopWait > 0) {
+      animal.hopWait -= dt;
+      return;
+    }
+    if (!animal.route.length) {
+      this.restAnimal(animal);
+      return;
+    }
+    if (!animal.hop) {
+      const target = animal.route[0];
+      const gap = distance(animal, target);
+      const {seconds,height} = RABBIT_HOPS[animal.action];
+      if (gap < .001) {
+        animal.route.shift();
+        return;
+      }
+      const stride = Math.min(gap, animal.speed * seconds);
+      const dx = (target.x - animal.x) * stride / gap;
+      const dy = (target.y - animal.y) * stride / gap;
+      const landing = {x: animal.x + dx,y: animal.y + dy};
+      if (petStepBlocked(this.animals, animal, landing) || petStepBlocked(this.animals, animal,
+        {x: animal.x + dx/2,y: animal.y + dy/2})) {
+        animal.stuck += dt;
+        if (animal.stuck >= .5) this.restAnimal(animal);
+        return;
+      }
+      animal.stuck = 0;
+      faceAnimal(animal, dx, dy);
+      animal.hop = {x:animal.x,y:animal.y,dx,dy,age:0,seconds,height,atWaypoint:stride === gap};
+    }
+    const hop = animal.hop;
+    hop.age += dt;
+    const phase = Math.min(1, hop.age / hop.seconds);
+    animal.hopPhase = phase;
+    animal.x = hop.x + hop.dx * phase;
+    animal.y = hop.y + hop.dy * phase;
+    animal.jump = hop.height * 4 * phase * (1 - phase);
+    animal.moving = phase < 1;
+    if (phase < 1) return;
+    if (hop.atWaypoint) animal.route.shift();
+    animal.hop = null;
+    animal.hopWait = RABBIT_LANDING_PAUSE;
   }
 
   planPerch(animal) {

@@ -1,4 +1,4 @@
-import {HospitalGame} from './hospital-core.js?v300';
+import {HospitalGame} from './hospital-core.js?v301';
 import {PursuitGame} from './pursuit-game.js?v252';
 import {PostalGame,postalDepartureMountTime} from './postal-core.js?v294';
 import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './memory-core.js?v224';
@@ -11,7 +11,7 @@ import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
 import {GardenGame} from './garden-core.js?v268';
 import {DONORS,gardenBugPose} from './garden-care.js';
 import {extendExamples} from './tutorial-examples.js?v=156';
-import {groupTutorial} from './tutorial-pages.js?v298';
+import {groupTutorial} from './tutorial-pages.js?v301';
 // Isolated demonstrations. Inputs call the production game rules; no journey or storage access.
 import {AquariumGame} from './core.js';
 import {MuseumGame} from './museum-core.js';

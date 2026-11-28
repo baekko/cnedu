@@ -1,7 +1,7 @@
 import {beginScene, spriteAnchor} from './layout.js';
 import {drawExplorer} from './heroes.js?v=155';
-import {HOSPITAL_PET_SIZES} from './hospital-core.js?v300';
-import {HOSPITAL_FLOOR, HOSPITAL_VIEW, HOSPITAL_WALL_HEIGHT} from './hospital-layout.js?v300';
+import {HOSPITAL_PET_SIZES} from './hospital-core.js?v301';
+import {HOSPITAL_FLOOR, HOSPITAL_VIEW, HOSPITAL_WALL_HEIGHT} from './hospital-layout.js?v301';
 
 const FURNITURE = ['desk','sofa','table','exam','cabinet','sink','treadmill','ramp','markers','bed','tree','plant'];
 const VETERINARY_FIXTURES = ['desk','sofa','exam','sink','treadmill','ramp','cabinet','bed'];
@@ -138,7 +138,11 @@ function tint(c,room) {
 function floorTexture(c) {
   const {width,height,rooms,doors,fixtures,hall}=HOSPITAL_FLOOR;
   c.fillStyle='#b9b9a7';c.fillRect(0,0,width,height);
-  for(const room of rooms) tint(c,room.id==='lobby'||room.id==='rest'?{...room,h:height-room.y}:room);
+  for(const room of rooms) tint(c,room);
+  const exterior=c.createLinearGradient(0,HOSPITAL_FLOOR.bounds.bottom,0,height);
+  exterior.addColorStop(0,'#c4b9a5');exterior.addColorStop(1,'#bcaf9a');
+  c.fillStyle=exterior;
+  c.fillRect(hall.x,HOSPITAL_FLOOR.bounds.bottom,hall.w,height-HOSPITAL_FLOOR.bounds.bottom);
   const hallLight=c.createLinearGradient(0,hall.y,0,hall.bottom);
   hallLight.addColorStop(0,'#afbbac');hallLight.addColorStop(.37,'#d1d9c8');hallLight.addColorStop(1,'#bac6b5');
   c.fillStyle=hallLight;c.fillRect(hall.x,hall.y,hall.w,hall.h);
@@ -190,16 +194,19 @@ const roomFor = id => HOSPITAL_FLOOR.rooms.find(room=>room.id===id);
 const WALL_FACE_TILE_WIDTH=384;
 const WALL_FACE_TILE_HEIGHT=128;
 const PANEL_SPLITS={lobby:.43,rest:.49};
+const PANEL_RAIL_Y={lobby:91,exam:86,therapy:87,rest:79};
+const WAINSCOT_HEIGHT=39;
+const WALL_CAP_DEPTH=4;
 const DOOR_HEIGHT=84;
 
 // These are sampled from the neutral points of the painted rear panels. The
 // same rail elevation follows each panel onto the adjoining plaster walls.
 const WALL_FINISH={
-  lobby:{plaster:'#cfa176',shadow:'#9d784f',wood:'#555640',rail:'#8d7955',base:'#686b53',railAt:35,cap:'#e6c6a1'},
-  exam:{plaster:'#999269',shadow:'#767251',wood:'#935526',rail:'#b18249',base:'#825020',railAt:38,cap:'#d5c098'},
-  therapy:{plaster:'#d6a777',shadow:'#aa7e55',wood:'#8c511f',rail:'#b07b45',base:'#7e461b',railAt:40,cap:'#e0c29d'},
-  rest:{plaster:'#d5ab7a',shadow:'#a38460',wood:'#82867a',rail:'#a29e8a',base:'#73766b',railAt:44,cap:'#dec4a7'},
-  hall:{plaster:'#bdbda0',shadow:'#91917c',wood:'#7a8475',rail:'#a4a491',base:'#6f796f',railAt:37,cap:'#d9d4b9'},
+  lobby:{plaster:'#cfa176',shadow:'#9d784f',wood:'#555640',rail:'#8d7955',base:'#686b53',cap:'#e6c6a1'},
+  exam:{plaster:'#999269',shadow:'#767251',wood:'#935526',rail:'#b18249',base:'#825020',cap:'#d5c098'},
+  therapy:{plaster:'#d6a777',shadow:'#aa7e55',wood:'#8c511f',rail:'#b07b45',base:'#7e461b',cap:'#e0c29d'},
+  rest:{plaster:'#d5ab7a',shadow:'#a38460',wood:'#82867a',rail:'#a29e8a',base:'#73766b',cap:'#dec4a7'},
+  hall:{plaster:'#bdbda0',shadow:'#91917c',wood:'#7a8475',rail:'#a4a491',base:'#6f796f',cap:'#d9d4b9'},
 };
 
 function smooth01(value) {
@@ -300,44 +307,50 @@ function paintPlaster(c,camera,start,end,material,paneled=true) {
   const upper=c.createLinearGradient(top.x,top.y,base.x,base.y);
   upper.addColorStop(0,material.plaster);upper.addColorStop(.74,material.plaster);
   upper.addColorStop(1,material.shadow);
-  band(c,camera,start,end,material.railAt,height,upper);
-  band(c,camera,start,end,0,material.railAt,material.wood);
+  band(c,camera,start,end,WAINSCOT_HEIGHT,height,upper);
+  band(c,camera,start,end,0,WAINSCOT_HEIGHT,material.wood);
   if(paneled) {
     const length=Math.hypot(end.x-start.x,end.y-start.y);
     for(let step=13;step<length;step+=13) {
       const n=step/length;
       const point=project(camera,start.x+(end.x-start.x)*n,start.y+(end.y-start.y)*n,5);
       c.strokeStyle='#251a1140';c.lineWidth=Math.max(.48,point.factor*.65);
-      c.beginPath();c.moveTo(point.x,point.y);c.lineTo(point.x,point.y-(material.railAt-8)*point.factor);c.stroke();
-      c.strokeStyle='#ffe5bd20';c.beginPath();c.moveTo(point.x+.6,point.y);c.lineTo(point.x+.6,point.y-(material.railAt-8)*point.factor);c.stroke();
+      c.beginPath();c.moveTo(point.x,point.y);c.lineTo(point.x,point.y-(WAINSCOT_HEIGHT-8)*point.factor);c.stroke();
+      c.strokeStyle='#ffe5bd20';c.beginPath();c.moveTo(point.x+.6,point.y);c.lineTo(point.x+.6,point.y-(WAINSCOT_HEIGHT-8)*point.factor);c.stroke();
     }
   }
-  band(c,camera,start,end,material.railAt-2,material.railAt+1.5,material.rail);
-  band(c,camera,start,end,material.railAt+1.5,material.railAt+2.9,'#fff0c94f');
+  band(c,camera,start,end,WAINSCOT_HEIGHT-2,WAINSCOT_HEIGHT+1.5,material.rail);
+  band(c,camera,start,end,WAINSCOT_HEIGHT+1.5,WAINSCOT_HEIGHT+2.9,'#fff0c94f');
   band(c,camera,start,end,0,5,material.base);
   band(c,camera,start,end,4.3,5.3,'#ffe7bf49');
   band(c,camera,start,end,height-2.5,height,material.cap);
 }
 
-function viewFloorOpacity(camera,player,room,line) {
+function viewFloorOpacity(camera,player,room,line,foreground=false) {
   if(!room) return 1;
-  const inWidth=smooth01((Math.min(player.x-room.x,room.x+room.w-player.x)+20)/48);
+  const sideDistance=Math.min(player.x-room.x,room.x+room.w-player.x);
   const distance=line-player.y;
+  if(foreground) return 1-.88*smooth01((sideDistance+10)/17)*smooth01((distance+8)/18);
+  const inWidth=smooth01((sideDistance+20)/48);
   const indoors=smooth01((distance+7)/59);
   const atBottom=project(camera,room.x,line).y;
   const inFrame=1-smooth01((atBottom-515)/75);
   return 1-.13*inWidth*indoors*inFrame;
 }
 
-function paintedRear(c,art,camera,wall,room,points) {
+function paintedRear(c,art,wall,room,points) {
   const [base,end,top]=points;
   const sw=WALL_FACE_TILE_WIDTH,sh=WALL_FACE_TILE_HEIGHT;
   const split=PANEL_SPLITS[room.id];
   const first=wall.segment==='left';
   const start=split && !first?split:0;
   const coverage=split?(first?split:1-split):1;
-  c.drawImage(art.walls,(room.column+start)*sw,room.row*sh,coverage*sw,sh,
-    base.x,top.y,end.x-base.x,base.y-top.y);
+  const sourceX=(room.column+start)*sw,sourceY=room.row*sh;
+  const rail=PANEL_RAIL_Y[room.id],railY=base.y-WAINSCOT_HEIGHT*base.factor;
+  c.drawImage(art.walls,sourceX,sourceY,coverage*sw,rail,
+    base.x,top.y,end.x-base.x,railY-top.y+.16);
+  c.drawImage(art.walls,sourceX,sourceY+rail,coverage*sw,sh-rail,
+    base.x,railY,end.x-base.x,base.y-railY);
   if(!wall.segment && top.y>-2) {
     roomSign(c,room.name,base.x+(end.x-base.x)*.5,Math.max(6,top.y+10*base.factor),10*base.factor);
   }
@@ -349,18 +362,34 @@ function facingWall(c,buffer,art,camera,wall,player,revealActors) {
   const y=wall.lineY;
   const start={x:wall.x,y},end={x:wall.x+wall.w,y};
   const points=pointsFor(camera,start,end,0,HOSPITAL_WALL_HEIGHT);
-  const [base,right,top,highLeft]=points;
+  const [base,right,top]=points;
   if(base.y<-6 || top.y>506 || right.x<-10 || base.x>400) return;
-  const baseAlpha=wall.edge==='front'?viewFloorOpacity(camera,player,room,y):1;
+  const foreground=wall.kind==='boundary';
+  const baseAlpha=wall.edge==='front'?viewFloorOpacity(camera,player,room,y,foreground):1;
   drawWallSection(c,buffer,points,revealActors,camera,y,baseAlpha,wallCanvas=>{
-    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,camera,wall,room,points);
+    if(wall.edge==='rear' && art.walls && room) paintedRear(wallCanvas,art,wall,room,points);
     else paintPlaster(wallCanvas,camera,start,end,material);
-    const cap=pointsFor(camera,{x:start.x,y:y-3.7},{x:end.x,y:y-3.7},HOSPITAL_WALL_HEIGHT,HOSPITAL_WALL_HEIGHT);
-    polygon(wallCanvas,[highLeft,top,cap[1],cap[0]],material.cap);
+    const outerY=y+(wall.edge==='front'?WALL_CAP_DEPTH:-WALL_CAP_DEPTH);
+    const leftX=start.x-(start.x===room?.x?WALL_CAP_DEPTH:0);
+    const rightX=end.x+(end.x===room?.x+room?.w?WALL_CAP_DEPTH:0);
+    const capLeft=project(camera,leftX,y,HOSPITAL_WALL_HEIGHT);
+    const capRight=project(camera,rightX,y,HOSPITAL_WALL_HEIGHT);
+    const backLeft=project(camera,leftX,outerY,HOSPITAL_WALL_HEIGHT);
+    const backRight=project(camera,rightX,outerY,HOSPITAL_WALL_HEIGHT);
+    polygon(wallCanvas,[capLeft,capRight,backRight,backLeft],material.cap);
     const shadow=wallCanvas.createLinearGradient(0,base.y,0,base.y+10*base.factor);
     shadow.addColorStop(0,'#3f34275c');shadow.addColorStop(1,'#3f342700');
     wallCanvas.fillStyle=shadow;wallCanvas.fillRect(base.x,base.y,right.x-base.x,10*base.factor);
   });
+  const plinth=foreground?.92*smooth01((1-baseAlpha)/.82):0;
+  if(plinth>0) {
+    // Leave an unbroken solid plinth when the nearby foreground facade is cut away.
+    const basePoints=pointsFor(camera,start,end,0,14);
+    drawWallSection(c,buffer,basePoints,revealActors,camera,y,plinth,wallCanvas=>{
+      band(wallCanvas,camera,start,end,0,14,material.wood);
+      band(wallCanvas,camera,start,end,12.7,14,material.cap);
+    });
+  }
 }
 
 function entryTrim(c,camera,door,player,revealActors) {
@@ -427,7 +456,7 @@ function sideWall(c,camera,part,revealActors) {
   const start={x:line,y},finish={x:line,y:end};
   const points=pointsFor(camera,start,finish,0,HOSPITAL_WALL_HEIGHT);
   const [base,near,high,far]=points;
-  const thickness=(wall.side==='right'?1:-1)*3.7;
+  const thickness=(wall.side==='right'?1:-1)*WALL_CAP_DEPTH;
   const cap=pointsFor(camera,{x:line+thickness,y},{x:line+thickness,y:end},HOSPITAL_WALL_HEIGHT,HOSPITAL_WALL_HEIGHT);
   c.save();
   c.globalAlpha=boundedOpacity(points,revealActors,camera,end);
@@ -438,7 +467,7 @@ function sideWall(c,camera,part,revealActors) {
   for(let mark=Math.ceil(y/15)*15;mark<end;mark+=15) {
     const p=project(camera,line,mark,6);
     c.strokeStyle='#2d211840';c.lineWidth=.7;
-    c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x,p.y-(material.railAt-9)*p.factor);c.stroke();
+    c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x,p.y-(WAINSCOT_HEIGHT-9)*p.factor);c.stroke();
   }
   polygon(c,[far,high,cap[1],cap[0]],material.cap);
   c.restore();
@@ -542,7 +571,7 @@ function bark(c,w,age) {
   }
 }
 
-function sleepIndicator(c,point,width,left) {
+function sleepIndicator(c,point,width,left,age) {
   const direction=left?-1:1;
   const x=point.x+direction*(width*.23+3);
   const y=point.y-Math.max(13,width*.31);
@@ -552,22 +581,51 @@ function sleepIndicator(c,point,width,left) {
   c.lineWidth=2;
   c.lineJoin='round';
   c.textAlign='center';
-  c.font='700 9px sans-serif';
-  c.strokeText('z',x,y);
-  c.fillText('z',x,y);
-  c.font='700 11px sans-serif';
-  c.strokeText('z',x+direction*7,y-6);
-  c.fillText('z',x+direction*7,y-6);
+  for (const offset of [0,.5]) {
+    const phase=(age/2.2+offset)%1;
+    const leftward=direction*(phase*7+Math.sin(phase*Math.PI*2)*2);
+    const rise=phase*24;
+    c.globalAlpha=Math.min(1,phase/.16,(1-phase)/.32);
+    c.font=`700 ${Math.round(8+phase*4)}px sans-serif`;
+    c.strokeText('z',x+leftward,y-rise);
+    c.fillText('z',x+leftward,y-rise);
+  }
   c.restore();
 }
 
+function animalFrame(art,pet) {
+  const {species,breed,dir,action,age=0}=pet;
+  const {cellWidth,cellHeight,ground,breeds}=art.manifest;
+  const row=breeds[species][breed];
+  const side=dir==='left';
+  const diagonal=art.diagonal && WALK.has(action) && ['fr','fl','br','bl'].includes(pet.facing);
+  const hopFrame=species==='rabbit' && WALK.has(action)
+    ? (pet.hopPhase>.15 && pet.hopPhase<.82 ? 0 : 1) : null;
+  const atlas=(image,column,line,flip=side)=>({image,sx:column*cellWidth,sy:line*cellHeight,
+    sw:cellWidth,sh:cellHeight,ground,left:flip});
+  if (diagonal) {
+    const step=hopFrame??Math.floor(age*(action==='run'?14:8))%2;
+    return atlas(art.diagonal,(pet.facing[0]==='b'?2:0)+step,row,pet.facing.endsWith('l'));
+  }
+  const specialRow=species==='cat'?CAT_ACTION_ROWS[breed]:undefined;
+  const specialColumn=specialRow===undefined?null:catActionColumn(action,age);
+  if (art.catActions && specialColumn!==null) return atlas(art.catActions,specialColumn,specialRow);
+  const coat=species==='cat'?ORIGINAL_COATS[breed]:undefined;
+  if (coat!==undefined) {
+    const image=art.postalCats,tile=image.width/4,frame=originalCatFrame(action,age);
+    return {image,sx:(frame%4)*tile,sy:(coat*3+Math.floor(frame/4))*tile,
+      sw:tile,sh:tile,ground:tile*.87,left:side};
+  }
+  if (row===undefined) throw new Error(`동물 그림 ${species}/${breed}이 없어요.`);
+  return atlas(art.animals,hopFrame??atlasColumn(action,age,pet.moving),row);
+}
+
 function animal(c,art,pet,camera) {
-  const {species,breed,x,y,dir,action,age=0,jump=0,elevation=0} = pet;
+  const {breed,x,y,action,age=0,jump=0,elevation=0} = pet;
   const groundPoint=project(camera,x,y);
   const petPoint=project(camera,x,y,elevation+jump);
   const scale=Math.min(1.12,Math.max(.88,groundPoint.factor));
   const petWidth = (pet.width ?? HOSPITAL_PET_SIZES[breed] ?? 37)*scale;
-  const coat = species==='cat'?ORIGINAL_COATS[breed]:undefined;
   const lifted = elevation+jump;
   if (elevation===0 || action==='jump') {
     const spread=Math.max(.52,1-lifted/155);
@@ -575,40 +633,17 @@ function animal(c,art,pet,camera) {
   } else {
     oval(c,petPoint.x,petPoint.y+.4,petWidth*.28,petWidth*.046,'#42372624');
   }
+  const frame=animalFrame(art,pet);
+  const height=petWidth*frame.sh/frame.sw;
+  const top=-petWidth*frame.ground/frame.sw;
   c.save();
   spriteAnchor(c,petPoint.x,petPoint.y);
-
-  const {cellWidth,cellHeight,ground,breeds} = art.manifest;
-  const h = petWidth*cellHeight/cellWidth;
-  const diagonal = art.diagonal && WALK.has(action) && ['fr','fl','br','bl'].includes(pet.facing);
-  const left = diagonal ? pet.facing.endsWith('l') : dir==='left';
-  if (left) c.scale(-1,1);
-  const specialRow = species==='cat'?CAT_ACTION_ROWS[breed]:undefined;
-  const specialColumn = specialRow===undefined?null:catActionColumn(action,age);
-  if (diagonal) {
-    const row=breeds[species][breed];
-    const column=(pet.facing[0]==='b'?2:0)+Math.floor(age*(action==='run'?14:8))%2;
-    c.drawImage(art.diagonal,column*cellWidth,row*cellHeight,cellWidth,cellHeight,
-      -petWidth/2,-h*ground/cellHeight,petWidth,h);
-  } else if (art.catActions && specialColumn!==null) {
-    c.drawImage(art.catActions,specialColumn*cellWidth,specialRow*cellHeight,cellWidth,cellHeight,
-      -petWidth/2,-h*ground/cellHeight,petWidth,h);
-  } else if (coat!==undefined) {
-    const original = art.postalCats;
-    const tile = original.width/4;
-    const frame = originalCatFrame(action,age);
-    const row = coat*3+Math.floor(frame/4);
-    c.drawImage(original,(frame%4)*tile,row*tile,tile,tile,-petWidth/2,-petWidth*.87,petWidth,petWidth);
-  } else {
-    const row = breeds[species][breed];
-    const column = atlasColumn(action,age,pet.moving);
-    if (row===undefined) throw new Error(`동물 그림 ${species}/${breed}이 없어요.`);
-    c.drawImage(art.animals,column*cellWidth,row*cellHeight,cellWidth,cellHeight,
-      -petWidth/2,-h*ground/cellHeight,petWidth,h);
-  }
+  if (frame.left) c.scale(-1,1);
+  c.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,-petWidth/2,top,petWidth,height);
   if (action==='bark') bark(c,petWidth,age);
   c.restore();
-  if (SLEEP.has(action)) sleepIndicator(c,petPoint,petWidth,left);
+  if (SLEEP.has(action)) sleepIndicator(c,petPoint,petWidth,frame.left,age);
+  return {pet,frame,x:petPoint.x-petWidth/2,y:petPoint.y+top,w:petWidth,h:height};
 }
 
 function visible(x,y,camera,padding) {
@@ -637,26 +672,64 @@ export class HospitalRenderer {
     wallMask.height=HOSPITAL_VIEW.height*2;
     this.wallMask=wallMask.getContext('2d');
     this.wallMask.scale(2,2);
+    const sample=document.createElement('canvas');
+    sample.width=sample.height=1;
+    this.petSample=sample.getContext('2d',{willReadFrequently:true});
+    this.petTargets=[];
   }
 
   effect() {}
+
+  petAt(horizontal,vertical) {
+    if (horizontal<0 || horizontal>=1 || vertical<0 || vertical>=1) return null;
+    const x=horizontal*HOSPITAL_VIEW.width,y=vertical*HOSPITAL_VIEW.height;
+    const targets=this.petTargets.filter(hit=>x>=hit.x-8 && x<hit.x+hit.w+8
+      && y>=hit.y-8 && y<hit.y+hit.h+8);
+    const hits=(hit,dx,dy)=>{
+      const u=(x+dx-hit.x)/hit.w,v=(y+dy-hit.y)/hit.h;
+      if (u<0 || u>=1 || v<0 || v>=1) return false;
+      const {image,sx,sy,sw,sh,left}=hit.frame;
+      const px=Math.floor(u*sw),py=Math.floor(v*sh);
+      const sample=this.petSample;
+      sample.clearRect(0,0,1,1);
+      sample.drawImage(image,sx+(left?sw-1-px:px),sy+py,1,1,0,0,1,1);
+      return sample.getImageData(0,0,1,1).data[3]>=80;
+    };
+    for (const r of [0,4,8]) {
+      const offsets=r?[[r,0],[-r,0],[0,r],[0,-r]]:[[0,0]];
+      const target=targets.findLast(hit=>offsets.some(([dx,dy])=>hits(hit,dx,dy)));
+      if (target) return target.pet;
+    }
+    return null;
+  }
+
+  drawPetPortrait(pet,canvas) {
+    const c=canvas.getContext('2d');
+    const {animals,manifest:{cellWidth,cellHeight,breeds}}=this.images;
+    const row=breeds[pet.species][pet.breed];
+    const size=Math.min(canvas.width/cellWidth,canvas.height/cellHeight);
+    const w=cellWidth*size,h=cellHeight*size;
+    c.clearRect(0,0,canvas.width,canvas.height);
+    c.drawImage(animals,0,row*cellHeight,cellWidth,cellHeight,(canvas.width-w)/2,(canvas.height-h)/2,w,h);
+  }
 
   draw(game,character) {
     const c = this.c;
     const {width,height,top} = HOSPITAL_VIEW;
     beginScene(c);
     c.clearRect(0,0,width,844);
+    this.petTargets=[];
     if (!game) return;
     c.save();
     c.translate(0,top);
     c.beginPath();
     c.rect(0,0,width,height);
     c.clip();
-    this.paintWorld(c,game,character);
+    this.paintWorld(c,game,character,this.petTargets);
     c.restore();
   }
 
-  paintWorld(c,game,character) {
+  paintWorld(c,game,character,targets) {
     const {player,animals} = game;
     const {width,height} = HOSPITAL_VIEW;
     const camera=cameraWithClearance(game.camera,player,width);
@@ -672,7 +745,7 @@ export class HospitalRenderer {
         for(const part of sidePieces(camera,obstacle,sides)) {
           layers.push({y:part.end,draw:()=>sideWall(c,camera,part,residents)});
         }
-      } else if(obstacle.kind==='face') {
+      } else if(obstacle.kind==='face' || obstacle.kind==='boundary') {
         layers.push({y:obstacle.lineY,draw:()=>facingWall(c,this.wallMask,this.images,camera,obstacle,player,residents)});
       }
     }
@@ -683,7 +756,10 @@ export class HospitalRenderer {
       layers.push({y:object.y,draw:()=>furniture(c,this.images,object,camera,residents)});
     }
     for (const pet of pets) if (visible(pet.x,pet.y,camera,95)) {
-      layers.push({y:animalDepth(pet),draw:()=>animal(c,this.images,pet,camera)});
+      layers.push({y:animalDepth(pet),draw:()=>{
+        const hit=animal(c,this.images,pet,camera);
+        targets?.push(hit);
+      }});
     }
     layers.push({y:player.y,draw:()=>{
       const p=project(camera,player.x,player.y);

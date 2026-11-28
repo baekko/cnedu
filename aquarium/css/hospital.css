@@ -3,8 +3,41 @@
   display: none;
 }
 
-.hospital-mode:has(.vet-interface:not([hidden])) #dpad {
+.hospital-mode:has(.vet-interface:not([hidden]), .vet-portrait:not([hidden])) #dpad {
   visibility: hidden;
+}
+
+.hospital-mode[data-screen="playing"] #ocean {
+  touch-action: manipulation;
+}
+
+.vet-portrait {
+  position: absolute;
+  z-index: 14;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px 18px;
+  background: #1c39356b;
+  color: #254742;
+  touch-action: manipulation;
+}
+
+.vet-portrait[hidden] {
+  display: none;
+}
+
+.vet-panel.vet-portrait-card {
+  width: min(100%, 242px);
+  text-align: center;
+}
+
+.vet-portrait-card canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: #eaf3ec;
 }
 
 .vet-interface {
@@ -145,7 +178,7 @@
   touch-action: manipulation;
 }
 
-.vet-interface :where(button, [role="spinbutton"]):focus-visible {
+:is(.vet-interface, .vet-portrait) :where(button, [role="spinbutton"]):focus-visible {
   outline: 3px solid #257c79;
   outline-offset: 2px;
 }

@@ -6,15 +6,16 @@ const left = 24;
 const right = 753;
 const upperSplit = 348;
 const lowerSplit = 419;
+const rear = 141;
 const bottom = 949;
 const hall = {id:'hall',x:left,y:523,w:right-left,h:107,bottom:630};
 
 const rooms = [
   {id:'lobby',name:'접수·대기실',x:left,y:hall.bottom,w:lowerSplit-left,h:bottom-hall.bottom,row:0,column:0,
     wall:'#e6ddd0',floor:'#ddc5a8',accent:'#789387'},
-  {id:'exam',name:'진료실',x:left,y:153,w:upperSplit-left,h:hall.y-153,row:0,column:1,
+  {id:'exam',name:'진료실',x:left,y:rear,w:upperSplit-left,h:hall.y-rear,row:0,column:1,
     wall:'#dbe4dd',floor:'#d5dad0',accent:'#78978e'},
-  {id:'therapy',name:'재활실',x:upperSplit,y:141,w:right-upperSplit,h:hall.y-141,row:1,column:0,
+  {id:'therapy',name:'재활실',x:upperSplit,y:rear,w:right-upperSplit,h:hall.y-rear,row:1,column:0,
     wall:'#ebdec9',floor:'#ddcbbb',accent:'#af9478'},
   {id:'rest',name:'회복실',x:lowerSplit,y:hall.bottom,w:right-lowerSplit,h:bottom-hall.bottom,row:1,column:1,
     wall:'#e9e0dc',floor:'#dcd2ca',accent:'#ae9193'},
@@ -59,23 +60,25 @@ const fixture = (kind,x,y,width,depth,room,extra={}) => ({kind,x,y,width,depth,r
   footprint:{x:x-width*.44,y:y-depth,w:width*.88,h:depth},
 });
 
-function rearFixture(kind,x,width,depth,room) {
-  const rear=rooms.find(candidate=>candidate.id===room).y;
-  return fixture(kind,x,rear+depth,width,depth,room);
+function rearCornerFixture(kind,width,depth,room,side) {
+  const edge=rooms.find(candidate=>candidate.id===room);
+  const halfFootprint=width*.44;
+  const x=side==='left'?edge.x+halfFootprint:edge.x+edge.w-halfFootprint;
+  return fixture(kind,x,edge.y+depth,width,depth,room);
 }
 
 const fixtures = [
   fixture('desk',315,716,137,43,'lobby'),
   ...[88,319].map(x=>fixture('sofa',x,837,106,33,'lobby',{facing:'north'})),
   fixture('sink',104,229,84,23,'exam'),
-  rearFixture('silverCabinet',267,84,34,'exam'),
+  rearCornerFixture('silverCabinet',84,34,'exam','right'),
   fixture('exam',174,320,111,37,'exam'),
   fixture('table',265,438,62,22,'exam'),
-  rearFixture('storageCabinet',434,91,34,'therapy'),
+  rearCornerFixture('storageCabinet',91,34,'therapy','left'),
   fixture('treadmill',532,272,103,32,'therapy'),
   fixture('ramp',660,231,100,36,'therapy'),
   fixture('markers',593,344,104,43,'therapy',{passable:true}),
-  rearFixture('linenCabinet',703,81,31,'rest'),
+  rearCornerFixture('linenCabinet',81,31,'rest','right'),
   fixture('bed',485,731,67,25,'rest',{passable:true}),
   fixture('bed',682,853,81,29,'rest',{passable:true}),
   fixture('bed',556,912,73,28,'rest',{passable:true}),
@@ -99,7 +102,7 @@ const stations = Object.entries(roomStations).flatMap(([room,points])=>
 );
 
 export const HOSPITAL_FLOOR = Object.freeze({
-  width:780,height:1000,start:{x:201,y:890},bounds:{left,right,top:141,bottom},
+  width:780,height:1000,start:{x:201,y:890},bounds:{left,right,top:rear,bottom},
   rooms,hall,walls,doors,fixtures,stations,walkable:[...rooms,hall],
   solids:[...walls,...fixtures.filter(fixture=>!fixture.passable).map(fixture=>fixture.footprint)],
   playerSolids:[...walls,...fixtures.map(fixture=>fixture.footprint)],

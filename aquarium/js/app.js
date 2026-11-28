@@ -1,7 +1,7 @@
 import {connectTitleModes,showStartupError} from './opening.js?v254';
-import {HospitalGame,HOSPITAL} from './hospital-core.js?v300';
-import {HospitalRenderer,loadHospitalAssets} from './hospital-renderer.js?v300';
-import {HospitalUI} from './hospital-ui.js?v295';
+import {HospitalGame,HOSPITAL} from './hospital-core.js?v301';
+import {HospitalRenderer,loadHospitalAssets} from './hospital-renderer.js?v301';
+import {HospitalUI} from './hospital-ui.js?v301';
 import {PostalGame,POSTAL} from './postal-core.js?v294';
 import {PostalRenderer,loadPostalAssets} from './postal-renderer.js?v294';
 import {PostalUI,syncPostalStats} from './postal-ui.js?v268';
@@ -27,8 +27,8 @@ import {CityHallRenderer,loadCityHallAssets} from './cityhall-renderer.js?v245';
 import {CONSERVATION,ConservationGame} from './conservation-core.js?v268';
 import {ConservationRenderer,loadConservationAssets} from './conservation-renderer.js?v268';
 import {WorkshopUI} from './workshop-ui.js';
-import {instructionHTML} from './instructions.js?v298';
-import {briefingCopy} from './briefing-copy.js?v298';
+import {instructionHTML} from './instructions.js?v301';
+import {briefingCopy} from './briefing-copy.js?v301';
 import {restoreSources} from './clue-order.js';
 import {CLUE_CARD_URL,cardPositionLabel,setCoinRewards} from './clue-card-art.js?v245';
 import {PHOTO,PhotoGame,PHOTO_ROOMS} from './photo-core.js';
@@ -41,11 +41,11 @@ import {createWriterCardCollider} from './writer-card-collision.js?v=155';
 import {createWriterGiantCollider} from './writer-giant-collision.js?v=155';
 import {DETECTIVE,DetectiveGame} from './detective-core.js';
 import {DetectiveRenderer,loadDetectiveAssets} from './detective-renderer.js?v245';
-import {createTutorial} from './play-tutorials.js?v300';
+import {createTutorial} from './play-tutorials.js?v301';
 import {TutorialFinance} from './tutorial-finance.js?v268';
 import {TutorialChrome} from './tutorial-chrome.js?v295';
 import {TutorialPlayback} from './tutorial-playback.js';
-import {TUTORIAL_COPY} from './tutorial-pages.js?v298';
+import {TUTORIAL_COPY} from './tutorial-pages.js?v301';
 import {breakBriefSentences} from './brief-sentences.js';
 import {POWER_WORDS,ENV_WORDS} from './ai-inference.js';
 import {DessertFinishUI} from './dessert-finish-ui.js';
@@ -90,7 +90,7 @@ import { GAME, CHARACTERS, PUZZLE } from './config.js?v214';
 import { AquariumGame, readProgress, saveProgress, puzzleTiles } from './core.js';
 import { loadAssets, Renderer, drawSubmarine, createSpriteCollider } from './renderer.js?v245';
 
-import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v298';
+import { readJourney, saveJourney, resetJourney, recoverJourneyUnlocks, visitPlace, checkAnswer, hintView, normalizePlayerName, PURSUIT_TRACE_RULE } from './journey.js?v301';
 import { loadMotion, SpritePlayer } from './motions.js';
 
 import {ArcadeRuns,arcadeMenuExclusions,arcadePlaces,COINS_PER_GAME} from './arcade-run.js?v295';
@@ -2529,6 +2529,29 @@ function hospitalHud(){
  if($('ocean').getAttribute('aria-label')!==label)$('ocean').setAttribute('aria-label',label);
  hospitalUI.render(game,playing,!!arcadeMode);
 }
+let hospitalTap=null;
+$('ocean').addEventListener('pointerdown',event=>{
+ if(!isHospital()||state!=='playing'||game.phase!=='explore'||!event.isPrimary||event.button!==0)return;
+ const rect=event.currentTarget.getBoundingClientRect();
+ const x=(event.clientX-rect.left)/rect.width,y=(event.clientY-rect.top)/rect.height;
+ const pet=renderer.petAt(x,y);
+ hospitalTap=pet?{pet,game,round:game.room,id:event.pointerId,x:event.clientX,y:event.clientY}:null;
+});
+$('ocean').addEventListener('pointerup',event=>{
+ const tap=hospitalTap;
+ if(!tap||tap.id!==event.pointerId)return;
+ if(Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>10)hospitalTap=null;
+ else tap.released=true;
+});
+$('ocean').addEventListener('click',event=>{
+ const tap=hospitalTap;
+ hospitalTap=null;
+ if(!tap?.released||!isHospital()||state!=='playing'||game.phase!=='explore'||tap.game!==game||tap.round!==game.room
+   ||Math.hypot(event.clientX-tap.x,event.clientY-tap.y)>10)return;
+ clearInput();
+ hospitalUI.showPortrait(tap.pet,(pet,canvas)=>renderer.drawPetPortrait(pet,canvas));
+});
+$('ocean').addEventListener('pointercancel',()=>{hospitalTap=null;});
 function postalHud(){
  const playing=state==='playing';
  syncPostalStats(game,$);
