@@ -6,7 +6,7 @@ import {icon} from './icons.js?v245';
 import {syncCityStats,syncCityAction} from './cityhall-ui.js?v252';
 import {DEMO_ACTIONS} from './tutorial-input.js?v295';
 import {syncPostalStats} from './postal-ui.js?v268';
-const ITEMS={cinema:'filmInfo',gym:'whistle',cityhall:'special',datacenter:'virusClear',conservation:'bookSupport',photo:'autoCamera',garden:'gardenerBell',monastery:'shield',detective:'decoy',aquarium:'light',museum:'time',history:'run',temple:'shield',robot:'magnet',space:'booster',writer:'bookmark',language:'magnet',newspaper:'satchel',dream:'eraser',literature:'bookmark',zoo:'whistle',ai:'autoChip',dessert:'remote'};
+const ITEMS={cinema:'filmInfo',gym:'whistle',cityhall:'special',datacenter:'virusClear',photo:'autoCamera',garden:'gardenerBell',monastery:'shield',detective:'decoy',aquarium:'light',museum:'time',history:'run',temple:'shield',robot:'magnet',space:'booster',writer:'bookmark',language:'magnet',newspaper:'satchel',dream:'eraser',literature:'bookmark',zoo:'whistle',ai:'autoChip',dessert:'remote'};
 function copy(source){const el=source.cloneNode(true);for(const node of [el,...el.querySelectorAll('[id]')])if(node.id){node.dataset.sourceId=node.id;node.removeAttribute('id');}for(const b of el.querySelectorAll('button')){b.tabIndex=-1;b.disabled=false;}return el;}
 export class TutorialChrome{
  constructor(root,place,lesson,source,duration,coinMode=false){
@@ -72,13 +72,12 @@ export class TutorialChrome{
    this.text('clue-value',g.banked.size);
    for(const [i,pip]of [...this.find('health-value').children].entries())pip.classList.toggle('empty',i>=g.health);
    this.find('health-value').setAttribute('aria-label',(place==='aquarium'?'내구도':'체력')+' '+g.health+'칸');
-   const era=place==='datacenter'?g.packets.length+' / 2':place==='conservation'?['먼지','종이','압착'][g.book.mode]:['photo','garden'].includes(place)?`${g.room+1} / 3`:place==='monastery'?`${g.zoneIndex+1} / 3`:place==='detective'?`${g.roomIndex+1} / 3`:place==='history'?(g.eraIndex<0?'박물관':`${g.eraIndex+1} / 3`):place==='ai'?`${g.orderIndex+1} / 9`:place==='zoo'||place==='literature'?`${g.room+1} / 9`:place==='dessert'?g.handLabel:place==='newspaper'?(g.held?'운반 중':'빈손'):place==='robot'?(g.held?'부품 운반':'빈손'):'';
+   const era=place==='datacenter'?g.packets.length+' / 2':['photo','garden'].includes(place)?`${g.room+1} / 3`:place==='monastery'?`${g.zoneIndex+1} / 3`:place==='detective'?`${g.roomIndex+1} / 3`:place==='history'?(g.eraIndex<0?'박물관':`${g.eraIndex+1} / 3`):place==='ai'?`${g.orderIndex+1} / 9`:place==='zoo'||place==='literature'?`${g.room+1} / 9`:place==='dessert'?g.handLabel:place==='newspaper'?(g.held?'운반 중':'빈손'):place==='robot'?(g.held?'부품 운반':'빈손'):'';
    this.text('history-era',era);
    if(place==='museum'){const colors=['#ec5555','#f49948','#f4d75c','#72ae6b','#66aed8','#5e75b9','#ae78c0','#eff1df','#535660'];this.find('museum-colors').innerHTML=colors.map((c,i)=>`<i style="background:${c};opacity:${g.monsters.some(m=>m.id===i+1&&m.alive)?'.3':'1'}"></i>`).join('');}
    const item=this.find('flash-button');item.innerHTML=icon(place==='garden'?g.itemKind:ITEMS[place])+`<span class="flash-count"><strong>${g.flashes??0}</strong></span>`;item.disabled=g.flashes<=0;
    const actId=DEMO_ACTIONS[place].at(-1);if(g.actionLabel&&actId)this.text(actId,g.actionLabel);
    if(place==='detective')this.text('detective-hide',g.hidden?'나오기':'숨기');
-   if(place==='conservation')this.find('workshop-rotate').hidden=g.book.mode!==1;
    if(place==='photo')this.find('field-act').classList.toggle('action-ready',g.focusing&&g.quality().good);
    if(place==='history'||place==='temple')this.text('interact-button',g.interaction?.startsWith('하차')?'하차':'탑승');
    if(place==='museum'){this.find('shoot-button').disabled=!!g.player.climbing;this.find('shoot-button').innerHTML=icon('slingshot');this.find('jump-button').innerHTML=icon('jump');}

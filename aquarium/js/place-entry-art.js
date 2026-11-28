@@ -20,7 +20,6 @@ const places={
  photo:['entrance-v129/photo.webp','#795943','#f7eddd','#d8bd9a'],
  garden:['entrance-v129/garden.webp','#487246','#e9f6e4','#a9d6a2'],
  datacenter:['entrance-v129/datacenter.webp','#2f6671','#e1f3f4','#a5cfd6'],
- conservation:['entrance-v129/conservation.webp','#785637','#f8edd7','#e4c391'],
  cityhall:['cityhall/entrance-v138.webp','#40684f','#e2f0e8','#afcfb9'],
  gym:['gym-v161/entrance.webp','#934b41','#faece0','#e9b29d'],
  cinema:['cinema/projector.webp','#655175','#f0e8f3','#cfb4db'],

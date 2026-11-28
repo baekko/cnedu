@@ -2,7 +2,7 @@ import {hasSideAnimation,sideWalkCell} from './side-walk.js?v=155';
 import {SIDE_HERO_SIZE} from './hero-scale.js';
 import {drawClueCard,usesCoinRewards} from './clue-card-art.js?v245';
 import {beginScene} from './layout.js';
-import {ZOO,ZOO_FEED_ZONE,ZOO_SUPPORT,FEED_ANIMALS,animalPose,trajectory} from './zoo-core.js?v=155';
+import {ZOO_FEED_ZONE,ZOO_SUPPORT,animalPose} from './zoo-core.js?v=155';
 import {ANIMAL_ART} from './zoo-approved-art.js?v313';
 import {hippoFrameIndex} from './zoo-hippo-motion.js';
 import {heroPose,heroPoint,releasePoint} from './zoo-hero-pose.js?v=155';
@@ -15,11 +15,12 @@ const box=(c,x,y,w,h,color,r=5)=>{c.fillStyle=color;c.beginPath();c.roundRect(x,
 export async function loadZooAssets(){
  const images={};
  const animals=new Set(Object.entries(ANIMAL_ART).filter(([kind])=>kind!=='hippo').map(([,art])=>art.sheet));
- const props=['lion-rock','giraffe-pole','rock-low','rock-high','prop-monkey-tree-v63','ice'];
+ const props=['lion-rock','giraffe-pole','prop-monkey-tree-v63'];
  const files=[
   ...[...animals].map(name=>['zoo-v313/'+name+'.webp',name]),
   ...props.map(name=>['zoo-v313/'+name+'.webp',name]),
-  ['zoo-v315/world.webp','world-approved'],['zoo-v313/hippo-motion.webp','hippo-motion'],
+  ...['rock-low','rock-high','ice'].map(name=>['zoo-v316/'+name+'.webp',name]),
+  ['zoo-v316/world.webp','world-approved'],['zoo-v313/hippo-motion.webp','hippo-motion'],
   ['zoo/entrance.webp','entrance'],['zoo/clue.webp','clue'],['language/throw-v42.webp','throw']
  ];
  for(const id of ['haru','doyun','narin','soi'])for(const action of ['idle','walk'])files.push(['hero-v153/'+id+'-'+action+'.webp',id+'-'+action]);
@@ -58,17 +59,12 @@ export class ZooRenderer{
   if(charge){c.save();c.setLineDash([2,6]);c.strokeStyle='#b69a58';c.lineWidth=1.5;c.beginPath();c.moveTo(o.x,o.y);c.quadraticCurveTo(o.x+40,o.y-65,o.x+80,o.y-5);c.stroke();c.restore();}
  }
  habitat(c,a){const s=a.spec,b=s.start;
-  if(s.kind==='lion'){const im=this.images['lion-rock'],w=204,h=w*im.height/im.width;c.drawImage(im,b+189,342,w,h);}
+  if(s.kind==='lion'){const im=this.images['lion-rock'],h=204*im.height/im.width;c.drawImage(im,b+155,341,238,h);}
   if(s.kind==='giraffe'){const im=this.images['giraffe-pole'];c.drawImage(im,b+332,184,62,226);}
   if(s.kind==='monkey'){const im=this.images['prop-monkey-tree-v63'],w=ZOO_SUPPORT.monkey.treeWidth,h=w*im.height/im.width;c.drawImage(im,b+ZOO_SUPPORT.monkey.treeX,350-h*.65496,w,h);}
   if(s.kind==='otter'){for(const [key,x,top,w,sy]of [['rock-low',195,402,102,.26891],['rock-high',291,343,108,.13333]]){const im=this.images[key],h=w*im.height/im.width;c.drawImage(im,b+x,top-h*sy,w,h);}}
   if(s.kind==='penguin'){const im=this.images.ice,w=224,h=w*im.height/im.width;c.drawImage(im,b+187,ZOO_SUPPORT.iceY-h*.34884,w,h);}
 
- }
- waterFront(c,a,t){
-  const p=animalPose(a),s=a.spec,b=s.start;if(s.kind==='hippo'){
-   drawHippoWake(c,p,t,a.waterPulses);
-  }else if(s.kind==='otter'&&p.moving){for(let i=0;i<4;i++){c.strokeStyle='#e1efdb99';c.lineWidth=1;c.beginPath();c.ellipse(p.x-i*6,p.y+1,9+i*4,2+i,0,0,TAU);c.stroke();}}
  }
  animal(c,a,t){
   const p=animalPose(a),art=ANIMAL_ART[p.kind];
@@ -107,7 +103,8 @@ export class ZooRenderer{
  }
  draw(g,character){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!g)return;c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();c.save();c.translate(-g.camera.x,0);
   drawZooScenery(c,this.images['world-approved'],g.camera.x,g.elapsed);
-  for(let i=0;i<g.animals.length;i++){const a=g.animals[i],s=a.spec,display=animalPose(a);if(s.kind==='hippo'?display.x-display.size/2>g.camera.x+420||display.x+display.size/2<g.camera.x-30:s.start>g.camera.x+480||s.start+420<g.camera.x-100)continue;this.habitat(c,a);if(a.fed<2)this.feedSpot(c,s.start);const p=this.animal(c,a,g.elapsed);this.waterFront(c,a,g.elapsed);
+  for(let i=0;i<g.animals.length;i++){const a=g.animals[i],s=a.spec,display=animalPose(a);if(s.kind==='hippo'?display.x-display.size/2>g.camera.x+420||display.x+display.size/2<g.camera.x-30:s.start>g.camera.x+480||s.start+420<g.camera.x-100)continue;this.habitat(c,a);if(a.fed<2)this.feedSpot(c,s.start);const p=this.animal(c,a,g.elapsed);
+   if(s.kind==='hippo')drawHippoWake(c,p,g.elapsed,a.waterPulses);
    // Low rail leaves the animal's face and the complete trajectory unobscured.
    for(const x of [s.start+205,s.start+395]){line(c,x,418,x,392,'#927854',5);line(c,x-1,414,x-1,393,'#c7af81',1.4);}line(c,s.start+206,400,s.start+394,400,'#c6aa7e',2);line(c,s.start+206,409,s.start+394,409,'#a78c64',1.7);
    if(s.id===g.active.spec.id&&a.fed<2&&p.open&&a.chew===0){c.save();c.strokeStyle=a.attention>0?'#d8ad4a':'#fef4c6';c.lineWidth=1.1;c.setLineDash([3,4]);c.beginPath();c.arc(p.target.x,p.target.y,p.radius+3,0,TAU);c.stroke();c.restore();}
@@ -121,10 +118,21 @@ export class ZooRenderer{
   if(g.charging){const xx=p.x-32,yy=p.y-88;box(c,xx-2,yy-12,80,26,'#fff3d9ed',6);c.fillStyle='#5b7f70';c.font='bold 9px sans-serif';c.textAlign='left';c.fillText('힘 '+Math.round(g.charge*100)+'%',xx+3,yy-3);box(c,xx+3,yy+2,68,5,'#d6d6b8',3);box(c,xx+3,yy+2,Math.max(2,68*g.charge),5,'#6f9a7a',3);}
   for(const e of g.effects){const k=e.age/(e.duration||1.3);c.save();c.globalAlpha=1-k;if(e.kind==='heart'){this.heart(c,e.x,e.y-12-k*36,.7,'#df927f');for(let j=0;j<4;j++)ellipse(c,e.x+Math.cos(j*TAU/4)*k*26,e.y-15+Math.sin(j*TAU/4)*k*26,2,2,'#eed086');}else if(e.kind==='card'){this.card(c,e.id,e.x,e.y-k*45,30);}else{for(let j=0;j<6;j++){const a=j*TAU/6;ellipse(c,e.x+Math.cos(a)*k*24,e.y-12*Math.sin(k*Math.PI)+Math.sin(a)*k*5,2*(1-k)+.5,1.4,e.kind==='splash'||e.kind==='ice'?'#e7f5e9':'#d2b079');}}c.restore();}
   c.restore();
-  box(c,78,8,234,26,'#fff5dfe8',12);for(let i=0;i<9;i++){const x=94+i*25,owned=g.banked.has(i+1);c.save();c.globalAlpha=owned?1:.27;drawClueCard(c,x,21.5,14,17);c.restore();}
-  const a=g.active,s=a.spec,name=s.name+(a.fed>=2?(usesCoinRewards()?' · 금화 획득':' · 단서 획득'):''),w=165;box(c,(390-w)/2,41,w,25,'#fff8e6e8',11);c.fillStyle='#577968';c.font='bold 11px sans-serif';c.textAlign='left';c.fillText(name,(390-w)/2+13,54);if(a.fed<2)for(let i=0;i<2;i++){ellipse(c,242+i*16,54,6,6,i<a.fed?'#779d79':'#d8d9b9');if(i<a.fed){c.fillStyle='#fff6d4';c.font='8px sans-serif';c.textAlign='center';c.fillText('✓',242+i*16,54);}}
+  box(c,78,8,234,26,'#fff8eaf5',12);
+  for(let i=0;i<9;i++){
+   const x=94+i*25;
+   if(g.banked.has(i+1))drawClueCard(c,x,21.5,14,17);
+   else box(c,x-6,15,12,13,'#e0d9c6',3);
+  }
+  const a=g.active,s=a.spec,name=s.name+(a.fed>=2?(usesCoinRewards()?' · 금화 획득':' · 단서 획득'):'');
+  box(c,112.5,41,165,25,'#fff8ecf7',11);
+  c.fillStyle='#36574a';c.font='bold 11px sans-serif';c.textAlign='left';c.textBaseline='middle';c.fillText(name,125.5,54);
+  if(a.fed<2)for(let i=0;i<2;i++){
+   ellipse(c,242+i*16,54,6,6,i<a.fed?'#577f60':'#ddd8c4');
+   if(i<a.fed){c.fillStyle='#fff9e6';c.font='8px sans-serif';c.textAlign='center';c.fillText('✓',242+i*16,54);}
+  }
   if(a.attention>0){box(c,137,100,116,21,'#f5d886dd',10);c.fillStyle='#6b714e';c.font='bold 10px sans-serif';c.textAlign='center';c.fillText('기다려요 '+a.attention.toFixed(1)+'초',195,111);}
-  const pose=animalPose(a);box(c,89,72,212,22,pose.open?'#e5edcedd':'#fff3dcdb',9);c.fillStyle=pose.open?'#527653':'#857052';c.font='bold 10px sans-serif';c.textAlign='center';c.fillText(pose.phase,195,84);
+  const pose=animalPose(a);box(c,89,72,212,22,pose.open?'#e8efdbf5':'#fff5e3f5',9);c.fillStyle=pose.open?'#385d42':'#69583f';c.font='bold 10px sans-serif';c.textAlign='center';c.fillText(pose.phase,195,84);
   if(g.elapsed<5){box(c,65,474,260,19,'#fff6dfdb',9);c.fillStyle='#648471';c.font='bold 9px sans-serif';c.textAlign='center';c.fillText('↑↓ 각도 · 던지기를 누르다 놓아요',195,484);}
   c.restore();
  }

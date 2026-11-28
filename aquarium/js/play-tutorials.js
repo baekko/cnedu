@@ -5,7 +5,6 @@ import {MemoryGame,MEMORY,MEMORY_BOARD,MEMORY_DEMO_PLAN,MEMORY_SIZE} from './mem
 import {CinemaGame} from './cinema-core.js?v268';
 import {GymGame} from './gym-core.js?v307';
 import {DataCenterGame} from './datacenter-core.js?v268';
-import {ConservationGame,patchTarget,patchSeams,BOOK_WORK} from './conservation-core.js?v268';
 import {observeTutorial} from './tutorial-input.js?v295';
 import {PhotoGame,photoGlareAt,photoLight} from './photo-core.js';
 import {GardenGame} from './garden-core.js?v268';
@@ -35,7 +34,7 @@ import {AITutorial} from './ai-tutorial.js';
 import {MonasteryGame,LANTERN_ROUTE,TEMPLE_BELLS,bellPassage} from './monastery-core.js?v228';
 import {awardClue} from './clue-order.js';
 
-export const TUTORIAL_PLACES=['aquarium','museum','history','exchange','temple','robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','conservation','cityhall','gym','cinema','memory','pursuit','postal','hospital'];
+export const TUTORIAL_PLACES=['aquarium','museum','history','exchange','temple','robot','space','writer','language','newspaper','dream','zoo','literature','ai','dessert','detective','monastery','photo','garden','datacenter','cityhall','gym','cinema','memory','pursuit','postal','hospital'];
 export class PlayTutorial{
  constructor(game,titles){this.game=game;this.titles=titles;this.total=titles.length;this.seq=[];this.i=0;this.age=0;this.ageHere=0;this.step=0;this.caption='';this.control='';this.done=false;this.fade=0;this.events=[];game.onEvent=e=>{this.events.push(e);this.onEvent?.(e);};}
  get title(){return this.titles[this.step];}
@@ -335,24 +334,6 @@ function datacenter(){
  .hold(2,'바이러스 제거 · 2회 사용 가능',4).hold(2,'체크 표시가 있는 길에는 바이러스가 다시 나오지 않아요.',1.3);return t;
 }
 
-function conservation(){
- const g=new ConservationGame({tutorial:true}),t=new PlayTutorial(g,['붓질 · 책벌레','종이 회전 · 고정 · 붙이기','양쪽 압착판','보호 받침']);
- t.walk(0,'방향키로 붓끝을 먼지에 가져가요.',96,227).act(0,'작업을 누르고 방향키로 쓸어요.',()=>g.beginAction(),'붓질')
- .walk(0,'움직이는 붓끝이 닿은 먼지만 지워져요.',294,227).act(0,'책벌레가 보이면 손을 떼어 붓을 들어요.',()=>g.releaseAction(),'붓질').hold(0,'붓을 든 채 지나가기를 기다려요.',1.6).hold(0,'다시 누르고 남은 먼지를 쓸면 돼요.',.5);
- t.cut(1,'먼지 책 세 권 다음에는 찢어진 종이를 붙여요.',()=>{g.selected=3;g.resetTool();g.elapsed=30;})
- .act(1,'회전 버튼으로 보존지 방향을 맞춰요.',()=>{while(g.book.rotation)g.rotate();},'회전')
- .walk(1,'방향키로 종이를 찢어진 테두리에 맞춰요.',246,270).act(1,'초록 테두리에서 작업을 눌러 고정해요.',()=>g.beginAction(),'고정')
- .until(1,'한쪽이 고정되면 주걱으로 가장자리를 붙여요.',()=>g.book.pinned,{},2);
- for(const point of patchSeams(g.books[3]))t.walk(1,'반짝이는 가장자리를 따라 주걱을 움직여요.',point.x,point.y).hold(1,'주걱이 닿은 곳부터 붙어요.',.14);
- t.until(1,'가장자리를 모두 붙이면 복원돼요.',()=>g.books[3].done,{},2).hold(1,'완료하면 다음 책이 바로 펼쳐져요.',.5);
- t.cut(2,'들뜬 책장은 양쪽의 압착판을 사용해요.',()=>{g.selected=6;g.resetTool();g.elapsed=55;})
- .walk(2,'왼쪽 압착판으로 이동해요.',96,282).act(2,'작업을 누르면 왼쪽 힘이 올라가요.',()=>g.beginAction(),'압착').until(2,'금빛 표시를 초록 구간까지 올려요.',()=>g.book.pressure[0]>=.64,{},3)
- .act(2,'손을 떼면 천천히 힘이 줄어들어요.',()=>g.releaseAction(),'압착').walk(2,'오른쪽 압착판도 눌러 균형을 맞춰요.',294,282)
- .act(2,'양쪽 표시가 초록에 함께 머물러야 해요.',()=>g.beginAction(),'압착').until(2,'오른쪽 표시도 초록 안에 맞춰요.',()=>g.book.pressure[1]>=.56,{},3).act(2,'초록 구간에서는 손을 떼어 유지해요.',()=>g.releaseAction(),'압착')
- .until(2,'양쪽 힘이 안정되면 책장이 펴져요.',()=>g.books[6].done,{},4).hold(2,'너무 세게 누르지 않도록 표시를 봐요.',.5);
- t.cut(3,'작업 중인 책에 보호 받침을 써요.',()=>{g.selected=1;g.resetTool();g.elapsed=3;})
- .act(3,'보호 받침은 이 책의 실수 한 번을 막아요.',()=>g.flash(),'보호 받침').hold(3,'보호 받침은 첫 실수를 막으면 사라져요. 2회 사용 가능.',2);return t;
-}
 function cityhall(){
  const g=new CityHallGame({plan:CITY_DEMO_PLAN}),t=new PlayTutorial(g,['비서의 보고와 정책 선택','전문가 조언과 결재']);
  t.hold(0,'시장 자리에 앉으면 비서가 첫 보고를 들고 찾아와요.',g.arrivalSeconds+.5)
@@ -539,5 +520,5 @@ function hospital(characterId){
   .still(1,'맞힌 종류마다 단서를 한 장 받아요.',1.6);
  return t;
 }
-const factories={hospital,postal,pursuit,memory,cinema,gym,cityhall,datacenter,conservation,photo,garden,monastery,detective,aquarium,museum,history,exchange,temple,robot,space,writer,language,newspaper,dream,literature,zoo,dessert};
+const factories={hospital,postal,pursuit,memory,cinema,gym,cityhall,datacenter,photo,garden,monastery,detective,aquarium,museum,history,exchange,temple,robot,space,writer,language,newspaper,dream,literature,zoo,dessert};
 export function createTutorial(place,character='haru'){if(place==='ai')return observeTutorial(groupTutorial(new AITutorial(),place),place);const f=factories[place];if(!f)throw Error('No tutorial for '+place);return observeTutorial(groupTutorial(extendExamples(f(character),place),place),place);}

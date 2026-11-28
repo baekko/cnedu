@@ -12,8 +12,9 @@
 {
   "imports": {
     "./js/ai-renderer.js?v245": "./js/ai-renderer.js?v315",
-    "./js/arcade-run.js?v295": "./js/arcade-run.js?v315",
+    "./js/arcade-run.js?v295": "./js/arcade-run.js?v316",
     "./js/arcade-view.js?v295": "./js/arcade-view.js?v315",
+    "./js/briefing-copy.js?v304": "./js/briefing-copy.js?v316",
     "./js/clue-card-art.js?v245": "./js/clue-card-art.js?v315",
     "./js/config.js": "./js/config.js?v312",
     "./js/config.js?v214": "./js/config.js?v312",
@@ -23,24 +24,32 @@
     "./js/history-core.js?v307": "./js/history-core.js?v312",
     "./js/history-renderer.js?v307": "./js/history-renderer.js?v315",
     "./js/hospital-ui.js?v301": "./js/hospital-ui.js?v315",
-    "./js/instructions.js?v304": "./js/instructions.js?v315",
+    "./js/instructions.js?v304": "./js/instructions.js?v316",
+    "./js/journey.js?v307": "./js/journey.js?v316",
     "./js/layout.js": "./js/layout.js?v313",
     "./js/layout.js?v214": "./js/layout.js?v313",
     "./js/literature-renderer.js?v307": "./js/literature-renderer.js?v315",
     "./js/monastery-core.js?v228": "./js/monastery-core.js?v313",
     "./js/museum-core.js": "./js/museum-core.js?v312",
-    "./js/play-tutorials.js?v307": "./js/play-tutorials.js?v313",
+    "./js/place-entry-art.js?v311": "./js/place-entry-art.js?v316",
+    "./js/places.js?v268": "./js/places.js?v316",
+    "./js/places.js?v295": "./js/places.js?v316",
+    "./js/play-tutorials.js?v307": "./js/play-tutorials.js?v316",
     "./js/pursuit-renderer.js?v245": "./js/pursuit-renderer.js?v315",
     "./js/renderer.js?v311": "./js/renderer.js?v315",
+    "./js/retired-places.js?v227": "./js/retired-places.js?v316",
     "./js/space-renderer.js?v307": "./js/space-renderer.js?v315",
     "./js/temple-core.js?v268": "./js/temple-core.js?v309",
     "./js/temple-core.js?v308": "./js/temple-core.js?v309",
     "./js/temple-renderer.js?v307": "./js/temple-renderer.js?v315",
-    "./js/tutorial-pages.js?v304": "./js/tutorial-pages.js?v312",
+    "./js/tutorial-chrome.js?v311": "./js/tutorial-chrome.js?v316",
+    "./js/tutorial-input.js?v295": "./js/tutorial-input.js?v316",
+    "./js/tutorial-pages.js?v304": "./js/tutorial-pages.js?v316",
     "./js/writer-core.js?v307": "./js/writer-core.js?v308",
     "./js/writer-renderer.js?v307": "./js/writer-renderer.js?v315",
     "./js/zoo-core.js?v=155": "./js/zoo-core.js?v315",
-    "./js/zoo-renderer.js?v313": "./js/zoo-renderer.js?v315"
+    "./js/zoo-renderer.js?v313": "./js/zoo-renderer.js?v316",
+    "./js/zoo-scenery.js?v315": "./js/zoo-scenery.js?v316"
   }
 }
   </script>
@@ -122,7 +131,7 @@
             <button class="dir down" data-direction="down" aria-label="아래로 이동"><svg viewBox="0 0 24 24"><path d="m12 19-9-12h18Z"/></svg></button>
           </div>
           <div id="cityhall-actions"><button id="cityhall-prev" type="button" class="interact-action" hidden disabled aria-label="대화 이전">이전</button><button id="cityhall-act" type="button" class="interact-action" disabled aria-label="대화 다음">다음</button></div>
-          <div id="workshop-actions" hidden><button id="workshop-rotate" class="interact-action" type="button" hidden>회전</button></div><div id="field-actions"><button id="field-act" class="interact-action field-act" aria-label="촬영 또는 물길 조작">촬영</button></div><div id="ai-actions"><button id="ai-original" hidden class="interact-action ai-original" aria-label="스캐너로 돌아가기">다시</button><button id="ai-act" class="interact-action ai-act" aria-label="작업실 행동">스캔</button></div><div id="zoo-actions"><button id="zoo-act" class="museum-action zoo-act" aria-label="누르고 힘을 모아 먹이 던지기" data-game-icon="feed"></button></div><div id="literature-actions"><button id="literature-act" class="interact-action literature-act" aria-label="장면에 맞는 행동">행동</button></div><div id="dream-actions"><button id="dream-jump" class="museum-action dream-jump" aria-label="점프" data-game-icon="jump"></button><button id="dream-act" class="interact-action dream-act" aria-label="중력 반전">반전</button></div><div id="monastery-actions"><button id="monastery-balance" class="interact-action monastery-balance" aria-label="누르고 균형 잡기" aria-pressed="false"><b>균형</b><small>누르고 있기</small></button></div><div id="detective-actions"><button id="detective-hide" class="interact-action detective-hide" aria-label="가구 뒤에 숨기">숨기</button><button id="detective-act" class="interact-action detective-act" aria-label="누르고 조사하기">조사</button></div><div id="dessert-actions"><button id="dessert-act" class="interact-action dessert-act" aria-label="오븐에서 꺼내기">꺼내기</button></div><div id="newspaper-actions"><button id="newspaper-act" class="interact-action newspaper-act" aria-label="사진·제목 집기 또는 배치">작업</button></div><div id="language-actions"><button id="language-jump" class="museum-action language-jump" aria-label="점프" data-game-icon="jump"></button><button id="language-act" class="interact-action language-act" aria-label="글자 집기">집기</button></div><div id="writer-actions"><button id="writer-jump" class="museum-action writer-jump" aria-label="점프" data-game-icon="jump"></button><button id="writer-act" class="interact-action writer-act" aria-label="이야기 행동">행동</button></div><div id="space-actions"><button id="brake-button" class="interact-action space-brake" aria-label="제동">제동</button></div><div id="robot-actions"><button id="work-button" class="interact-action robot-work" aria-label="부품 집기 또는 로봇 수리">작업</button></div><div id="history-actions" hidden><button id="hammer-button" class="museum-action hammer-action" aria-label="망치로 내려치기"><span>⚒</span><b>망치</b></button><button id="interact-button" class="interact-action" disabled>탑승</button></div><div id="museum-actions" hidden><button id="jump-button" class="museum-action jump-action" aria-label="점프"><span>↥</span><b>점프</b></button><button id="shoot-button" class="museum-action shoot-action" aria-label="새총 발사"><span>Y</span><b>새총</b></button></div>
+          <div id="field-actions"><button id="field-act" class="interact-action field-act" aria-label="촬영 또는 물길 조작">촬영</button></div><div id="ai-actions"><button id="ai-original" hidden class="interact-action ai-original" aria-label="스캐너로 돌아가기">다시</button><button id="ai-act" class="interact-action ai-act" aria-label="작업실 행동">스캔</button></div><div id="zoo-actions"><button id="zoo-act" class="museum-action zoo-act" aria-label="누르고 힘을 모아 먹이 던지기" data-game-icon="feed"></button></div><div id="literature-actions"><button id="literature-act" class="interact-action literature-act" aria-label="장면에 맞는 행동">행동</button></div><div id="dream-actions"><button id="dream-jump" class="museum-action dream-jump" aria-label="점프" data-game-icon="jump"></button><button id="dream-act" class="interact-action dream-act" aria-label="중력 반전">반전</button></div><div id="monastery-actions"><button id="monastery-balance" class="interact-action monastery-balance" aria-label="누르고 균형 잡기" aria-pressed="false"><b>균형</b><small>누르고 있기</small></button></div><div id="detective-actions"><button id="detective-hide" class="interact-action detective-hide" aria-label="가구 뒤에 숨기">숨기</button><button id="detective-act" class="interact-action detective-act" aria-label="누르고 조사하기">조사</button></div><div id="dessert-actions"><button id="dessert-act" class="interact-action dessert-act" aria-label="오븐에서 꺼내기">꺼내기</button></div><div id="newspaper-actions"><button id="newspaper-act" class="interact-action newspaper-act" aria-label="사진·제목 집기 또는 배치">작업</button></div><div id="language-actions"><button id="language-jump" class="museum-action language-jump" aria-label="점프" data-game-icon="jump"></button><button id="language-act" class="interact-action language-act" aria-label="글자 집기">집기</button></div><div id="writer-actions"><button id="writer-jump" class="museum-action writer-jump" aria-label="점프" data-game-icon="jump"></button><button id="writer-act" class="interact-action writer-act" aria-label="이야기 행동">행동</button></div><div id="space-actions"><button id="brake-button" class="interact-action space-brake" aria-label="제동">제동</button></div><div id="robot-actions"><button id="work-button" class="interact-action robot-work" aria-label="부품 집기 또는 로봇 수리">작업</button></div><div id="history-actions" hidden><button id="hammer-button" class="museum-action hammer-action" aria-label="망치로 내려치기"><span>⚒</span><b>망치</b></button><button id="interact-button" class="interact-action" disabled>탑승</button></div><div id="museum-actions" hidden><button id="jump-button" class="museum-action jump-action" aria-label="점프"><span>↥</span><b>점프</b></button><button id="shoot-button" class="museum-action shoot-action" aria-label="새총 발사"><span>Y</span><b>새총</b></button></div>
           <div id="postal-actions" class="postal-actions" hidden>
             <button id="postal-map-button" class="interact-action postal-control" type="button" aria-haspopup="dialog">마을지도</button>
             <button id="postal-deliver" class="interact-action postal-control" type="button" disabled>배달</button>
@@ -276,7 +285,7 @@
   <link rel="stylesheet" href="./css/hospital.css?v315">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v315').catch(async error => {
+    import('./js/app.js?v316').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

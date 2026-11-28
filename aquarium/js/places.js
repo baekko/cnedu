@@ -21,7 +21,6 @@ export const PLACES=Object.freeze([
  {id:'photo',name:'사진관',playable:true,icon:'camera',description:'구도와 초점을 맞춰 특별한 순간 아홉 장을 찍어요.'},
  {id:'garden',name:'식물원',playable:true,icon:'garden',description:'히터와 환기창을 조절해 세 온실의 꽃을 키워요.'},
  {id:'datacenter',name:'데이터센터',playable:true,icon:'server',description:'분기 레버를 바꿔 자료를 목적지 서버로 보내요.'},
- {id:'conservation',name:'고서보존실',playable:true,icon:'literature',description:'먼지를 털고 종이를 붙여 아홉 권의 고서를 복원해요.'},
  {id:'cityhall',name:'시청',playable:true,icon:'cityhall',description:'시장으로서 여섯 안건을 결재하고 지지율에 따라 단서를 모아요.'},
  {id:'gym',name:'체육관',playable:true,icon:'gym',description:'던지는 방향을 보고 공을 피하며 아홉 단서를 모아요.'},
  {id:'cinema',name:'영화관',playable:true,icon:'cinema',description:'픽셀 영화의 제목을 맞히며 아홉 단서를 모아요.'},

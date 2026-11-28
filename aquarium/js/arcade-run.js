@@ -1,6 +1,7 @@
 import {PLACES} from './places.js?v295';
 import {CHARACTERS} from './config.js';
 import {arcadeCharacterSetupId,canResumeArcade} from './arcade-state.js?v254';
+import {isRetiredPlace} from './retired-places.js?v227';
 
 export const arcadePlaces=()=>PLACES.filter(place=>place.playable);
 export const COINS_PER_GAME=9;
@@ -27,7 +28,7 @@ function readSaved(storage){
 
 export class ArcadeRuns{
  constructor(storage,{createId=newId,clock=()=>new Date()}={}){
-  this.storage=storage;this.createId=createId;this.clock=clock;this.data=readSaved(storage);
+  this.storage=storage;this.createId=createId;this.clock=clock;this.refresh();
  }
  get run(){return this.data.run;}
  get records(){return this.data.records;}
@@ -36,15 +37,22 @@ export class ArcadeRuns{
  get completed(){return Object.values(this.run?.games||{}).filter(game=>!game.abandoned).length;}
  get characterSetupId(){return arcadeCharacterSetupId(this.data);}
  get canResume(){return canResumeArcade(this.data);}
- get canRecord(){return this.run&&this.completed===this.run.places.length;}
+ get canRecord(){return !!this.run?.places.length&&this.completed===this.run.places.length;}
 
  save(){
   try{this.storage.setItem(saveKey,JSON.stringify(this.data));this.unsaved=false;}
   catch{this.unsaved=true;}
  }
  refresh(){
-  const saved=readSaved(this.storage);
-  if(!this.unsaved)this.data=saved;
+  if(this.unsaved)return;
+  this.data=readSaved(this.storage);
+  const run=this.run;
+  if(!Array.isArray(run?.places)||!run.places.some(isRetiredPlace))return;
+  run.places=run.places.filter(place=>!isRetiredPlace(place));
+  run.games=Object.fromEntries(Object.entries(run.games??{}).filter(([place])=>!isRetiredPlace(place)));
+  if(isRetiredPlace(run.active?.place))run.active=null;
+  this.recordCompletion();
+  this.save();
  }
  start(player){
   this.refresh();
@@ -81,13 +89,16 @@ export class ArcadeRuns{
   if(run?.active?.place!==place)return false;
   run.games[place]={coins:run.active.coins,abandoned};
   run.active=null;
-  if(this.canRecord&&!this.records.some(record=>record.id===run.id)){
-   this.records.unshift({id:run.id,player:run.player,finishedAt:this.clock().toISOString(),score:this.total,maximum:this.maximum,
-    games:run.places.map(id=>({place:id,coins:run.games[id].coins})),ticket:run.ticket,shared:false,
-    ...(run.registrationKey?{registrationKey:run.registrationKey}:{})});
-  }
+  this.recordCompletion();
   this.save();
   return true;
+ }
+ recordCompletion(){
+  const run=this.run;
+  if(!this.canRecord||this.records.some(record=>record.id===run.id))return;
+  this.records.unshift({id:run.id,player:run.player,finishedAt:this.clock().toISOString(),score:this.total,maximum:this.maximum,
+   games:run.places.map(id=>({place:id,coins:run.games[id].coins})),ticket:run.ticket,shared:false,
+   ...(run.registrationKey?{registrationKey:run.registrationKey}:{})});
  }
  markShared(id){
   this.refresh();

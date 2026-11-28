@@ -1,4 +1,4 @@
-const retiredPlaces=new Set(['science']);
+const retiredPlaces=new Set(['science','conservation']);
 export const isRetiredPlace=id=>retiredPlaces.has(id);
 const withdrawnResearchPlaces=new Set(['excavation','cartography']);
 export const isWithdrawnResearchPlace=id=>withdrawnResearchPlaces.has(id);
@@ -6,6 +6,18 @@ export const isWithdrawnResearchPlace=id=>withdrawnResearchPlaces.has(id);
 // Resume at the last available place when a save points to a retired one.
 export function withoutRetiredPlaces(data){
  if(!data||typeof data!=='object'||Array.isArray(data))return data;
+ // The next step after 데이터센터 is 시청 now. Keep later unlocks and
+ // records when an older save has already advanced beyond the removed game.
+ if(data.stage==='conservation'||data.unlockedThrough==='conservation'||Object.hasOwn(data,'conservation')){
+  const next={...data};
+  delete next.conservation;
+  if(next.stage==='conservation'){
+   next.stage='cityhall';
+   next.phase='briefing';
+  }
+  if(next.unlockedThrough==='conservation')next.unlockedThrough='cityhall';
+  data=next;
+ }
  const withdrawnStage=isWithdrawnResearchPlace(data.stage);
  if(withdrawnStage||isWithdrawnResearchPlace(data.unlockedThrough)){
   data={...data,stage:withdrawnStage?'memory':data.stage,unlockedThrough:'memory'};

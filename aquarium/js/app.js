@@ -24,9 +24,6 @@ import {CityHallGame,CITYHALL} from './cityhall-core.js?v=144';
 import {CityHallGame as LegacyCityHallGame} from './cityhall-legacy.js';
 import {CityHallUI,syncCityStats,syncCityAction,citySummaryHTML} from './cityhall-ui.js?v252';
 import {CityHallRenderer,loadCityHallAssets} from './cityhall-renderer.js?v311';
-import {CONSERVATION,ConservationGame} from './conservation-core.js?v268';
-import {ConservationRenderer,loadConservationAssets} from './conservation-renderer.js?v268';
-import {WorkshopUI} from './workshop-ui.js';
 import {instructionHTML} from './instructions.js?v304';
 import {arcadeCopy} from './arcade-copy.js?v315';
 import {briefingCopy} from './briefing-copy.js?v304';
@@ -125,7 +122,7 @@ const requestedPlace=requestedEntry||location.hash.slice(1);
 const withdrawnEntry=isWithdrawnResearchPlace(requestedPlace);
 if(withdrawnEntry)history.replaceState(null,'',location.pathname);
 const entry=withdrawnEntry?null:isRetiredPlace(requestedPlace)?'cityhall':requestedPlace==='travel'?'pursuit':requestedEntry;
-const trialKind=entry==='hospital'||location.hash==='#hospital'?'hospital':entry==='postal'||location.hash==='#postal'?'postal':entry==='pursuit'||location.hash==='#pursuit'?'pursuit':entry==='memory'||location.hash==='#memory'?'memory':entry==='cinema'||location.hash==='#cinema'?'cinema':entry==='gym'||location.hash==='#gym'?'gym':entry==='cityhall'||location.hash==='#cityhall'?'cityhall':entry==='datacenter'||location.hash==='#datacenter'?'datacenter':entry==='conservation'||location.hash==='#conservation'?'conservation':entry==='photo'||location.hash==='#photo'?'photo':entry==='garden'||location.hash==='#garden'?'garden':entry==='monastery'||location.hash==='#monastery'?'monastery':entry==='detective'||location.hash==='#detective'?'detective':entry==='dessert'||location.hash==='#dessert'?'dessert':entry==='ai'||location.hash==='#ai'?'ai':entry==='zoo'||location.hash==='#zoo'?'zoo':entry==='literature'||location.hash==='#literature'?'literature':entry==='dream'||location.hash==='#dream'?'dream':entry==='newspaper'||location.hash==='#newspaper'?'newspaper':entry==='language'||location.hash==='#language'?'language':entry==='writer'||location.hash==='#writer'?'writer':entry==='space'||location.hash==='#space'?'space':entry==='robot'||location.hash==='#robot'?'robot':entry==='temple'||location.hash==='#temple'?'temple':entry==='exchange'||location.hash==='#exchange'?'exchange':entry==='museum'||location.hash==='#museum'?'museum':null;
+const trialKind=entry==='hospital'||location.hash==='#hospital'?'hospital':entry==='postal'||location.hash==='#postal'?'postal':entry==='pursuit'||location.hash==='#pursuit'?'pursuit':entry==='memory'||location.hash==='#memory'?'memory':entry==='cinema'||location.hash==='#cinema'?'cinema':entry==='gym'||location.hash==='#gym'?'gym':entry==='cityhall'||location.hash==='#cityhall'?'cityhall':entry==='datacenter'||location.hash==='#datacenter'?'datacenter':entry==='photo'||location.hash==='#photo'?'photo':entry==='garden'||location.hash==='#garden'?'garden':entry==='monastery'||location.hash==='#monastery'?'monastery':entry==='detective'||location.hash==='#detective'?'detective':entry==='dessert'||location.hash==='#dessert'?'dessert':entry==='ai'||location.hash==='#ai'?'ai':entry==='zoo'||location.hash==='#zoo'?'zoo':entry==='literature'||location.hash==='#literature'?'literature':entry==='dream'||location.hash==='#dream'?'dream':entry==='newspaper'||location.hash==='#newspaper'?'newspaper':entry==='language'||location.hash==='#language'?'language':entry==='writer'||location.hash==='#writer'?'writer':entry==='space'||location.hash==='#space'?'space':entry==='robot'||location.hash==='#robot'?'robot':entry==='temple'||location.hash==='#temple'?'temple':entry==='exchange'||location.hash==='#exchange'?'exchange':entry==='museum'||location.hash==='#museum'?'museum':null;
 let trial=!!trialKind;
 const normalStorage=storage;
 const arcadeRuns=new ArcadeRuns(normalStorage);
@@ -145,7 +142,7 @@ if(trial)storage={getItem:key=>normalStorage.getItem(trialKind+'_trial_'+key),se
 if(entry==='character'||entry==='title'){
  resetJourney(normalStorage);
  history.replaceState(null,'',location.pathname);
-}else if(entry==='hospital'||(trialKind==='hospital'&&!readJourney(storage))||entry==='postal'||entry==='pursuit'||entry==='memory'||entry==='cinema'||entry==='gym'||entry==='cityhall'||entry==='datacenter'||entry==='conservation'||entry==='photo'||entry==='garden'||entry==='monastery'||entry==='detective'||entry==='dessert'||entry==='ai'||entry==='zoo'||entry==='museum'||entry==='exchange'||entry==='temple'||entry==='robot'||entry==='space'||entry==='writer'||entry==='language'||entry==='newspaper'||entry==='dream'||entry==='literature'){
+}else if(entry==='hospital'||(trialKind==='hospital'&&!readJourney(storage))||entry==='postal'||entry==='pursuit'||entry==='memory'||entry==='cinema'||entry==='gym'||entry==='cityhall'||entry==='datacenter'||entry==='photo'||entry==='garden'||entry==='monastery'||entry==='detective'||entry==='dessert'||entry==='ai'||entry==='zoo'||entry==='museum'||entry==='exchange'||entry==='temple'||entry==='robot'||entry==='space'||entry==='writer'||entry==='language'||entry==='newspaper'||entry==='dream'||entry==='literature'){
  // A direct game link starts this game anew, even when an older trial is saved.
  // Keep the regular adventure and its chosen explorer in normalStorage.
  const reviewHaru=entry==='postal'&&entryParams.get('character')==='haru';
@@ -162,7 +159,7 @@ let character = {...(CHARACTERS.find(c => c.id === progress.character) || CHARAC
 character.name=journey?.playerName||'플레이어';
 let nameMotion=null,nameToken=0;
 let hospitalImages=null,cinemaImages=null,cinemaUI=null,memoryImages=null,pursuitImages=null,postalImages=null;
-let gymImages=null,photoImages=null,gardenImages=null,dataCenterImages=null,conservationImages=null,cityHallImages=null,cityHallUI=null;
+let gymImages=null,photoImages=null,gardenImages=null,dataCenterImages=null,cityHallImages=null,cityHallUI=null;
 const FIELD={hospital:{
  rules:HOSPITAL,Game:HospitalGame,Renderer:HospitalRenderer,rooms:['1차','2차','3차'],name:'동물병원',
  result:'세 번의 동물 세기를 마쳤어요!',unit:'맞힌 종류'
@@ -172,9 +169,9 @@ const FIELD={hospital:{
 },pursuit:{
  rules:PURSUIT,Game:PursuitGame,Renderer:PursuitRenderer,rooms:['세계 지도'],name:'국제수사본부',
  item:'추가 단서',itemTip:`이번 단계의 네 번째 그림 공개 · ${PURSUIT.flashes}회 사용 가능`,result:'범인을 붙잡았어요',unit:'맞힌 도시'
-},memory:{rules:MEMORY,Game:MemoryGame,Renderer:MemoryRenderer,rooms:['그림 조사'],name:'기억연구소',item:'범위 힌트',itemTip:'아직 못 찾은 한 곳의 주변을 표시 · 1회 사용 가능',result:'달라진 아홉 곳을 모두 찾았어요!',unit:'찾은 곳'},cinema:{rules:CINEMA,Game:CinemaGame,Renderer:CinemaRenderer,load:loadCinemaAssets,rooms:['상영관'],name:'영화관',item:'영화 정보',itemTip:'지금 영화의 이야기 힌트 · 2회 사용 가능',result:'아홉 영화를 모두 맞혔어요!',unit:'맞힌 영화'},gym:{rules:GYM,Game:GymGame,Renderer:GymRenderer,load:loadGymAssets,rooms:['피구 코트'],name:'체육관',item:'타임아웃 휘슬',itemTip:'공과 상대가 3초 멈춰요 · 2회 사용 가능',result:'아홉 단서를 모두 모았어요!',unit:'모은 단서'},datacenter:{rules:DATACENTER,Game:DataCenterGame,Renderer:DataCenterRenderer,load:loadDataCenterAssets,rooms:['분기 회로실'],name:'데이터센터',item:'바이러스 제거',itemTip:'현재 연결된 경로의 바이러스 제거 · 2회 사용 가능',result:'아홉 자료를 모두 보냈어요!',unit:'전송한 자료'},conservation:{rules:CONSERVATION,Game:ConservationGame,Renderer:ConservationRenderer,load:loadConservationAssets,rooms:['복원 작업대'],name:'고서보존실',item:'보호 받침',itemTip:'지금 펼친 책에서 첫 실수를 막아요 · 2회 사용 가능',result:'아홉 고서를 모두 복원했어요!',unit:'복원한 책'},photo:{rules:PHOTO,Game:PhotoGame,Renderer:PhotoRenderer,load:loadPhotoAssets,rooms:PHOTO_ROOMS,name:'사진관'},garden:{rules:GARDEN,Game:GardenGame,Renderer:GardenRenderer,load:loadGardenAssets,rooms:GARDEN_ROOMS,name:'식물원'}};
+},memory:{rules:MEMORY,Game:MemoryGame,Renderer:MemoryRenderer,rooms:['그림 조사'],name:'기억연구소',item:'범위 힌트',itemTip:'아직 못 찾은 한 곳의 주변을 표시 · 1회 사용 가능',result:'달라진 아홉 곳을 모두 찾았어요!',unit:'찾은 곳'},cinema:{rules:CINEMA,Game:CinemaGame,Renderer:CinemaRenderer,load:loadCinemaAssets,rooms:['상영관'],name:'영화관',item:'영화 정보',itemTip:'지금 영화의 이야기 힌트 · 2회 사용 가능',result:'아홉 영화를 모두 맞혔어요!',unit:'맞힌 영화'},gym:{rules:GYM,Game:GymGame,Renderer:GymRenderer,load:loadGymAssets,rooms:['피구 코트'],name:'체육관',item:'타임아웃 휘슬',itemTip:'공과 상대가 3초 멈춰요 · 2회 사용 가능',result:'아홉 단서를 모두 모았어요!',unit:'모은 단서'},datacenter:{rules:DATACENTER,Game:DataCenterGame,Renderer:DataCenterRenderer,load:loadDataCenterAssets,rooms:['분기 회로실'],name:'데이터센터',item:'바이러스 제거',itemTip:'현재 연결된 경로의 바이러스 제거 · 2회 사용 가능',result:'아홉 자료를 모두 보냈어요!',unit:'전송한 자료'},photo:{rules:PHOTO,Game:PhotoGame,Renderer:PhotoRenderer,load:loadPhotoAssets,rooms:PHOTO_ROOMS,name:'사진관'},garden:{rules:GARDEN,Game:GardenGame,Renderer:GardenRenderer,load:loadGardenAssets,rooms:GARDEN_ROOMS,name:'식물원'}};
 const isField=()=>!!FIELD[activePlace];
-const isWorkshop=()=>activePlace==='datacenter'||activePlace==='conservation';
+const isDataCenter=()=>activePlace==='datacenter';
 function createFieldGame(place,runPlan){const options={onEvent:handleGameEvent,characterId:character.id,runPlan};if(place==='cinema'){cinemaImages.movies.reset();options.filmReady=id=>{cinemaImages.ensureFilm(id).catch(()=>{});return cinemaImages.movies.ready(id);};options.filmTime=id=>cinemaImages.movies.time(id);}if(place==='memory')options.loadRound=memoryImages.loadRound;const g=new FIELD[place].Game(options);renderer.bindContacts?.(g,character);if(place==='pursuit')renderer.prepare(g);return g;}
 const isCinema=()=>activePlace==='cinema';
 const isMemory=()=>activePlace==='memory';
@@ -234,7 +231,6 @@ const focusStack = [];
 
 const layout=new GameLayout({app:$('app'),viewport:$('viewport'),canvas:$('ocean')});
 const fitScreen=()=>layout.refresh();
-const workshopUI=new WorkshopUI($('game-ui'),()=>{if(state!=='playing'||activePlace!=='conservation')return;advanceLiteratureInput();game.rotate();hud();});
 
 function persist() {
   if(arcadeMode)return;
@@ -325,7 +321,7 @@ function setState(next) {
   cinemaUI?.render(game,isCinema()&&next==='playing');
   if(!isCinema())document.querySelector('#game-ui .timer .hud-label').textContent=isPursuit()?'남은 비행':'남은 시간';
   $('app').classList.toggle('configured-puzzle',!!CLUE_PUZZLES[activePlace]);
-  $('app').classList.toggle('field-mode',isField());$('app').classList.toggle('photo-mode',isPhoto());$('app').classList.toggle('garden-mode',activePlace==='garden');for(const id of ['datacenter','conservation','gym','cinema','memory','pursuit','postal','hospital'])$('app').classList.toggle(id+'-mode',activePlace===id);workshopUI.render(game,next==='playing',activePlace);
+  $('app').classList.toggle('field-mode',isField());$('app').classList.toggle('photo-mode',isPhoto());$('app').classList.toggle('garden-mode',activePlace==='garden');for(const id of ['datacenter','gym','cinema','memory','pursuit','postal','hospital'])$('app').classList.toggle(id+'-mode',activePlace===id);
   $('field-act').disabled=next!=='playing';$('field-room-nav').hidden=activePlace!=='garden'||!['playing','countdown','paused','help'].includes(next);
   for(const dir of ['up','down'])document.querySelector('.dir.'+dir).disabled=isMonastery()&&next!=='playing';
   for(const id of ['home-button','failure-home'])$(id).textContent='지난 게임 다시하기';
@@ -388,7 +384,7 @@ function syncCharacters() {
 function clearCharacterAssets(){
   postalImages=null;
   cinemaImages?.movies?.pause();cinemaImages=null;gymImages=null;
-  photoImages=null;gardenImages=null;cityHallImages=null;cityHallUI=null;dataCenterImages=null;conservationImages=null;monasteryImages=null;detectiveImages=null;dessertImages=null;aiImages=null;museumImages=null;historyImages=null;exchangeImages=null;templeImages=null;robotImages=null;spaceImages=null;writerImages=null;languageImages=null;zooImages=null;literatureImages=null;dreamImages=null;newspaperImages=null;exchangeUI=null;
+  photoImages=null;gardenImages=null;cityHallImages=null;cityHallUI=null;dataCenterImages=null;monasteryImages=null;detectiveImages=null;dessertImages=null;aiImages=null;museumImages=null;historyImages=null;exchangeImages=null;templeImages=null;robotImages=null;spaceImages=null;writerImages=null;languageImages=null;zooImages=null;literatureImages=null;dreamImages=null;newspaperImages=null;exchangeUI=null;
 }
 function usePlayer(player){
  if(character.id!==player.character)clearCharacterAssets();
@@ -902,7 +898,7 @@ function hud() {
   if(isSpace()){$('history-era').textContent=game.phase==='depart'?'출발 중':game.stunLeft>0?'회전 중':'안정';$('pilot-label').textContent=character.name+' · 우주유영';$('brake-button').disabled=state!=='playing'||!game.canMove;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
   if(isRobot()){$('history-era').textContent=game.held?partInfo(game.held.kind).name:game.job?'작업 중':'빈손';$('pilot-label').textContent=character.name+' · 로봇 수리';$('work-button').disabled=state!=='playing'||!game.canMove||game.actionWait>0;$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');}
   if(isTemple()){$('history-era').textContent=game.delays+'회';$('pilot-label').textContent=`${character.name} · ${game.zone.name}`;$('interact-button').disabled=state!=='playing'||!game.interaction;$('interact-button').textContent=game.interaction||'탑승';$('health-value').setAttribute('aria-label',`체력 ${game.health}칸`);for(const direction of ['left','up'])document.querySelector('.dir.'+direction).classList.toggle('temple-brace',state==='playing'&&game.windActive);}
-  $('flash-button').disabled=state!=='playing'||game.flashes===0||(isPhoto()&&(!!game.autoShot||!game.target))||(activePlace==='garden'&&!game.canCallGardener)||(activePlace==='datacenter'&&!game.canCleanVirus)||(activePlace==='conservation'&&(game.book.protected||game.book.done))||(isMonastery()&&!game.canShield)||((isSpace()||isWriter())&&!game.canRecover)||(isLiterature()&&!game.canShield)||((isRobot()||isLanguage())&&!game.canMagnet)||(isDetective()&&!game.canDecoy)||(isDessert()&&!game.canFreeze)||(isNewspaper()&&!game.canUseBag)||(isAI()&&!game.canAutoMatch)||(isZoo()&&!game.canShield)||(isDream()&&!game.canErase)||(isTemple()&&!game.canShield)||((isMuseum()||isGym())&&game.freezeLeft>0)||(isHistory()&&(game.phase!=='explore'||game.boostLeft>0));
+  $('flash-button').disabled=state!=='playing'||game.flashes===0||(isPhoto()&&(!!game.autoShot||!game.target))||(activePlace==='garden'&&!game.canCallGardener)||(activePlace==='datacenter'&&!game.canCleanVirus)||(isMonastery()&&!game.canShield)||((isSpace()||isWriter())&&!game.canRecover)||(isLiterature()&&!game.canShield)||((isRobot()||isLanguage())&&!game.canMagnet)||(isDetective()&&!game.canDecoy)||(isDessert()&&!game.canFreeze)||(isNewspaper()&&!game.canUseBag)||(isAI()&&!game.canAutoMatch)||(isZoo()&&!game.canShield)||(isDream()&&!game.canErase)||(isTemple()&&!game.canShield)||((isMuseum()||isGym())&&game.freezeLeft>0)||(isHistory()&&(game.phase!=='explore'||game.boostLeft>0));
 }
 function handleGameEvent(event) {
   if(arcadeMode&&event.type==='card'){syncArcadeCoins(event);return;}
@@ -1229,7 +1225,6 @@ window.addEventListener('keydown',event=>{
     if(event.code==='KeyL'){event.preventDefault();if(!event.repeat)flash();return;}
     if(movement.includes(event.code)){event.preventDefault();if(!event.repeat){const d=keyDirections[event.code];game.selectByOffset(d.y||d.x);hud();}return;}
   }
-  if(state==='playing'&&activePlace==='conservation'&&event.code==='KeyR'){event.preventDefault();if(!event.repeat){game.rotate();hud();}return;}
   if(state==='playing'&&isField()&&!isHospital()&&['Space','KeyJ','KeyE','KeyL','Digit1','Digit2','Digit3'].includes(event.code)){event.preventDefault();if(!event.repeat){if(event.code==='KeyL')flash();else if(event.code.startsWith('Digit')){if(activePlace==='garden'){game.goRoom(Number(event.code.at(-1))-1);hud();}}else{game.beginAction();hud();}}return;}
   if(state==='playing'&&isMonastery()&&['Space','KeyJ','KeyE','KeyL'].includes(event.code)){event.preventDefault();unlockAudio();if(event.code==='KeyL'){if(!event.repeat)flash();}else game.beginBalance();hud();return;}
   if(state==='playing'&&isDetective()&&['Space','KeyJ','KeyE','KeyK','KeyH','KeyL'].includes(event.code)){event.preventDefault();advanceLiteratureInput();unlockAudio();if(!event.repeat){if(event.code==='KeyL')flash();else if(event.code==='KeyK'||event.code==='KeyH')game.hide();else game.beginAction();hud();}return;}
@@ -1275,7 +1270,7 @@ function drawClues(container) {
   ).join('');
 }
 function openPuzzle(){
-  document.querySelector('.puzzle-placeholder').textContent=CLUE_PUZZLES[activePlace]?.prompt||(isWorkshop()?'완성한 그림 속 '+(activePlace==='datacenter'?'컴퓨터':'복원 도구')+'의 이름을 찾아보세요.':isField()?(isPhoto()?'완성한 그림 속 촬영 도구의 이름을 찾아보세요.':'완성한 그림 속 원예 도구의 이름을 찾아보세요.'):isMonastery()?'사찰에서 소리를 내는 이 물건의 이름을 찾아보세요.':isDetective()?'증거를 모아 완성한 물건의 이름을 찾아보세요.':isDessert()?'그림 속 디저트의 이름을 찾아보세요.':'그림 조각을 모아 정답을 찾아보세요.');
+  document.querySelector('.puzzle-placeholder').textContent=CLUE_PUZZLES[activePlace]?.prompt||(isDataCenter()?'완성한 그림 속 컴퓨터의 이름을 찾아보세요.':isField()?(isPhoto()?'완성한 그림 속 촬영 도구의 이름을 찾아보세요.':'완성한 그림 속 원예 도구의 이름을 찾아보세요.'):isMonastery()?'사찰에서 소리를 내는 이 물건의 이름을 찾아보세요.':isDetective()?'증거를 모아 완성한 물건의 이름을 찾아보세요.':isDessert()?'그림 속 디저트의 이름을 찾아보세요.':'그림 조각을 모아 정답을 찾아보세요.');
   $('puzzle-grid').innerHTML=puzzleTiles(progress.clues).map(card=>
     `<div class="puzzle-tile ${card.owned?'owned':'missing'}" style="${pieceStyle(card)}" role="img" aria-label="${cardPositionLabel(card.id)} ${card.owned?'그림 조각':'빈칸'}">${card.owned?'':`<span><img src="${CLUE_CARD_URL}" alt=""><small>미수집</small></span>`}</div>`
   ).join('');
@@ -1392,7 +1387,7 @@ function showResult(result) {
   if(isLiterature()){$('history-message').hidden=true;$('result-title').textContent=complete?'아홉 명작의 단서를 모두 찾았어요!':'문학관에서 모은 단서예요';$('result-description').textContent=`${result.survived?'':'체력을 모두 썼어요. '}단서 ${progress.clues.length}장으로 그림을 조합해 보세요.`;}
   if(isZoo()){$('history-message').hidden=true;$('result-title').textContent=complete?'동물 친구들의 단서를 모두 모았어요!':'동물원에서 모은 단서예요';$('result-description').textContent=`동물원에서 받은 단서 ${progress.clues.length}장을 조합해 보세요.`;}
   if(isDream()){$('history-message').hidden=true;$('result-title').textContent='꿈에서 깨어났어요';$('result-description').textContent=`꿈속에서 모은 단서 ${progress.clues.length}장으로 그림을 조합해 보세요.`;}
-  if(isField()&&!isPursuit()&&!isPostal()&&!isHospital()){Object.assign(journey[activePlace],{room:game.room,flashes:game.flashes});persistJourney();$('history-message').hidden=true;$('result-title').textContent=(isWorkshop()||isGym()||isCinema()||isMemory())?(complete?FIELD[activePlace].result:FIELD[activePlace].name+'에서 모은 단서예요'):complete?(isPhoto()?'아홉 사진을 모두 찍었어요!':'아홉 꽃밭을 모두 피웠어요!'):(isPhoto()?'사진관에서 모은 단서예요':'식물원에서 모은 단서예요');$('result-description').textContent=isMemory()?'달라진 곳을 찾아 단서 '+progress.clues.length+'장을 모았어요.':isCinema()?'맞힌 영화 '+progress.clues.length+'편에서 얻은 단서를 조합해 보세요.':isGym()?'공을 피하며 모은 단서 '+progress.clues.length+'장으로 그림을 조합해 보세요.':isWorkshop()?FIELD[activePlace].unit+' '+progress.clues.length+'개에 담긴 그림을 확인해요.':isPhoto()?'성공한 사진 '+progress.clues.length+'장에 담긴 그림을 확인해요.':'피운 꽃밭 '+progress.clues.length+'곳의 그림을 확인해요.';}
+  if(isField()&&!isPursuit()&&!isPostal()&&!isHospital()){Object.assign(journey[activePlace],{room:game.room,flashes:game.flashes});persistJourney();$('history-message').hidden=true;$('result-title').textContent=(isDataCenter()||isGym()||isCinema()||isMemory())?(complete?FIELD[activePlace].result:FIELD[activePlace].name+'에서 모은 단서예요'):complete?(isPhoto()?'아홉 사진을 모두 찍었어요!':'아홉 꽃밭을 모두 피웠어요!'):(isPhoto()?'사진관에서 모은 단서예요':'식물원에서 모은 단서예요');$('result-description').textContent=isMemory()?'달라진 곳을 찾아 단서 '+progress.clues.length+'장을 모았어요.':isCinema()?'맞힌 영화 '+progress.clues.length+'편에서 얻은 단서를 조합해 보세요.':isGym()?'공을 피하며 모은 단서 '+progress.clues.length+'장으로 그림을 조합해 보세요.':isDataCenter()?FIELD[activePlace].unit+' '+progress.clues.length+'개에 담긴 그림을 확인해요.':isPhoto()?'성공한 사진 '+progress.clues.length+'장에 담긴 그림을 확인해요.':'피운 꽃밭 '+progress.clues.length+'곳의 그림을 확인해요.';}
   if(isPursuit()){
    $('result-title').textContent=game.captured===true?'범인을 붙잡았어요':'범인을 놓쳤어요';
    $('result-description').textContent='도시를 맞혀 모은 단서 '+progress.clues.length+'장을 이번 수사 기록에 남겼어요.';
@@ -2282,7 +2277,7 @@ $('zoo-act').addEventListener('click',e=>{if(e.detail===0&&state==='playing'&&is
 
 function showPlayTutorial(page=0,loopCount=0){
  const world=document.createElement('canvas');world.width=780;world.height=1688;world.scene=sceneGeometry(activePlace==='aquarium'?536:500,activePlace);
- const types={hospital:[HospitalRenderer,hospitalImages],postal:[PostalRenderer,postalImages],pursuit:[PursuitRenderer,pursuitImages],memory:[MemoryRenderer,memoryImages],cinema:[CinemaRenderer,cinemaImages],gym:[GymRenderer,gymImages],cityhall:[CityHallRenderer,cityHallImages],datacenter:[DataCenterRenderer,dataCenterImages],conservation:[ConservationRenderer,conservationImages],photo:[PhotoRenderer,photoImages],garden:[GardenRenderer,gardenImages],monastery:[MonasteryRenderer,monasteryImages],detective:[DetectiveRenderer,detectiveImages],dessert:[DessertRenderer,dessertImages],aquarium:[Renderer,images],museum:[MuseumRenderer,museumImages],history:[HistoryRenderer,historyImages],exchange:[ExchangeRenderer,exchangeImages],temple:[TempleRenderer,templeImages],robot:[RobotRenderer,robotImages],space:[SpaceRenderer,spaceImages],writer:[WriterRenderer,writerImages],language:[LanguageRenderer,languageImages],newspaper:[NewspaperRenderer,newspaperImages],dream:[DreamRenderer,dreamImages],zoo:[ZooRenderer,zooImages],literature:[LiteratureRenderer,literatureImages],ai:[AIRenderer,aiImages]};
+ const types={hospital:[HospitalRenderer,hospitalImages],postal:[PostalRenderer,postalImages],pursuit:[PursuitRenderer,pursuitImages],memory:[MemoryRenderer,memoryImages],cinema:[CinemaRenderer,cinemaImages],gym:[GymRenderer,gymImages],cityhall:[CityHallRenderer,cityHallImages],datacenter:[DataCenterRenderer,dataCenterImages],photo:[PhotoRenderer,photoImages],garden:[GardenRenderer,gardenImages],monastery:[MonasteryRenderer,monasteryImages],detective:[DetectiveRenderer,detectiveImages],dessert:[DessertRenderer,dessertImages],aquarium:[Renderer,images],museum:[MuseumRenderer,museumImages],history:[HistoryRenderer,historyImages],exchange:[ExchangeRenderer,exchangeImages],temple:[TempleRenderer,templeImages],robot:[RobotRenderer,robotImages],space:[SpaceRenderer,spaceImages],writer:[WriterRenderer,writerImages],language:[LanguageRenderer,languageImages],newspaper:[NewspaperRenderer,newspaperImages],dream:[DreamRenderer,dreamImages],zoo:[ZooRenderer,zooImages],literature:[LiteratureRenderer,literatureImages],ai:[AIRenderer,aiImages]};
  const [Type,assets]=types[activePlace],lesson=createTutorial(activePlace,character.id),painter=new Type(world,assets);
  if(activePlace==='aquarium')lesson.game.collides=createSpriteCollider(images,character);
  if(activePlace==='space')lesson.game.collides=createSpaceSpriteCollider(spaceImages,character);
@@ -2449,7 +2444,6 @@ async function fieldAssets(place){
  if(place==='cinema')return cinemaImages ||= await loadCinemaAssets(character);
  if(place==='gym')return gymImages ||= await loadGymAssets(character);
  if(place==='datacenter')return dataCenterImages ||= await loadDataCenterAssets(character);
- if(place==='conservation')return conservationImages ||= await loadConservationAssets(character);
  if(place==='photo')return photoImages ||= await loadPhotoAssets(character);
  return gardenImages ||= await loadGardenAssets(character);
 }
@@ -2466,8 +2460,8 @@ async function prepareField(place){
  $('history-actions').hidden=true;$('museum-actions').hidden=true;$('history-era').hidden=false;$('museum-colors').hidden=true;
  document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · '+(PLACES.findIndex(p=>p.id===place)+1);
  syncCurrentPlaceHeaders();document.querySelector('.health-stat .hud-label').textContent=place==='photo'?'촬영실':place==='garden'?'온실':place==='datacenter'?'전송 중':'작업 종류';
- document.querySelector('.control-label span').textContent=place==='conservation'?'방향키로 도구 이동':'방향키로 이동';document.querySelector('#flash-button b').textContent=place==='pursuit'&&arcadeMode?'추가 정보':spec.item||(place==='photo'?'자동 촬영':'정원사 호출벨');document.querySelector('.flash-tip').textContent=spec.itemTip||(place==='photo'?'피사체를 따라가 자동으로 한 장 촬영 · 1회 사용 가능':'가까운 식물 한 곳을 정원사가 마무리 · 1회 사용 가능');document.querySelector('#pause-overlay .modal-lead').textContent=spec.item?'제한시간과 작업이 함께 멈췄어요.':place==='photo'?'제한시간과 촬영 대상이 함께 멈췄어요.':'제한시간과 온실의 온도가 함께 멈췄어요.';
- applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent=spec.item?'방향키 / WASD '+(place==='conservation'?'도구 이동':'이동')+' · SPACE/J/E 작업'+(place==='conservation'?' · R 종이 회전':'')+' · L 아이템':'방향키 / WASD 이동 · SPACE/J/E '+(place==='photo'?'누르고 놓아 촬영':'장치 조작')+(place==='photo'?' · 양옆 출입구로 공간 이동':' · 1/2/3 공간 이동')+' · L 아이템';
+ document.querySelector('.control-label span').textContent='방향키로 이동';document.querySelector('#flash-button b').textContent=place==='pursuit'&&arcadeMode?'추가 정보':spec.item||(place==='photo'?'자동 촬영':'정원사 호출벨');document.querySelector('.flash-tip').textContent=spec.itemTip||(place==='photo'?'피사체를 따라가 자동으로 한 장 촬영 · 1회 사용 가능':'가까운 식물 한 곳을 정원사가 마무리 · 1회 사용 가능');document.querySelector('#pause-overlay .modal-lead').textContent=spec.item?'제한시간과 작업이 함께 멈췄어요.':place==='photo'?'제한시간과 촬영 대상이 함께 멈췄어요.':'제한시간과 온실의 온도가 함께 멈췄어요.';
+ applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent=spec.item?'방향키 / WASD 이동 · SPACE/J/E 작업 · L 아이템':'방향키 / WASD 이동 · SPACE/J/E '+(place==='photo'?'누르고 놓아 촬영':'장치 조작')+(place==='photo'?' · 양옆 출입구로 공간 이동':' · 1/2/3 공간 이동')+' · L 아이템';
  $('dpad').setAttribute('aria-label',spec.name+' 방향키');$('brief-sub').setAttribute('aria-label',spec.name+' 캐릭터');$('answer-input').value='';$('answer-help').textContent='완성한 그림 속 도구의 이름은 무엇일까요?';
  if(place==='gym'){$('history-era').hidden=true;$('health-value').hidden=false;document.querySelector('.health-stat .hud-label').textContent='체력';syncCurrentPlaceHeaders();document.querySelector('.desktop-keys').textContent='방향키 / WASD 이동 · L 타임아웃 휘슬';document.querySelector('#pause-overlay .modal-lead').textContent='제한시간과 공이 함께 멈췄어요.';}
  if(place==='cinema'){$('health-value').hidden=true;document.querySelector('.health-stat .hud-label').textContent='상영 영화';syncCurrentPlaceHeaders();document.querySelector('.control-label span').textContent='방향키로 보기 선택';document.querySelector('.desktop-keys').textContent='방향키 보기 선택 · SPACE 결정 · L 영화 정보';document.querySelector('#pause-overlay .modal-lead').textContent='상영 중인 영화가 멈췄어요.';}
@@ -2673,7 +2667,7 @@ function memoryHud(){
 function fieldHud(){
  if(isGym()){$('history-era').hidden=true;$('health-value').hidden=false;$('pilot-label').textContent=character.name+' · 피구 코트';$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');$('flash-button').disabled=state!=='playing'||game.flashes<=0||game.freezeLeft>0;$('ocean').setAttribute('aria-label','체육관 피구 · 체력 '+game.health+'칸'+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9'+(game.freezeLeft>0?' · 타임아웃 '+game.freezeLeft.toFixed(1)+'초':''));return;}
 
- if(isWorkshop()){workshopHud();return;}
+ if(isDataCenter()){datacenterHud();return;}
  const spec=FIELD[activePlace];$('history-era').textContent=(game.room+1)+' / 3';$('pilot-label').textContent=character.name+' · '+spec.rooms[game.room];
  if(!isPhoto()){document.querySelector('#flash-button b').textContent=game.itemLabel;document.querySelector('.flash-tip').textContent=game.itemTip;}else syncCurrentPlaceHeaders();
  $('field-room-name').textContent=spec.rooms[game.room]+(!isPhoto()?'\n'+(game.room===0?'실내 '+game.climate.temperature.toFixed(1)+'℃ · '+game.climate.weather.label:game.room===1?(game.pollen===null?'꽃가루를 받아요':['금빛','분홍','파란'][game.pollen]+' 꽃가루'):'남은 벌레 '+game.bugs.filter(b=>b.hp>0).length):'');for(const b of $('field-room-nav').querySelectorAll('button')){b.setAttribute('aria-pressed',String(Number(b.dataset.fieldRoom)===game.room));b.disabled=state!=='playing';const n=Number(b.dataset.fieldRoom),label=isPhoto()?String(n+1):String(n+1)+'\n'+['온도','꽃가루','해충'][n];if(b.textContent!==label)b.textContent=label;b.setAttribute('aria-label',spec.rooms[n]+' · 자유 이동'+(!isPhoto()&&n===0?' · '+game.rooms[n].temperature.toFixed(1)+'도':''));}
@@ -2709,7 +2703,7 @@ $('ocean').addEventListener('pointerup',event=>{
 });
 $('ocean').addEventListener('pointercancel',()=>{memoryTap=null;});
 
-function workshopHud(){
- const spec=FIELD[activePlace];$('history-era').textContent=activePlace==='datacenter'?game.packets.length+' / 2':['먼지','종이','압착'][game.book.mode];$('pilot-label').textContent=character.name+' · '+(game.file?.name||game.book?.name);document.querySelector('#flash-button b').textContent=game.itemLabel;document.querySelector('.flash-tip').textContent=game.itemTip;
- $('field-act').textContent=game.actionLabel;$('field-act').disabled=state!=='playing'||!game.canAct;$('field-act').setAttribute('aria-label',game.actionLabel);$('field-act').classList.toggle('action-ready',game.holding||!!game.work);$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');workshopUI.render(game,state==='playing',activePlace);$('ocean').setAttribute('aria-label',spec.name+' · '+game.statusDescription+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9 · '+arcadeRewardText(game.prompt));
+function datacenterHud(){
+ $('history-era').textContent=game.packets.length+' / 2';$('pilot-label').textContent=character.name+' · '+game.file.name;document.querySelector('#flash-button b').textContent=game.itemLabel;document.querySelector('.flash-tip').textContent=game.itemTip;
+ $('field-act').textContent=game.actionLabel;$('field-act').disabled=state!=='playing'||!game.canAct;$('field-act').setAttribute('aria-label',game.actionLabel);$('field-act').classList.toggle('action-ready',!!game.work);$('history-message').textContent=arcadeRewardText(game.prompt);$('history-message').hidden=state!=='playing'||!game.prompt;$('history-message').classList.remove('danger');$('ocean').setAttribute('aria-label',FIELD.datacenter.name+' · '+game.statusDescription+(arcadeMode?' · 금화 ':' · 단서 ')+game.banked.size+'/9 · '+arcadeRewardText(game.prompt));
 }
