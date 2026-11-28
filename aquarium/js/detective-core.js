@@ -30,10 +30,10 @@ export function soundPath(room,from,to){
 }
 export class DetectiveGame{
  constructor({onEvent=()=>{}}={}){
-  this.onEvent=onEvent;this.elapsed=0;this.ended=false;this.phase='investigate';this.roomIndex=0;this.health=3;this.flashes=DETECTIVE.flashes;this.banked=new Set();this.found=new Set();this.clueSources=new Set();this.effects=[];this.caught=0;this.hidden=false;this.hideCover=null;this.job=null;this.holding=false;this.noise=null;this.decoy=null;this.immunity=1.5;this.transitionLeft=0;this.finishLeft=null;this.note='';this.noteLeft=0;this.inspectCount=0;this.hideCount=0;this.pursuitCount=0;this.footClock=0;this.hideEscapes=0;
+  this.onEvent=onEvent;this.elapsed=0;this.ended=false;this.phase='investigate';this.roomIndex=0;this.health=3;this.flashes=DETECTIVE.flashes;this.banked=new Set();this.found=new Set();this.clueSources=new Set();this.effects=[];this.caught=0;this.hidden=false;this.hideCover=null;this.job=null;this.holding=false;this.noise=null;this.decoy=null;this.immunity=1.5;this.transitionLeft=0;this.note='';this.noteLeft=0;this.inspectCount=0;this.hideCount=0;this.pursuitCount=0;this.footClock=0;this.hideEscapes=0;
   this.rooms=ROOM_SPECS.map((r,j)=>({...r,covers:r.covers.map(o=>({...o})),evidence:r.evidence.map((e,i)=>({...e,id:j*3+i,collected:false,progress:0})),guards:[]}));this.player={x:195,y:432,dir:'up',moving:false,walk:0,hammerAge:99};this.enterRoom(0);
  }
- get room(){return this.rooms[this.roomIndex];}get remaining(){return Math.max(0,DETECTIVE.duration-this.elapsed);}get canMove(){return !this.ended&&this.transitionLeft<=0&&this.finishLeft===null;}
+ get room(){return this.rooms[this.roomIndex];}get remaining(){return Math.max(0,DETECTIVE.duration-this.elapsed);}get canMove(){return !this.ended&&this.transitionLeft<=0;}
  get pursued(){return this.room.guards.some(g=>g.mode==='chase'||g.mode==='search');}
  get watched(){return !this.hidden&&this.immunity<=0&&this.room.guards.some(g=>canSee(g,this.player,this.room.covers));}
  get roomCollected(){return this.room.evidence.filter(e=>e.collected).length;}get suspicion(){return Math.max(0,...this.room.guards.map(g=>g.mode==='chase'?1:g.alert));}
@@ -50,7 +50,7 @@ export class DetectiveGame{
   if(this.hidden)return this.pursued?'숨어서 수색이 끝나길 기다려요 · 조사 진행은 유지돼요':'숨는 중 · 경비원이 지나가면 다시 조사해요';if(this.pursued)return this.watched?'추격 중! 가구를 돌아 시선을 끊으세요':'시선이 끊겼어요! 가까운 가구에 숨어 수색을 피하세요';if(this.noteLeft>0)return this.note;if(this.job)return this.job.evidence.noise?'조사 소리! 경비원이 오면 멈추고 숨으세요':'조사 버튼을 계속 누르세요 · 발소리도 들킬 수 있어요';
   if(this.atDoor&&!this.canExit)return '이 방의 증거를 먼저 모아요 · '+this.roomCollected+' / 3';
   if(this.target)return this.target.name+' · 조사 버튼을 누르고 있어요'+(this.target.noise?' · 소음 주의':'')+(this.target.progress>0?' · 이어서 조사':'');
-  if(this.roomCollected===3&&this.roomIndex<2)return '증거 3개 확보! 오른쪽 위 문으로 가요';if(this.nearbyCover)return this.watched?'경비원이 보고 있어요 · 먼저 시선을 끊으세요':'가구 뒤에서 숨을 수 있어요 · 조사 진행은 유지돼요';return '금빛 시야를 피해 종이 표식이 있는 물건을 조사해요';
+  if(this.canExit)return this.roomIndex<this.rooms.length-1?'증거 3개 확보! 오른쪽 위 문으로 가요':'모든 증거를 모았어요! 오른쪽 위 문으로 나가요';if(this.nearbyCover)return this.watched?'경비원이 보고 있어요 · 먼저 시선을 끊으세요':'가구 뒤에서 숨을 수 있어요 · 조사 진행은 유지돼요';return '금빛 시야를 피해 종이 표식이 있는 물건을 조사해요';
  }
  say(s,t=2){this.note=s;this.noteLeft=t;}
  enterRoom(index){
@@ -128,8 +128,8 @@ export class DetectiveGame{
   if(this.player.moving&&this.immunity<=0){this.footClock-=dt;if(this.footClock<=0){this.footClock=.6;const heard=this.makeNoise(this.player.x,this.player.y,1.3,{kind:'footstep',priority:1,radius:DETECTIVE.hearing});if(heard)this.effects.push({type:'footstep',x:this.player.x,y:this.player.y,age:0});}}
   for(const g of this.room.guards){if(this.transitionLeft<=0)this.updateGuard(g,dt);if(!this.hidden&&this.immunity<=0&&Math.hypot(g.x-this.player.x,g.y-this.player.y)<DETECTIVE.contact){this.catchPlayer();break;}}
   if(this.ended)return;
-  if(this.job&&this.holding){const j=this.job;if(this.hidden||Math.hypot(j.evidence.x-this.player.x,j.evidence.y-this.player.y)>32)this.releaseAction();else{j.age+=dt;j.evidence.progress=j.age;j.noiseWait-=dt;if(j.evidence.noise&&j.noiseWait<=0){this.makeNoise(j.evidence.x,j.evidence.y,2.3,{kind:'investigate',priority:2,radius:235});j.noiseWait=1.05;}if(j.age+1e-8>=j.evidence.seconds){const e=j.evidence;e.collected=true;this.inspectCount++;this.releaseAction();const id=awardClue(this,e.id,e.id+1);this.effects.push({type:'card',id,x:e.x,y:e.y,age:0});this.onEvent({type:'card',id,x:e.x,y:e.y+170});this.say('증거 확보! 이 방 '+this.roomCollected+'/3',1.6);if(this.banked.size===9)this.finishLeft=.7;}}}
-  for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<1.3);if(this.finishLeft!==null){this.finishLeft-=dt;if(this.finishLeft<=0)this.finish(true,'complete');}if(this.remaining<=1e-8){this.elapsed=DETECTIVE.duration;this.finish(true,'timeout');}
+  if(this.job&&this.holding){const j=this.job;if(this.hidden||Math.hypot(j.evidence.x-this.player.x,j.evidence.y-this.player.y)>32)this.releaseAction();else{j.age+=dt;j.evidence.progress=j.age;j.noiseWait-=dt;if(j.evidence.noise&&j.noiseWait<=0){this.makeNoise(j.evidence.x,j.evidence.y,2.3,{kind:'investigate',priority:2,radius:235});j.noiseWait=1.05;}if(j.age+1e-8>=j.evidence.seconds){const e=j.evidence;e.collected=true;this.inspectCount++;this.releaseAction();const id=awardClue(this,e.id,e.id+1);this.effects.push({type:'card',id,x:e.x,y:e.y,age:0});this.onEvent({type:'card',id,x:e.x,y:e.y+170});this.say('증거 확보! 이 방 '+this.roomCollected+'/3',1.6);}}}
+  for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<1.3);if(this.remaining<=1e-8){this.elapsed=DETECTIVE.duration;this.finish(true,'timeout');}
  }
  finish(survived,reason='complete'){if(this.ended)return;this.ended=true;this.failureReason=reason;this.player.moving=false;this.releaseAction();this.onEvent({type:'end',survived,elapsed:this.elapsed,found:[...this.banked]});}
 }

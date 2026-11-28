@@ -1,4 +1,5 @@
-import {routeZ} from './temple-core.js?v268';
+import {routeZ} from './temple-core.js?v308';
+import {ITHACA_TILE} from './temple-ithaca-layout.js?v308';
 // All terrain is anchored to the same world coordinate. Borders are joined by
 // illustrated terrain, not by a scene fade or a camera reset.
 function feather(image,top=0,bottom=0){
@@ -10,7 +11,7 @@ function feather(image,top=0,bottom=0){
  c.fillStyle=g;c.fillRect(0,0,canvas.width,canvas.height);return canvas;
 }
 export class TempleWorld{
- constructor(images){this.images=images;this.sea=feather(images['sea.webp'],0,.13);this.ithaca=feather(images['ithaca.webp'],0,.055);this.garden=feather(images['temple-garden.webp'],.12,.1);this.coast=feather(images['forest-coast.webp'],.1,.12);}
+ constructor(images){this.images=images;this.sea=feather(images['sea.webp'],0,.13);this.ithaca=feather(images['ithaca.webp'],0,.017);this.garden=feather(images['temple-garden.webp'],.12,.1);this.coast=feather(images['forest-coast.webp'],.1,.12);}
  draw(c,Y){
   c.fillStyle='#178d9a';c.fillRect(0,0,390,500);
   const cover=(im,from,to)=>{if(Y(from)<0||Y(to)>500)return;const h=to-from,w=h*im.width/im.height;c.drawImage(im,(390-w)/2,Y(to),w,h);};
@@ -23,7 +24,10 @@ export class TempleWorld{
   const height=390*this.sea.height/this.sea.width;
   for(let z=routeZ(1850);z<routeZ(5700);z+=height-76){if(Y(z)<0||Y(z+height)>500)continue;c.drawImage(this.sea,0,Y(z+height),390,height);}
   c.restore();
-  cover(this.ithaca,routeZ(4690),routeZ(5640));
+  // The port illustration keeps its entire width. Its lower water edge alone
+  // blends into the sea, keeping the pier and both rows of houses intact.
+  const arrivalY=Y(ITHACA_TILE.topZ);
+  if(arrivalY<500&&arrivalY+ITHACA_TILE.height>0)c.drawImage(this.ithaca,0,arrivalY,ITHACA_TILE.width,ITHACA_TILE.height);
   cover(this.garden,routeZ(540),routeZ(1200));
   cover(this.coast,routeZ(1505),routeZ(2090));
   // The illustration spans the full land route in world coordinates.

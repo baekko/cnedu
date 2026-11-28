@@ -10,7 +10,7 @@ const round=(c,x,y,w,h,fill,r=7)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,
 const oxygenMark=(c,x,y)=>{round(c,x-5,y-6,10,12,'#071d30',3);round(c,x-3.5,y-4.5,7,9,'#52c7b2',2);c.fillStyle='#d8fff2';c.fillRect(x-1.5,y-6.5,3,2);c.fillStyle='#fff';c.fillRect(x-.8,y-2.5,1.6,5);c.fillRect(x-2.5,y-.8,5,1.6);};
 export async function loadSpaceAssets(character){
  await loadRecoveryArt();
- const images={},files=['cosmos','station-v307','drone-a','drone-b','debris-a','debris-b','debris-c','beacon','rabbit',character.id+'-eva'];
+ const images={},files=['cosmos','station-v308','drone-a','drone-b','debris-a','debris-b','debris-c','beacon','rabbit',character.id+'-eva'];
  await Promise.all(files.map(name=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[name]=im;resolve();};im.onerror=()=>reject(Error('우주정거장 그림: '+name));im.src=new URL('../assets/space/'+name+'.webp',import.meta.url).href;})));return images;
 }
 export class SpaceRenderer{
@@ -20,7 +20,7 @@ export class SpaceRenderer{
  backdrop(c,g,t){c.fillStyle='#091d31';c.fillRect(0,0,390,500);const im=this.images.cosmos;c.drawImage(im,-90-g.camera.x*.13,-100-g.camera.y*.11,900,900);
   for(let i=0;i<65;i++){const x=((i*173.79+41-g.camera.x*.27)%470+470)%470-40,y=((i*83.31+19-g.camera.y*.27)%580+580)%580-40;c.globalAlpha=.3+.35*(.5+.5*Math.sin(i*2.71+t*.6));c.fillStyle=i%4?'#d6eaf4':'#efce8d';c.beginPath();c.arc(x,y,i%7===0?1.3:.65,0,TAU);c.fill();}c.globalAlpha=1;
  }
- station(c,g,t){this.sprite(c,'station-v307',SPACE_STATION.x,SPACE_STATION.y,SPACE_STATION.width);c.save();c.scale(1.25,1.25);for(const [i,x,y] of [[0,360,1115],[1,650,525],[2,1010,760]]){this.sprite(c,'beacon',x,y,25);c.fillStyle=`rgba(120,228,234,${.3+.25*Math.sin(t*2+i)})`;c.beginPath();c.arc(x,y-5,4,0,TAU);c.fill();}c.restore();}
+ station(c,g,t){this.sprite(c,'station-v308',SPACE_STATION.x,SPACE_STATION.y,SPACE_STATION.width);c.save();c.scale(1.25,1.25);for(const [i,x,y] of [[0,360,1115],[1,650,525],[2,1010,760]]){this.sprite(c,'beacon',x,y,25);c.fillStyle=`rgba(120,228,234,${.3+.25*Math.sin(t*2+i)})`;c.beginPath();c.arc(x,y-5,4,0,TAU);c.fill();}c.restore();}
 
  card(c,card,g){const p=cardPosition(card,g.elapsed);c.save();c.translate(p.x,p.y+Math.sin(g.elapsed*2+card.id)*2);c.rotate(card.kind==='drift'?Math.sin(g.elapsed*.6+card.id)*.12:0);drawClueCard(c,0,0,24,32);c.restore();}
  drone(c,d,g){const q=dronePosition(d,g.elapsed);c.save();c.translate(d.x,d.y);c.strokeStyle='#b7dddc28';c.lineWidth=1;c.setLineDash([2,8]);c.beginPath();for(let i=0;i<=64;i++){const a=i/64*TAU,x=Math.cos(a)*d.rx,y=Math.sin(2*a)*d.ry;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}c.stroke();c.restore();

@@ -9,15 +9,16 @@ import {makeTempleEffects,drawWindField} from './temple-fx.js';
 import {makeCombatEffects,drawBoltGround} from './temple-combat-fx.js?v307';
 import {beginScene} from './layout.js';
 import {drawTempleHero as drawExplorer} from './temple-hero.js?v=155';
-import {TEMPLE,routeZ} from './temple-core.js?v268';
-import {TempleWorld} from './temple-world.js?v307';
+import {TEMPLE,TEMPLE_FINISH,routeZ} from './temple-core.js?v308';
+import {TempleWorld} from './temple-world.js?v308';
 import {makeSeaEffects} from './temple-water.js?v307';
-const TEMPLE_REVISED_ART=new Set(['temple.webp','forest.webp','sea.webp','ithaca.webp','temple-garden.webp','forest-coast.webp','boat-v20.webp','head.webp']);
+const TEMPLE_REVISED_ART=new Set(['temple.webp','forest.webp','sea.webp','temple-garden.webp','forest-coast.webp','boat-v20.webp','head.webp']);
+const ITHACA_ART=new Set(['ithaca.webp','ithaca-gate.webp']);
 export async function loadTempleAssets(character){
  await loadRecoveryArt();
- const files=['temple','forest','sea','ithaca','temple-garden','forest-coast','cliff','head','pig','entrance','land-route'].map(n=>n+'.webp');
+ const files=['temple','forest','sea','ithaca','ithaca-gate','temple-garden','forest-coast','cliff','head','pig','entrance','land-route'].map(n=>n+'.webp');
  files.push(`${character.id}-armor.webp`,'pig-walk.webp','gods-actions-v20.webp','waves-v21.webp','heroes-rowing-v20.webp','boat-v20.webp');const images={};
- await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[file]=im;resolve();};im.onerror=()=>reject(new Error('신전 그림: '+file));const dir=file==='land-route.webp'?'temple-v307':TEMPLE_REVISED_ART.has(file)?'temple-v306':file.endsWith('-armor.webp')?'temple-v153':file==='pig-walk.webp'?'temple-v156':'temple';im.src=new URL(`../assets/${dir}/${file}`,import.meta.url).href;})));return images;
+ await Promise.all(files.map(file=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[file]=im;resolve();};im.onerror=()=>reject(new Error('신전 그림: '+file));const dir=ITHACA_ART.has(file)?'temple-v308':file==='land-route.webp'?'temple-v307':TEMPLE_REVISED_ART.has(file)?'temple-v306':file.endsWith('-armor.webp')?'temple-v153':file==='pig-walk.webp'?'temple-v156':'temple';im.src=new URL(`../assets/${dir}/${file}`,import.meta.url).href;})));return images;
 }
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const pill=(c,x,y,w,h,fill)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,9);c.fill();};
@@ -130,6 +131,24 @@ export class TempleRenderer{
   this.sea.whirlpool(c,150,cy,t,g.whirlpoolStrength);
   this.introduce(c,g,'whirlpool','카리브디스',150,cy-145);
  }
+ finishGate(c,Y){
+  const {x,z,halfWidth}=TEMPLE_FINISH,y=Y(z);
+  if(y<-20||y>580)return;
+  const width=2*halfWidth,cell=width/16,gate=this.images['ithaca-gate.webp'];
+  c.save();c.fillStyle='#927b63';c.fillRect(x-halfWidth,y-4,width,8);
+  for(let col=0;col<16;col++)for(let row=0;row<2;row++){
+   c.fillStyle=(col+row)%2?'#ead7af':'#2d6685';
+   c.fillRect(x-halfWidth+col*cell+.35,y-4+row*4+.35,cell-.7,3.3);
+  }
+  // Atlas foot anchor y=373 and the measured 640px wide clear opening.
+  const scale=width/640,top=y-373*scale;
+  c.drawImage(gate,x-420*scale,top,gate.width*scale,gate.height*scale);
+  c.fillStyle='#785737';c.fillRect(x-21,top+7,42,20);
+  c.fillStyle='#315779';c.fillRect(x-20,top+8,40,18);
+  c.fillStyle='#fff0ce';c.textAlign='center';c.textBaseline='middle';c.font='800 12px sans-serif';
+  c.fillText('골인',x,top+17);
+  c.restore();
+ }
 
  hazard(c,h,g,Y){
   if(h.age>=h.life)return;
@@ -160,7 +179,7 @@ export class TempleRenderer{
   if(g.sirenSlowLeft>0&&!g.scyllaGrab){for(const side of [-1,1]){c.save();c.translate(side*19,-46+Math.sin(t*5+side)*3);c.strokeStyle='#684a80';c.fillStyle='#f5c9ff';c.lineWidth=2;c.beginPath();c.ellipse(-2,4,3.5,2.5,-.4,0,TAU);c.fill();c.stroke();c.beginPath();c.moveTo(1,3);c.lineTo(1,-7);c.lineTo(6,-5);c.stroke();c.restore();}}
   c.restore();if(g.stunLeft>0){c.save();c.translate(p.x,y-40);for(let i=0;i<3;i++){const a=Math.floor(t*8)/8*4+i*TAU/3,x=Math.cos(a)*19,yy=Math.sin(a)*6;c.strokeStyle='#ffdd71';c.lineWidth=2;c.beginPath();c.moveTo(x-3,yy);c.lineTo(x+3,yy);c.moveTo(x,yy-3);c.lineTo(x,yy+3);c.stroke();}c.restore();}
  }
- draw(game,character,time){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!game)return;if(this.introGame!==game){this.introGame=game;this.introductions=new Map();}const g=game,t=g.elapsed,Y=z=>420-(z-g.cameraZ);c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();this.background(c,g,Y);this.atmosphere(c,g,Y,t);
+ draw(game,character,time){const c=this.c;beginScene(c);c.clearRect(0,0,390,844);if(!game)return;if(this.introGame!==game){this.introGame=game;this.introductions=new Map();}const g=game,t=g.elapsed,Y=z=>420-(z-g.cameraZ);c.save();c.translate(0,170);c.beginPath();c.rect(0,0,390,500);c.clip();this.background(c,g,Y);this.atmosphere(c,g,Y,t);this.finishGate(c,Y);
   const deco=[['zeus',325,575,105],['circe',325,1300,77],['wind',36,1680,95],['poseidon',350,4480,128]];
   for(const [name,x,z,w] of deco){const y=Y(routeZ(z));if(y>-90&&y<650){const frame=name==='wind'?(g.windActive?[1,2,2,3][Math.floor(t*4)%4]:0):this.castFrame(g,name);this.deity(c,name,x,y,w,frame,name!=='wind');this.introduce(c,g,name,{zeus:'제우스',circe:'키르케',wind:'아이올로스',poseidon:'포세이돈'}[name],x,y-w);}}
   this.sirens(c,g,Y,t);this.whirlpool(c,g,Y,t);

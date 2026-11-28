@@ -1,4 +1,5 @@
 import {FieldGame,clamp} from './field-base.js';
+import {awardClue} from './clue-order.js';
 import {HISTORY} from './history-core.js?v307';
 import {movedDuringStep} from './walk-cycle.js';
 
@@ -87,7 +88,15 @@ export class GymGame extends FieldGame{
  }
  tick(dt){
   this.invincible=Math.max(0,this.invincible-dt);
-  for(const c of this.activeCards)if(Math.hypot(c.x-this.player.x,c.y-this.player.y)<18){c.collected=true;this.award(c.id,c.x,c.y-12);if(this.ended)return;}
+  for(const card of this.activeCards){
+   if(Math.hypot(card.x-this.player.x,card.y-this.player.y)>=18)continue;
+   card.collected=true;
+   const id=awardClue(this,card.id);
+   if(!id)continue;
+   const y=card.y-12;
+   this.effects.push({type:'card',id,x:card.x,y,age:0});
+   this.onEvent({type:'card',id,x:card.x,y:y+170});
+  }
   if(this.freezeLeft>0){this.freezeLeft=Math.max(0,this.freezeLeft-dt);if(this.freezeLeft===0)this.invincible=Math.max(this.invincible,.5);return;}
   this.throwClock+=dt;this.schedule();
   for(const t of this.throwers){

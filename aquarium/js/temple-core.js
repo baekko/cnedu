@@ -1,3 +1,4 @@
+import {ithacaWalkBounds} from './temple-ithaca-layout.js?v308';
 import {movedDuringStep} from './walk-cycle.js';
 import {awardClue,hasSource} from './clue-order.js';
 import {damage,collectRecovery,tickVitality} from './vitality.js';
@@ -6,9 +7,10 @@ import {SIREN,sirenWaveContact,sirenCaptureContact} from './temple-siren.js?v=15
 export const TEMPLE_ROUTE_SCALE=1.5;
 export const routeZ=z=>z*TEMPLE_ROUTE_SCALE;
 export const TEMPLE_DOCK=Object.freeze({x:195,left:140,right:250,approach:routeZ(1830),boardFrom:routeZ(1855),walkEnd:routeZ(1880),boatZ:routeZ(1910)});
+export const TEMPLE_FINISH=Object.freeze({x:195,z:routeZ(5210),halfWidth:64});
 export const TEMPLE_TEMPO=1.2;
 export const CIRCE_ORB_SPEED=147.84*TEMPLE_TEMPO;
-export const TEMPLE=Object.freeze({duration:110,speed:168*TEMPLE_TEMPO,boatSpeed:192*TEMPLE_TEMPO,forwardSpeed:routeZ(46.8)*TEMPLE_TEMPO,stunSeconds:0,pigSeconds:3,shieldSeconds:4,recoveries:1,recoveryGrace:1,goal:routeZ(5110),answer:'올빼미',hints:['주로 밤에 활동하는 새입니다.','큰 눈과 둥근 얼굴이 특징입니다.']});
+export const TEMPLE=Object.freeze({duration:110,speed:168*TEMPLE_TEMPO,boatSpeed:192*TEMPLE_TEMPO,forwardSpeed:routeZ(46.8)*TEMPLE_TEMPO,stunSeconds:0,pigSeconds:3,shieldSeconds:4,recoveries:1,recoveryGrace:1,goal:TEMPLE_FINISH.z,answer:'올빼미',hints:['주로 밤에 활동하는 새입니다.','큰 눈과 둥근 얼굴이 특징입니다.']});
 export const TEMPLE_ZONES=[
  {id:'temple',name:'제우스의 신전',from:0,to:850,tip:'앞길의 번개 표시를 보고 옆으로 피해요',color:'#b89957'},
  {id:'circe',name:'키르케의 숲',from:850,to:1460,tip:'마법 구슬을 피하고 단서를 주워요',color:'#9377b4'},
@@ -17,7 +19,7 @@ export const TEMPLE_ZONES=[
  {id:'scylla',name:'스킬라의 해협',from:2550,to:3340,tip:'머리 그림자에서 벗어나요',color:'#55947d'},
  {id:'whirlpool',name:'카리브디스',from:3340,to:3930,tip:'소용돌이의 중심을 피해요',color:'#467da1'},
  {id:'poseidon',name:'포세이돈의 바다',from:3930,to:4700,tip:'파도의 빈틈으로 지나가요',color:'#408da0'},
- {id:'ithaca',name:'이타카',from:4700,to:5400,tip:'항구에 내려 마지막 단서를 찾아요!',color:'#b69b62'}
+ {id:'ithaca',name:'이타카',from:4700,to:5400,tip:'항구에 내려 골인 문을 통과해요!',color:'#b69b62'}
 ].map(zone=>({...zone,from:routeZ(zone.from),to:routeZ(zone.to)}));
 export const TEMPLE_CARDS=[{id:1,x:112,z:350},{id:2,x:272,z:680},{id:3,x:170,z:1315},{id:4,x:190,z:1780},{id:5,x:112,z:2250},{id:6,x:104,z:3010,locked:true},{id:7,x:215,z:3585},{id:8,x:200,z:4410},{id:9,x:195,z:5090}].map(c=>({...c,z:routeZ(c.z)}));
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -79,7 +81,9 @@ export class TempleGame{
   // Currents cannot accelerate forward travel and undermine the time budget.
   p.z=clamp(p.z,old.z-TEMPLE.forwardSpeed*slow*dt,old.z+TEMPLE.forwardSpeed*slow*dt);
   const sea=this.mode==='sail',left=sea?40:56,right=sea?(this.zone.id==='scylla'?280:350):334;
-  p.x=clamp(p.x,left,right);p.z=clamp(p.z,routeZ(sea?1910:this.mode==='shore'?4750:40),sea?routeZ(4670):this.mode==='walk'?TEMPLE_DOCK.walkEnd:TEMPLE.goal);
+  p.z=clamp(p.z,routeZ(sea?1910:this.mode==='shore'?4750:40),sea?routeZ(4670):this.mode==='walk'?TEMPLE_DOCK.walkEnd:TEMPLE.goal);
+  const banks=this.mode==='shore'?ithacaWalkBounds(p.z):{left,right};
+  p.x=clamp(p.x,banks.left,banks.right);
   if(sea&&this.zone.id==='siren'&&sirenCaptureContact(this.siren,p)&&this.hit('siren')){
    // A real contact pushes the boat clear, leaving a fair chance to steer away.
    p.x=this.siren.side<0?74:316;this.songExposure=0;
@@ -177,7 +181,7 @@ export class TempleGame{
    if(b.age<5&&Math.hypot(b.x-this.player.x,b.z-this.player.z)<18){b.age=9;this.hit('pig');}
   }this.orbs=this.orbs.filter(b=>b.age<5);
   if(this.zone.id==='whirlpool'&&this.whirlpoolStrength>.6&&Math.hypot(this.player.x-150,this.player.z-routeZ(3585))<34)this.hit('whirlpool');
-  if(this.ended)return;collectRecovery(this,this.player);this.collect();if(this.mode==='shore'&&this.cards[8].collected){this.reachedIthaca=true;this.finish(true);}
+  if(this.ended)return;collectRecovery(this,this.player);this.collect();if(this.mode==='shore'&&this.player.z>=TEMPLE_FINISH.z&&Math.abs(this.player.x-TEMPLE_FINISH.x)<=TEMPLE_FINISH.halfWidth){this.reachedIthaca=true;this.finish(true);}
  }
  finish(survived){if(this.ended)return;if(!survived&&this.scyllaGrab&&!this.scyllaGrab.done){this.scyllaGrab.defeated=true;return;}this.ended=true;this.player.moving=false;this.phase=survived?'returned':'failed';this.onEvent({type:'end',survived,elapsed:this.elapsed,found:[...this.found],reason:this.failureReason,reachedIthaca:this.reachedIthaca,delays:this.delays});}
 }

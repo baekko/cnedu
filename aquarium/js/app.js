@@ -2170,7 +2170,7 @@ async function prepareWriter(){
  $('app').classList.remove('monastery-mode','detective-mode','dessert-mode','ai-mode','zoo-mode','literature-mode','dream-mode','newspaper-mode','language-mode','space-mode','museum-mode','history-mode','exchange-mode','temple-mode','robot-mode');$('app').classList.add('writer-mode');
  syncCurrentPlaceHeaders();document.querySelector('.game-header .wordmark').textContent='PLAY THE BOOK · 08';document.querySelector('.health-stat .hud-label').textContent='체력';
  $('health-value').hidden=false;$('museum-colors').hidden=true;$('history-era').hidden=true;$('history-message').hidden=true;$('history-actions').hidden=true;$('museum-actions').hidden=true;
- document.querySelector('.control-label span').textContent='방향키로 이야기 둘러보기';document.querySelector('#flash-button b').textContent='마법 책갈피';document.querySelector('.flash-tip').textContent='4초 보호막 · 3회 사용 가능';document.querySelector('#pause-overlay .modal-lead').textContent='시간과 이야기 속 움직임이 함께 멈췄어요.';
+ document.querySelector('.control-label span').textContent='방향키로 이야기 둘러보기';document.querySelector('#flash-button b').textContent='마법 책갈피';document.querySelector('.flash-tip').textContent=`4초 보호막 · ${WRITER.flashes}회 사용 가능`;document.querySelector('#pause-overlay .modal-lead').textContent='시간과 이야기 속 움직임이 함께 멈췄어요.';
  applyIcons(gameInstructionList);document.querySelector('.desktop-keys').textContent='방향키 이동 · SPACE/J/K 점프 · ↑ 콩나무 · E 행동 · L 책갈피';$('ocean').setAttribute('aria-label','동화작가의 방에서 여섯 문학작품 속을 이동하는 게임');$('dpad').setAttribute('aria-label','이야기 속 캐릭터 이동 방향키');$('brief-sub').setAttribute('aria-label','선택한 캐릭터가 펼쳐진 책 위를 달리고 점프하여 단서를 줍는 모습');$('answer-input').value='';$('answer-help').textContent='그림 단서를 보고 정답을 입력해 보세요.';
 }
 async function enterWriter(){

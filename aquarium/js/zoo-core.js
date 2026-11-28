@@ -118,7 +118,7 @@ export function feedTrajectory(origin,angle,power,spec){
  return path;
 }
 export class ZooGame{
- constructor({onEvent=()=>{},character='haru'}={}){this.character=character;this.onEvent=onEvent;this.elapsed=0;this.ended=false;this.phase='feed';this.health=3;this.flashes=2;this.banked=new Set();this.clueSources=new Set();this.found=new Set();this.player={x:62,y:ZOO.ground,moving:false,walkDistance:0,face:1,shotAge:99};this.camera={x:0,y:0};this.angle=48;this.charge=0;this.charging=false;this.chargeAge=0;this.cooldown=0;this.pending=null;this.shots=[];this.effects=[];this.animals=FEED_ANIMALS.map(spec=>({spec,clock:0,fed:0,chew:0,attention:0,reach:0,jump:null,activated:false,walkDistance:0,waterPulses:[]}));this.queuedMove=null;this.notice='';this.noticeLeft=0;this.lastRoom=0;this.throwCount=0;this.hitCount=0;this.lastTrail=null;this.finishAge=0;this.lastPower=.48;}
+ constructor({onEvent=()=>{},character='haru'}={}){this.character=character;this.onEvent=onEvent;this.elapsed=0;this.ended=false;this.phase='feed';this.health=3;this.flashes=2;this.banked=new Set();this.clueSources=new Set();this.found=new Set();this.player={x:62,y:ZOO.ground,moving:false,walkDistance:0,face:1,shotAge:99};this.camera={x:0,y:0};this.angle=48;this.charge=0;this.charging=false;this.chargeAge=0;this.cooldown=0;this.pending=null;this.shots=[];this.effects=[];this.animals=FEED_ANIMALS.map(spec=>({spec,clock:0,fed:0,chew:0,attention:0,reach:0,jump:null,activated:false,walkDistance:0,waterPulses:[]}));this.queuedMove=null;this.notice='';this.noticeLeft=0;this.lastRoom=0;this.throwCount=0;this.hitCount=0;this.lastTrail=null;this.lastPower=.48;}
  get room(){return clamp(Math.floor(this.player.x/ZOO.penWidth),0,8);}
  get zone(){return Math.floor(this.room/3);}
  get active(){return this.animals[this.room];}
@@ -129,7 +129,7 @@ export class ZooGame{
  get canThrow(){return !this.ended&&this.cooldown<=0&&!this.pending&&this.active.fed<2;}
  get inFeedSpot(){const x=this.player.x-this.active.spec.start;return x>=24&&x<=154;}
  get origin(){return releasePoint(this.character,this.player);}
- get prompt(){return this.noticeLeft>0?this.notice:'';}
+ get prompt(){return this.noticeLeft>0?this.notice:this.banked.size===9?'오른쪽 끝으로 걸어가요':'';}
  get preview(){return feedTrajectory(this.origin,this.angle,this.charging?this.charge:this.lastPower,this.active.spec);}
  say(text,left=1.8){this.notice=text;this.noticeLeft=left;}
  queueMove(d){this.queuedMove={x:d.x||0,y:d.y||0,left:.13};}
@@ -179,7 +179,7 @@ export class ZooGame{
    }
   }
   this.shots=this.shots.filter(s=>!s.dead);this.effects=this.effects.filter(e=>(e.age+=dt)<(e.duration||1.3));if(this.lastTrail&&(this.lastTrail.age+=dt)>1.4)this.lastTrail=null;
-  if(this.banked.size===9){this.finishAge+=dt;if(this.finishAge>=1.3)this.finish(true);}else if(this.elapsed>=ZOO.duration||this.player.x>=ZOO.width-36)this.finish(true);
+  if(this.elapsed>=ZOO.duration||this.player.x>=ZOO.width-36)this.finish(true);
  }
  finish(survived=true){if(this.ended)return;this.ended=true;this.phase='complete';this.cancelThrow();this.pending=null;this.player.moving=false;this.queuedMove=null;this.onEvent({type:'end',survived,elapsed:this.elapsed,found:[...this.banked]});}
 }

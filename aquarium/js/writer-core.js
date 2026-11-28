@@ -7,7 +7,7 @@ import {GIANT_POSES} from './writer-giant-poses.js';
 import {GiantSpritePlayback,giantCanDamage} from './writer-giant-sprites-v101.js';
 import {giantHandsContact} from './writer-giant-collision.js?v=155';
 import {writerGust,gustHits} from './writer-wind.js?v307';
-export const WRITER=Object.freeze({duration:120,width:9600,height:500,speed:FLAT_WALK_SPEED,airSpeed:118,roomParallax:.2,gravity:640,flashes:3,stun:0,shieldSeconds:4,answer:'여우',hints:['꼬리가 풍성한 동물입니다.','동화에서 꾀가 많은 동물로 자주 등장합니다.']});
+export const WRITER=Object.freeze({duration:120,width:9600,height:500,speed:FLAT_WALK_SPEED,airSpeed:118,roomParallax:.2,gravity:640,flashes:1,stun:0,shieldSeconds:4,answer:'여우',hints:['꼬리가 풍성한 동물입니다.','동화에서 꾀가 많은 동물로 자주 등장합니다.']});
 export const STORIES=Object.freeze([
  {id:'pigs',name:'아기 돼지 삼 형제',start:0,end:1700,cards:[1,2]},
  {id:'alice',name:'이상한 나라의 앨리스',start:1700,end:3400,cards:[3,4]},

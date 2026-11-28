@@ -8,6 +8,23 @@
   <title>어서오세요, 이곳은 수족관입니다 · PLAY THE BOOK</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
+  <script type="importmap">
+{
+  "imports": {
+    "./js/detective-core.js": "./js/detective-core.js?v308",
+    "./js/gym-core.js?v307": "./js/gym-core.js?v308",
+    "./js/history-renderer.js?v307": "./js/history-renderer.js?v308",
+    "./js/instructions.js?v304": "./js/instructions.js?v308",
+    "./js/space-renderer.js?v307": "./js/space-renderer.js?v308",
+    "./js/temple-core.js?v268": "./js/temple-core.js?v308",
+    "./js/temple-renderer.js?v307": "./js/temple-renderer.js?v308",
+    "./js/tutorial-pages.js?v304": "./js/tutorial-pages.js?v308",
+    "./js/writer-core.js?v307": "./js/writer-core.js?v308",
+    "./js/writer-renderer.js?v307": "./js/writer-renderer.js?v308",
+    "./js/zoo-core.js?v=155": "./js/zoo-core.js?v308"
+  }
+}
+  </script>
   <script type="module" src="./js/opening.js?v254"></script>
 </head>
 <body>
@@ -240,7 +257,7 @@
   <link rel="stylesheet" href="./css/hospital.css?v301">
   <link rel="stylesheet" href="./css/postal.css?v268">
   <script type="module" async>
-    import('./js/app.js?v307').catch(async error => {
+    import('./js/app.js?v308').catch(async error => {
       const {showStartupError} = await import('./js/opening.js?v254');
       showStartupError();
       console.error(error);

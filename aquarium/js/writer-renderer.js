@@ -9,17 +9,18 @@ import {GIANT_ATTACK_ART_V102} from './writer-giant-hand-v102.js';
 import {GiantSpritePlayback} from './writer-giant-sprites-v101.js';
 import {OZ_LANDSCAPE,ozLandscapePlacement,ozLandscapeVisible} from './writer-oz-layout.js';
 import {beginScene} from './layout.js';
-import {WRITER,STORIES,WRITER_CARDS,WRITER_PLATFORMS,ALICE_GATE,WRITER_WIND,NOSE,GIANT,giantHands,CASTLE,PIRATES,VINE,WRITER_CAT,PUPPETS,puppetAt,OZ_FRIENDS} from './writer-core.js?v307';
+import {WRITER,STORIES,WRITER_CARDS,WRITER_PLATFORMS,ALICE_GATE,WRITER_WIND,NOSE,GIANT,giantHands,CASTLE,PIRATES,VINE,WRITER_CAT,PUPPETS,puppetAt,OZ_FRIENDS} from './writer-core.js?v308';
 import {writerGust,gustCrossSection} from './writer-wind.js?v307';
 const TAU=Math.PI*2,rows={haru:0,doyun:1,narin:2,soi:3};
 const round=(c,x,y,w,h,r,fill)=>{c.fillStyle=fill;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const doors=[[118.09,236.42,83.42,116.24],[93.01,225.63,85.65,126.87],[97.14,231,80.61,121.53]];
-const redrawnArt=new Set(['room','wonder','gate','shelters-v35','author-v37']);
-const fineLineArt=new Set(['ship','scenery-v35','vine-v38','vine-crown-v39']);
-function writerArtPath(key){
- const folder=fineLineArt.has(key)?'writer-v307':redrawnArt.has(key)?'writer-v306':'writer';
- return folder+'/'+key+'.webp';
-}
+const writerArtFolders={
+ room:'writer-v306',wonder:'writer-v306',gate:'writer-v306','author-v37':'writer-v306',
+ ship:'writer-v307',
+ 'shelters-v35':'writer-v308','scenery-v35':'writer-v308','vine-v38':'writer-v308',
+ 'vine-crown-v39':'writer-v308',[OZ_LANDSCAPE.asset]:'writer-v308',
+};
+const writerArtPath=key=>(writerArtFolders[key]??'writer')+'/'+key+'.webp';
 export function writerBriefingPose(t){
  const phase=t%3.2,back=t%6.4>=3.2,jump=phase>=.7&&phase<1.65,u=(phase-.7)/.95;
  const x=phase<.7?40+25*phase/.7:jump?65+50*u:phase<2.25?115+25*(phase-1.65)/.6:140;
@@ -30,7 +31,7 @@ export async function loadWriterAssets(character){
  const result={},files=['room','houses','ship','actors','wonder','fox','heroes','gate','cast-v35','scenery-v35','shelters-v35','giant-v39','vine-v38','vine-crown-v39','cat-v39','oz-friends-v36','marionette-v36','author-v37']
   .map(n=>[writerArtPath(n),n]);
  files.push([WRITER_CARD_ART.file,'card-soldier'],['writer-v130/pigs.webp','pigs-v38']);
- files.push(['writer-v307/'+OZ_LANDSCAPE.asset+'.webp',OZ_LANDSCAPE.asset]);
+ files.push([writerArtPath(OZ_LANDSCAPE.asset),OZ_LANDSCAPE.asset]);
  files.push([GIANT_ART_V101.bodyFile,'giant-climb-body'],[GIANT_ART_V101.handsFile,'giant-climb-hands']);
  files.push([GIANT_ATTACK_ART_V102.file,'giant-attack-corrected'],[GIANT_ATTACK_ART_V102.highHandFile,'giant-attack-high-hand']);
  files.push(['museum/'+character.id+'-actions.webp','climb']);

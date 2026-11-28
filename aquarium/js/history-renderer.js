@@ -6,7 +6,8 @@ import {drawTimeMachine,machinePose,machineWalker,machineSize} from './time-mach
 import {HISTORY,ERAS,HISTORY_ACTORS} from './history-core.js?v307';
 const HISTORY_REVISED_ART=new Set(['jerusalem.webp','pyramid.webp','prehistoric.webp','machine-idle.webp','machine-powered.webp','breakables.webp']);
 function historyAssetPath(file){
- if(file==='museum.webp'||file.startsWith('history-v130/dino'))return 'history-v307/'+file.split('/').at(-1);
+ if(file==='museum.webp')return 'history-v308/'+file;
+ if(file.startsWith('history-v130/dino'))return 'history-v307/'+file.split('/').at(-1);
  if(HISTORY_REVISED_ART.has(file))return 'history-v306/'+file;
  if(file.startsWith('history-v130/'))return file;
  const dir=file==='seated-heroes.webp'?'history-v27':file.endsWith('-walk.webp')||file.endsWith('-idle.webp')?'hero-v153':'history';
