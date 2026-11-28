@@ -59,19 +59,23 @@ const fixture = (kind,x,y,width,depth,room,extra={}) => ({kind,x,y,width,depth,r
   footprint:{x:x-width*.44,y:y-depth,w:width*.88,h:depth},
 });
 
+function rearFixture(kind,x,width,depth,room) {
+  const rear=rooms.find(candidate=>candidate.id===room).y;
+  return fixture(kind,x,rear+depth,width,depth,room);
+}
+
 const fixtures = [
   fixture('desk',315,716,137,43,'lobby'),
-  fixture('sofa',88,837,106,33,'lobby'),
-  fixture('sofa',319,837,106,33,'lobby'),
+  ...[88,319].map(x=>fixture('sofa',x,837,106,33,'lobby',{facing:'north'})),
   fixture('sink',104,229,84,23,'exam'),
-  fixture('silverCabinet',267,232,84,34,'exam'),
+  rearFixture('silverCabinet',267,84,34,'exam'),
   fixture('exam',174,320,111,37,'exam'),
   fixture('table',265,438,62,22,'exam'),
-  fixture('storageCabinet',434,215,91,34,'therapy'),
+  rearFixture('storageCabinet',434,91,34,'therapy'),
   fixture('treadmill',532,272,103,32,'therapy'),
   fixture('ramp',660,231,100,36,'therapy'),
   fixture('markers',593,344,104,43,'therapy',{passable:true}),
-  fixture('linenCabinet',703,708,81,31,'rest'),
+  rearFixture('linenCabinet',703,81,31,'rest'),
   fixture('bed',485,731,67,25,'rest',{passable:true}),
   fixture('bed',682,853,81,29,'rest',{passable:true}),
   fixture('bed',556,912,73,28,'rest',{passable:true}),
@@ -80,7 +84,7 @@ const fixtures = [
 
 const roomStations = {
   lobby:[[61,754],[119,752],[177,713],[232,738],[298,741],[365,757],[339,859],[266,786],
-    [179,824],[64,804],[212,884],[279,879],[338,901],[147,927],[228,922]],
+    [179,824],[64,786],[212,884],[279,879],[338,901],[147,927],[228,922]],
   exam:[[57,263],[105,264],[154,243],[212,239],[280,260],[298,320],[230,347],[178,360],
     [52,352],[92,399],[145,414],[187,451],[306,397],[78,463]],
   therapy:[[380,271],[438,279],[504,300],[586,281],[648,267],[721,288],[675,341],[500,327],
